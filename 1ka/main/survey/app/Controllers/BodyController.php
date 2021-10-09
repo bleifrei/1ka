@@ -27,6 +27,7 @@ use TrackingClass;
 use SurveyPanel;
 use SurveyQuiz;
 use SurveyGorenje;
+use SurveyNIJZ;
 use GDPR;
 use UserAccess;
 
@@ -1230,10 +1231,20 @@ class BodyController extends Controller
         // SKAVTI - prikaz povzetka odgovorov in grafa
         global $mysql_database_name;
         //if($mysql_database_name == '1ka' && get('anketa') == '64'){
-        if($mysql_database_name == '1ka' && (get('anketa') == '293926' || get('anketa') == '314856')){
+        if($mysql_database_name == 'real1kasi' && (get('anketa') == '293926' || get('anketa') == '314856' || get('anketa') == '332793')){
 			echo '<div id="skavti_answers">';
 			Display::getInstance()->displaySkavtiAnswers();
 			echo '</div>';
+		}
+
+        // NIJZ - prikaz radar grafa in tabele
+        global $site_domain;
+        if( ($site_domain == 'test.1ka.si' && get('anketa') == '8892') || ($site_domain == 'anketa.nijz.si' && get('anketa') == '126738') ){	
+            
+            $nijz = new SurveyNIJZ(get('anketa'), get('usr_id'));
+            
+            $nijz->displayRadar();
+            $nijz->displayTable();
 		}
     }
 	

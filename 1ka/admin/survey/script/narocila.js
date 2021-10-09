@@ -54,7 +54,7 @@ function popupUserAccess_close() {
 function prepareNarocilaTableAdmin(){
 
     $("#user_narocila").DataTable({
-        order: [[ 4, "desc" ]],
+        order: [[ 5, "desc" ]],
         lengthMenu: [[50, 500, 1000], [50, 500, 1000]],
         select: false,
         lengthChange: true,
@@ -63,8 +63,9 @@ function prepareNarocilaTableAdmin(){
         responsive: true,
         columnDefs: [
             {responsivePriority: 1, targets: 0},
-            {responsivePriority: 2, targets: 7},
-            {responsivePriority: 3, targets: 4}
+            {responsivePriority: 2, targets: 1},
+            {responsivePriority: 3, targets: 8},
+            {responsivePriority: 4, targets: 5}
         ],
         language: {
             "url": siteUrl+"admin/survey/script/datatables/Slovenian.json"

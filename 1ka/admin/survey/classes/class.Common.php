@@ -1610,6 +1610,11 @@ class Common {
 				$help_url = 'https://www.1ka.si/d/en/help/user-guide/edit/settings';
 			}
 
+            // Moje ankete - narocila
+			else if ($_GET['a'] == 'narocila') {
+				$help_url = 'https://www.1ka.si/d/en/services';
+			}
+
 			// Ostale default podstrani
 			else {
 				switch ($podstran) {
@@ -2025,6 +2030,12 @@ class Common {
 			//Urejanje - Vprasalnik
 			else if ($_GET['a'] == 'branching') {				
 				$help_url = 'https://www.1ka.si/d/sl/pomoc/vodic-za-uporabnike/urejanje/vprasalnik';
+			}
+
+            // Moje ankete - narocila
+			else if ($_GET['a'] == 'narocila') {
+				$help_url = 'https://www.1ka.si/d/en/services';
+				$help_url = 'https://www.1ka.si/d/sl/cenik';
 			}
 			
 			// Ostale default podstrani

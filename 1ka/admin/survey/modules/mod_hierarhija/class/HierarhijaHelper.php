@@ -110,10 +110,7 @@ class HierarhijaHelper
                 $zamenjaj = $match;
 
                 // email ne sme biti enak imenu ali priimku
-                if ($iskanje == 'ime ucitelja' && ! in_array($user->email, [
-                        $user->name,
-                        $user->surname,
-                    ])) {
+                if ($iskanje == 'ime ucitelja' && ! in_array($user->email, [$user->name, $user->surname])) {
                     $zamenjaj = $user->name." ".$user->surname;
                 } elseif ($iskanje == 'ime ucitelja') {
                     preg_match('/(\w+)((?:\.)(\w+))?/', $user->email, $ucitelj);

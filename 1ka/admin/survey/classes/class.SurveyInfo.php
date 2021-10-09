@@ -725,6 +725,11 @@ class SurveyInfo
                             $module_availible = false;
                     break;
 
+                    case 'voting':
+                        if(!$userAccess->checkUserAccess($what='voting'))
+                            $module_availible = false;
+                    break;
+
                     case 'social_network':
                         if(!$userAccess->checkUserAccess($what='social_network'))
                             $module_availible = false;
@@ -789,6 +794,11 @@ class SurveyInfo
 
                 case 'quiz':
                     if(!$userAccess->checkUserAccess($what='kviz'))
+                        return false;
+                break;
+
+                case 'voting':
+                    if(!$userAccess->checkUserAccess($what='voting'))
                         return false;
                 break;
 

@@ -261,6 +261,10 @@ class LatexStatus {
 			$enabled_advanced .= $prefix . $lang['srv_vrsta_survey_type_6'];
 			$prefix = ', ';
 		}
+        if ($row['voting'] == 1) {
+			$enabled_advanced .= $prefix . $lang['srv_vrsta_survey_type_18'];
+			$prefix = ', ';
+		}
 		if ($row['phone'] == 1) {
 			$enabled_advanced .= $prefix . $lang['srv_vrsta_survey_type_7'];
 			$prefix = ', ';

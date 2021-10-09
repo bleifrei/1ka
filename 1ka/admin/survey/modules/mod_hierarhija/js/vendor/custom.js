@@ -739,7 +739,7 @@ function jstree_vkljuci(jsonData) {
 
 function dodajKomentar() {
     $('#fade').fadeTo('slow', 1);
-    $('#vrednost_edit').html('').fadeIn('slow').load('ajax.php?anketa=' + anketa_id + '&t=hierarhija-ajax&a=komentar-k-hierarhiji&m=get');
+    $('#vrednost_edit').wrapAll('<div class="fixed-position"></div>').html('').fadeIn('slow').load('ajax.php?anketa=' + anketa_id + '&t=hierarhija-ajax&a=komentar-k-hierarhiji&m=get');
 }
 
 /**
@@ -747,7 +747,7 @@ function dodajKomentar() {
  */
 function uploadLogo() {
     $('#fade').fadeTo('slow', 1);
-    $('#vrednost_edit').html('').fadeIn('slow').load('ajax.php?anketa=' + anketa_id + '&t=hierarhija-ajax&a=upload-logo&m=get', function () {
+    $('#vrednost_edit').wrapAll('<div class="fixed-position"></div>').html('').fadeIn('slow').load('ajax.php?anketa=' + anketa_id + '&t=hierarhija-ajax&a=upload-logo&m=get', function () {
 
         //Vklopi nice input file
         $("input[type=file]").nicefileinput({

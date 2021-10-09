@@ -5091,6 +5091,10 @@ table.grid_header_table label {
 div.buttons {
   text-align: center;
 }
+div.buttons input,
+div.buttons button {
+  -webkit-appearance: none;
+}
 
 div.buttonsHeatmap input {
   cursor: pointer;
@@ -6864,6 +6868,32 @@ table.trak_inline_nadnaslov td {
 .fotoresults_div {
   float: right;
 }
+.fotoresults_div .fotoresults {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 320px;
+  height: 240px;
+  border: 1px solid;
+}
+
+.fotoresults_delete {
+  display: none;
+  cursor: pointer;
+  margin-top: 5px;
+  width: 150px;
+  color: #1e88e5;
+  text-decoration: none;
+  cursor: pointer;
+}
+.fotoresults_delete:hover {
+  color: #ffa608;
+  text-decoration: none;
+}
+.fotoresults_delete.upload_fotoresults_delete {
+  position: static;
+  margin: 20px 0 10px 20px;
+}
 
 .my_camera_div {
   float: left;
@@ -7340,7 +7370,7 @@ button.ui-datepicker-trigger::before {
   font-size: 12px;
   color: #333 !important;
   width: 40%;
-  padding: 10px;
+  padding: 5px;
   border: 1px solid #c6c6c6 !important;
   border-radius: 0;
 }

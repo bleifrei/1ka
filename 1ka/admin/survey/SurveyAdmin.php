@@ -37,6 +37,7 @@
  *  slideshow (prezentacija)
  *  social_network (socialna omrežja - generator imen)
  *  quiz (kviz s pravilnimi/napacnimi odgovori)
+ *  voting (volitve z anonimnimi vabili)
  *  uporabnost (evalvacija strani - split screen)
  *  panel (povezovanje ankete s panelom - npr. Valicon, GFK...)
  *  360_stopinj (adecco)
@@ -266,157 +267,92 @@ class SurveyAdmin
         global $site_domain;
         global $aai_instalacija;
 
-        $sql = sisplet_query("SELECT email FROM users WHERE id='$global_user_id'");
-        $row = mysqli_fetch_assoc($sql);
-        if ($row['email'] == "test@1ka.si") {
-            echo '<div id="test_user_alert">';
-            echo '<span>' . $lang['notify_testUser'] . '</span>';
-            echo '</div>';
-        }
-
-        echo '<div id="blue_header"><a href="' . $site_url . 'admin/survey"></a></div>';
-
-
-        // user navigacija
-        echo '<div id="enka_nav">';
-        
-        // Search po zunanji lupini - preusmeri na drupalov search
-		echo '<div id="search_holder">';
-        
-		if($lang['id'] != "1")
-			$drupal_search_url = 'https://www.1ka.si/d/en/iskanje/';
-		else
-            $drupal_search_url = 'https://www.1ka.si/d/sl/iskanje/';
-            
-        echo '<form method="GET" id="1kasf" action="'.$drupal_search_url.'">';
-
-        echo '<input type="hidden" id="drupal_search_url" name="drupal_search_url" value="'.$drupal_search_url.'" />';
-
-		echo '<a href="#" onclick="showSearch();"><span class="faicon search pointer"></span></a> ';
-        echo '<input id="searchSurvey" type="text" value="" placeholder="' . $lang['s_search_frontend'] . '" name="search" />';
-        echo '<input type="button" style="display: none;" value="' . $lang['s_search'] . '" />';
-		
-		echo '</form>';
-		
-        echo '</div>';
-		
-
-        // Hitra pomoč - povezave na linke s pomočjo na www.1ka.si
-        $subdomain = ($lang['id'] == "1") ? 'www' : 'english';
-        $help_url = Common::getHelpUrl($subdomain, $this->first_action);
-        echo '<div id="help_holder">';
-        echo ' <a href="' . $help_url . '" title="' . $lang['srv_settings_help'] . '" target="_blank">';
-        echo '<span class="faicon help2"></span>';
-        echo '</a> ';
-        echo '</div>';
-
-        // povezava na fieldwork sync
-        if ($this->anketa > 0) {
-
-            // poglej če je tale ID ankete v srv_fieldwork
-            $sql = sisplet_query("SELECT id FROM srv_fieldwork where sid_server='" . $this->anketa . "'");
-            if (mysqli_num_rows($sql) > 0) {
-                // nariši link.
-                echo '<div id="fieldwork_holder">';
-                echo '<a href="index.php?anketa=' . $this->anketa . '&amp;a=' . A_FIELDWORK . '" title="' . $lang['srv_vrsta_survey_type_13'] . '">';
-                echo '<span class="sprites fieldwork"></span>';
-                echo '</a> ';
-                echo '</div>';
-            }
-        }
-
-        $sql = $this->db_select_user($global_user_id);
-        $row = mysqli_fetch_array($sql);
-
-        $text = $row['name'] . ' ' . $row['surname'];
-        $text = (strlen($text) > 25) ? substr($text, 0, 25) . '...' : $text;
-
-
-        echo '<div id="xtradiv"><strong class="xtraname">' . $text . ' <span class="faicon after sort_down_arrow"/></strong>';
-        echo '<div id="xtradivSettings">';
-        
-        echo '<span class="xtraSetting"><a class="xtra" href="' . $site_url . 'admin/survey/index.php?a=nastavitve&m=global_user_myProfile"><span class="faicon user"></span>' . $lang['edit_data'] . '</a></span>';
-
-		// Odjava na nov nacin preko frontend/api
-		echo '<form name="odjava" method="post" action="'.$site_url.'frontend/api/api.php?action=logout">';
-		echo '<span class="xtraSetting"><a class="xtra" href="#" onClick="document.odjava.submit();"><span class="faicon logout"></span>' . $lang['logout'] . '</a></span>';
-		echo '</form>';
-		
-        echo '</div>';
-        echo '</div>';
-
-        echo '</div>';
-
-
-        // logotip
-        echo '<div id="logo">';
-
-        $logo_class = ($lang['id'] != "1") ? ' class="english"' : '';
-        $su = ($site_url == "https://www.1ka.si/" && $lang['id'] != "1") ? "https://www.1ka.si/d/en/" : $site_url;
-		
-        echo '<a href="' . $su . '" title="' . $lang['srv_1cs'] . '" id="enka_logo" ' . $logo_class . '></a>';
-        echo '</div>';
-
 
         echo '<div id="main_holder">';
 
-        echo '<div id="main">';
 
-        /***** SEZNAM ANKET - Ce ni nastavljene ankete, potem prikazujemo seznam na prvi strani *****/ 
-        if (!($this->anketa > 0)) {
+        /********************* GLAVA *********************/
+        echo '<header>';
 
-            $this->displaySeznamAnket();
-        }
-        /***** GLAVNA VSEBINA - Znotraj posamezne ankete *****/ 
-        else{
+        // DESKTOP HEADER
+        echo '<div class="desktop_header">';
 
-            echo '  <div id="anketa"' . ($this->anketa == 0 ? ' class="prva"' : '') . '>';  
+        // Nastavitve zgoraj desno v headerju (search, help, profil...)
+        $this->displayHeaderRight();
+
+        // logotip
+        $this->displayHeaderLogo();
+
+        // Znotraj posamezne ankete
+        if($this->anketa > 0){
+
+            // Utripajoc napis "Demo anketa"
+            $this->displayHeaderDemoSurvey();
 
             // Prikaze podatke o anketi in navigacijo - na vrhu (top bar)
-            $this->displayAnketaTop();
+            $this->displayHeaderAnketa();
+        }
+        // Seznam anket
+        else{
+            $this->displayHeaderSeznamAnket();
+        }
+
+        echo '</div>';
+
+        // MOBILE HEADER
+        echo '<div class="mobile_header">';
+
+        $mobile_admin = new MobileSurveyAdmin($this);
+        $mobile_admin->displayHeaderMobile();
+
+        echo '</div>';
+
+        echo '</header>';
+        /********************* GLAVA - END *********************/
+
+
+        /********************* MAIN *********************/
+        echo '<div id="main">';
+
+        // SEZNAM ANKET - Ce ni nastavljene ankete, potem prikazujemo seznam na prvi strani *****/ 
+        if (!($this->anketa > 0)) {
+            $this->displaySeznamAnket();
+        }
+        // ZNOTRAJ ANKETE
+        else{
+            echo '<div id="anketa">';  
 
             echo '<div id="anketa_edit" class="page_'.$_GET['a'].' subpage_'.$_GET['m'].' '.($this->survey_type == '1' ? 'forma' : '').' '.($this->survey_type == '0' ? 'glasovanje' : '').'">';
             $this->displayAnketa();
             echo '</div>';
 
-            echo '  </div>  <!-- /anketa -->';
-    
-
-            // Predpregled tipa vprašanj - prikazujemo samo kadar smo v urejanju ankete
-            if (($_GET['a'] == '' && isset($_GET['anketa'])) || $_GET['a'] == 'branching') {
-    
-                echo '<div id="tip_preview">';
-
-                echo '<div class="top-left"></div><div class="top-right"></div><div class="inside">';
-                $this->getTipPreviewHtml();
-                echo '</div><div class="bottom-left"></div><div class="bottom-right"></div>';
-
-                echo '</div>'; // tip_preview
-            }
-    
-            // Utripajoc napis "Demo anketa"
-            $row = SurveyInfo::getInstance()->getSurveyRow();
-            if ($row['invisible'] == 1 && !Dostop::isMetaAdmin()) {
-                echo '<div id="invisible-layer"></div>';
-                echo '<div id="invisible-close" onClick="window.close(); return false;"><span>' . $lang['srv_close_invisible'] . '</span></div>';
-                
-                ?> <script> $('#invisible-close span').effect("pulsate", {times: 3}, 2000); </script> <?
-            }
+            echo '</div>';
         }
 
         /***** SKRITI DIVI ZA POPUPE *****/ 
         $this->displayHiddenPopups();
-       
-        echo '</div> <!-- /main -->';
 
+        echo '</div>';
+        /********************* MAIN - END *********************/
+        
 
-        /***** FOOTER *****/
+        /********************* FOOTER *********************/
         $this->displayFooter();
+        /********************* FOOTER - END *********************/
+
+
+        echo '</div> <!-- /main_holder -->';
     }
+
 
     // Prikazemo skrite dive za popupe
     private function displayHiddenPopups(){
         global $lang;
+
+
+        // Predpregled tipa vprašanj - prikazujemo samo kadar smo v urejanju ankete
+        $this->getTipPreviewHtml();
+
 
         // Loading ikona
         echo '  <div id="loading">';
@@ -545,9 +481,148 @@ class SurveyAdmin
         echo '</div>';
         echo '</div>';
     }
+    
+
+    // Prikazemo podatke zgoraj desno v glavi (search, user, help)
+    private function displayHeaderRight(){
+        global $site_url;
+        global $global_user_id;
+        global $lang;
+
+
+        // user navigacija
+        echo '<div id="enka_nav">';
+                
+
+        // Gumb za nadgraditev paketa v mojih anketah (ce imamo vklopljene pakete in nimamo 3ka paketa)
+        if($this->anketa == 0){
+  
+            global $app_settings;
+            if($app_settings['commercial_packages'] == true){
+
+                // Preverimo trenuten paket uporabnika
+                $userAccess = UserAccess::getInstance($global_user_id);
+                $current_package = $userAccess->getPackage();
+                if($current_package != '3' && !$userAccess->userNotAuthor()){
+                    
+                    $drupal_url = ($lang['id'] == '2') ? $site_url.'d/en/' : $site_url.'d/';
+                    $upgrade_url = $drupal_url.'izvedi-nakup/3/podatki';
+
+                    $button_text = ($current_package == '2') ? $lang['srv_access_upgrade2'] : $lang['srv_access_upgrade'];
+
+                    echo '<div class="upgrade_package">';
+                    echo '<div class="buttonwrapper"><a class="ovalbutton ovalbutton_purple" href="'.$upgrade_url.'" target="_blank"><span>'.$button_text.'</span></a></div>';
+                    echo '</div>';
+                }
+            }
+        }
+
+
+        // Search po zunanji lupini - preusmeri na drupalov search
+        echo '<div id="search_holder">';
+
+        if($lang['id'] != "1")
+            $drupal_search_url = 'https://www.1ka.si/d/en/iskanje/';
+        else
+            $drupal_search_url = 'https://www.1ka.si/d/sl/iskanje/';
+            
+        echo '<form method="GET" id="1kasf" action="'.$drupal_search_url.'">';
+
+        echo '<input type="hidden" id="drupal_search_url" name="drupal_search_url" value="'.$drupal_search_url.'" />';
+
+        echo '<a href="#" onclick="showSearch();"><span class="faicon search pointer"></span></a> ';
+        echo '<input id="searchSurvey" type="text" value="" placeholder="' . $lang['s_search_frontend'] . '" name="search" />';
+        echo '<input type="button" style="display: none;" value="' . $lang['s_search'] . '" />';
+
+        echo '</form>';
+
+        echo '</div>';
+
+
+        // Hitra pomoč - povezave na linke s pomočjo na www.1ka.si
+        $subdomain = ($lang['id'] == "1") ? 'www' : 'english';
+        $help_url = Common::getHelpUrl($subdomain, $this->first_action);
+        echo '<div id="help_holder">';
+        echo ' <a href="' . $help_url . '" title="' . $lang['srv_settings_help'] . '" target="_blank">';
+        echo '<span class="faicon help2"></span>';
+        echo '</a> ';
+        echo '</div>';
+
+
+        // povezava na fieldwork sync
+        if ($this->anketa > 0) {
+
+            // poglej če je tale ID ankete v srv_fieldwork
+            $sql = sisplet_query("SELECT id FROM srv_fieldwork where sid_server='" . $this->anketa . "'");
+            if (mysqli_num_rows($sql) > 0) {
+                // nariši link.
+                echo '<div id="fieldwork_holder">';
+                
+                echo '<a href="index.php?anketa=' . $this->anketa . '&amp;a=' . A_FIELDWORK . '" title="' . $lang['srv_vrsta_survey_type_13'] . '">';
+                echo '<span class="sprites fieldwork"></span>';
+                echo '</a> ';
+
+                echo '</div>';
+            }
+        }
+
+
+        // User profil
+        $sql = $this->db_select_user($global_user_id);
+        $row = mysqli_fetch_array($sql);
+
+        $text = $row['name'] . ' ' . $row['surname'];
+        $text = (strlen($text) > 25) ? substr($text, 0, 25) . '...' : $text;
+
+        echo '<div id="xtradiv"><strong class="xtraname">'.$text.' <span class="faicon after sort_down_arrow"/></strong>';
+        echo '<div id="xtradivSettings">';
+
+        echo '<span class="xtraSetting"><a class="xtra" href="' . $site_url . 'admin/survey/index.php?a=nastavitve&m=global_user_myProfile"><span class="faicon user"></span>' . $lang['edit_data'] . '</a></span>';
+
+        // Odjava na nov nacin preko frontend/api
+        echo '<form name="odjava" id="form_odjava_desktop" method="post" action="'.$site_url.'frontend/api/api.php?action=logout">';
+        echo '<span class="xtraSetting"><a class="xtra" href="#" onClick="$(\'#form_odjava_desktop\').submit();"><span class="faicon logout"></span>' . $lang['logout'] . '</a></span>';
+        echo '</form>';
+
+        echo '</div>';
+        echo '</div>';
+
+        
+        echo '</div>';
+    }
+
+    // Prikazemo logo zgoraj levo
+    public function displayHeaderLogo(){
+        global $lang;
+        global $site_url;
+
+        echo '<div id="logo">';
+
+        $logo_class = ($lang['id'] != "1") ? ' class="english"' : '';
+        $su = ($site_url == "https://www.1ka.si/" && $lang['id'] != "1") ? "https://www.1ka.si/d/en/" : $site_url;
+		
+        echo '<a href="' . $su . '" title="' . $lang['srv_1cs'] . '" id="enka_logo" ' . $logo_class . '></a>';
+
+        echo '</div>';
+    }
+
+    // Utripajoc napis "Demo anketa"
+    private function displayHeaderDemoSurvey(){
+        global $lang;
+
+        $row = SurveyInfo::getInstance()->getSurveyRow();
+
+        if ($row['invisible'] == 1 && !Dostop::isMetaAdmin()) {
+
+            echo '<div id="invisible-layer"></div>';
+            echo '<div id="invisible-close" onClick="window.close(); return false;"><span>' . $lang['srv_close_invisible'] . '</span></div>';
+            
+            ?> <script> $('#invisible-close span').effect("pulsate", {times: 3}, 2000); </script> <?
+        }
+    }
 
     // Prikaze podatke o anketi na vrhu
-    private function displayAnketaTop(){
+    private function displayHeaderAnketa(){
         global $lang;
         global $site_url;
     
@@ -566,6 +641,59 @@ class SurveyAdmin
         $this->thirdNavigation();
     }
 
+    /**
+     * prikaze glavo v seznamu anket
+     *
+     */
+    private function displayHeaderSeznamAnket(){
+        global $lang, $site_url, $global_user_id, $admin_type, $site_domain;
+
+        // Pobrisemo vse preview vnose
+        Common::deletePreviewData($this->anketa);
+
+        # naložimo razred z seznamom anket
+        $SL = new SurveyList();
+        $SLCount = $SL->countSurveys();
+        $SLCountPhone = $SL->countPhoneSurveys();
+
+        // Obvestilo da ima uporabnik neprebrano sporocilo
+        $NO = new Notifications();
+        $countMessages = $NO->countMessages();
+		if ($countMessages > 0) {
+            echo '<div id="new_notification_alert" onClick="showUnreadMessages();">';
+            echo $lang['srv_notifications_alert'];
+            echo '</div>';
+
+			// Ce imamo vklopljen avtomatski prikaz sporcila (za pomembne zadeve), ga prikazemo po loadu
+			if($NO->checkForceShow())
+				echo '<script>$(document).ready(function(){showUnreadMessages();})</script>';
+		}
+		
+		// GDPR popup za prejemanje obvestil - force ce ga se ni izpolnil - SAMO NA www.1ka.si, test.1ka.si in virtualkah
+		if (($site_url == 'https://www.1ka.si/' || $site_url == 'http://test.1ka.si/' || $site_url == 'https://1ka.arnes.si/' || ($cookie_domain == '.1ka.si' && $virtual_domain == true)) 
+				&& User::getInstance()->getSetting($setting='gdpr_agree') == '-1') {		
+			
+			// Avtomatsko prikazemo po loadu
+			echo '<script>$(document).ready(function(){showGDPRMessage();})</script>';
+		}
+	
+		
+        echo '<div id="anketa_active" class="folders">';	
+		
+        echo '  <div id="topLine2">&nbsp;</div>';
+
+        echo '  <div id="surveyNavigation">';
+        $SL->display_tabs();
+        echo '  </div>';
+
+        echo '</div>';
+        
+        
+        # smo v knjižnici
+        $SL->display_sub_tabs();
+    }
+
+
     // Priakz footerja
     private function displayFooter(){
         global $lang;
@@ -574,7 +702,8 @@ class SurveyAdmin
         global $aai_instalacija;
         global $mysql_database_name;
 
-        echo '<div id="srv_footer">';
+
+        echo '<footer id="srv_footer">';
         
 
         // Leva stran footerja
@@ -647,10 +776,9 @@ class SurveyAdmin
         echo '</div>';
         
         
-        echo '</div>';  // END #main
-
-        echo '</div>';  // END #main_holder
+        echo '</footer>';
     }
+
 
     // Prikaze ime ankete, zvezdico in tiste linke spodi (ker se vse refresha z ajaxom)
     private function anketa_active() {
@@ -1166,6 +1294,18 @@ class SurveyAdmin
             echo '<li>';
             echo '<a href="index.php?anketa=' . $this->anketa . '&amp;a=' . A_KVIZ . '" title="' . $lang['srv_vrsta_survey_type_6'] . '">';
             echo '<span class="module_icon quiz"></span>';
+            echo '</a>';
+            echo '</li>';
+        }
+        # volitve
+        if (isset($modules['voting'])) {
+            $css = ($this->first_action == A_VOTING) ? 'on' : 'off';
+
+            echo '<li class="space">&nbsp;</li>';
+
+            echo '<li>';
+            echo '<a href="index.php?anketa=' . $this->anketa . '&amp;a=' . A_VOTING . '" title="' . $lang['srv_vrsta_survey_type_18'] . '">';
+            echo '<span class="module_icon voting"></span>';
             echo '</a>';
             echo '</li>';
         }
@@ -1777,6 +1917,14 @@ class SurveyAdmin
                 echo '<li class="space"></li>';
                 echo '<li><a class="no-img' . $_right . $_active . '" href="' . $site_url . 'admin/survey/index.php?anketa=' . $this->anketa . '&amp;a=' . A_KVIZ . '" title="' . $lang['srv_kviz'] . '">' . $lang['srv_kviz'] . '</a></li>';
             }
+            #volitve
+            if (isset($modules['voting'])) {
+                $_active = ($_GET['a'] == A_VOTING) ? ' active' : '';
+                $_right = (isset($modules['social_network'])
+                    || isset($modules['slideshow'])) ? '' : ' side-right';
+                echo '<li class="space"></li>';
+                echo '<li><a class="no-img' . $_right . $_active . '" href="' . $site_url . 'admin/survey/index.php?anketa=' . $this->anketa . '&amp;a=' . A_VOTING . '" title="' . $lang['srv_voting'] . '">' . $lang['srv_voting'] . '</a></li>';
+            }
 			#napredni parapodatki
             if (isset($modules['advanced_paradata'])) {
                 $_active = ($_GET['a'] == A_ADVANCED_PARADATA) ? ' active' : '';
@@ -1822,13 +1970,15 @@ class SurveyAdmin
             echo '</li>';
             echo '<li class="space"></li>';
 
-            # parapodatki (browser, os, js...)
-            echo '<li>';
-            echo '<a class="no-img' . ($_GET['a'] == A_PARA_GRAPH ? ' active' : '') . '"'
-                . ' href="index.php?anketa=' . $this->anketa . '&amp;a=' . A_PARA_GRAPH . '" title="' . $lang['srv_metapodatki'] . '">';
-            echo $lang['srv_metapodatki'] . '</a>';
-            echo '</li>';
-            echo '<li class="space"></li>';
+            # parapodatki (browser, os, js...) - volitve imajo to ugasnjeno
+            if(!SurveyInfo::getInstance()->checkSurveyModule('voting')) {
+                echo '<li>';
+                echo '<a class="no-img' . ($_GET['a'] == A_PARA_GRAPH ? ' active' : '') . '"'
+                    . ' href="index.php?anketa=' . $this->anketa . '&amp;a=' . A_PARA_GRAPH . '" title="' . $lang['srv_metapodatki'] . '">';
+                echo $lang['srv_metapodatki'] . '</a>';
+                echo '</li>';
+                echo '<li class="space"></li>';
+            }
 
             # neodgovori in uporabnost enot
             //if ($admin_type === '0') {
@@ -1848,6 +1998,16 @@ class SurveyAdmin
             echo $lang['srv_usable_respondents'] . '</a>';
             echo '</li>';
             echo '<li class="space"></li>';
+
+            # kakovost resp - V DELU - ZAENKRAT SAMO ADMINI
+			if ($admin_type === '0') {
+				echo '<li>';
+				echo '<a class="no-img' . ($_GET['a'] == A_KAKOVOST_RESP ? ' active' : '') . '"'
+					. ' href="index.php?anketa=' . $this->anketa . '&amp;a=' . A_KAKOVOST_RESP . '" title="' . $lang['srv_kakovost'] . '">';
+				echo $lang['srv_kakovost'] . '</a>';
+				echo '</li>';
+				echo '<li class="space"></li>';
+			}
 
 			# speeder index - V DELU - ZAENKRAT SAMO ADMINI
 			if ($admin_type === '0') {
@@ -1869,8 +2029,8 @@ class SurveyAdmin
                 echo '<li class="space"></li>';
             }
 
-			# IP analiza lokacij - gorenje ima to ugasnjeno
-            if (!Common::checkModule('gorenje')) {
+			# IP analiza lokacij - gorenje ima to ugasnjeno, volitve imajo tudi ugasnjeno
+            if (!Common::checkModule('gorenje') && !SurveyInfo::getInstance()->checkSurveyModule('voting')) {
                 echo '<li>';
                 echo '<a class="no-img' . ($_GET['a'] == A_GEOIP_LOCATION ? ' active' : '') . '"'
                     . ' href="index.php?anketa=' . $this->anketa . '&amp;a=' . A_GEOIP_LOCATION . '" title="' . $lang['srv_geoip_location'] . '">';
@@ -1923,17 +2083,21 @@ class SurveyAdmin
             }
 
             # langStatistic
-            #langStatistic naj bo viden samo če imamo različne jezike
-            $qry_string = "SELECT language FROM srv_user WHERE ank_id = '" . $this->anketa . "' AND preview = '0' AND deleted='0' group by language";
-            $qry = (sisplet_query($qry_string));
-            $cntLang = mysqli_num_rows($qry);
-            if ($cntLang > 1) {
-                echo '<li>';
-                echo '<a class="no-img' . ($_GET['a'] == 'langStatistic' ? ' active' : '') . '"'
-                    . ' href="index.php?anketa=' . $this->anketa . '&amp;a=langStatistic" title="' . $lang['srv_languages_statistics'] . '">';
-                echo $lang['srv_languages_statistics'] . '</a>';
-                echo '</li>';
-                echo '<li class="space"></li>';
+            #langStatistic naj bo viden samo če imamo različne jezike in nimamo volitev
+            if (!Common::checkModule('gorenje') && !SurveyInfo::getInstance()->checkSurveyModule('voting')) {
+                
+                $qry_string = "SELECT language FROM srv_user WHERE ank_id = '" . $this->anketa . "' AND preview = '0' AND deleted='0' group by language";
+                $qry = (sisplet_query($qry_string));
+                $cntLang = mysqli_num_rows($qry);
+
+                if ($cntLang > 1) {
+                    echo '<li>';
+                    echo '<a class="no-img' . ($_GET['a'] == 'langStatistic' ? ' active' : '') . '"'
+                        . ' href="index.php?anketa=' . $this->anketa . '&amp;a=langStatistic" title="' . $lang['srv_languages_statistics'] . '">';
+                    echo $lang['srv_languages_statistics'] . '</a>';
+                    echo '</li>';
+                    echo '<li class="space"></li>';
+                }
             }
 
             echo '</ul>';
@@ -2002,7 +2166,7 @@ class SurveyAdmin
         // Zavihki PODATKI
         elseif($_GET['a'] == 'data'){
 
-            if(!isset($_GET['m'])){
+            if(!isset($_GET['m']) || $_GET['m'] == 'view'){
                 $podstran = 'data';
             }
             elseif($_GET['m'] == 'quick_edit'){
@@ -2183,6 +2347,7 @@ class SurveyAdmin
                 || $_GET['a'] == 'uporabnost'
                 || ($_GET['a'] == 'hierarhija_superadmin' && $hierarhija_type < 5)
                 || $_GET['a'] == 'kviz'
+                || $_GET['a'] == 'voting'
                 || $_GET['a'] == 'slideshow'
                 || $_GET['a'] == 'vnos'
                 || $_GET['a'] == A_TELEPHONE
@@ -2306,6 +2471,13 @@ class SurveyAdmin
             echo '	<div id="surveyUsableResp">';
             $SUR = new SurveyUporabnost($this->anketa);
             $SUR->displayUporabnost();
+            echo '	</div>';
+        } 
+        // prikaze modul kakovost
+        elseif ($_GET['a'] == A_KAKOVOST_RESP) { 
+            echo '	<div id="surveyKakovostResp">';
+            $SUR = new SurveyKakovost($this->anketa);
+            $SUR->displayKakovost();
             echo '	</div>';
         } 
         // Prikaze analizo hitrosti respondenta
@@ -2433,6 +2605,7 @@ class SurveyAdmin
         elseif ($_GET['a'] == 'uporabnost'
             || ($_GET['a'] == 'hierarhija_superadmin' && $hierarhija_type < 5)
             || $_GET['a'] == 'kviz'
+            || $_GET['a'] == 'voting'
             || $_GET['a'] == 'slideshow'
             || $_GET['a'] == 'vnos'
             || $_GET['a'] == A_TELEPHONE
@@ -3094,7 +3267,7 @@ class SurveyAdmin
     }
 
     // Linki za napredne module
-    function showAdvancedModulesLinks()
+    private function showAdvancedModulesLinks()
     {
         global $lang;
         global $site_url;
@@ -3142,6 +3315,12 @@ class SurveyAdmin
             # Kviz
             echo '<li ' . ($get == A_KVIZ ? ' class="highlightLineTab"' : ' class="nonhighlight"') . '>';
 			echo '<a href="index.php?anketa=' . $this->anketa . '&amp;a='.A_KVIZ.'" title="' . $lang['srv_vrsta_survey_type_6'] . '" '.(!$userAccess->checkUserAccess($what='kviz') ? 'class="user_access_locked"' : '').'><span>' . $lang['srv_vrsta_survey_type_6'] . '</span></a></li> ';
+
+            # Volitve
+            if ($admin_type == 0) {
+                echo '<li ' . ($get == A_VOTING ? ' class="highlightLineTab"' : ' class="nonhighlight"') . '>';
+                echo '<a href="index.php?anketa=' . $this->anketa . '&amp;a='.A_VOTING.'" title="' . $lang['srv_vrsta_survey_type_18'] . '" '.(!$userAccess->checkUserAccess($what='voting') ? 'class="user_access_locked"' : '').'><span>' . $lang['srv_vrsta_survey_type_18'] . '</span></a></li> ';
+            }
 
             # Socialna omrezja
             echo '<li ' . ($get == A_SOCIAL_NETWORK ? ' class="highlightLineTab"' : ' class="nonhighlight"') . '>';
@@ -3279,53 +3458,14 @@ class SurveyAdmin
      * prikaze seznam anket in polje za dodajanje na prvi strani
      *
      */
-    function displaySeznamAnket(){
+    private function displaySeznamAnket(){
         global $lang, $site_url, $global_user_id, $admin_type, $site_domain;
 
-        // Pobrisemo vse preview vnose
-        Common::deletePreviewData($this->anketa);
 
         # naložimo razred z seznamom anket
         $SL = new SurveyList();
         $SLCount = $SL->countSurveys();
         $SLCountPhone = $SL->countPhoneSurveys();
-
-        // Obvestilo da ima uporabnik neprebrano sporocilo
-        $NO = new Notifications();
-        $countMessages = $NO->countMessages();
-		if ($countMessages > 0) {
-            echo '<div id="new_notification_alert" onClick="showUnreadMessages();">';
-            echo $lang['srv_notifications_alert'];
-            echo '</div>';
-
-			// Ce imamo vklopljen avtomatski prikaz sporcila (za pomembne zadeve), ga prikazemo po loadu
-			if($NO->checkForceShow())
-				echo '<script>$(document).ready(function(){showUnreadMessages();})</script>';
-		}
-		
-		// GDPR popup za prejemanje obvestil - force ce ga se ni izpolnil - SAMO NA www.1ka.si, test.1ka.si in virtualkah
-		if (($site_url == 'https://www.1ka.si/' || $site_url == 'http://test.1ka.si/' || $site_url == 'https://1ka.arnes.si/' || ($cookie_domain == '.1ka.si' && $virtual_domain == true)) 
-				&& User::getInstance()->getSetting($setting='gdpr_agree') == '-1') {		
-			
-			// Avtomatsko prikazemo po loadu
-			echo '<script>$(document).ready(function(){showGDPRMessage();})</script>';
-		}
-	
-		
-        echo '<div id="anketa_active" class="folders">';	
-		
-        echo '  <div id="topLine2">&nbsp;</div>';
-
-        echo '  <div id="surveyNavigation">';
-        $SL->display_tabs();
-        echo '  </div>';
-
-        echo '</div>';
-        
-        
-        # smo v knjižnici
-        $SL->display_sub_tabs();
-
 
 
         // VSEBINA POSAMEZNEGA TABA PRI MOJIH ANKETAH 
@@ -3616,6 +3756,8 @@ class SurveyAdmin
         echo '</div>';
     }
 
+
+
     /**
      * vrne kodo ankete, ki se jo uporabi za embed
      *
@@ -3800,7 +3942,7 @@ class SurveyAdmin
                 }
             }
 
-            if (($_GET['a'] == A_COLLECT_DATA || $_GET['a'] == A_USABLE_RESP || $_GET['a'] == A_SPEEDER_INDEX || $_GET['a'] == A_REMINDER_TRACKING || $_GET['a'] == A_TEXT_ANALYSIS || $_GET['a'] == A_EDITS_ANALYSIS || $_GET['a'] == A_ANALYSIS) && $_GET['m'] != 'analysis_links' && $_GET['m'] != 'anal_arch')
+            if (($_GET['a'] == A_COLLECT_DATA || $_GET['a'] == A_USABLE_RESP || $_GET['a'] == A_KAKOVOST_RESP || $_GET['a'] == A_SPEEDER_INDEX || $_GET['a'] == A_REMINDER_TRACKING || $_GET['a'] == A_TEXT_ANALYSIS || $_GET['a'] == A_EDITS_ANALYSIS || $_GET['a'] == A_ANALYSIS) && $_GET['m'] != 'analysis_links' && $_GET['m'] != 'anal_arch')
                 $this->displayExportHover($navigation);
 
         } else if ($navigation == 1) {
@@ -4933,9 +5075,23 @@ class SurveyAdmin
      * preview
      *
      */
-    function getTipPreviewHtml(){
+    private function getTipPreviewHtml(){
         global $lang;
         global $global_user_id;
+
+
+        // Predpregled tipa vprašanj - prikazujemo samo kadar smo v urejanju ankete
+        if (!$this->anketa > 0)
+            return;
+
+        if ( ($_GET['a'] != '' || !isset($_GET['anketa'])) && $_GET['a'] != 'branching' )
+            return;
+
+
+        echo '<div id="tip_preview">';
+
+        echo '<div class="top-left"></div><div class="top-right"></div><div class="inside">';
+
 
         // Preverimo, ce je funkcionalnost v paketu, ki ga ima uporabnik
         $userAccess = UserAccess::getInstance($global_user_id);
@@ -5842,6 +5998,11 @@ class SurveyAdmin
                 echo '</div>';
             }
         }
+
+
+        echo '</div><div class="bottom-left"></div><div class="bottom-right"></div>';
+
+        echo '</div>'; // tip_preview
     }
 
     /**

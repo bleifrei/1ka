@@ -35,6 +35,7 @@ class CrossRoad {
                     break;
                 case A_NONRESPONSE_GRAPH:
                 case A_USABLE_RESP:
+                case A_KAKOVOST_RESP:
                 case A_SPEEDER_INDEX:
                 case A_TEXT_ANALYSIS:
                 case A_GEOIP_LOCATION:
@@ -183,6 +184,7 @@ class CrossRoad {
                 case A_UPORABNOST:
                 case A_HIERARHIJA_SUPERADMIN:
                 case A_KVIZ:
+                case A_VOTING:
                 case A_ADVANCED_PARADATA:
                 case A_JSON_SURVEY_EXPORT:
                 case A_VNOS:

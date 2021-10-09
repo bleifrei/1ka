@@ -1,10 +1,12 @@
 <?php
 
+
 /**
  *
  *  Class ki vsebuje funkcije APIJA za narocila (oddaj narocilo, izvedi placilo...)
  *
  */
+use GeoIp2\Database\Reader;
 
 class ApiNarocilaController{
     
@@ -337,7 +339,19 @@ class ApiNarocilaController{
                         $this->response['success'] = false;
                     }  
 
-                    break; 
+                    break;
+
+                case 'get_lokacija':
+
+                  global $site_path;
+
+                  $reader = new Reader($site_path.'admin/survey/modules/mod_geoIP/db/GeoLite2-City.mmdb');
+                  $podatki = $reader->city($this->data['ip']);
+
+                  // Vrnemo ime države
+                  $this->response['drzava'] =  $podatki->country->name;
+
+                break;
             }
         }
     }

@@ -929,6 +929,10 @@ class SurveyStatistic {
 			$enabled_advanced .= $prefix . $lang['srv_vrsta_survey_type_6'];
 			$prefix = ', ';
 		}
+        if (isset($modules['voting'])) {
+			$enabled_advanced .= $prefix . $lang['srv_vrsta_survey_type_18'];
+			$prefix = ', ';
+		}
 		if (isset($modules['phone'])) {
 			$enabled_advanced .= $prefix . $lang['srv_vrsta_survey_type_7'];
 			$prefix = ', ';

@@ -2319,12 +2319,12 @@ class SurveyChart {
 			'radar_scale' 	=> 0,		// skala pri radarju (na osi / diagonalno)
 			'3d_pie'		=> 0,		// tip kroznega grafa (navaden / 3d)
 			'labelWidth' 	=> 50,		// sirina label (50% / 20%)
-			'barLabel'	 	=> 0,		// prikaz label v stolpicnih grafih
+			'barLabel'	 	=> 1,		// prikaz label v stolpicnih grafih
 			'barLabelSmall'	=> 1,		// prikaz label pod 5% v stolpicnih grafih (zraven stolpca)
 			'rotate'	 	=> 0,		// obrnjeni gridi in variable (pri vseh MG - multiradio, multinumber...)
 			'colors'		=> $colors,	// custom barve grafa
 			'show_avg'	 	=> -1,		// prikaz povprecja na grafu (samo pri ordinalnih radio)
-			'show_numerus'	=> -1,		// prikaz numerusa na grafu
+			'show_numerus'	=> 1,		// prikaz numerusa na grafu
 			'otherType'		=> 0,		// poravnava other tabel
 			'otherFreq'		=> 0,		// izpis frekvenc v other tabeli
 			'hideEmptyVar'	=> 0,		// ali izpuscamo prazne opcije brez odgovora (ce je nad 20 variabel -> default 1)

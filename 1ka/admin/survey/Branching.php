@@ -339,10 +339,8 @@ class Branching {
 
 		$row = SurveyInfo::getInstance()->getSurveyRow();
 
-		//if ($row['toolbox'] == 1 || $row['toolbox'] == 2)
 		if($this->survey_type != 0)
 			$this->toolbox_basic2();
-		//else
 
 		if ($row['toolbox'] >= 3)
 			$this->toolbox_library();
@@ -353,6 +351,8 @@ class Branching {
 		});
 		</script><?php
 
+        // Mobile add question
+        MobileSurveyAdmin::displayAddQuestion($this->anketa);
     }
 
     /**
@@ -679,7 +679,7 @@ class Branching {
 		# find & replace
 		if ($row['locked'] == 0) {
 			echo '<p>';
-			echo '<a href="#" onclick="find_replace(); return false;" title="'.$lang['srv_find_replace'].'" ><span class="advanced_setting"><span class="faicon replace"></span></span>'.$lang['srv_find_replace'].'</a>';
+			echo '<a href="#" onclick="find_replace(); return false;" title="'.$lang['srv_find_replace_words'].'" ><span class="advanced_setting"><span class="faicon replace"></span></span>'.$lang['srv_find_replace_words'].'</a>';
 			echo '</p>';
 		}
 
@@ -1069,6 +1069,8 @@ class Branching {
                 printf ($lang['srv_new_survey_success3'], 'index.php?anketa='.$this->anketa.'&a=branching&change_mode=1&what=toolbox&value=3');
                 echo '  </div>';
 
+                MobileSurveyAdmin::displayNoQuestions($this->anketa);
+
 				echo '</li>';
 			}
 
@@ -1102,9 +1104,6 @@ class Branching {
 
 			}
 
-			//$sqlQ = sisplet_query("SELECT * FROM srv_branching WHERE ank_id='$this->anketa' AND parent='0' ORDER BY vrstni_red ASC");
-	        //if (!$sqlQ) echo mysqli_error($GLOBALS['connect_db']);
-	        //while ($rowQ = mysqli_fetch_array($sqlQ)) {
 	        foreach (Cache::srv_branching_parent($this->anketa, $parent) AS $k => $rowQ) {
 	            $this->display_element($rowQ['element_spr'], $rowQ['element_if']);
 	        }
@@ -1631,6 +1630,8 @@ class Branching {
 		if ( in_array($row['tip'], array(1,2,6,16,19,20)) ) {
 			if ($row['enota'] != 10 && $row['orientation'] != 10){
 				echo '<div class="add-variable tip_'.$row['tip'].'"><a href="#" onclick="vprasanje_fullscreen(\''.$spremenljivka.'\'); return false;" title="'.$lang['srv_novavrednost'].'"><span class="faicon add small"></span> '.$lang['srv_novavrednost'].'</a></div>';
+				
+                MobileSurveyAdmin::displayAddQuestionCategory($this->anketa, $spremenljivka, $row['tip']);
 			}
 		}
 
@@ -6836,7 +6837,8 @@ class Branching {
             }
 
 			if ( ! ( mysqli_num_rows($sql1)==1 && $spr_id==0 ) ) {
-	            echo '<div id="div_condition_editing_operators" style="padding-left:1%">'.$lang['srv_add_cond'].':
+	            echo '<div id="div_condition_editing_operators" style="padding-left:1%">'.$lang['srv_add_cond'].' '.Help::display('srv_if_operator').':
+
 	            <a href="#" onclick="condition_add(\''.$if.'\', \'0\', \'0\', \''.$vrednost.'\'); return false;"><strong>&nbsp;AND&nbsp;</strong></a>,
 	            <a href="#" onclick="condition_add(\''.$if.'\', \'0\', \'1\', \''.$vrednost.'\'); return false;"><strong>&nbsp;AND NOT&nbsp;</strong></a>,
 	            <a href="#" onclick="condition_add(\''.$if.'\', \'1\', \'0\', \''.$vrednost.'\'); return false;"><strong>&nbsp;OR&nbsp;</strong></a>,
@@ -7227,7 +7229,7 @@ class Branching {
 
         // right_bracket buttons
 		if ($row_count['count'] != 1 || $row['right_bracket']>0 || $row['left_bracket']>0) {
-            echo '<td class="tbl_ce_lor white" style="width:50px; text-align:center" nowrap>';
+            echo '<td class="tbl_ce_tb white" style="width:50px; text-align:center" nowrap>';
 			
 			if ($row['right_bracket'] > 0)
 				echo '<a href="#" onclick="javascript:bracket_edit_new(\''.$condition.'\', \''.$vrednost.'\', \'right\', \'minus\'); return false;" title="'.$lang['srv_zaklepaj_rem'].'"><span class="faicon delete_circle"></span></a>';
@@ -7235,24 +7237,23 @@ class Branching {
 				echo '<span class="faicon delete_circle icon-grey_normal"></span>';
 
 			echo '<a href="#" onclick="javascript:bracket_edit_new(\''.$condition.'\', \''.$vrednost.'\', \'right\', \'plus\' ); return false;" title="'.$lang['srv_zaklepaj_add'].'"><span class="faicon add small"></span></a>';
-		} else {
-            echo '<td class="tbl_ce_lor white" style="width:50px; text-align:center" nowrap>';
+		} 
+        else {
+            echo '<td class="tbl_ce_tb white" style="width:50px; text-align:center" nowrap>';
 		}
 		echo '</td>';
 
 
 		// move
-        echo '<td class="tbl_ce_bck_blue white" style="text-align:right; width:30px">';
+        echo '<td class="tbl_ce_tb white" style="text-align:right; width:30px">';
         if ($row_count['count'] != 1 )
         	echo '<img src="img_0/move_updown.png" class="move" title="'.$lang['srv_move'].'" />';
         echo '</td>';
 
         // remove
-        echo '<td class="tbl_ce_bck_blue white" style="text-align:left; width:30px">';
+        echo '<td class="tbl_ce_lor white" style="text-align:left; width:30px">';
         if ($row_count['count'] != 1 )
             echo '<a href="#" onclick="condition_remove(\''.$row['if_id'].'\', \''.$condition.'\', \''.$vrednost.'\'); return false;" title="'.$lang['srv_if_rem'].'"><span class="faicon delete icon-grey_dark_link"></span></a>'."\n";
-        //else
-            //echo '<span class="sprites cancel_blue_light"></span>'."\n";
         echo '</td>';
 
 

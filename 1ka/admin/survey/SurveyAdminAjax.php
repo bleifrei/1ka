@@ -849,12 +849,33 @@ class SurveyAdminAjax {
 						$this->anketa = $_POST['anketa'];
 					}
 					
-					$MA = new MailAdapter($this->anketa, $type='alert');
+                    // Squalo vklopljen
+                    if(isset($_POST['squalo_mode'])){
+
+                        // Squalo vklopljen
+                        if($_POST['squalo_mode'] == '1'){echo $_POST['squalo_mode'];
+                            sisplet_query("UPDATE srv_anketa_module SET vrednost='2' WHERE ank_id='".$this->anketa."' AND modul='email'");
+                        }
+                        // Squalo izklopljen
+                        else{
+                            sisplet_query("UPDATE srv_anketa_module SET vrednost='1' WHERE ank_id='".$this->anketa."' AND modul='email'");
+
+                            $MA = new MailAdapter($this->anketa, $type='alert');
 					
-					$settings = $MA->getSettingsFromRequest($_REQUEST);
-					$mode = $_REQUEST['SMTPMailMode'];
+                            $settings = $MA->getSettingsFromRequest($_REQUEST);
+                            $mode = $_REQUEST['SMTPMailMode'];
+                            
+                            $MA->setSettings($mode, $settings);
+                        }
+                    }
+                    else{
+                        $MA = new MailAdapter($this->anketa, $type='alert');
 					
-					$MA->setSettings($mode, $settings);
+                        $settings = $MA->getSettingsFromRequest($_REQUEST);
+                        $mode = $_REQUEST['SMTPMailMode'];
+                        
+                        $MA->setSettings($mode, $settings);
+                    }
 				}
 			} elseif ($_GET['m'] == 'predvidenicasi') {	// predvideni casi
 				foreach($_POST AS $key => $val) {
@@ -1260,7 +1281,7 @@ class SurveyAdminAjax {
 					$avtorSql = sisplet_query("SELECT insert_uid FROM srv_anketa WHERE id='" . $this->anketa . "'");
 					$avtorRow = mysqli_fetch_assoc($avtorSql);
 					
-					// da ne more zbrisat avtorja (razen če je test@1ka.si)
+					// da ne more zbrisat avtorja
 					$avtorPogoj = (isset ($avtorRow['insert_uid']) && $avtorRow['insert_uid'] > 0) ? " AND (uid != ".$avtorRow['insert_uid']." )" : "";
 					// da ne more zbrisat sam sebe
 					$avtorID = " AND uid != '" . $global_user_id . "'";
@@ -6119,6 +6140,17 @@ class SurveyAdminAjax {
 			$sq = new SurveyQuiz($this->anketa);
 			$sq->displaySettings();
 		} 
+        elseif ($what == 'voting' && $value == '1'){
+			
+            // Volitve
+			$sv = new SurveyVoting($this->anketa);
+
+            // Izvedemo vse potrebno pri vklopu (vklopimo obvescanje, ugasnemo belezenje parapodatkov...)
+			$sv->turnOnVoting();
+
+            // Prikazemo morebitne nastavitve
+			$sv->displaySettings();
+		}
 		elseif ($what == 'advanced_paradata' && $value == '1'){
 			// kviz
 			$sap = new SurveyAdvancedParadata($this->anketa);

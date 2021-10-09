@@ -14,6 +14,7 @@ use enkaParameters;
 use SurveyInfo;
 use SurveyMissingValues;
 use Common;
+use Mobile_Detect;
 
 
 class CheckController extends Controller
@@ -389,11 +390,37 @@ class CheckController extends Controller
 
             if (in_array($row['text'], array('0','1','2','3'))){
 
-				$sqlU = sisplet_query("SELECT device FROM srv_user WHERE id='".get('usr_id')."'");
+                // Star nacin detekcije - vedno vezan na prvi prihod, po novem detektiramo vsakic posebej
+				/*$sqlU = sisplet_query("SELECT device FROM srv_user WHERE id='".get('usr_id')."'");
 				$rowU = mysqli_fetch_array($sqlU);
 
-				if (!($rowU['device'] == $row['text']))
-					return false;
+                if (!($rowU['device'] == $row['text']))
+					return false;*/
+                
+                $device = 0;
+                $useragent = $_SERVER['HTTP_USER_AGENT'];
+
+                if ($useragent != '' && get_cfg_var('browscap')) {
+
+                    $browser_detect = get_browser($useragent, true);
+
+                    $detect = New Mobile_Detect();
+                    $detect->setUserAgent($useragent);
+
+                    // Detect naprave (pc, mobi, tablet, robot)
+                    if ($detect->isMobile()) {
+                        if ($detect->isTablet())
+                            $device = 2;
+                        else
+                            $device = 1;
+                    } 
+                    elseif ($browser_detect['crawler'] == 1){
+                        $device = 3;
+                    }
+                }
+
+				if (!($device == $row['text']))
+					return false;                
 			}
         }
 

@@ -485,8 +485,7 @@ class SurveyCopy {
 								'edit_time' => "NOW()",
 								'folder' => "'1'",
 								'forum' => "'0'",
-								'thread' => "'0'",
-								'old_email_style' => "'0'");
+								'thread' => "'0'");
 
 				# user_id ni enak če je anketa na drugem strežniku zato v tem primeru damo -1 da na drugem strežniku vemo da je to kopija od drugod
 				if (self::$destSite != 0) {

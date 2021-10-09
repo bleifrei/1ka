@@ -43,12 +43,40 @@ function FotoDeclaration(inpid, site_url){
  * @returns {undefined}
  */
 function take_snapshot(inpid) {
+    
     // take snapshot and get image data
     Webcam.snap( function(data_uri) {
-            // display results in page
-            document.getElementById('fotoresults_'+inpid).innerHTML = 
-                    '<img style="border:1px solid;" src="'+data_uri+'"/>';
-            var raw_image_data = data_uri.replace(/^data\:image\/\w+\;base64\,/, '');
-            document.getElementById('foto_'+inpid).value = raw_image_data;
-    } );
+
+        // display results in page
+        $('#fotoresults_'+inpid).html('<img src="'+data_uri+'"/>');
+
+        var raw_image_data = data_uri.replace(/^data\:image\/\w+\;base64\,/, '');
+        $('#foto_'+inpid).val(raw_image_data);
+
+        $('#fotoresults_delete_'+inpid).show();
+    });
+}
+
+// Pobrisemo snapshot
+function delete_snapshot(inpid) {
+    $('#fotoresults_'+inpid).html('<p>'+lang['srv_resevanje_foto_pre_result']+'</p>');
+    $('#foto_'+inpid).val('');
+
+    $('#fotoresults_delete_'+inpid).hide();
+}
+
+// Pobrisemo upload fotografije
+function delete_upload_foto(inpid) {
+    $('#'+inpid).val(null);
+
+    //var reader = new FileReader();
+
+    //reader.onload = function (e) {
+        $('#upload_foto_result_'+inpid).css("display", "none"); 
+        $('#upload_foto_result_'+inpid).attr('src', "#");
+    //};
+
+    //reader.readAsDataURL(input.files[0]);
+
+    $('#upload_fotoresults_delete_'+inpid).hide();
 }

@@ -9,13 +9,11 @@
 
 $(function() {
 	
-	//console.time('onload');
-	
 	load_meta_variables();		// script.js
 	ajax_start_stop();			// script.js
 	onload_init();				// script.js
 	IE7_select_disabled_fix();	// script.js
-        inline_jezik_hover();       // script.js
+    inline_jezik_hover();       // script.js
 	
 	onload_init_branching();	// branching.js
 	onload_init_inline();		// vprasanjeInline.js
@@ -25,9 +23,6 @@ $(function() {
 	analiza_init();				// script_analiza.js
 	
 	statistika_init();			// statistika.js
-	//console.timeEnd('onload');
-	
-	//browser_alert();
 
 	missingProfiles_init();		// missingProfiles.js
 	missingValues_init();		// missingValues.js
@@ -39,17 +34,12 @@ $(function() {
 	multiCrosstabs_init();		// multicrosstabi (analiza)
 	slideshow_init();			// prezendatcije (slideshow)
 	dataSetingProfile_init();	// nastavitve v analizah in podatkov
-	invitations_init();	// nastavitve v analizah in podatkov
-	//themes_init();				// nastavitve v temah
+	invitations_init();	        // nastavitve v analizah in podatkov
 	inspect_init();				// nastavitve v inspect
 	means_init();				// nastavitve v meansih
 	ttest_init();				// nastavitve v ttest
 	simpleMailInvitation_init();// nastavitve v simpleMailInvitation
 	charts_init();				// nastavitve v charts
 	creport_init();				// nastavitve v creport
-        onload_init_recode();        // nastavitve v recodiranju(function($) {   
-	//onload_init_language_technology();		// nastavitve v language technology{   
-
-	// prestejemo stevilo DOM elementov
-	//alert(document.getElementsByTagName("*").length);
+    onload_init_recode();       // nastavitve v recodiranju(function($) {   
 });

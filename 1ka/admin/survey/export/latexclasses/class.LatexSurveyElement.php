@@ -906,7 +906,12 @@ class LatexSurveyElement{
 		//$text = str_replace('{','\{',$text);		
 		//$text = str_replace('}','\}',$text);	
 		$text = str_replace('$','\$ ',$text);
-		$text = str_replace('#','\# ',$text);
+		
+		if(substr_count($text, '#')){	//ce je stevilo # vecje od 1
+			$text = str_replace('#','\#',$text);
+		}else{
+			$text = str_replace('#','\# ',$text);
+		}				
 		$text = str_replace('%','\% ',$text);		
 		$text = str_replace('€','\euro',$text);		
 		$text = str_replace('^','\textasciicircum{} ',$text);		
@@ -923,7 +928,7 @@ class LatexSurveyElement{
 		//$text = str_replace('&gt;','\textgreater ',$text);
 		$text = str_replace('&gt;',' \textgreater ',$text);
 		//ureditev posebnih karakterjev za Latex - konec
-
+		
 		//ureditev grskih crk
 		$text = str_replace('α','\textalpha ',$text);
 		$text = str_replace('β','\textbeta ',$text);
@@ -962,6 +967,7 @@ class LatexSurveyElement{
 				$text = str_replace('<ul>','\begin{itemize} ', $text);
 				$text = str_replace('<ul','\begin{itemize} ', $text);
 				$text = str_replace('<li>','\item ', $text);
+				$text = str_replace('<li','\item ', $text);
 				$text = str_replace('</ul>','\end{itemize} \ ', $text);					
 			}
 			//echo "prazno v html: ".strpos($text, '\r')."</br>";
@@ -980,6 +986,7 @@ class LatexSurveyElement{
 			if($numOfOl!=0 && $posLi !== false){	//ce imamo ol in li				
 				$text = str_replace('<ol>','\begin{enumerate} ', $text);
 				$text = str_replace('<li>','\item ', $text);
+				$text = str_replace('<li','\item ', $text);
 				$text = str_replace('</ol>','\end{enumerate} \ ', $text);					
 			}
 			//echo "prazno v html: ".strpos($text, '\r')."</br>";
@@ -1022,12 +1029,12 @@ class LatexSurveyElement{
 		$numOfAt = substr_count($text, $findAt);	//stevilo '@' v besedilu
 
 		$posAt = strpos($text, $findAt);
-		if($posAt){	//ce je prisotna afna
+		if($posAt && $posSpace1){	//ce je prisotna afna in je prisoten presledek v besedilu
 			//echo "afna je: $posAt </br>";
 			//echo "Encoding: ".$text."</br>";
 
 			//najdi prvi presledek po afni
-			//echo substr($text, $posAt) ."</br>";
+			//echo substr($text, $posAt) ."</br>";			
 			$posSpace1Mail = strpos(substr($text, $posAt), $findSpace);	//najdi pozicijo prvega presledka v besedilu po e-naslovu
 			$posSpace1Mail = $posSpace1Mail+$posAt;	//koncna pozicija, ce se gleda celotno besedilo
 			//echo $posSpace1Mail."</br>";			
@@ -1058,16 +1065,18 @@ class LatexSurveyElement{
 
 		//RESEVANJE odstranitve dodatnih style tag-ov po ul, ipd. #######################################################
 		$findStyleTag = 'style="';		
-		$findStyleTagEnd = '"';
+		//$findStyleTagEnd = '"';
+		$findStyleTagEnd = '">';
 		$numOfStyleTags = substr_count($text, $findStyleTag);	//stevilo 'style=" ' v tekstu
-		//echo "stevilo style: ".$numOfStyleTags." </br>";		
+		//echo "stevilo style: ".$numOfStyleTags." </br>";	
+		//echo 	$text."</br>";
 		for($s=0; $s<$numOfStyleTags; $s++){	//za vsako najdeno 'style=" ' besedilo, uredi njeno odstranitev			
 			$posStyleTag = strpos($text, $findStyleTag);			
-			$posStyleTagEnd = strpos($text, $findStyleTagEnd, $posStyleTag);	//strpos(string,find,start) najdi $findStyleTagEnd v $text, isci od $posStyleTag dalje
-			$dolzinaOff = $posStyleTagEnd - $posStyleTag + 2;
+			$posStyleTagEnd = strpos($text, $findStyleTagEnd, $posStyleTag);	//strpos(string,find,start) najdi $findStyleTagEnd v $text, isci od $posStyleTag dalje			
+			$dolzinaOff = $posStyleTagEnd - $posStyleTag + 2;			
 			$text = substr_replace($text, "", $posStyleTag, $dolzinaOff);
 		
-		}		
+		}
 		//RESEVANJE odstranitve dodatnih style tag-ov po ul, ipd. - konec #################################################
 
  		if($pos === false && $posImg === false) {	//v tekstu ni br in img 		
@@ -1933,16 +1942,28 @@ class LatexSurveyElement{
 								if($spremenljivke['tip'] != 24){	//ce ni kombinirana tabela z izberite s seznama (ali roleto)
 									if($data[$userAnswerIndex[$spremenljivke['id']]]==($indeksRoleta)){	//ce je prisoten podatek za doloceni indeks seznama, ga izpisi
 										//$tex .= '& \\textcolor{crta}{'.$vodoravniOdgovori[$j-1].'}';	//izris odgovora respondenta v roleti ali seznamu
-										$tex .= '& \\textcolor{crta}{\footnotesize{'.$vodoravniOdgovori[$j-1].'}}';	//izris odgovora respondenta v roleti ali seznamu									
+										//$tex .= '& \\textcolor{crta}{\footnotesize{'.$vodoravniOdgovori[$j-1].'}}';	//izris odgovora respondenta v roleti ali seznamu	
+										if($export_data_type==0||$export_data_type==2){	//ce skrcen izvoz
+											$tex .= '& \\textcolor{crta}{\footnotesize{'.$vodoravniOdgovori[$j-1].'}}';	//izris odgovora respondenta v roleti ali 
+										}else{	//drugace, ce je razsirjen izvoz
+											$tex .= '\item[] \\textcolor{crta}{\footnotesize{'.$vodoravniOdgovori[$j-1].'}}';	//izris odgovora respondenta v roleti ali 
+										}								
 										$noItem = 0;
-										//echo "podatek je prisoten: ".$vodoravniOdgovori[$j-1]."</br>";
+										
 									}else{
-										$tex .= ' & '.$vodoravniOdgovori[$j-1];
+										//echo "tip exp: ".$export_data_type."</br>";
+										if($export_data_type==0||$export_data_type==2){	//ce skrcen izvoz
+											$tex .= ' & '.$vodoravniOdgovori[$j-1];
+										}else{	//drugace, ce je razsirjen izvoz
+											
+										}
+										
 									}
 								}else{ //ce je kombinirana tabela z izberite s seznama (ali roleto)
 									$tex .= ' & \\textcolor{crta}{\footnotesize{'.$data[$userAnswerIndex[$spremenljivke['id']]].'}}';
 									/* echo "odgovor : ".$data[$userAnswerIndex[$spremenljivke['id']]]."</br>";
 									print_r($data); */
+									
 								}
 								
 							}
@@ -1960,6 +1981,7 @@ class LatexSurveyElement{
 								}
 								$roletaAliSeznam = 1;
 							}
+							
 						
 						}elseif($enota == 4){	//ena moznost proti drugi
 							//$tex .= '& '.$simbolTex.' & '.$lang['srv_tip_sample_t6_4_vmes'].' & '.$simbolTex;
@@ -2098,7 +2120,7 @@ class LatexSurveyElement{
 		if( in_array($spremenljivkeTip, array(21, 4, 7, 8, 18, 17)) ){//ce je tip besedilo ali stevilo ali datum ali vsota ali razvrscanje
 			$rowAnswers = mysqli_fetch_assoc($sqlUserAnswer);
 			if($rowAnswers){	//ce je kaj v bazi
-				//echo "Nekaj je v bazi za spremenljivko".$spremenljivkeId." in usr".$usr_id."</br>";
+				//echo "Nekaj je v bazi za spremenljivko".$spremenljivkeId." in usr ".$usr_id."</br>";
 				$userDataPresent++;
 			}
 		}else{
@@ -2119,7 +2141,7 @@ class LatexSurveyElement{
 				}		
 			}
 		}
-		//echo "userDataPresent za tip ".$spremenljivkeTip." id".$spremenljivkeId." usr ".$usr_id." je:".$userDataPresent."</br>";
+		//echo "userDataPresent za tip ".$spremenljivkeTip." id ".$spremenljivkeId." usr ".$usr_id." je:".$userDataPresent." in loop: $loop_id</br>";
 		return $userDataPresent;
 	}
 	#funkcija, ki skrbi za preverjanje obstoja podatkov za vprasanja, ki niso grid ali kombinirana tabela - konec

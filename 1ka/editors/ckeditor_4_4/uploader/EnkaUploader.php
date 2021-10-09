@@ -7,7 +7,7 @@
 <?php
 
 
-include_once($_SERVER['DOCUMENT_ROOT'] . '/function.php');
+include_once('../../../function.php');
 
 // Ce imamo v GET-u lang naložimo jezikovno datoteko
 if(isset($_GET['lang'])){
@@ -25,7 +25,7 @@ if (!isset ($_POST['posted']) && (isset ($_GET['image']) && $_GET['image'] == 1)
 ?>
     <body style="margin-top: 0px; top: 0px; margin-left: 0px; left: 0px; padding-top: 0px;">
     <form name="uploader" method="post" enctype="multipart/form-data"
-          action="/editors/ckeditor_4_4/uploader/EnkaUploader.php" style="height: 15px;">
+          action="<?= $site_url ?>editors/ckeditor_4_4/uploader/EnkaUploader.php" style="height: 15px;">
         <input type="hidden" name="posted" value="1"/>
         <input type="hidden" name="urlsrc" value="<?= $_GET['url'] ?>"/>
         <input type="hidden" name="type" value="image"/>
@@ -41,7 +41,7 @@ if (!isset ($_POST['posted']) && (isset ($_GET['image']) && $_GET['image'] == 1)
 ?>
     <body style="margin-top: 0px; top: 0px; margin-left: 0px; left: 0px; padding-top: 0px;">
     <form name="uploader" method="post" enctype="multipart/form-data"
-          action="/editors/ckeditor_4_4/uploader/EnkaUploader.php" style="height: 15px;">
+          action="<?= $site_url ?>editors/ckeditor_4_4/uploader/EnkaUploader.php" style="height: 15px;">
         <input type="hidden" name="posted" value="1"/>
         <input type="hidden" name="urlsrc" value="<?= $_GET['url'] ?>"/>
         <input type="hidden" name="type" value="file"/>
@@ -64,7 +64,7 @@ if (!isset ($_POST['posted']) && (isset ($_GET['image']) && $_GET['image'] == 1)
                      $final = $nakljucno .$ime;
                     if (move_uploaded_file($_FILES['editorDatoteka']['tmp_name'], $site_path .'uploadi/editor/doc/' .$final)) {
 ?>
-                    <body bgcolor="#ebebeb" onload="parent.document.getElementById(parent.urlsrc).value='<?=str_replace("http://", "", $site_url)?>uploadi/editor/doc/<?=$final?>'; window.location.href='<?= $site_url ?>/editors/ckeditor_4_4/uploader/EnkaUploader.php'; ">
+                    <body bgcolor="#ebebeb" onload="parent.document.getElementById(parent.urlsrc).value='<?=str_replace("http://", "", $site_url)?>uploadi/editor/doc/<?=$final?>'; window.location.href='<?= $site_url ?>editors/ckeditor_4_4/uploader/EnkaUploader.php'; ">
                     <strong style="font-family: Arial; font-size: 12px; font-weight: bold;"><?=$lang['upload_done']?></strong>
 <?php
                     }else {
@@ -94,14 +94,14 @@ if (!isset ($_POST['posted']) && (isset ($_GET['image']) && $_GET['image'] == 1)
             if (strpos($ime, ".jpg") === false && strpos($ime, ".jpeg") === false && strpos($ime, ".gif") === false &&
             strpos($ime, ".png") === false && strpos($ime, ".bmp") === false && strpos($ime, ".svg") === false) {
 ?>
-                <body onload="window.location.href='<?= $site_url ?>/editors/ckeditor_4_4/uploader/EnkaUploader.php?image=1&error=1';">
+                <body onload="window.location.href='<?= $site_url ?>editors/ckeditor_4_4/uploader/EnkaUploader.php?image=1&error=1';">
  <?php
             }else {
                $nakljucno = time();
                $final = $nakljucno . $ime;
                $UF_obj = new Upload();
                $UF_obj->File = $_FILES['eitorSlika'];
-               $UF_obj->SavePath = $_SERVER['DOCUMENT_ROOT'] . '/uploadi/editor';
+               $UF_obj->SavePath = $site_path . '/uploadi/editor';
                $UF_obj->NewName = $_FILES['eitorSlika']['name'];
 
                //Širina in višina slike nastavimo
@@ -113,7 +113,7 @@ if (!isset ($_POST['posted']) && (isset ($_GET['image']) && $_GET['image'] == 1)
                $Error = $UF_obj->UploadFile();
                if (empty($Error)) {
  ?>
-                    <body onload="parent.document.getElementById(parent.urlsrc).value='<?= $site_url ?>uploadi/editor/<?= $final ?>'; parent.document.querySelector('img[id$=_previewImage]').src='<?= $site_url ?>uploadi/editor/<?= $final ?>'; parent.document.querySelector('img[id$=_previewImage]').style.display='block'; window.location.href='<?= $site_url ?>/editors/ckeditor_4_4/uploader/EnkaUploader.php?image=1';">
+                    <body onload="parent.document.getElementById(parent.urlsrc).value='<?= $site_url ?>uploadi/editor/<?= $final ?>'; parent.document.querySelector('img[id$=_previewImage]').src='<?= $site_url ?>uploadi/editor/<?= $final ?>'; parent.document.querySelector('img[id$=_previewImage]').style.display='block'; window.location.href='<?= $site_url ?>editors/ckeditor_4_4/uploader/EnkaUploader.php?image=1';">
                     <strong style="font-family: Arial; font-size: 12px; font-weight: bold;"><?= $lang['upload_img_done'] ?></strong>
 <?php
                 }else {

@@ -13,6 +13,7 @@ define('GROUP_PAGINATE', 4);			# po kolko strani grupira pri paginaciji
 define('REC_ON_PAGE', 10);			# kolko zapisov na stran pri urejanju respondentov
 define('REC_ON_SEND_PAGE', 20);		# kolko zapisov na stran pri pošiljanju
 define('NOTIFY_INFO1KA', 5);			# Nad koliko emaili obveščamo info@1ka.si
+
 set_time_limit(2400); # 30 minut
 
 class SurveyInvitationsNew {
@@ -48,15 +49,13 @@ class SurveyInvitationsNew {
 		
 		$this->surveySettings = SurveyInfo::getInstance()->getSurveyRow();
 		
-		#koliko respondentov je že v bazi
-		$sql_string_all  = "SELECT count(*) FROM srv_invitations_recipients WHERE ank_id = '".$this->sid."' AND deleted = '0'";
-		$sql_query_all 	 = sisplet_query($sql_string_all);
+		# koliko respondentov je že v bazi
+		$sql_query_all 	 = sisplet_query("SELECT count(*) FROM srv_invitations_recipients WHERE ank_id = '".$this->sid."' AND deleted = '0'");
 		$sql_row_all 	 = mysqli_fetch_row($sql_query_all);
 		$this->count_all = (int)$sql_row_all[0];
 		
-		#preverimo ali prikazujemo nov ali star način  odvisno od nastavitve v misc
-		$strSelect = "SELECT count(*) FROM srv_anketa AS a WHERE id ='".$this->sid."' AND insert_time > (SELECT value FROM misc WHERE what = 'invitationTrackingStarted' LIMIT 1)";
-		$sql_query = sisplet_query($strSelect);
+		# preverimo ali prikazujemo nov ali star način  odvisno od nastavitve v misc
+		$sql_query = sisplet_query("SELECT count(*) FROM srv_anketa AS a WHERE id ='".$this->sid."' AND insert_time > (SELECT value FROM misc WHERE what = 'invitationTrackingStarted' LIMIT 1)");
 		list($newTracking) = mysqli_fetch_row($sql_query);
 		$this->newTracking = (int)$newTracking > 0 ? true : false;
 		
@@ -149,175 +148,251 @@ class SurveyInvitationsNew {
 		}
 		else if ($action == 'add_recipients_view') {
 			$this->useRecipientsList();
-			#$this->addRecipientsView();
-		} else if ($action == 'add_recipients') {
+		} 
+        else if ($action == 'add_recipients') {
 			$this->addRecipients();
-		} else if ($action == 'view_recipients') {
+		} 
+        else if ($action == 'view_recipients') {
 			$this->viewRecipients();
-		} else if ($action == 'view_message') {
+		} 
+        else if ($action == 'view_message') {
 			$this->viewMessage($_POST['mid']);
-		} else if ($action == 'make_default') {
+		} 
+        else if ($action == 'make_default') {
 			$this->makeDefaultMessage($_POST['mid']);
-		} else if ($action == 'make_default_from_preview') {
+		} 
+        else if ($action == 'make_default_from_preview') {
 			$this->makeDefaultFromPreview($_POST['mid']);
-		} else if ($action == 'save_message_simple') {
+		} 
+        else if ($action == 'save_message_simple') {
 			$this->save_message_simple();
-			#		} else if ($action == 'save_message') {
-			#			$this->saveMessage($_POST['mid']);
-		} else if ($action == 'save_message_simple_noEmail') {
+		} 
+        else if ($action == 'save_message_simple_noEmail') {
 			$this->save_message_simple_noEmail();
-		} else if ($action == 'send_message') {
+		} 
+        else if ($action == 'send_message') {
 			$this->sendMessage($_POST['mid']);
-		} else if ($action == 'view_archive') {
+		} 
+        else if ($action == 'view_archive') {
 			$this->viewAarchive($_POST['mid']);
-		} else if ($action == 'view_send_recipients') {
+		} 
+        else if ($action == 'view_send_recipients') {
 			if(isset($_POST['noMailing']) && $_POST['noMailing'] == '1')
 				$this->selectSendToNoEmailing();
 			else
 				$this->selectSendTo();
-		} else if ($action == 'mailToSourceChange') {
+		} 
+        else if ($action == 'mailToSourceChange') {
 			$this->mailToSourceChange();
-		} else if ($action == 'send_mail') {
-			if(isset($_GET['noemailing']) && $_GET['noemailing'] == '1')
+		} 
+        else if ($action == 'send_mail') {
+			
+            // Posiljanje brez emailov (samo aktivacija prejemnikov)
+            if(isset($_GET['noemailing']) && $_GET['noemailing'] == '1'){
 				$this->sendMailNoEmailing();
-			else
+            }
+            // Klasicno posiljanje preko smtp-ja
+			else{
 				$this->sendMail();
-		} else if ($action == 'upload_recipients') {
+            }
+		} 
+        else if ($action == 'upload_recipients') {
 			$this->uploadRecipients();
-		} else if ($action == 'view_archive_recipients') {
+		} 
+        else if ($action == 'view_archive_recipients') {
 			$this->viewArchiveRecipients();
-		} else if ($action == 'edit_archive_comment') {
+		} 
+        else if ($action == 'edit_archive_comment') {
 			$this->editArchiveComment();
-		} else if ($action == 'delete_recipient_confirm') {
+		} 
+        else if ($action == 'delete_recipient_confirm') {
 			$this->deleteRecipientConfirm();
-		} else if ($action == 'delete_recipient') {
+		} 
+        else if ($action == 'delete_recipient') {
 			$this->deleteRecipient();
-		} else if ($action == 'delete_recipient_single') {
+		} 
+        else if ($action == 'delete_recipient_single') {
 			$this->deleteRecipientSingle();
-		} else if ($action == 'delete_recipient_all') {
+		} 
+        else if ($action == 'delete_recipient_all') {
 			$this->deleteRecipientAll();
-		} else if ($action == 'export_recipients') {
+		} 
+        else if ($action == 'export_recipients') {
 			$this->exportRecipients();
-		} else if ($action == 'export_recipients_all') {
+		} 
+        else if ($action == 'export_recipients_all') {
 			$this->exportRecipients_all();
-		} else if ($action == 'use_recipients_list') {
+		} 
+        else if ($action == 'use_recipients_list') {
 			$this->useRecipientsList();
-		} else if ($action == 'change_import_type') {
+		} 
+        else if ($action == 'change_import_type') {
 			$this->changeImportType();
-		} else if ($action == 'save_recipient_list') {
+		} 
+        else if ($action == 'save_recipient_list') {
 			$this->saveRecipientList();
-		} else if ($action == 'get_profile_name') {
+		} 
+        else if ($action == 'get_profile_name') {
 			echo "DEPRECATED!";
 			die();
 			$this->getProfileName();
-		} else if ($action == 'list_get_name') {
+		} 
+        else if ($action == 'list_get_name') {
 			$this->listGetName();
-		} else if ($action == 'invListEdit') {
+		} 
+        else if ($action == 'invListEdit') {
 			$this->invListEdit();
-		} else if ($action == 'save_rec_profile') {
+		} 
+        else if ($action == 'save_rec_profile') {
 			$this->saveRecProfile();
-		} else if ($action == 'delete_rec_profile') {
+		} 
+        else if ($action == 'delete_rec_profile') {
 			$this->deleteRecProfile();
-		} else if ($action == 'edit_rec_profile') {
+		} 
+        else if ($action == 'edit_rec_profile') {
 			$this->editRecProfile();
-		} else if ($action == 'update_rec_profile') {
+		} 
+        else if ($action == 'update_rec_profile') {
 			$this->updateRecProfile();
-		} else if ($action == 'delete_msg_profile') {
+		} 
+        else if ($action == 'delete_msg_profile') {
 			$this->deleteMsgProfile();
-		} else if ($action == 'message_rename') {
+		} 
+        else if ($action == 'message_rename') {
 			$this->messageRename();
-		} else if ($action == 'show_message_rename') {
+		} 
+        else if ($action == 'show_message_rename') {
 			$this->showMessageRename();
-		} else if ($action == 'edit_recipient') {
+		} 
+        else if ($action == 'edit_recipient') {
 			$this->editRecipient();
-		} else if ($action == 'save_recipient') {
+		} 
+        else if ($action == 'save_recipient') {
 			$this->saveRecipient();
-		} else if ($action == 'set_recipient_filter') {
+		} 
+        else if ($action == 'set_recipient_filter') {
 			$this->setRecipientFilter();
-		} else if ($action == 'only_this_survey') {
+		} 
+        else if ($action == 'only_this_survey') {
 			$this->onlyThisSurvey();
-			#		} else if ($action == 'check_send_mail') {
-			#			$this->checkSendMail();
-		} else if ($action == 'add_users_to_database') {
+		} 
+        else if ($action == 'add_users_to_database') {
 			$this->add_users_to_database();
-		} else if ($action == 'add_checked_users_to_database') {
+		} 
+        else if ($action == 'add_checked_users_to_database') {
 			$this->add_checked_users_to_database();
-		} else if ($action == 'arch_save_comment') {
+		} 
+        else if ($action == 'arch_save_comment') {
 			$this->saveArchiveComment();
-		} else if ($action == 'edit_message_details') {
+		} 
+        else if ($action == 'edit_message_details') {
 			$this->editMessageDetails();
-		} else if ($action == 'message_save_details') {
+		} 
+        else if ($action == 'message_save_details') {
 			$this->messageSaveDetails();
-		} else if ($action == 'message_save_forward') {
+		} 
+        else if ($action == 'message_save_forward') {
 			$this->messageSaveforward();
-		} else if ($action == 'message_save_forward_noEmail') {
+		} 
+        else if ($action == 'message_save_forward_noEmail') {
 			$this->messageSaveforwardNoEmail();
-		} else if ($action == 'prepare_save_message') {
-			$this->prepareSaveMessage();
-				
-		} else if ($action == 'showRecipientTracking') {
+		} 
+        else if ($action == 'prepare_save_message') {
+			$this->prepareSaveMessage();		
+		} 
+        else if ($action == 'showRecipientTracking') {
 			$this->showRecipientTracking();
-		} else if ($action == 'arch_show_recipients') {
+		} 
+        else if ($action == 'arch_show_recipients') {
 			$this->showArchiveRecipients();
-		} else if ($action == 'arch_show_details') {
+		} 
+        else if ($action == 'arch_show_details') {
 			$this->showArchiveDetails();
-		} else if ($action == 'arch_edit_details') {
+		} 
+        else if ($action == 'arch_edit_details') {
 			$this->editArchiveDetails();
-		} else if ($action == 'inv_status') {
+		} 
+        else if ($action == 'inv_status') {
 			$this->showInvitationStatus();
-		} else if ($action == 'inv_lists') {
+		} 
+        else if ($action == 'inv_lists') {
 			$this->showInvitationLists();
-		} else if ($action == 'inv_list_save') {
+		} 
+        else if ($action == 'inv_list_save') {
 			$this->listSave();
-		} else if ($action == 'invListSaveOld') {
+		} 
+        else if ($action == 'invListSaveOld') {
 			$this->invListSaveOld();
-		} else if ($action == 'invListEditSave') {
+		} 
+        else if ($action == 'invListEditSave') {
 			$this->invListEditSave();
-		} else if ($action == 'editRecList') {
-#			$this->editRecList();
+		} 
+        else if ($action == 'editRecList') {
+
 			$doEdit = $_SESSION['inv_edit_rec_profile'][$this->sid] == 'true' ? true : false;
-			if ($doEdit) {
+			
+            if ($doEdit) {
 				$this->showEditRecList();
-			} else {
+			} 
+            else {
 				$this->showNoEditRecList();
 			}
-		} else if ($action == 'deleteRecipientsList') {
+		} 
+        else if ($action == 'deleteRecipientsList') {
 			$this->deleteRecipientsList();
-        } else if($action == 'deleteRecipientsListMulti'){
+        } 
+        else if($action == 'deleteRecipientsListMulti'){
             $this->deleteRecipientsListMulti();
-		} else if ($action == 'showInvitationListsNames') {
+		} 
+        else if ($action == 'showInvitationListsNames') {
 			$this->showInvitationListsNames();
-		} else if ($action == 'changeInvRecListEdit') {
+		} 
+        else if ($action == 'changeInvRecListEdit') {
 			$this->changeInvRecListEdit();
-		} else if ($action == 'upload_list') {
+		} 
+        else if ($action == 'upload_list') {
 			$this->upload_list();
-		} else if ($action == 'send_upload_list') {
+		} 
+        else if ($action == 'send_upload_list') {
 			$this->send_upload_list();
-		} else if ($action == 'changePaginationLimit') {
+		} 
+        else if ($action == 'changePaginationLimit') {
 			$this->changePaginationLimit();
-		} else if ($action == 'setSortField') {
+		} 
+        else if ($action == 'setSortField') {
 			$this->setSortField();
-		} else if ($action == 'validateSysVarsMapping') {
+		} 
+        else if ($action == 'validateSysVarsMapping') {
 			$this->validateSysVarsMapping();
-		} else if ($action == 'addSysVarsMapping') {
+		} 
+        else if ($action == 'addSysVarsMapping') {
 			$this->addSysVarsMapping();
-		} else if ($action == 'recipientsAddForward') {
+		} 
+        else if ($action == 'recipientsAddForward') {
 			$this->recipientsAddForward();
-		} else if ($action == 'showAdvancedConditions') {
+		} 
+        else if ($action == 'showAdvancedConditions') {
 			$this->showAdvancedConditions();
-		} else if ($action == 'setAdvancedCondition') {
+		} 
+        else if ($action == 'setAdvancedCondition') {
 			$this->setAdvancedCondition();
-		} else if ($action == 'inv_server') {
+		} 
+        else if ($action == 'inv_server') {
 			$this->viewServerSettings();
-		} else if ($action == 'inv_settings') {
+		} 
+        else if ($action == 'inv_settings') {
 			$this->showInvitationSettings();
-		} else if ($action == 'set_noEmailing') {
+		} 
+        else if ($action == 'set_noEmailing') {
 			$this->setNoEmailing();
-		} else if ($action == 'set_noEmailing_type') {
+		} 
+        else if ($action == 'set_noEmailing_type') {
 			$this->setNoEmailingType();
-		} else if ($action == 'showAAISmtpPopup') {
+		} 
+        else if ($action == 'showAAISmtpPopup') {
 			$this->showAAISmtpPopup();
-		} else {			
+		} 
+        else {			
 			$sql = sisplet_query("SELECT EXISTS (SELECT 1 FROM srv_invitations_archive WHERE ank_id='".$this->sid."')");
 			$row = mysqli_fetch_array($sql);
 			
@@ -1302,8 +1377,7 @@ class SurveyInvitationsNew {
 	function viewRecipients($errors = array(), $msgs = array()) {
 		global $lang, $site_url, $admin_type;
 
-		//echo '<h2>'.$lang['srv_inv_edit_recipients_heading'].'</h2>';
-		$noEmailing = SurveySession::get('inv_noEmailing');
+        $noEmailing = SurveySession::get('inv_noEmailing');
 		
 		$row = $this->surveySettings;
 		
@@ -1402,8 +1476,7 @@ class SurveyInvitationsNew {
 			
 		}
 		# preštejemo koliko imamo vseh respondentov in koliko jih je brez e-maila
-		$sql_string_all = "SELECT id FROM srv_invitations_recipients WHERE ank_id = '".$this->sid."' AND deleted = '0'";
-		$sql_query_all = sisplet_query($sql_string_all);
+		$sql_query_all = sisplet_query("SELECT id FROM srv_invitations_recipients WHERE ank_id = '".$this->sid."' AND deleted = '0'");
 		$count_all = mysqli_num_rows($sql_query_all);
 
 		$sql_string_withot_email = "SELECT count(*) FROM srv_invitations_recipients WHERE ank_id = '".$this->sid."' AND deleted = '0' AND email IS NULL AND sent='0'";
@@ -1421,16 +1494,20 @@ class SurveyInvitationsNew {
 		# Katera polja prikazujemo v seznamu prejemnikov
 		$default_fields = array(
 				'sent' => 1,
-				'responded' => 1,
-				'unsubscribed' => 1,
 				'email' => 1,
-				'password' => 1,
 				'firstname' => 0,
 				'lastname' => 0,
 				'salutation' => 0,
 				'phone' => 0,
 				'custom' => 0,
 		);
+
+        // Volitve nimajo nekaterih polj
+        if(!SurveyInfo::getInstance()->checkSurveyModule('voting')){
+            $default_fields['responded'] = 1;
+            $default_fields['unsubscribed'] = 1;
+            $default_fields['password'] = 1;
+        }
 		
 		// Ce imamo modul 360 imamo tudi odnos
 		if(SurveyInfo::getInstance()->checkSurveyModule('360_stopinj')){
@@ -1448,11 +1525,17 @@ class SurveyInvitationsNew {
 				}
 			}
 		}
-		# dodamo še ostala polja
-		$fields['last_status'] = 1;
+
+		// Dodamo še ostala polja
+        // Volitve nimajo nekaterih polj
+        if(!SurveyInfo::getInstance()->checkSurveyModule('voting')){
+		    $fields['last_status'] = 1;
+            $fields['date(date_expired)'] = 1;
+        }
+            
 		$sql_select_fields[] = 'i.last_status';
 		$fields['date_inserted'] = 1;
-		$fields['date(date_expired)'] = 1;
+		
 		$fields['inserted_uid'] = 1;
 		$sql_select_fields[] = 'i.inserted_uid';
 		$sql_select_fields[] = 'i.date_inserted';
@@ -1460,9 +1543,6 @@ class SurveyInvitationsNew {
 		$fields['list_id'] = 1;
 		$sql_select_fields[] = 'i.list_id';
 		
-		#štetje vabil
-		#$fields['count_inv'] = 1;
-		#$sql_select_fields[] = 'count(siar.arch_id) AS count_inv';
 
 		#dodamo paginacijo in poiščemo zapise
 		$page = isset($_GET['page']) ? $_GET['page'] : '1';
@@ -1537,6 +1617,7 @@ class SurveyInvitationsNew {
 		$lists = array();
 		$lists['-1'] = array('name'=>$lang['srv_invitation_new_templist']);
 		$lists['0'] = array('name'=>$lang['srv_invitation_new_templist_author']);
+
 		if (count($lids) > 0 ) {
 			$sql_string_lists = "SELECT * from srv_invitations_recipients_profiles WHERE pid IN(".implode(',',$lids).") ";
 			$sql_query_lists = sisplet_query($sql_string_lists);
@@ -1544,6 +1625,7 @@ class SurveyInvitationsNew {
 				$lists[$row_lists['pid']] = array('name'=>$row_lists['name']);
 			}
 		}
+
 		if (count($msgs) > 0) {
 			echo '<span class="inv_msg_note">';
 			foreach($msgs as $msg) {
@@ -1551,6 +1633,7 @@ class SurveyInvitationsNew {
 			}
 			echo '</span>';
 		}
+
 		if (count($errors) > 0) {
 			echo '<span class="inv_error_note">';
 			foreach($errors as $error) {
@@ -1558,16 +1641,18 @@ class SurveyInvitationsNew {
 			}
 			echo '</span>';
 		}
+
 		if ($count_all > 0 ) {
 
 			# dodamo filtriranje
 				
 			echo '<div id="inv_rec_filter">';
 			echo '<label>'.$lang['srv_invitation_recipients_filter'].'</label> <input id="inv_rec_filter_value" type="text" onchange="inv_filter_recipients(); return false;" value="'.$_SESSION['inv_filter']['value'].'">';
-			#echo '<img src="'.$site_url.'admin/survey/icons/icons/wand.png">';
-			echo '&nbsp;&nbsp;&nbsp;<label><input id="inv_rec_filter_on" type="checkbox" onchange="inv_filter_recipients(); return false;"'.(isset($_SESSION['inv_filter_on']) && $_SESSION['inv_filter_on'] == true ? ' checked="true"' : '').'>';
+
+            echo '&nbsp;&nbsp;&nbsp;<label><input id="inv_rec_filter_on" type="checkbox" onchange="inv_filter_recipients(); return false;"'.(isset($_SESSION['inv_filter_on']) && $_SESSION['inv_filter_on'] == true ? ' checked="true"' : '').'>';
 			echo $lang['srv_invitation_recipients_filter_advanced'].'</label>';
-			if (isset($_SESSION['inv_filter_on']) && $_SESSION['inv_filter_on'] == true )  {
+			
+            if (isset($_SESSION['inv_filter_on']) && $_SESSION['inv_filter_on'] == true )  {
 				echo '&nbsp;';
 				echo '&nbsp;';
 				echo '<label>'.$lang['srv_invitation_recipients_filter_sent'];
@@ -1604,17 +1689,7 @@ class SurveyInvitationsNew {
 				
 			echo '</div>';
 			
-
-			/* // Prestavljeno na dno
-			if ($count_without_email > 0) {
-				# add to database without sending e-mail
-					
-				echo '<div id="inv_rec_add_to_db" >';
-				echo '<span>'.$lang['srv_invitation_recipients_activate'].'</span>&nbsp;';
-				echo '<span class="as_link" onclick="inv_add_rec_to_db(); return false;" target="_blank">'.$lang['srv_invitation_recipients_activate_here'].'</span>';
-				echo '</div>';
-			}*/
-				
+            
 			echo '<form id="frm_inv_rec_export" name="resp_uploader" method="post" autocomplete="off">';
 			echo '<input type="hidden" name="anketa" id="anketa" value="'.$this->sid.'">';
 			echo '<input type="hidden" name="noNavi" id="noNavi" value="true">';
@@ -1667,16 +1742,10 @@ class SurveyInvitationsNew {
 				
 
 				echo '<table id="tbl_recipients_list">';
+
 				echo '<tr>';
 				# checkbox
 				echo '<th class="tbl_icon" colspan="'.($this->surveySettings['show_email']==1?'4':'3').'" >&nbsp;</th>';
-				/*
-				 * 				# uredi
-				echo '<th class="tbl_liks">&nbsp;</th>';
-				# izbrisi
-				echo '<th class="tbl_liks">&nbsp;</th>';
-
-			 */
 				
 				foreach ($fields AS $fkey =>$field) {
 					if ($field == 1) {
@@ -1713,7 +1782,7 @@ class SurveyInvitationsNew {
 							switch ($fkey) {
 								case 'sent':
 									echo '<td class="anl_ac pointer" onclick="showRecipientTracking(\''.$sql_row['id'].'\'); return false;">';
-									echo '<span class="faicon '.((int)$sql_row['sent'] == 1 ? ('inv_sent_1') : 'inv_sent_0').' icon-as_link"></span>';
+									echo '<span class="faicon '.((int)$sql_row['sent'] == 1 ? ('inv_sent_1') : 'inv_sent_0').' icon-as_link" title="'.((int)$sql_row['sent'] == 1 ? $lang['sent'] : $lang['not_sent']).'"></span>';
 									echo '</td>';
 									break;
 								case 'responded':
@@ -2217,36 +2286,39 @@ class SurveyInvitationsNew {
 	function checkDefaultMessage() {
 		global $lang, $global_user_id;
 
-		$sql_string = "SELECT id FROM srv_invitations_messages WHERE ank_id = '$this->sid' AND isdefault='1'";
-		$sql_query = sisplet_query($sql_string);
+		$sql_query = sisplet_query("SELECT id FROM srv_invitations_messages WHERE ank_id = '$this->sid' AND isdefault='1'");
 
 		$row = $this->surveySettings;
 		
 		# če privzeto sporočilo ne obstaja ga skreiramo
 		if (mysqli_num_rows($sql_query) == 0 ) {
+
 			Common::getInstance()->Init($this->sid);
+
 			$reply_to = Common::getInstance()->getReplyToEmail();
-			#poiščemo ime seznama za sporočila
+
+			# poiščemo ime seznama za sporočila
 			$naslov = $this->generateMessageName();
 
 			$body_text = ($row['usercode_required'] == 1) ? $lang['srv_inv_message_body_text'].$lang['srv_inv_message_body_text_pass'] : $lang['srv_inv_message_body_text'];
 			
-			# skreiramo osnovno sporočilo
-			$sqlString = "INSERT INTO srv_invitations_messages (ank_id, naslov, subject_text, body_text, reply_to, isdefault, uid, insert_time, comment, edit_uid, edit_time, url ) VALUES ('$this->sid', '".$naslov."', '".$lang['srv_inv_message_subject_text']."', '".$body_text."', '".$reply_to."', '1', '".$global_user_id."', NOW(), '', '".$global_user_id."', NOW(), '')";
-				
-			$sqlQuery = sisplet_query($sqlString);
+			# skreiramo osnovno sporočilo				
+			$sqlQuery = sisplet_query("INSERT INTO srv_invitations_messages (ank_id, naslov, subject_text, body_text, reply_to, isdefault, uid, insert_time, comment, edit_uid, edit_time, url ) VALUES ('$this->sid', '".$naslov."', '".$lang['srv_inv_message_subject_text']."', '".$body_text."', '".$reply_to."', '1', '".$global_user_id."', NOW(), '', '".$global_user_id."', NOW(), '')");
 			if (!$sqlQuery) {
 				$error = mysqli_error($GLOBALS['connect_db']);
 			}
+
 			$new_msg_id = mysqli_insert_id($GLOBALS['connect_db']);
 				
 			if ((int)$new_msg_id > 0) {
 				return true;
-			} else {
+			} 
+            else {
 				# insert ni uspel, in privzetega sporočila nimamo
 				return false;
 			}
-		} else {
+		} 
+        else {
 			# če smo tu, imamo privzeto sporočilo
 			return true;
 		}
@@ -2729,14 +2801,7 @@ class SurveyInvitationsNew {
         else {
 			return false;
 		}
-		
-		# če je testni uporabnik mu ne prikažemo linkov
-		$sql = sisplet_query("SELECT email FROM users WHERE id='$global_user_id'");
-		list($email) = mysqli_fetch_row($sql);
-		if ( $email == 'test@1ka.si' ) {
-			return false;
-		}
-		
+				
 		if (!isset($_POST['noNavi']) || (isset($_POST['noNavi']) && $_POST['noNavi'] != 'true')) {
 			$_sub_action = $_GET['m'];
 
@@ -2927,15 +2992,14 @@ class SurveyInvitationsNew {
 		global $lang, $site_url;
 		
 		// Ali posiljamo maile ali ne
-		//$noEmailing = (isset($_GET['noemailing']) ? $_GET['noemailing'] : 0);
 		$noEmailing = SurveySession::get('inv_noEmailing');
 		
 		$row = $this->surveySettings;
 		
 		# Pripravimo izbor komu lahko pošiljamo
-		//echo '<h2>'.$lang['srv_inv_send_heading'].'</h2>';
 		echo '<h2 style="margin-left: 15px; color:#333 !important;">';
-		// Text s podatki o nastavitvah posiljanja
+		
+        // Text s podatki o nastavitvah posiljanja
 		$settings_text = '<span class="bold spaceRight">'.$lang['srv_inv_message_type'].':</span>';
 		
 		$individual = (int)$this->surveySettings['individual_invitation'];
@@ -2988,40 +3052,51 @@ class SurveyInvitationsNew {
 		echo '<div id="inv_send_mail">';
 		
 		# damo v tabelo zaradi prilagajanja oblike levo/desno
-		echo '<table><tr><td>';
-		echo '<div>';
+		echo '<table><tr>';
+        
+        // Pri volitvah vedno posiljamo samo tistim, katerim se nismo poslali
+        if(!SurveyInfo::getInstance()->checkSurveyModule('voting')){
 
-		echo $lang['srv_inv_send_who_database'].'<br/>';
-		echo '<span class="floatLeft">';
-		echo '<label><input type="radio" name="mailsource" value="0" onclick="mailToSourceChange();" checked="checked">'.$lang['srv_inv_send_who_all_units'].'</label>';
-		echo '</span>';
-			
-		$this->advancedCondition();
-		echo '<br class="clr"/>';
-		
-		echo '<label><input type="radio" name="mailsource" value="1" onclick="mailToSourceChange();">'.$lang['srv_inv_send_who_archive'].'</label>';
-		echo '<br/><label><input type="radio" name="mailsource" value="2" onclick="mailToSourceChange();">'.$lang['srv_inv_send_who_lists'].'</label>';
-		echo '<br/>';
-		echo '<div id="inv_select_mail_to_source_lists">';
-		$this->displayMailToSourceLists((int)$_POST['source_type']);
-		echo '</div>'; #id="inv_select_mail_to_source_lists"
-		echo '</div>';
+            echo '<td>';
+            
+            echo '<div>';
 
-		# polovimo sporočilo in prejemnike
-		$sql_string_m = "SELECT id, naslov, subject_text, body_text, reply_to, isdefault, comment, url FROM srv_invitations_messages WHERE ank_id = '$this->sid' AND isdefault='1'";
+            echo $lang['srv_inv_send_who_database'].'<br/>';
+            echo '<span class="floatLeft">';
+            echo '<label><input type="radio" name="mailsource" value="0" onclick="mailToSourceChange();" checked="checked">'.$lang['srv_inv_send_who_all_units'].'</label>';
+            echo '</span>';
+                
+            $this->advancedCondition();
+            echo '<br class="clr"/>';
+            
+            echo '<label><input type="radio" name="mailsource" value="1" onclick="mailToSourceChange();">'.$lang['srv_inv_send_who_archive'].'</label>';
+            echo '<br/><label><input type="radio" name="mailsource" value="2" onclick="mailToSourceChange();">'.$lang['srv_inv_send_who_lists'].'</label>';
+            echo '<br/>';
 
-		$sql_query_m = sisplet_query($sql_string_m);
-		if (mysqli_num_rows($sql_query_m) > 0 ) {
-			$preview_message = mysqli_fetch_assoc($sql_query_m);
-		} else {
-			#nimamo še vsebine sporočila skreiramo privzeto.
-			echo '<span class="inv_error_note">';
-			echo $lang['srv_invitation_note6'];
-			echo '</span>';
-			exit();
-		}
-		
-		echo '</td><td>';
+            echo '<div id="inv_select_mail_to_source_lists">';
+            $this->displayMailToSourceLists((int)$_POST['source_type']);
+            echo '</div>'; #id="inv_select_mail_to_source_lists"
+
+            echo '</div>';
+
+            # polovimo sporočilo in prejemnike
+            $sql_query_m = sisplet_query("SELECT id, naslov, subject_text, body_text, reply_to, isdefault, comment, url FROM srv_invitations_messages WHERE ank_id = '$this->sid' AND isdefault='1'");
+            if (mysqli_num_rows($sql_query_m) > 0 ) {
+                $preview_message = mysqli_fetch_assoc($sql_query_m);
+            } 
+            else {
+                #nimamo še vsebine sporočila skreiramo privzeto.
+                echo '<span class="inv_error_note">';
+                echo $lang['srv_invitation_note6'];
+                echo '</span>';
+
+                exit();
+            }
+            
+            echo '</td>';
+        }
+        
+        echo '<td>';
 		
 		// Ce posiljamo preko navadne poste ali smsov, nimamo sporocila
 		if($noEmailing == 0){
@@ -3046,7 +3121,9 @@ class SurveyInvitationsNew {
 			echo '</div>'; // inv_select_mail_to_respondents	
 		}
 		
-		echo '</td></tr></table>';
+		echo '</td>';
+
+        echo '</tr></table>';
 
 		echo '</div>'; //inv_send_mail
 	}
@@ -3204,8 +3281,14 @@ class SurveyInvitationsNew {
 				echo ' <span id="srv_inactive">'.$lang['srv_inv_activate_survey_here'].'</span>';
 			}
 			echo '</a>';
-		} else {
-			# anketa je aktivna lahko pošiljamo
+        } 
+        # anketa je aktivna lahko pošiljamo
+        else {
+
+            // Preverimo ce je vklopljen modul za volitve - obvestilo, da ni naknadnega posiljanja
+            if(SurveyInfo::getInstance()->checkSurveyModule('voting')){
+                echo '<p class="bold red">'.$lang['srv_voting_no_duplicates'].'</p>';
+            }
 
 			$sql_string = "SELECT comment FROM srv_invitations_messages WHERE ank_id = '$this->sid' AND isdefault='1'";
 			$sql_query = sisplet_query($sql_string);
@@ -3223,7 +3306,7 @@ class SurveyInvitationsNew {
 			$source_type = (int)$_POST['source_type'];
 			$source_lists = trim($_POST['source_lists']);
 				
-			$respondents = $this->getRespondents2Send($send_type,$checkboxes, $source_type, $source_lists);
+			$respondents = $this->getRespondents2Send($send_type, $checkboxes, $source_type, $source_lists);
 			#koliko strani imamp
 			$numRespondents = count($respondents);
 			$pages = ceil($numRespondents / $this->rec_send_page_limit);
@@ -3652,6 +3735,8 @@ class SurveyInvitationsNew {
 
 	}
 
+
+    // Glavno posiljanje mail vabil
 	function sendMail() {
 		global $lang, $site_path, $site_url, $global_user_id, $lastna_instalacija;
 		
@@ -3714,11 +3799,8 @@ class SurveyInvitationsNew {
 				}
 
 				$subject_text = $sql_row_m['subject_text'];
-
 				$body_text = $sql_row_m['body_text'];
 				$msg_url = $sql_row_m['url'];
-
-                $message_naslov = $sql_row_m['naslov'];
                 
 				// naslov za odgovor je avtor ankete
 				if ($this->validEmail($sql_row_m['reply_to'])) {
@@ -3727,60 +3809,16 @@ class SurveyInvitationsNew {
                 else {
 					$reply_to = Common::getInstance()->getReplyToEmail();
                 }
-                
-				// prejeminki besedila
+
+
+                // prejeminki besedila
 				$sql_query = sisplet_query("SELECT id, firstname, lastname, email, password, password, cookie, phone, salutation, custom, relation 
                                                 FROM srv_invitations_recipients 
                                                 WHERE ank_id = '".$this->sid."' AND deleted='0' AND id IN (".implode(',',$rids).") 
                                                 ORDER BY id
                                             ");
-
-				// polovimo sistemske spremenljivke z vrednostmi
-				$qrySistemske = sisplet_query("SELECT s.id, s.naslov, s.variable 
-                                                FROM srv_spremenljivka s, srv_grupa g 
-                                                WHERE s.sistem='1' AND s.gru_id=g.id AND g.ank_id='".$this->sid."' AND variable IN ("."'" . implode("','",$this->inv_variables)."')
-                                                ORDER BY g.vrstni_red, s.vrstni_red
-                                            ");
-				$sys_vars = array();
-				$sys_vars_ids = array();
-                
-                while ($row = mysqli_fetch_assoc($qrySistemske)) {
-					$sys_vars[$row['id']] = array('id'=>$row['id'], 'variable'=>$row['variable'],'naslov'=>$row['naslov']);
-					$sys_vars_ids[] = $row['id'];
-				}
-                
-                $sqlVrednost = sisplet_query("SELECT spr_id, id AS vre_id, vrstni_red, variable FROM srv_vrednost WHERE spr_id IN(".implode(',',$sys_vars_ids).") ORDER BY vrstni_red ASC ");
-				while ($row = mysqli_fetch_assoc($sqlVrednost)) {
-                    
-                    // Ce gre za odnos imamo radio
-					if($sys_vars[$row['spr_id']]['variable'] == 'odnos'){
-						if(!isset($sys_vars[$row['spr_id']]['vre_id'][$row['vrstni_red']]))
-							$sys_vars[$row['spr_id']]['vre_id'][$row['variable']] = $row['vre_id'];
-					}
-					elseif (!isset($sys_vars[$row['spr_id']]['vre_id'])) {				
-						$sys_vars[$row['spr_id']]['vre_id'] = $row['vre_id'];
-					}
-				}
-
-				# zakeširamo user_id za datapiping
-				$arryDataPiping = array();
-				$qryDataPiping = sisplet_query("SELECT id,inv_res_id FROM srv_user WHERE ank_id='$this->sid' AND inv_res_id IS NOT NULL");
-				while (list($dpUid,$dpInvResId) = mysqli_fetch_row($qryDataPiping)) {
-					if ((int)$dpInvResId > 0 && (int)$dpUid > 0) {
-						$arryDataPiping[$dpInvResId] = (int)$dpUid;
-					}
-                }
-                
-				# array za rezultate
-				$send_ok = array();
-				$send_ok_ids = array();
-				$send_users_data = array();
-				$send_error = array();
-				$send_error_ids = array();
-
-				# če mamo SEO
-				$nice_url = SurveyInfo::getSurveyLink();
-				# zloopamo skozi prejemnike in personaliziramo sporočila in jih pošljemo
+				
+                # zloopamo skozi prejemnike in personaliziramo sporočila in jih pošljemo
 				$date_sent = date ("Y-m-d H:i:s");
 
                 $numRows = mysqli_num_rows($sql_query);
@@ -3822,181 +3860,36 @@ class SurveyInvitationsNew {
                                         ");
 
 				$arch_id = mysqli_insert_id($GLOBALS['connect_db']);
-				$duplicated = array();
 				
-				while ($sql_row = mysqli_fetch_assoc($sql_query)) {
+                // Podatki posiljatelja
+                list($name, $surname, $email) = mysqli_fetch_row(sisplet_query("SELECT name, surname, email FROM users WHERE id='$global_user_id'"));
 
-					$password = $sql_row['password'];
-						
-					$email = $sql_row['email'];
-					if ($dont_send_duplicated == true && isset($duplicated[$email])) {
-						$duplicated[$email] ++;
-						continue;
-                    }
-                    
-					$duplicated[$email] = 1;
-                    $individual = (int)$this->surveySettings['individual_invitation'];
-                    
-					if ( ($individual  == 1 && trim($email) != '' && trim($password) != '') || ($individual == 0 && trim($email) != '') ){
-
-						// odvisno ali imamo url za jezik.
-						if ($msg_url != null && trim($msg_url) != '' ) {
-							$url = $msg_url . ($individual  == 1  ? '?code='.$password : '');
-                        } 
-                        else {
-							$url = $nice_url . ($individual  == 1  ? '&code='.$password : '');
-						}
-		
-						$url .= '&ai='.(int)$arch_id;
-                        
-                        // odjava
-						$unsubscribe = $site_url . 'admin/survey/unsubscribe.php?anketa=' . $this->sid . '&code='.$password;
-
-						$user_body_text = str_replace(
-							array(
-									'#URL#',
-									'#URLLINK#',
-									'#UNSUBSCRIBE#',
-									'#FIRSTNAME#',
-									'#LASTNAME#',
-									'#EMAIL#',
-									'#CODE#',
-									'#PASSWORD#',
-									'#PHONE#',
-									'#SALUTATION#',
-									'#CUSTOM#',
-									'#RELATION#',
-							),
-							array(
-									'<a href="' . $url . '">' . $url . '</a>',
-									$url,
-									'<a href="' . $unsubscribe . '">' . $lang['user_bye_hl'] . '</a>',
-									$sql_row['firstname'],
-									$sql_row['lastname'],
-									$sql_row['email'],
-									$sql_row['password'],
-									$sql_row['password'],
-									$sql_row['phone'],
-									$sql_row['salutation'],
-									$sql_row['custom'],
-									$sql_row['relation'],
-							),
-							$body_text
-						);
-
-						
-						// naredimo DataPiping;
-						if (isset($arryDataPiping[$sql_row['id']])) {
-							$user_body_text = Common::getInstance()->dataPiping($user_body_text, $arryDataPiping[$sql_row['id']], 0);
-						}
-						$resultX = null;
-
-						try{
-							$MA = new MailAdapter($this->sid, $type='invitation');
-							$MA->addRecipients($email);
-							$resultX = $MA->sendMail($user_body_text, $subject_text);
-						   
-						}
-						catch (Exception $e){
-							// todo fajn bi bilo zalogirat kaj se dogaja
-							$__error = $e->getMessage();
-							$__errStack = $e->getTraceAsString();
-						}
-						
-						$_user_data = $sql_row;
-						if ($resultX) {
-							$send_ok[] = $email;
-							$send_ok_ids[] = $sql_row['id'];
-							$_user_data['status'] = 1;
-							# poslalo ok
-                        } 
-                        else {
-							// ni poslalo
-							$send_error[] = $email;
-							$send_error_ids[] = $sql_row['id'];
-							$_user_data['status'] = 2;
-						}
-
-                        $send_users_data[] = $_user_data;
-                        
-
-                        // updejtamo userja da mu je bilo poslano - PO NOVEM TO DELAMO SPROTI
-                        if ( count($send_ok_ids) > 0) {
-                            
-                            $sqlQuery = sisplet_query("UPDATE srv_invitations_recipients SET sent = '1', date_sent = '".$date_sent."' WHERE id IN (".implode(',',$send_ok_ids).")");
-                            if (!$sqlQuery) {
-                                $error = mysqli_error($GLOBALS['connect_db']);
-                            }
-                            
-                            // statuse popravimo samo če vabilo še ni bilo poslano ali je bila napaka
-                            $sqlQuery = sisplet_query("UPDATE srv_invitations_recipients SET last_status = '1' WHERE id IN (".implode(',',$send_ok_ids).") AND last_status IN ('0','2')");
-                            if (!$sqlQuery) {
-                                $error = mysqli_error($GLOBALS['connect_db']);
-                            }
-                        }
-
-                        # updejtamo status za errorje
-                        if ( count($send_error_ids) > 0) {
-
-                            $sqlQuery = sisplet_query("UPDATE srv_invitations_recipients SET last_status = GREATEST(last_status,2) WHERE id IN (".implode(',',$send_error_ids).") AND last_status IN ('0')");
-                            if (!$sqlQuery) {
-                                $error = mysqli_error($GLOBALS['connect_db']);
-                            }
-                        }
-
-
-                        // če mamo personalizirana email vabila, userje dodamo v bazo
-                        if ($individual == 1) {
-                                            
-                            // dodamo še userja v srv_user da je kompatibilno s staro logiko
-                            $strInsertDataText = array();
-                            $strInsertDataVrednost = array();
-
-                            $_r = sisplet_query("INSERT INTO srv_user 
-                                                    (ank_id, email, cookie, pass, last_status, time_insert, inv_res_id) 
-                                                    VALUES 
-                                                    ('".$this->sid."', '".$_user_data['email']."', '".$_user_data['cookie']."', '".$_user_data['password']."', '".$_user_data['status']."', NOW(), '".$_user_data['id']."') ON DUPLICATE KEY UPDATE cookie = '".$_user_data['cookie']."', pass='".$_user_data['password']."'
-                                                ");
-                            $usr_id = mysqli_insert_id($GLOBALS['connect_db']);
-
-                            if ($usr_id) {
-
-                                // dodamo še srv_userbase in srv userstatus
-                                sisplet_query("INSERT INTO srv_userbase (usr_id, tip, datetime, admin_id) VALUES ('".$usr_id."','0',NOW(),'".$global_user_id."')");
-                                sisplet_query("INSERT INTO srv_userstatus (usr_id, tip, status, datetime) VALUES ('".$usr_id."', '0', '0', NOW())");
-                                    
-                                // dodamo še podatke za posameznega userja za sistemske spremenljivke
-                                foreach ($sys_vars AS $sid => $spremenljivka) {
-                                    
-                                    $_user_variable = $this->inv_variables_link[$spremenljivka['variable']];
-                                    
-                                    if (trim($_user_data[$_user_variable]) != '' && $_user_data[$_user_variable] != null) {
-                                        if($spremenljivka['variable'] == 'odnos')
-                                            $strInsertDataVrednost[] = "('".$sid."','".$spremenljivka['vre_id'][trim($_user_data[$_user_variable])]."','".$usr_id."')";
-                                        else
-                                            $strInsertDataText[] = "('".$sid."','".$spremenljivka['vre_id']."','".trim($_user_data[$_user_variable])."','".$usr_id."')";
-                                    }
-                                }
-                            } 
-                            else {
-                                // lahko da user že obstaja in je šlo za duplicated keys
-                            }             
-                                           
-                            // vstavimo v srv_data_text
-                            if (count($strInsertDataText) > 0) {
-                                $strInsert = "INSERT INTO srv_data_text".$this->db_table." (spr_id, vre_id, text, usr_id) VALUES ";
-                                $strInsert .= implode(',',$strInsertDataText);
-                                sisplet_query($strInsert);
-                            }
-                            // vstavimo v srv_data_vrednost
-                            if (count($strInsertDataVrednost) > 0) {
-                                $strInsert = "INSERT INTO srv_data_vrednost".$this->db_table." (spr_id, vre_id, usr_id) VALUES ";
-                                $strInsert .= implode(',',$strInsertDataVrednost);
-                                sisplet_query($strInsert);
-                            }
-                        }
-					}
-				}
+                // Podatki za posiljanje
+                $sending_data = array(
+                    'body_text'         => $body_text, 
+                    'subject_text'      => $subject_text, 
+                    'arch_id'           => $arch_id, 
+                    'msg_url'           => $msg_url, 
+                    'date_sent'         => $date_sent, 
+                    'from_email'        => $email, 
+                    'from_name'         => $name.' '.$surname,
+                    'reply_to_email'    => $reply_to
+                );
+				
+                // Loop po prejemnikih in posiljanje mailov
+                $squalo = new SurveyInvitationsSqualo($this->sid);
+                if($squalo->getSqualoActive()){
+                    $sending_results = $squalo->sendSqualoInvitations($sql_query, $sending_data);
+                }
+                else{
+                    $sending_results = $this->sendMailToUsers($sql_query, $sending_data);
+                }
+                
+                $send_ok = $sending_results['send_ok'];
+                $send_ok_ids = $sending_results['send_ok_ids'];
+                $send_users_data = $sending_results['send_users_data'];
+                $send_error = $sending_results['send_error'];
+                $send_error_ids = $sending_results['send_error_ids'];
 
 
 				// dodajmo še userje v povezovalno tabelo (arhiv)
@@ -4010,7 +3903,8 @@ class SurveyInvitationsNew {
 					
 					// za arhive
 					$_archive_recipients = array();
-					// za tracking
+
+                    // za tracking
 					$_tracking = array();
 
 					if (count($send_ok_ids) > 0) {
@@ -4051,7 +3945,6 @@ class SurveyInvitationsNew {
                 } 
                 else if (count($send_ok) > 0 ) {
                     
-                    list($name,$surname,$email) = mysqli_fetch_row(sisplet_query("SELECT name, surname,email FROM users WHERE id='$global_user_id'"));
 					$who='';
                     
                     if (trim($name) != '') {
@@ -4133,7 +4026,292 @@ class SurveyInvitationsNew {
 		#$this->viewAarchive($return['msg']);
 		$this->viewSendMailFinish($return['msg']);
 	}
-	
+    
+    // Posljemo mail userjem - loop in send
+    private function sendMailToUsers($sql_recipients_query, $sending_data){
+        global $global_user_id;
+        global $site_url;
+
+
+        // Preverimo ce je vklopljen modul za volitve
+        $voting = SurveyInfo::getInstance()->checkSurveyModule('voting');
+        
+        # če mamo SEO
+		$nice_url = SurveyInfo::getSurveyLink();
+
+        // Polovimo sistemske spremenljivke
+        $sys_vars = $this->getSystemVars();
+
+        # zakeširamo user_id za datapiping
+        $arryDataPiping = array();
+        $qryDataPiping = sisplet_query("SELECT id, inv_res_id FROM srv_user WHERE ank_id='$this->sid' AND inv_res_id IS NOT NULL");
+        while (list($dpUid, $dpInvResId) = mysqli_fetch_row($qryDataPiping)) {
+            
+            if ((int)$dpInvResId > 0 && (int)$dpUid > 0) {
+                $arryDataPiping[$dpInvResId] = (int)$dpUid;
+            }
+        }
+
+        $duplicated = array();
+
+        # array za rezultate
+		$send_ok = array();
+		$send_ok_ids = array();
+		$send_users_data = array();
+		$send_error = array();
+		$send_error_ids = array();
+
+        // Loop po prejemnikih
+        while ($sql_row = mysqli_fetch_assoc($sql_recipients_query)) {
+
+            $password = $sql_row['password'];
+                
+            $email = $sql_row['email'];
+
+            // Preverimo ce je duplikat
+            if ($dont_send_duplicated == true && isset($duplicated[$email])) {
+                $duplicated[$email] ++;
+                continue;
+            }
+            
+            $duplicated[$email] = 1;
+
+            $individual = (int)$this->surveySettings['individual_invitation'];
+            
+            if ( ($individual  == 1 && trim($email) != '' && trim($password) != '') || ($individual == 0 && trim($email) != '') ){
+
+                // odvisno ali imamo url za jezik.
+                if ($sending_data['msg_url'] != null && trim($sending_data['msg_url']) != '' ) {
+                    $url = $sending_data['msg_url'] . ($individual  == 1  ? '?code='.$password : '');
+                } 
+                else {
+                    $url = $nice_url . ($individual  == 1  ? '&code='.$password : '');
+                }
+
+                $url .= '&ai='.(int)$sending_data['$arch_id'];
+                
+                // odjava
+                $unsubscribe = $site_url . 'admin/survey/unsubscribe.php?anketa=' . $this->sid . '&code='.$password;
+
+                $user_body_text = str_replace(
+                    array(
+                            '#URL#',
+                            '#URLLINK#',
+                            '#UNSUBSCRIBE#',
+                            '#FIRSTNAME#',
+                            '#LASTNAME#',
+                            '#EMAIL#',
+                            '#CODE#',
+                            '#PASSWORD#',
+                            '#PHONE#',
+                            '#SALUTATION#',
+                            '#CUSTOM#',
+                            '#RELATION#',
+                    ),
+                    array(
+                            '<a href="' . $url . '">' . $url . '</a>',
+                            $url,
+                            '<a href="' . $unsubscribe . '">' . $lang['user_bye_hl'] . '</a>',
+                            $sql_row['firstname'],
+                            $sql_row['lastname'],
+                            $sql_row['email'],
+                            $sql_row['password'],
+                            $sql_row['password'],
+                            $sql_row['phone'],
+                            $sql_row['salutation'],
+                            $sql_row['custom'],
+                            $sql_row['relation'],
+                    ),
+                    $sending_data['body_text']
+                );
+
+                
+                // naredimo DataPiping;
+                if (isset($arryDataPiping[$sql_row['id']])) {
+                    $user_body_text = Common::getInstance()->dataPiping($user_body_text, $arryDataPiping[$sql_row['id']], 0);
+                }
+                $resultX = null;
+
+                try{
+                    $MA = new MailAdapter($this->sid, $type='invitation');
+                    $MA->addRecipients($email);
+                    $resultX = $MA->sendMail($user_body_text, $sending_data['subject_text']);
+                   
+                }
+                catch (Exception $e){
+                    // todo fajn bi bilo zalogirat kaj se dogaja
+                    $__error = $e->getMessage();
+                    $__errStack = $e->getTraceAsString();
+                }
+                
+                $_user_data = $sql_row;
+                if ($resultX) {
+                    $send_ok[] = $email;
+                    $send_ok_ids[] = $sql_row['id'];
+                    $_user_data['status'] = 1;
+                    # poslalo ok
+                } 
+                else {
+                    // ni poslalo
+                    $send_error[] = $email;
+                    $send_error_ids[] = $sql_row['id'];
+                    $_user_data['status'] = 2;
+                }
+
+                $send_users_data[] = $_user_data;
+                
+
+                // updejtamo userja da mu je bilo poslano - PO NOVEM TO DELAMO SPROTI
+                if ( count($send_ok_ids) > 0) {
+                    
+                    $sqlQuery = sisplet_query("UPDATE srv_invitations_recipients SET sent='1', date_sent='".$sending_data['date_sent']."' WHERE id IN (".implode(',',$send_ok_ids).")");
+                    if (!$sqlQuery) {
+                        $error = mysqli_error($GLOBALS['connect_db']);
+                    }
+                    
+                    // statuse popravimo samo če vabilo še ni bilo poslano ali je bila napaka
+                    $sqlQuery = sisplet_query("UPDATE srv_invitations_recipients SET last_status='1' WHERE id IN (".implode(',',$send_ok_ids).") AND last_status IN ('0','2')");
+                    if (!$sqlQuery) {
+                        $error = mysqli_error($GLOBALS['connect_db']);
+                    }
+
+                    // Pri volitvah za sabo pobrisemo podatke preko katerih bi lahko povezali prejemnike z responsi
+                    if($voting){
+                        $sqlQuery = sisplet_query("UPDATE srv_invitations_recipients 
+                                                SET cookie='', password=''
+                                                WHERE id IN (".implode(',',$send_ok_ids).") AND sent='1' AND last_status='1' AND ank_id='".$this->sid."'
+                                            ");
+                        if (!$sqlQuery) {
+                            $error = mysqli_error($GLOBALS['connect_db']);
+                        }
+                    }
+                }
+
+                # updejtamo status za errorje
+                if ( count($send_error_ids) > 0) {
+
+                    $sqlQuery = sisplet_query("UPDATE srv_invitations_recipients SET last_status = GREATEST(last_status,2) WHERE id IN (".implode(',',$send_error_ids).") AND last_status IN ('0')");
+                    if (!$sqlQuery) {
+                        $error = mysqli_error($GLOBALS['connect_db']);
+                    }
+                }
+
+                // če mamo personalizirana email vabila, userje dodamo v bazo
+                if ($individual == 1) {
+                                    
+                    // dodamo še userja v srv_user da je kompatibilno s staro logiko
+                    $strInsertDataText = array();
+                    $strInsertDataVrednost = array();
+
+                    // Pri volitvah zaradi anonimizacije ignoriramo vse identifikatorje
+                    if($voting){
+                        $_r = sisplet_query("INSERT INTO srv_user 
+                                                (ank_id, cookie, pass, last_status, inv_res_id) 
+                                                VALUES 
+                                                ('".$this->sid."', '".$_user_data['cookie']."', '".$_user_data['password']."', '".$_user_data['status']."', '-1') ON DUPLICATE KEY UPDATE cookie = '".$_user_data['cookie']."', pass='".$_user_data['password']."'
+                                            ");
+
+                        // Ce ne belezimo parapodatka za cas responsa, anonimno zabelezimo cas zadnjega responsa
+                        sisplet_query("UPDATE srv_anketa SET last_response_time=NOW() WHERE id='".$this->sid."'");
+                    }
+                    else{
+                        $_r = sisplet_query("INSERT INTO srv_user 
+                                                (ank_id, email, cookie, pass, last_status, time_insert, inv_res_id) 
+                                                VALUES 
+                                                ('".$this->sid."', '".$_user_data['email']."', '".$_user_data['cookie']."', '".$_user_data['password']."', '".$_user_data['status']."', NOW(), '".$_user_data['id']."') ON DUPLICATE KEY UPDATE cookie = '".$_user_data['cookie']."', pass='".$_user_data['password']."'
+                                            ");
+                    }
+                    $usr_id = mysqli_insert_id($GLOBALS['connect_db']);
+
+                    if ($usr_id) {
+
+                        // dodamo še srv_userbase in srv userstatus
+                        sisplet_query("INSERT INTO srv_userbase (usr_id, tip, datetime, admin_id) VALUES ('".$usr_id."','0',NOW(),'".$global_user_id."')");
+                        sisplet_query("INSERT INTO srv_userstatus (usr_id, tip, status, datetime) VALUES ('".$usr_id."', '0', '0', NOW())");
+                            
+                        // dodamo še podatke za posameznega userja za sistemske spremenljivke
+                        foreach ($sys_vars AS $sid => $spremenljivka) {
+                            
+                            $_user_variable = $this->inv_variables_link[$spremenljivka['variable']];
+                            
+                            if (trim($_user_data[$_user_variable]) != '' && $_user_data[$_user_variable] != null) {
+                                if($spremenljivka['variable'] == 'odnos')
+                                    $strInsertDataVrednost[] = "('".$sid."','".$spremenljivka['vre_id'][trim($_user_data[$_user_variable])]."','".$usr_id."')";
+                                else
+                                    $strInsertDataText[] = "('".$sid."','".$spremenljivka['vre_id']."','".trim($_user_data[$_user_variable])."','".$usr_id."')";
+                            }
+                        }
+                    } 
+                    else {
+                        // lahko da user že obstaja in je šlo za duplicated keys
+                    }             
+                                   
+
+                    // Pri volitvah zaradi anonimizacije ne vsatvimo nicesar v sistemske spremenljivke
+                    if(!$voting){
+                        
+                        // vstavimo v srv_data_text
+                        if (count($strInsertDataText) > 0) {
+                            $strInsert = "INSERT INTO srv_data_text".$this->db_table." (spr_id, vre_id, text, usr_id) VALUES ";
+                            $strInsert .= implode(',',$strInsertDataText);
+                            sisplet_query($strInsert);
+                        }
+                        // vstavimo v srv_data_vrednost
+                        if (count($strInsertDataVrednost) > 0) {
+                            $strInsert = "INSERT INTO srv_data_vrednost".$this->db_table." (spr_id, vre_id, usr_id) VALUES ";
+                            $strInsert .= implode(',',$strInsertDataVrednost);
+                            sisplet_query($strInsert);
+                        }
+                    }
+                }
+            }
+        }
+
+        $results = array(
+            'send_ok'           => $send_ok,
+            'send_ok_ids'       => $send_ok_ids,
+            'send_users_data'   => $send_users_data,
+            'send_error'        => $send_error,
+            'send_error_ids'    => $send_error_ids,
+        );
+
+        return $results;
+    }
+
+    private function getSystemVars(){
+
+        // polovimo sistemske spremenljivke z vrednostmi
+        $qrySistemske = sisplet_query("SELECT s.id, s.naslov, s.variable 
+                                        FROM srv_spremenljivka s, srv_grupa g 
+                                        WHERE s.sistem='1' AND s.gru_id=g.id AND g.ank_id='".$this->sid."' AND variable IN ("."'" . implode("','",$this->inv_variables)."')
+                                        ORDER BY g.vrstni_red, s.vrstni_red
+                                    ");
+        $sys_vars = array();
+        $sys_vars_ids = array();
+
+        while ($row = mysqli_fetch_assoc($qrySistemske)) {
+            $sys_vars[$row['id']] = array('id'=>$row['id'], 'variable'=>$row['variable'],'naslov'=>$row['naslov']);
+            $sys_vars_ids[] = $row['id'];
+        }
+
+        $sqlVrednost = sisplet_query("SELECT spr_id, id AS vre_id, vrstni_red, variable FROM srv_vrednost WHERE spr_id IN(".implode(',',$sys_vars_ids).") ORDER BY vrstni_red ASC ");
+        while ($row = mysqli_fetch_assoc($sqlVrednost)) {
+
+            // Ce gre za odnos imamo radio
+            if($sys_vars[$row['spr_id']]['variable'] == 'odnos'){
+
+                if(!isset($sys_vars[$row['spr_id']]['vre_id'][$row['vrstni_red']]))
+                $sys_vars[$row['spr_id']]['vre_id'][$row['variable']] = $row['vre_id'];
+            }
+            elseif (!isset($sys_vars[$row['spr_id']]['vre_id'])) {				
+             $sys_vars[$row['spr_id']]['vre_id'] = $row['vre_id'];
+            }
+        }
+
+        return $sys_vars;
+    }
+
+    // Rocna aktivacija vabil
 	function sendMailNoEmailing() {
 		global $lang, $site_path, $site_url, $global_user_id;
 		
@@ -4206,34 +4384,9 @@ class SurveyInvitationsNew {
 
 				$arch_id = mysqli_insert_id($GLOBALS['connect_db']);
 				$duplicated = array();
-				
-				
-				// polovimo sistemske spremenljivke z vrednostmi
-				$qrySistemske = sisplet_query("SELECT s.id, s.naslov, s.variable 
-                                                FROM srv_spremenljivka s, srv_grupa g 
-                                                WHERE s.sistem='1' AND s.gru_id=g.id AND g.ank_id='".$this->sid."' AND variable IN ("."'" . implode("','",$this->inv_variables)."')  
-                                                ORDER BY g.vrstni_red, s.vrstni_red
-                                            ");
-				$sys_vars = array();
-				$sys_vars_ids = array();
-				while ($row = mysqli_fetch_assoc($qrySistemske)) {
-					$sys_vars[$row['id']] = array('id'=>$row['id'], 'variable'=>$row['variable'],'naslov'=>$row['naslov']);
-					$sys_vars_ids[] = $row['id'];
-                }
-                
-				$sqlVrednost = sisplet_query("SELECT spr_id, id AS vre_id, vrstni_red, variable FROM srv_vrednost WHERE spr_id IN(".implode(',',$sys_vars_ids).") ORDER BY vrstni_red ASC ");
-				while ($row = mysqli_fetch_assoc($sqlVrednost)) {
-                    
-                    // Ce gre za odnos imamo radio
-					if($sys_vars[$row['spr_id']]['variable'] == 'odnos'){
-						if(!isset($sys_vars[$row['spr_id']]['vre_id'][$row['vrstni_red']]))
-							$sys_vars[$row['spr_id']]['vre_id'][$row['variable']] = $row['vre_id'];
-					}
-					elseif (!isset($sys_vars[$row['spr_id']]['vre_id'])) {				
-						$sys_vars[$row['spr_id']]['vre_id'] = $row['vre_id'];
-					}
-				}
-				
+				                
+                // Polovimo sistemske spremenljivke
+                $sys_vars = $this->getSystemVars();
 				
 				// prejeminki besedila
 				$sql_query = sisplet_query("SELECT id, firstname, lastname, email, password, cookie, phone, salutation, custom, relation 
@@ -4422,6 +4575,7 @@ class SurveyInvitationsNew {
 		$this->viewSendMailFinish($return['msg']);
 	}
 
+
 	function viewSendMailFinish($msg) {
 		global $lang, $site_url;
 		
@@ -4560,28 +4714,53 @@ class SurveyInvitationsNew {
 		echo '<table id="tbl_recipients_list">';
 		
 		echo '<tr>';
-		echo '<th class="tbl_icon" title="'.$lang['srv_inv_recipients_sent'].'">'.$lang['srv_inv_recipients_sent'].'</th>';
-		echo '<th class="tbl_icon" title="'.$lang['srv_inv_recipients_responded'].'">'.$lang['srv_inv_recipients_responded'].'</th>';
-		echo '<th class="tbl_icon" title="'.$lang['srv_inv_recipients_unsubscribed'].'">'.$lang['srv_inv_recipients_unsubscribed'].'</th>';
-		echo '<th class="tbl_inv_left">'.$lang['srv_inv_recipients_email'].'</th>';
-		echo '<th>'.$lang['srv_inv_recipients_password'].'</th>';
-		echo '<th>'.$lang['srv_inv_recipients_firstname'].'</th>';
-		echo '<th>'.$lang['srv_inv_recipients_lastname'].'</th>';
-		echo '<th>'.$lang['srv_inv_recipients_last_status'].'</th>';
-		echo '<th>'.$lang['srv_inv_recipients_list_id'].'</th>';
+
+        // Pri volitvah ne prikazemo nekaterih stolpcev
+        if(SurveyInfo::getInstance()->checkSurveyModule('voting')){
+            echo '<th class="tbl_icon" title="'.$lang['srv_inv_recipients_sent'].'">'.$lang['srv_inv_recipients_sent'].'</th>';
+            echo '<th class="tbl_inv_left">'.$lang['srv_inv_recipients_email'].'</th>';
+            echo '<th>'.$lang['srv_inv_recipients_firstname'].'</th>';
+            echo '<th>'.$lang['srv_inv_recipients_lastname'].'</th>';
+            echo '<th>'.$lang['srv_inv_recipients_list_id'].'</th>';
+        }
+        else{
+            echo '<th class="tbl_icon" title="'.$lang['srv_inv_recipients_sent'].'">'.$lang['srv_inv_recipients_sent'].'</th>';
+            echo '<th class="tbl_icon" title="'.$lang['srv_inv_recipients_responded'].'">'.$lang['srv_inv_recipients_responded'].'</th>';
+            echo '<th class="tbl_icon" title="'.$lang['srv_inv_recipients_unsubscribed'].'">'.$lang['srv_inv_recipients_unsubscribed'].'</th>';
+            echo '<th class="tbl_inv_left">'.$lang['srv_inv_recipients_email'].'</th>';
+            echo '<th>'.$lang['srv_inv_recipients_password'].'</th>';
+            echo '<th>'.$lang['srv_inv_recipients_firstname'].'</th>';
+            echo '<th>'.$lang['srv_inv_recipients_lastname'].'</th>';
+            echo '<th>'.$lang['srv_inv_recipients_last_status'].'</th>';
+            echo '<th>'.$lang['srv_inv_recipients_list_id'].'</th>';
+        }
+
 		echo '</tr>';
 		
 		while ($sql_row = mysqli_fetch_assoc($sql_query)) {
 			echo '<tr>';
-			echo '<td><img src="'.$site_url.'admin/survey/img_0/'.((int)$sql_row['sent'] == 1 ? 'email_sent.png' : 'email_open.png').'"></td>';
-			echo '<td><img src="'.$site_url.'admin/survey/icons/icons/'.((int)$sql_row['responded'] == 1 ? 'star_on.png' : 'star_off.png').'"></td>';
-			echo '<td><img src="'.$site_url.'admin/survey/img_0/'.((int)$sql_row['unsubscribed'] == 1 ? 'opdedout_on.png' : 'opdedout_off.png').'"></td>';
-			echo '<td class="tbl_inv_left">'.$sql_row['email'].'</td>';
-			echo '<td>'.$sql_row['password'].'</td>';
-			echo '<td>'.$sql_row['firstname'].'</td>';
-			echo '<td>'.$sql_row['lastname'].'</td>';
-			echo '<td>'.$lang['srv_userstatus_'.$sql_row['last_status']].' ('.$sql_row['last_status'].')'.'</td>';
-			echo '<td>'.$lists[$sql_row['list_id']].'</td>';
+            
+            // Pri volitvah ne prikazemo nekaterih stolpcev
+            if(SurveyInfo::getInstance()->checkSurveyModule('voting')){
+                echo '<td><img src="'.$site_url.'admin/survey/img_0/'.((int)$sql_row['sent'] == 1 ? 'email_sent.png' : 'email_open.png').'"></td>';
+                echo '<td class="tbl_inv_left">'.$sql_row['email'].'</td>';
+                echo '<td>'.$sql_row['firstname'].'</td>';
+                echo '<td>'.$sql_row['lastname'].'</td>';
+                echo '<td>'.$lists[$sql_row['list_id']].'</td>';
+            }
+            else{
+                echo '<td><img src="'.$site_url.'admin/survey/img_0/'.((int)$sql_row['sent'] == 1 ? 'email_sent.png' : 'email_open.png').'"></td>';
+                echo '<td><img src="'.$site_url.'admin/survey/icons/icons/'.((int)$sql_row['responded'] == 1 ? 'star_on.png' : 'star_off.png').'"></td>';
+                echo '<td><img src="'.$site_url.'admin/survey/img_0/'.((int)$sql_row['unsubscribed'] == 1 ? 'opdedout_on.png' : 'opdedout_off.png').'"></td>';
+                echo '<td class="tbl_inv_left">'.$sql_row['email'].'</td>';
+                echo '<td>'.$sql_row['password'].'</td>';
+                echo '<td>'.$sql_row['firstname'].'</td>';
+                echo '<td>'.$sql_row['lastname'].'</td>';
+                echo '<td>'.$lang['srv_userstatus_'.$sql_row['last_status']].' ('.$sql_row['last_status'].')'.'</td>';
+                echo '<td>'.$lists[$sql_row['list_id']].'</td>';
+            }
+			
+
 			echo '</tr>';
 		}
 		
@@ -4792,6 +4971,10 @@ class SurveyInvitationsNew {
 	function addSystemVariables($variables) {
 		global $site_path, $lang;
 		
+        // Pri modulu za volitve so responsi anonimni, zato nimamo nobenih sistemskih spremenljivk
+        if(SurveyInfo::getInstance()->checkSurveyModule('voting'))
+            return;
+
 		$system_fields = array(
 				'inv_field_email' => 'email',
 				'inv_field_firstname' => 'ime',
@@ -4932,63 +5115,72 @@ class SurveyInvitationsNew {
 		session_start();
 		
 		$fields = array();
-		$recipients_list=null;	
+		$recipients_list = null;	
 		$noEmailing = SurveySession::get('inv_noEmailing');
-		
+
 		# če ne obstaja začasen seznam ga naredimo (praznega)
 		if (!isset($_SESSION['inv_rec_profile'][$this->sid])) {
+
 			$_SESSION['inv_rec_profile'][$this->sid] = array(
-					'pid'=>-1,
-					'name'=>$lang['srv_invitation_new_templist'],
-					'fields'=>($noEmailing == 1 ? 'firstname,lastname' : 'email'),
-					'respondents'=>'',
-					'comment'=>$lang['srv_invitation_new_templist']);
+                'pid'           => -1,
+                'name'          => $lang['srv_invitation_new_templist'],
+                'fields'        => ($noEmailing == 1 ? 'firstname,lastname' : 'email'),
+                'respondents'   => '',
+                'comment'       => $lang['srv_invitation_new_templist']
+            );
 		}
 
 		#polovimo emaile in poljaiz seznama
-		if ( $pid > 0) {
-			# če imamo pid in je večji kot nič polovimo podatke iz tabele
-			$sql_string = "SELECT fields,respondents FROM srv_invitations_recipients_profiles WHERE pid = '".$pid."'";
-		$sql_query = sisplet_query($sql_string);
-		$sql_row = mysqli_fetch_assoc($sql_query);
-		if (trim($sql_row['respondents']) != '') {
-			//$recipients_list = explode("\n",trim($sql_row['respondents']));
-			// Zamenjamo 1ka delimiter z default vejico, ker drugače je v seznamih porušeno
-			$recipients_list = explode("\n",str_replace ("|~|", ",", trim($sql_row['respondents'])));
-		}
-		$_fields = explode(",", $sql_row['fields']);
-		if (count($_fields) > 0) {
-			foreach ($_fields AS $field) {
-				$fields[] =  'inv_field_'.$field;
-			}
-		}
+		if ($pid > 0) {
 
-		} else if ($pid == 0) {
-			# če ne je začasin porfil - avtor
-			$sql_string = "SELECT email, name, surname FROM users WHERE id = '".$global_user_id."'";
-			$sql_query = sisplet_query($sql_string);
+			# če imamo pid in je večji kot nič polovimo podatke iz tabele
+            $sql_query = sisplet_query("SELECT fields,respondents FROM srv_invitations_recipients_profiles WHERE pid = '".$pid."'");
+            $sql_row = mysqli_fetch_assoc($sql_query);
+            
+            if (trim($sql_row['respondents']) != '') {
+                //$recipients_list = explode("\n",trim($sql_row['respondents']));
+                // Zamenjamo 1ka delimiter z default vejico, ker drugače je v seznamih porušeno
+                $recipients_list = explode("\n",str_replace ("|~|", ",", trim($sql_row['respondents'])));
+            }
+
+            $_fields = explode(",", $sql_row['fields']);
+
+            if (count($_fields) > 0) {
+                foreach ($_fields AS $field) {
+                    $fields[] =  'inv_field_'.$field;
+                }
+            }
+		}
+        else if ($pid == 0) {
+			
+            # če ne je začasin porfil - avtor
+			$sql_query = sisplet_query("SELECT email, name, surname FROM users WHERE id = '".$global_user_id."'");
 			$rowEmail = mysqli_fetch_assoc($sql_query);
 
 			// default smo rekli je vejica, ane?
-                        $recipients_list[]= $rowEmail['email'].','.$rowEmail['name'].','.$rowEmail['surname'];
-                        //$recipients_list[]= $rowEmail['email'].'|~|'.$rowEmail['name'].'|~|'.$rowEmail['surname'];
-			$fields[]= 'inv_field_email';
-			$fields[]= 'inv_field_firstname';
-			$fields[]= 'inv_field_lastname';
+            $recipients_list[] = $rowEmail['email'];
+            //$recipients_list[] = $rowEmail['email'].','.$rowEmail['name'].','.$rowEmail['surname'];
 
-		} else if ($pid == -1) {
+			$fields[]= 'inv_field_email';
+			/*$fields[]= 'inv_field_firstname';
+			$fields[]= 'inv_field_lastname';*/
+		} 
+        else if ($pid == -1) {
 			# začasen profil iz seje
 			$_fields = explode(",",$_SESSION['inv_rec_profile'][$this->sid]['fields']);
-			if (count($_fields) > 0) {
+			
+            if (count($_fields) > 0) {
 				foreach ($_fields AS $field) {
 					$fields[] =  'inv_field_'.$field;
 				}
 			}
+
 			if (trim($_SESSION['inv_rec_profile'][$this->sid]['respondents']) != '') {
 				$recipients_list = explode("\n",trim($_SESSION['inv_rec_profile'][$this->sid]['respondents']));
 			}
 
-		} else {
+		} 
+        else {
 			$recipients_list[] = '';
 			$fields[]= 'inv_field_email';
 		}
@@ -5733,32 +5925,22 @@ class SurveyInvitationsNew {
 				$delimit = $convertTypes['delimit'];
 			}
 			
-			#echo $delimit.$lang['srv_inv_recipients_count_inv'];
 			echo $convertTypes['newLine'];
 			
 			$sqlString = "SELECT sir.*, IF(sirp.name IS NULL, '".$lang['srv_invitation_new_templist_author']."', sirp.name) AS list_name "
 				." FROM srv_invitations_recipients AS sir"
 				." LEFT JOIN srv_invitations_recipients_profiles AS sirp ON (sir.list_id = sirp.pid)"
-				#." LEFT JOIN srv_invitations_archive_recipients AS siar ON (sir.id = siar.rec_id)"
-
 				." WHERE sir.ank_id = '$this->sid' AND deleted='0' ORDER BY id";
-				
-			/*
-			." FROM srv_invitations_recipients AS sir"
-			." LEFT JOIN srv_invitations_recipients_profiles AS sirp ON (sir.list_id = sirp.pid)"
-			." LEFT JOIN srv_invitations_archive_recipients AS siar ON (sir.id = siar.rec_id)"
-			." WHERE sir.ank_id = '$this->sid' AND deleted='0' GROUP BY siar.rec_id  ORDER BY id";
-			*/
-			#$sqlString = "SELECT * FROM srv_invitations_recipients WHERE ank_id = '$this->sid' AND deleted='0' ORDER BY id";
-			
+							
 			$sqlQuery = sisplet_query($sqlString);
 			if (mysqli_num_rows($sqlQuery)) {
+
 				while ($sql_row = mysqli_fetch_assoc($sqlQuery)) {
+                    
 					foreach ($this->inv_variables_excel AS $vkey => $inv_variable) {
 						echo $sql_row[$inv_variable].$convertTypes['delimit'];
 					}
 
-					#echo $sql_row['count_inv'];
 					echo $convertTypes['newLine'];
 				}
 			}
@@ -5796,22 +5978,39 @@ class SurveyInvitationsNew {
 	// Dodamo vse userje v bazo podatkov kot respondente
 	function add_users_to_database() {
 
+        // Preverimo ce je vklopljen modul za volitve
+        $voting = SurveyInfo::getInstance()->checkSurveyModule('voting');
+
 		# prejeminki besedila
-		$sql_string = "SELECT id,firstname, lastname, email, password, password, cookie, phone, salutation, custom, relation FROM srv_invitations_recipients WHERE ank_id = '".$this->sid."' AND deleted='0' AND sent='0'";
-		$sql_query = sisplet_query($sql_string);
+		$sql_query = sisplet_query("SELECT id, firstname, lastname, email, password, password, cookie, phone, salutation, custom, relation 
+                                        FROM srv_invitations_recipients 
+                                        WHERE ank_id = '".$this->sid."' AND deleted='0' AND sent='0'
+                                ");
 
 		# polovimo sistemske spremenljivke z vrednostmi
-		$strSistemske = "SELECT s.id, s.naslov, s.variable FROM srv_spremenljivka s, srv_grupa g WHERE s.sistem='1' AND s.gru_id=g.id AND g.ank_id='".$this->sid."' AND variable IN("."'" . implode("','",$this->inv_variables)."')  ORDER BY g.vrstni_red, s.vrstni_red";
-		$qrySistemske = sisplet_query($strSistemske);
+		$qrySistemske = sisplet_query("SELECT s.id, s.naslov, s.variable 
+                                        FROM srv_spremenljivka s, srv_grupa g 
+                                        WHERE s.sistem='1' AND s.gru_id=g.id AND g.ank_id='".$this->sid."' 
+                                            AND variable IN("."'" . implode("','",$this->inv_variables)."') 
+                                        ORDER BY g.vrstni_red, s.vrstni_red
+                                    ");
+
 		$sys_vars = array();
 		$sys_vars_ids = array();
+
 		while ($row = mysqli_fetch_assoc($qrySistemske)) {
 			$sys_vars[$row['id']] = array('id'=>$row['id'], 'variable'=>$row['variable'],'naslov'=>$row['naslov']);
 			$sys_vars_ids[] = $row['id'];
 		}
-		$sqlVrednost = sisplet_query("SELECT spr_id, id AS vre_id, vrstni_red, variable FROM srv_vrednost WHERE spr_id IN(".implode(',',$sys_vars_ids).") ORDER BY vrstni_red ASC ");
+		
+        $sqlVrednost = sisplet_query("SELECT spr_id, id AS vre_id, vrstni_red, variable 
+                                        FROM srv_vrednost 
+                                        WHERE spr_id IN(".implode(',',$sys_vars_ids).") 
+                                        ORDER BY vrstni_red ASC
+                                    ");
 		while ($row = mysqli_fetch_assoc($sqlVrednost)) {
-			// Ce gre za odnos imamo radio
+			
+            // Ce gre za odnos imamo radio
 			if($sys_vars[$row['spr_id']]['variable'] == 'odnos'){
 				if(!isset($sys_vars[$row['spr_id']]['vre_id'][$row['vrstni_red']]))
 					$sys_vars[$row['spr_id']]['vre_id'][$row['variable']] = $row['vre_id'];
@@ -5837,16 +6036,38 @@ class SurveyInvitationsNew {
 		$strInsertUserbase = array();
 		$strInsertUserstatus = array();
 		foreach ($send_users_data AS $user_data) {
-			$strInsert = "INSERT INTO srv_user (ank_id, email, cookie, pass, last_status, time_insert, inv_res_id) VALUES ('".$this->sid."', '".$user_data['email']."', '".$user_data['cookie']."', '".$user_data['password']."', '".$user_data['status']."', NOW(), '".$user_data['id']."') ON DUPLICATE KEY UPDATE last_status=VALUES(last_status), inv_res_id=VALUES(inv_res_id)";
-				
-			sisplet_query($strInsert);
-			$usr_id = mysqli_insert_id($GLOBALS['connect_db']);
+
+            // Pri volitvah zaradi anonimizacije ignoriramo vse identifikatorje
+            if($voting){
+                sisplet_query("INSERT INTO srv_user 
+                                (ank_id, cookie, pass, last_status, inv_res_id) 
+                                VALUES 
+                                ('".$this->sid."', '".$user_data['cookie']."', '".$user_data['password']."', '".$user_data['status']."', '-1') ON DUPLICATE KEY UPDATE last_status=VALUES(last_status)
+                            ");
+
+                // Ce ne belezimo parapodatka za cas responsa, anonimno zabelezimo cas zadnjega responsa
+                sisplet_query("UPDATE srv_anketa SET last_response_time=NOW() WHERE id='".$this->sid."'");
+            }
+            else{
+                sisplet_query("INSERT INTO srv_user 
+                            (ank_id, email, cookie, pass, last_status, time_insert, inv_res_id) 
+                            VALUES 
+                            ('".$this->sid."', '".$user_data['email']."', '".$user_data['cookie']."', '".$user_data['password']."', '".$user_data['status']."', NOW(), '".$user_data['id']."') ON DUPLICATE KEY UPDATE last_status=VALUES(last_status), inv_res_id=VALUES(inv_res_id)
+                        ");
+            }
+
+			
+			
+            $usr_id = mysqli_insert_id($GLOBALS['connect_db']);
+
 			if ($usr_id) {
 				# za update v srv_invitations_respondents
 				$send_ok_ids[] = $user_data['id'];
-			} else {
+			} 
+            else {
 				$send_error_ids[] = $user_data;
 			}
+
 			# dodamo še srv_userbase in srv userstatus
 			$strInsertUserbase[] = "('".$usr_id."','0',NOW(),'".$global_user_id."')";
 			$strInsertUserstatus[] = "('".$usr_id."', '0', '0', NOW())";
@@ -5877,18 +6098,24 @@ class SurveyInvitationsNew {
 			$strInsert .= implode(',',$strInsertUserstatus);
 			sisplet_query($strInsert);				
 		}
-		# vstavimo v srv_data_text
-		if (count($strInsertDataText) > 0) {
-			$strInsert = "INSERT INTO srv_data_text".$this->db_table." (spr_id, vre_id, text, usr_id) VALUES ";
-			$strInsert .= implode(',',$strInsertDataText);
-			sisplet_query($strInsert);
-		}
-		# vstavimo v srv_data_vrednost
-		if (count($strInsertDataVrednost) > 0) {
-			$strInsert = "INSERT INTO srv_data_vrednost".$this->db_table." (spr_id, vre_id, usr_id) VALUES ";
-			$strInsert .= implode(',',$strInsertDataVrednost);
-			sisplet_query($strInsert);
-		}
+
+        // Pri volitvah zaradi anonimizacije ne vsatvimo nicesar v sistemske spremenljivke
+        if(!$voting){
+
+            # vstavimo v srv_data_text
+            if (count($strInsertDataText) > 0) {
+                $strInsert = "INSERT INTO srv_data_text".$this->db_table." (spr_id, vre_id, text, usr_id) VALUES ";
+                $strInsert .= implode(',',$strInsertDataText);
+                sisplet_query($strInsert);
+            }
+            # vstavimo v srv_data_vrednost
+            if (count($strInsertDataVrednost) > 0) {
+                $strInsert = "INSERT INTO srv_data_vrednost".$this->db_table." (spr_id, vre_id, usr_id) VALUES ";
+                $strInsert .= implode(',',$strInsertDataVrednost);
+                sisplet_query($strInsert);
+            }
+        }
+
 		sisplet_query("COMMIT");
 			
 		# zloopamo skozi prejemnike in personaliziramo sporočila in jih pošljemo
@@ -5897,19 +6124,13 @@ class SurveyInvitationsNew {
 		# updejtamo userja da mu je bilo poslano
 		if ( count($send_ok_ids) > 0) {
             
-            $sqlString = "UPDATE srv_invitations_recipients SET sent = '1', date_sent = '".$date_sent."' WHERE id IN (".implode(',',$send_ok_ids).")";
-			$sqlQuery = sisplet_query($sqlString);
-            
-            if (!$sqlQuery) {
+			$sqlQuery = sisplet_query("UPDATE srv_invitations_recipients SET sent='1', date_sent = '".$date_sent."' WHERE id IN (".implode(',',$send_ok_ids).")");   
+            if (!$sqlQuery)
 				$error = mysqli_error($GLOBALS['connect_db']);
-            }
             
-			$sqlString = "UPDATE srv_invitations_recipients SET last_status = '1' WHERE id IN (".implode(',',$send_ok_ids).") AND last_status IN ('0','2')";
-			$sqlQuery = sisplet_query($sqlString);
-            
-            if (!$sqlQuery) {
+			$sqlQuery = sisplet_query("UPDATE srv_invitations_recipients SET last_status='1' WHERE id IN (".implode(',',$send_ok_ids).") AND last_status IN ('0','2')");     
+            if (!$sqlQuery)
 				$error = mysqli_error($GLOBALS['connect_db']);
-			}
 		}
 
 		$msg = array($lang['srv_inv_activate_respondents']. count($send_ok_ids));
@@ -6126,6 +6347,9 @@ class SurveyInvitationsNew {
 				$sql_sub_condition = " AND i.last_status IN (".$_POST['checkboxes'].")";
 			}
 		}
+
+        // Ce imamo vklopljene volitve potem posiljamo samo tistim, katerim še nismo poslali vabila (ponovno posiljanje ni mogoce)
+        $sql_voting_condition = (SurveyInfo::getInstance()->checkSurveyModule('voting')) ? " AND i.sent = '0' AND i.cookie != '' AND i.password != ''" : "";
 		
 		// Ce imamo posiljanje brez emaila, ni potrebno da je email vnesen za posameznega respondenta
 		if($noEmailing == 1){
@@ -6150,11 +6374,12 @@ class SurveyInvitationsNew {
 		else{
 			$sql_fields = "SELECT DISTINCT i.password, i.id, i.email, i.last_status, i.list_id FROM srv_invitations_recipients AS i";
 			$sql_main_condition = " WHERE i.ank_id = '".$this->sid."' AND i.deleted = '0' AND i.unsubscribed = '0' AND i.email IS NOT NULL";
-			$sql_sort = " ORDER BY i.id ASC";
+			$sql_sort = " ORDER BY i.id ASC";            
 			
 			$sql_string = $sql_fields
 						. $advancedConditionJoin
 						. $sql_main_condition
+                        . $sql_voting_condition
 						. $advancedCondition
 						. $sql_sub_condition
 						. $sub_query
@@ -6526,12 +6751,20 @@ class SurveyInvitationsNew {
 			echo ')';
 			echo '</div>';
 			
+
 			echo '<div style="margin-left:25px;margin-bottom:10px;">';
+
 			echo '<table id="tbl_respondentArchive">';
-			echo '<th>'.$lang['srv_invitation_user_chronology_date'].'</th>';
-			echo '<th>'.$lang['srv_invitation_user_chronology_status'].'</th>';
+
+			echo '<tr>';
+			
+            echo '<th>'.$lang['srv_invitation_user_chronology_date'].'</th>';
+            // Volitve nimajo nekaterih polj
+            if(!SurveyInfo::getInstance()->checkSurveyModule('voting'))
+			    echo '<th>'.$lang['srv_invitation_user_chronology_status'].'</th>';
 			echo '<th>'.$lang['srv_inv_message_type'].'</th>';
-			echo '</tr>';
+			
+            echo '</tr>';
 				
 			$sql_string1 = "SELECT status, DATE_FORMAT(time_insert,'%d.%m.%Y, %T') AS status_time FROM srv_invitations_tracking WHERE res_id = '$_rec_id' AND inv_arch_id='".$sql_row['id']."' ORDER BY uniq ASC";
 			$sql_query1 = sisplet_query($sql_string1);
@@ -6540,8 +6773,10 @@ class SurveyInvitationsNew {
 				
 				echo '<td>'.$sql_row1['status_time'].'</td>';
 				
-				echo '<td>('.$sql_row1['status'].') - '.$lang['srv_userstatus_'.$sql_row1['status']].'</td>';
-				
+                // Volitve nimajo nekaterih polj
+                if(!SurveyInfo::getInstance()->checkSurveyModule('voting'))
+			    	echo '<td>('.$sql_row1['status'].') - '.$lang['srv_userstatus_'.$sql_row1['status']].'</td>';
+
 				echo '<td>';
 							if ($sql_row['tip'] == '0')
 				echo $lang['srv_inv_message_noemailing_type1'];
@@ -6558,12 +6793,13 @@ class SurveyInvitationsNew {
 			echo '</table>';
 			echo '</div>';
 		}
-		echo '<div style="padding:5px 0px;">';
-		echo '<span style="font-weight:600;">'.$lang['srv_inv_recipients_final_status'].'</span> ('.$lastStatus.') - '.$lang['srv_userstatus_'.$lastStatus];
-		echo '</div>';
-		
-		
-		
+
+        // Volitve nimajo nekaterih polj
+        if(!SurveyInfo::getInstance()->checkSurveyModule('voting')){
+            echo '<div style="padding:5px 0px;">';
+            echo '<span style="font-weight:600;">'.$lang['srv_inv_recipients_final_status'].'</span> ('.$lastStatus.') - '.$lang['srv_userstatus_'.$lastStatus];
+            echo '</div>';
+        }	
 		
 		echo '</div>'; // inv_select_mail_preview
 		
@@ -6682,35 +6918,64 @@ class SurveyInvitationsNew {
 		echo '</span></span>';
 
 		echo '<div id="inv_arch_mail_preview">';
+
 		echo '<table id="tbl_recipients_list">';
+
 		echo '<tr>';
-		echo '<th class="tbl_icon" title="'.$lang['srv_inv_recipients_sent'].'">'.$lang['srv_inv_recipients_sent'].'</th>';
-		echo '<th class="tbl_icon" title="'.$lang['srv_inv_recipients_responded'].'">'.$lang['srv_inv_recipients_responded'].'</th>';
-		echo '<th class="tbl_icon" title="'.$lang['srv_inv_recipients_unsubscribed'].'">'.$lang['srv_inv_recipients_unsubscribed'].'</th>';
-		echo '<th class="tbl_inv_left">'.$lang['srv_inv_recipients_email'].'</th>';
-		echo '<th>'.$lang['srv_inv_recipients_password'].'</th>';
-		echo '<th>'.$lang['srv_inv_recipients_firstname'].'</th>';
-		echo '<th>'.$lang['srv_inv_recipients_lastname'].'</th>';
-		echo '<th>'.$lang['srv_inv_recipients_max_archive_status'].'</th>';
-		echo '<th>'.$lang['srv_inv_recipients_last_status'].'</th>';
-		echo '<th>'.$lang['srv_inv_recipients_list_id'].'</th>';
+
+        // Pri volitvah ne prikazemo nekaterih stolpcev
+        if(SurveyInfo::getInstance()->checkSurveyModule('voting')){
+            echo '<th class="tbl_icon" title="'.$lang['srv_inv_recipients_sent'].'">'.$lang['srv_inv_recipients_sent'].'</th>';
+            echo '<th class="tbl_inv_left">'.$lang['srv_inv_recipients_email'].'</th>';
+            echo '<th>'.$lang['srv_inv_recipients_firstname'].'</th>';
+            echo '<th>'.$lang['srv_inv_recipients_lastname'].'</th>';
+            echo '<th>'.$lang['srv_inv_recipients_list_id'].'</th>';
+        }
+        else{
+            echo '<th class="tbl_icon" title="'.$lang['srv_inv_recipients_sent'].'">'.$lang['srv_inv_recipients_sent'].'</th>';
+            echo '<th class="tbl_icon" title="'.$lang['srv_inv_recipients_responded'].'">'.$lang['srv_inv_recipients_responded'].'</th>';
+            echo '<th class="tbl_icon" title="'.$lang['srv_inv_recipients_unsubscribed'].'">'.$lang['srv_inv_recipients_unsubscribed'].'</th>';
+            echo '<th class="tbl_inv_left">'.$lang['srv_inv_recipients_email'].'</th>';
+            echo '<th>'.$lang['srv_inv_recipients_password'].'</th>';
+            echo '<th>'.$lang['srv_inv_recipients_firstname'].'</th>';
+            echo '<th>'.$lang['srv_inv_recipients_lastname'].'</th>';
+            echo '<th>'.$lang['srv_inv_recipients_max_archive_status'].'</th>';
+            echo '<th>'.$lang['srv_inv_recipients_last_status'].'</th>';
+            echo '<th>'.$lang['srv_inv_recipients_list_id'].'</th>';
+        }
+		
 		echo '</tr>';
+
 		while ($sql_row = mysqli_fetch_assoc($sql_query)) {
 			echo '<tr>';
-			echo '<td><span class="as_link" onclick="showRecipientTracking(\''.$sql_row['res_id'].'\'); return false;"><img src="'.$site_url.'admin/survey/img_0/'.((int)$sql_row['sent'] == 1 ? 'email_sent.png' : 'email_open.png').'"></span></td>';
-			echo '<td><img src="'.$site_url.'admin/survey/icons/icons/'.((int)$sql_row['responded'] == 1 ? 'star_on.png' : 'star_off.png').'"></td>';
-			echo '<td><img src="'.$site_url.'admin/survey/img_0/'.((int)$sql_row['unsubscribed'] == 1 ? 'opdedout_on.png' : 'opdedout_off.png').'"></td>';
-			echo '<td class="tbl_inv_left">'.$sql_row['email'].'</td>';
-			echo '<td>'.$sql_row['password'].'</td>';
-			echo '<td>'.$sql_row['firstname'].'</td>';
-			echo '<td>'.$sql_row['lastname'].'</td>';
-			$status = $arch_user_max_status[$sql_row['res_id']];
-			echo '<td>'.$lang['srv_userstatus_'.$status].' ('.$status.')'.'</td>';
-			echo '<td>'.$lang['srv_userstatus_'.$sql_row['last_status']].' ('.$sql_row['last_status'].')'.'</td>';
-			echo '<td>'.$lists[$sql_row['list_id']].'</td>';
+
+            // Pri volitvah ne prikazemo nekaterih stolpcev
+            if(SurveyInfo::getInstance()->checkSurveyModule('voting')){
+                echo '<td><span class="as_link" onclick="showRecipientTracking(\''.$sql_row['res_id'].'\'); return false;"><img src="'.$site_url.'admin/survey/img_0/'.((int)$sql_row['sent'] == 1 ? 'email_sent.png' : 'email_open.png').'"></span></td>';
+                echo '<td class="tbl_inv_left">'.$sql_row['email'].'</td>';
+                echo '<td>'.$sql_row['firstname'].'</td>';
+                echo '<td>'.$sql_row['lastname'].'</td>';
+                echo '<td>'.$lists[$sql_row['list_id']].'</td>';
+            }
+            else{
+                echo '<td><span class="as_link" onclick="showRecipientTracking(\''.$sql_row['res_id'].'\'); return false;"><img src="'.$site_url.'admin/survey/img_0/'.((int)$sql_row['sent'] == 1 ? 'email_sent.png' : 'email_open.png').'"></span></td>';
+                echo '<td><img src="'.$site_url.'admin/survey/icons/icons/'.((int)$sql_row['responded'] == 1 ? 'star_on.png' : 'star_off.png').'"></td>';
+                echo '<td><img src="'.$site_url.'admin/survey/img_0/'.((int)$sql_row['unsubscribed'] == 1 ? 'opdedout_on.png' : 'opdedout_off.png').'"></td>';
+                echo '<td class="tbl_inv_left">'.$sql_row['email'].'</td>';
+                echo '<td>'.$sql_row['password'].'</td>';
+                echo '<td>'.$sql_row['firstname'].'</td>';
+                echo '<td>'.$sql_row['lastname'].'</td>';
+                $status = $arch_user_max_status[$sql_row['res_id']];
+                echo '<td>'.$lang['srv_userstatus_'.$status].' ('.$status.')'.'</td>';
+                echo '<td>'.$lang['srv_userstatus_'.$sql_row['last_status']].' ('.$sql_row['last_status'].')'.'</td>';
+                echo '<td>'.$lists[$sql_row['list_id']].'</td>';
+            }
+
 			echo '</tr>';
 		}
+
 		echo '</table>';
+
 		echo '</div>'; // inv_select_mail_preview
 
 		echo '</div>'; // id="arc_content"
@@ -6821,8 +7086,20 @@ class SurveyInvitationsNew {
 		
 		echo '<table style="width:50%"><tr>';	
 		
-		# nov način z trackingom
-		if ($this->newTracking == true) {
+        // Pri volitvah prikazemo samo osnovne stevilke - zaradi anonimizacije ni trackinga
+        if(SurveyInfo::getInstance()->checkSurveyModule('voting')){
+
+            $userAccess = UserAccess::getInstance($global_user_id);
+
+			// Ce so izklopljena ne prikazemo leve strani
+			if((int)$isEmail > 0 && $userAccess->checkUserAccess($what='invitations')){
+				echo '<td style="padding-right:10px;vertical-align: top;">';
+				$this->displayInvitationStatusVoting();
+				echo '</td>';
+			}
+        }
+		// Nov način z trackingom
+		elseif($this->newTracking == true) {
 
             $userAccess = UserAccess::getInstance($global_user_id);
 
@@ -7161,7 +7438,8 @@ class SurveyInvitationsNew {
 		}
 	}
 	
-	function displayInvitationStatusNew() {
+    // Prikaz statusov posiljanj
+	private function displayInvitationStatusNew() {
 		global $lang, $admin_type, $global_user_id, $site_url, $site_path, $app_settings;
 		
 		$isEmail = (int)SurveyInfo::getInstance()->checkSurveyModule('email');
@@ -7176,15 +7454,17 @@ class SurveyInvitationsNew {
 			echo '<p>';	
 			
 			#koliko je vseh uporabnikov v bazi
-			$sql_string  = "SELECT count(*) as cnt FROM srv_invitations_recipients WHERE ank_id = '".$this->sid."' AND deleted ='0'";
-			$sql_query = sisplet_query($sql_string);
+			$sql_query = sisplet_query("SELECT count(*) as cnt FROM srv_invitations_recipients WHERE ank_id = '".$this->sid."' AND deleted ='0'");
 			list($cnt_all_in_db) =  mysqli_fetch_row($sql_query);
 				
 			#zloopamo skozi posamezna pošiljanja in preštejemo vse potrebno
-			$sql_string  = "SELECT sia.id, sia.tip, rec_in_db, DATE_FORMAT(sia.date_send,'%d.%m.%Y, %T') AS ds,  u.name, u.surname, u.email FROM srv_invitations_archive AS sia INNER JOIN users AS u ON sia.uid = u.id WHERE ank_id = '".$this->sid."' ORDER BY sia.date_send ASC;";
-			#$sql_string  = "SELECT * FROM srv_invitations_archive WHERE ank_id = '".$this->sid."'";
-			$sql_query = sisplet_query($sql_string);
-            
+			$sql_query = sisplet_query("SELECT sia.id, sia.tip, rec_in_db, DATE_FORMAT(sia.date_send,'%d.%m.%Y, %T') AS ds,  u.name, u.surname, u.email 
+                                            FROM srv_invitations_archive AS sia 
+                                                INNER JOIN users AS u ON sia.uid = u.id 
+                                            WHERE ank_id = '".$this->sid."' 
+                                            ORDER BY sia.date_send ASC;
+                                    ");
+
             $array_dashboard = array();
 			$array_archive_subdata = array();
 			$user_max_status = array();
@@ -7624,6 +7904,146 @@ class SurveyInvitationsNew {
 		}
 	}
 
+    // Prikaz statusov posiljanj pri volitvah
+    private function displayInvitationStatusVoting() {
+		global $lang, $admin_type, $global_user_id, $site_url, $site_path, $app_settings;
+		
+		$isEmail = (int)SurveyInfo::getInstance()->checkSurveyModule('email');
+
+		$userAccess = UserAccess::getInstance($global_user_id);
+
+		// Email vabila so omogocena
+		if ((int)$isEmail > 0 && $userAccess->checkUserAccess($what='invitations')) {
+			
+			echo '<fieldset class="inv_fieldset"><legend>'.$lang['srv_inv_nav_email_status'].'</legend>';
+			echo '<div class="inv_filedset_inline_div">';
+			echo '<p>';	
+			
+			#koliko je vseh uporabnikov v bazi in kolkim je bil mail poslan
+			$sql_count = sisplet_query("SELECT count(id) as cnt, sent
+                                            FROM srv_invitations_recipients 
+                                            WHERE ank_id='".$this->sid."' AND deleted ='0'
+                                            GROUP BY sent
+                                    ");
+
+            $cnt_all_in_db = 0;
+            $cnt_sent_in_db = 0;
+			while($row_count = mysqli_fetch_array($sql_count)){
+
+                $cnt_all_in_db += (int)$row_count['cnt'];
+
+                if($row_count['sent'] == '1'){
+                    $cnt_sent_in_db += (int)$row_count['cnt'];
+                }
+            }
+
+				
+            echo '<table class="inv_dashboard_table">';
+
+            // Vsi v bazi
+            echo '<tr>';
+            echo '<th>'.$lang['srv_inv_dashboard_tbl_all'].'</th>';
+            echo '<th>'.(int)$cnt_all_in_db.'</th>';
+            echo '<th>-</th>';
+            echo '<th>100%</th>';
+            echo '</tr>';
+
+            // Poslani
+            echo '<tr>';
+            echo '<td>'.$lang['srv_inv_dashboard_tbl_send'].'</td>';
+            echo '<td>'.(int)$cnt_sent_in_db.'</td>';
+            echo '<td>'.((int)$cnt_sent_in_db > 0 ? '100%' : '0%').'</td>';
+            echo '<td>'.$this->formatNumber(((int)$cnt_sent_in_db > 0 ? (int)$cnt_sent_in_db*100/(int)$cnt_all_in_db : 0),0,'%').'</td>';
+            echo '</tr>';
+
+            echo '</table>';
+
+            echo '</p>';
+			echo '</div>';
+			echo '</fieldset>';
+		}
+		// Email vabila niso omogocena
+		else {
+			echo '<fieldset class="inv_fieldset"><legend>'.$lang['srv_inv_nav_email_status'].'</legend>';
+			echo '<div class="inv_filedset_inline_div">';
+			echo '<p>';
+				
+			echo $lang['srv_inv_dashboard_not_enabled'];
+		
+			# uporabnik nima pravic omogočit vabil
+			if (!$userAccess->checkUserAccess($what='invitations')) {
+				echo '<br/>'.$lang['srv_inv_dashboard_no_permissions'];
+			} 
+			# uporabnik lahko vklopi email vabila
+			else {
+				echo '&nbsp;<a href="#" onclick="enableEmailInvitation(this);">'.$lang['srv_omogoci'].'</a>';
+			}
+			
+			echo '</p>';
+			echo '</div>';
+			echo '</fieldset>';
+		}
+		
+        
+        // predpripravimo podatke za vsa pošiljanja
+        /*$cnt_by_sendings = array();
+        
+		$all_units_count = count($cnt_by_user);
+		if ($all_units_count > 0) {
+			foreach ($cnt_by_user AS $uid => $ucnt) {
+				$cnt_by_sendings[$ucnt]++;
+			}	
+            
+			echo '<br/>';
+			
+			#pregled po pošiljanjih	
+			echo '<fieldset class="inv_fieldset">';
+			
+			echo '<legend>';
+			echo '<span class="pointer" onClick="$(this).parent().parent().find(\'.inv_filedset_inline_div\').toggle(); $(this).find(\'.plus\').toggle();$(this).find(\'.minus\').toggle();">';
+			echo '<span class="plus strong displayNone blue">+ </span>';
+			echo '<span class="minus strong blue">- </span>';
+			echo '<span class="legend blue">'.$lang['srv_inv_nav_email_sending_status'].'</span>';
+			echo '</span>';
+			echo Help::display('srv_inv_cnt_by_sending');
+			echo '</legend>';
+			
+			echo '<br/>';
+			
+			echo '<div class="inv_filedset_inline_div">';
+			echo '<table style="border-spacing:0px; padding:0px; margin:0 0 20px 15px;">';
+			echo '<colgrup>';
+			echo '<col style="min-width:150px;"/>';
+			echo '<col style="min-width:150px;"/>';
+			echo '<col style="min-width:150px;"/>';
+			echo '</colgrup>';
+			echo '<tr>';
+			echo '<th class="anl_al">'.$lang['srv_inv_sending_overview_cnt'].'</th>';
+			echo '<th class="anl_al">'.$lang['srv_inv_sending_overview_units'].'</th>';
+			echo '<th class="anl_al">'.$lang['srv_inv_sending_overview_percentage'].'</th>';
+			echo '</tr>';
+			if ($cnt_by_sendings > 0) {
+				foreach ($cnt_by_sendings AS $cnt => $units) {
+					echo '<tr>';
+					echo '<td>'.$cnt.'</td>';
+					echo '<td>'.$units.'</td>';
+					$percent = ($all_units_count > 0) ? $units / $all_units_count * 100 : 0;
+					echo '<td>'.Common::formatNumber ($percent,0,null,'%').'</td>';
+					echo '</tr>';
+				}
+			}
+			echo '<tr>';
+			echo '<td class="anl_bt_dot red">'.$lang['srv_inv_sending_overview_sum'].'</td>';
+			echo '<td class="anl_bt_dot red">'.$all_units_count.'</td>';
+			$percent = ($all_units_count > 0) ? $all_units_count / $all_units_count * 100 : 0;
+			echo '<td class="anl_bt_dot red">'.Common::formatNumber ($percent,0,null,'%').'</td>';
+			echo '</tr>';
+			echo '</table>';
+			echo '</div>';
+			echo '</fieldset>';
+		}*/
+	}
+
 
 	function showInvitationSettings() {
 		global $lang, $admin_type, $global_user_id, $site_url, $site_path, $app_settings;
@@ -7682,10 +8102,10 @@ class SurveyInvitationsNew {
 			else{
 			
 				if($noEmailing == 1){
-					echo '<table style="width:50%;">';					
+					echo '<table class="invitations_settings" style="width:50%;">';					
 				}
 				else{
-					echo '<table style="width:100%;">';	
+					echo '<table class="invitations_settings" style="width:100%;">';	
 					echo '<colgroup style="width:48%;"></colgroup>';	
 					echo '<colgroup style="width:48%;"></colgroup>';
 				}
@@ -7699,6 +8119,15 @@ class SurveyInvitationsNew {
 				echo '<div class="inv_filedset_inline_div">';
 				
 				echo '<div id="surveyInvitationSetting">';
+
+                // Preverimo ce je vklopljen modul za volitve - potem ne pustimo nobenih preklopov
+                $voting_disabled = '';
+                if(SurveyInfo::getInstance()->checkSurveyModule('voting')){
+                    $voting_disabled = ' disabled';
+
+                    // Warning za volitve
+                    echo '<p class="red bold">'.$lang['srv_voting_warning'].'</p>';
+                }
 				
 				$individual = (int)$this->surveySettings['individual_invitation'];
 				
@@ -7709,8 +8138,8 @@ class SurveyInvitationsNew {
 					echo ' '.Help::display('srv_user_base_individual_invitaition_note2').' </label>';
 				else
 					echo ' '.Help::display('srv_user_base_individual_invitaition_note').' </label>'; 
-				echo '<label><input type="radio" name="individual_invitation" value="0" id="individual_invitation_0"'.($individual == 0 ? ' checked="checked"' : '').' onChange="surveyBaseSettingRadio(\'individual_invitation\',true);"/>'.$lang['no1'].'</label>';
-				echo '<label><input type="radio" name="individual_invitation" value="1" id="individual_invitation_1"'.($individual == 1 ? ' checked="checked"' : '').' onChange="surveyBaseSettingRadio(\'individual_invitation\',true);"/>'.$lang['yes'].'</label>';				
+				echo '<label><input type="radio" name="individual_invitation" value="0" id="individual_invitation_0"'.($individual == 0 ? ' checked="checked"' : '').' '.$voting_disabled.' onChange="surveyBaseSettingRadio(\'individual_invitation\',true);"/>'.$lang['no1'].'</label>';
+				echo '<label><input type="radio" name="individual_invitation" value="1" id="individual_invitation_1"'.($individual == 1 ? ' checked="checked"' : '').' '.$voting_disabled.' onChange="surveyBaseSettingRadio(\'individual_invitation\',true);"/>'.$lang['yes'].'</label>';				
 				echo '</p>';
 
 				// Ce niso indvidualizirana imamo samo nacin posiljanja
@@ -7719,8 +8148,8 @@ class SurveyInvitationsNew {
 					// Nacin posiljanja (email, posta, sms...)
 					echo '<p>';
 					echo '<label class="lbl_email_setting">'.$lang['srv_inv_message_type'].': '.Help::display('srv_inv_sending_type').'</label>';
-					echo '<label><input type="radio" name="inv_messages_noEmailing" value="0" id="inv_messages_noEmailing_1"'.($noEmailing == 0 ? ' checked="checked"' : '').' onChange="noEmailingToggle(\'0\');"/>'.$lang['srv_inv_message_noemailing_0'].'</label>';
-					echo '<label><input type="radio" name="inv_messages_noEmailing" value="1" id="inv_messages_noEmailing_1"'.($noEmailing == 1 ? ' checked="checked"' : '').' onChange="noEmailingToggle(\'1\');"/>'.$lang['srv_inv_message_noemailing_1'].'</label>';
+					echo '<label><input type="radio" name="inv_messages_noEmailing" value="0" id="inv_messages_noEmailing_1"'.($noEmailing == 0 ? ' checked="checked"' : '').' '.$voting_disabled.' onChange="noEmailingToggle(\'0\');"/>'.$lang['srv_inv_message_noemailing_0'].'</label>';
+					echo '<label><input type="radio" name="inv_messages_noEmailing" value="1" id="inv_messages_noEmailing_1"'.($noEmailing == 1 ? ' checked="checked"' : '').' '.$voting_disabled.' onChange="noEmailingToggle(\'1\');"/>'.$lang['srv_inv_message_noemailing_1'].'</label>';
 					echo '</p>';
 					
 					// Nacin dokumentiranja (posta, sms, drugo)
@@ -7728,9 +8157,9 @@ class SurveyInvitationsNew {
 						$noEmailingType = SurveySession::get('inv_noEmailing_type');
 						echo '<p>';
 						echo '<label class="lbl_email_setting">'.$lang['srv_inv_message_type_external'].':</label>';
-						echo '<label><input type="radio" name="noMailType" value="0" id="noMailType1"'.($noEmailingType == 0 ? ' checked="checked"' : '').' onClick="noEmailingType(\'0\');" />'.$lang['srv_inv_message_noemailing_type1'].'</label>';
-						echo '<label><input type="radio" name="noMailType" value="1" id="noMailType2"'.($noEmailingType == 1 ? ' checked="checked"' : '').' onClick="noEmailingType(\'1\');" />'.$lang['srv_inv_message_noemailing_type2'].'</label>';
-						echo '<label><input type="radio" name="noMailType" value="2" id="noMailType3"'.($noEmailingType == 2 ? ' checked="checked"' : '').' onClick="noEmailingType(\'2\');" />'.$lang['srv_inv_message_noemailing_type3'].'</label>';
+						echo '<label><input type="radio" name="noMailType" value="0" id="noMailType1"'.($noEmailingType == 0 ? ' checked="checked"' : '').' '.$voting_disabled.' onClick="noEmailingType(\'0\');" />'.$lang['srv_inv_message_noemailing_type1'].'</label>';
+						echo '<label><input type="radio" name="noMailType" value="1" id="noMailType2"'.($noEmailingType == 1 ? ' checked="checked"' : '').' '.$voting_disabled.' onClick="noEmailingType(\'1\');" />'.$lang['srv_inv_message_noemailing_type2'].'</label>';
+						echo '<label><input type="radio" name="noMailType" value="2" id="noMailType3"'.($noEmailingType == 2 ? ' checked="checked"' : '').' '.$voting_disabled.' onClick="noEmailingType(\'2\');" />'.$lang['srv_inv_message_noemailing_type3'].'</label>';
 						echo '</p>';
 					}
 				} 
@@ -7740,8 +8169,8 @@ class SurveyInvitationsNew {
 					// Nacin posiljanja (email, posta, sms...)
 					echo '<p>';
 					echo '<label class="lbl_email_setting">'.$lang['srv_inv_message_type'].': '.Help::display('srv_inv_sending_type').'</label>';
-					echo '<label><input type="radio" name="inv_messages_noEmailing" value="0" id="inv_messages_noEmailing_1"'.($noEmailing == 0 ? ' checked="checked"' : '').' onChange="noEmailingToggle(\'0\');"/>'.$lang['srv_inv_message_noemailing_0'].'</label>';
-					echo '<label><input type="radio" name="inv_messages_noEmailing" value="1" id="inv_messages_noEmailing_1"'.($noEmailing == 1 ? ' checked="checked"' : '').' onChange="noEmailingToggle(\'1\');"/>'.$lang['srv_inv_message_noemailing_1'].'</label>';
+					echo '<label><input type="radio" name="inv_messages_noEmailing" value="0" id="inv_messages_noEmailing_1"'.($noEmailing == 0 ? ' checked="checked"' : '').' '.$voting_disabled.' onChange="noEmailingToggle(\'0\');"/>'.$lang['srv_inv_message_noemailing_0'].'</label>';
+					echo '<label><input type="radio" name="inv_messages_noEmailing" value="1" id="inv_messages_noEmailing_1"'.($noEmailing == 1 ? ' checked="checked"' : '').' '.$voting_disabled.' onChange="noEmailingToggle(\'1\');"/>'.$lang['srv_inv_message_noemailing_1'].'</label>';
 					echo '</p>';
 					
 					// Nacin dokumentiranja (posta, sms, drugo)
@@ -7749,9 +8178,9 @@ class SurveyInvitationsNew {
 						$noEmailingType = SurveySession::get('inv_noEmailing_type');
 						echo '<p>';
 						echo '<label class="lbl_email_setting">'.$lang['srv_inv_message_type_external'].':</label>';
-						echo '<label><input type="radio" name="noMailType" value="0" id="noMailType1"'.($noEmailingType == 0 ? ' checked="checked"' : '').' onClick="noEmailingType(\'0\');" />'.$lang['srv_inv_message_noemailing_type1'].'</label>';
-						echo '<label><input type="radio" name="noMailType" value="1" id="noMailType2"'.($noEmailingType == 1 ? ' checked="checked"' : '').' onClick="noEmailingType(\'1\');" />'.$lang['srv_inv_message_noemailing_type2'].'</label>';
-						echo '<label><input type="radio" name="noMailType" value="2" id="noMailType3"'.($noEmailingType == 2 ? ' checked="checked"' : '').' onClick="noEmailingType(\'2\');" />'.$lang['srv_inv_message_noemailing_type3'].'</label>';
+						echo '<label><input type="radio" name="noMailType" value="0" id="noMailType1"'.($noEmailingType == 0 ? ' checked="checked"' : '').' '.$voting_disabled.' onClick="noEmailingType(\'0\');" />'.$lang['srv_inv_message_noemailing_type1'].'</label>';
+						echo '<label><input type="radio" name="noMailType" value="1" id="noMailType2"'.($noEmailingType == 1 ? ' checked="checked"' : '').' '.$voting_disabled.' onClick="noEmailingType(\'1\');" />'.$lang['srv_inv_message_noemailing_type2'].'</label>';
+						echo '<label><input type="radio" name="noMailType" value="2" id="noMailType3"'.($noEmailingType == 2 ? ' checked="checked"' : '').' '.$voting_disabled.' onClick="noEmailingType(\'2\');" />'.$lang['srv_inv_message_noemailing_type3'].'</label>';
 						echo '</p>';
 					}
 					
@@ -7759,8 +8188,8 @@ class SurveyInvitationsNew {
 					if($noEmailing != 1){
 						echo '<p>';
 						echo '<label class="lbl_email_setting">'.$lang['usercode_required1'].':'.Help::display('usercode_required').'</label>';
-						echo '<label><input type="radio" name="usercode_required" value="0" id="usercode_required_0"'.($row['usercode_required'] == 0 ? ' checked="checked"' : '').' onChange="surveyBaseSettingRadio(\'usercode_required\',true);"/>'.$lang['usercode_required2'].'</label>';
-						echo '<label><input type="radio" name="usercode_required" value="1" id="usercode_required_1"'.($row['usercode_required'] == 1 ? ' checked="checked"' : '').' onChange="surveyBaseSettingRadio(\'usercode_required\',true);"/>'.$lang['usercode_required3'].'</label>';
+						echo '<label><input type="radio" name="usercode_required" value="0" id="usercode_required_0"'.($row['usercode_required'] == 0 ? ' checked="checked"' : '').' '.$voting_disabled.' onChange="surveyBaseSettingRadio(\'usercode_required\',true);"/>'.$lang['usercode_required2'].'</label>';
+						echo '<label><input type="radio" name="usercode_required" value="1" id="usercode_required_1"'.($row['usercode_required'] == 1 ? ' checked="checked"' : '').' '.$voting_disabled.' onChange="surveyBaseSettingRadio(\'usercode_required\',true);"/>'.$lang['usercode_required3'].'</label>';
 						echo '</p>';
 					}
 					
@@ -7778,10 +8207,10 @@ class SurveyInvitationsNew {
 					// Dostop brez kode
 					
 					
-					echo '<p>';
-					echo '<label for="usercode_skip_0" class="lbl_email_setting">'.$lang['srv_user_base_access_check'].' '.Help::display('srv_inv_no_code').'</label>';
-					echo '<input type="checkbox" name="usercode_skip_checkbox" value="0" id="usercode_skip_0"'.($row['usercode_skip'] != 0 ? ' checked="checked"' : '').' onChange="surveyBaseSettingRadio(\'usercode_skip\',true);" />';
-					echo '</p>';
+					echo '<p><label for="usercode_skip_0" class="lbl_email_setting">';
+					echo $lang['srv_user_base_access_check'].' '.Help::display('srv_inv_no_code');
+					echo '<input type="checkbox" name="usercode_skip_checkbox" value="0" id="usercode_skip_0"'.($row['usercode_skip'] != 0 ? ' checked="checked"' : '').' '.$voting_disabled.' onChange="surveyBaseSettingRadio(\'usercode_skip\',true);" />';
+					echo '</label></p>';
 					if($row['usercode_skip'] > 0){
 						echo '<div style="float: left; margin: -10px 0 0 15px;">';
 						echo '<label class="lbl_email_setting">'.$lang['srv_user_base_access'].Help::display('usercode_skip').' </label>';
@@ -7818,15 +8247,13 @@ class SurveyInvitationsNew {
 					
 					// Gorenje tega nima
 					if (!Common::checkModule('gorenje')){
+
 						echo '<td style="padding-right:10px;vertical-align: top;">';
 						echo '<fieldset class="inv_fieldset"><legend>'.$lang['srv_email_setting_title'].'</legend>';
 						echo '<div class="inv_filedset_inline_div">';
 						
 						echo '<div id="surveyInvitationSettingServer">';
-
-						//echo '<p>V delu...</p>';
 						$this->viewServerSettings();
-						
 						echo '</div>';
 						
 						echo '</div>';				
@@ -9850,6 +10277,7 @@ class SurveyInvitationsNew {
 		global $global_user_id;
 		global $mysql_database_name;
 		global $aai_instalacija;
+
 		
 		$row = SurveyInfo::getInstance()->getSurveyRow();
 
@@ -9866,7 +10294,36 @@ class SurveyInvitationsNew {
         // Admini na testu, www in virtualkah imajo 1ka smtp
         if(($admin_type == 0) && ($mysql_database_name == 'www1kasi' || $mysql_database_name == 'test1kasi' || $mysql_database_name == 'real1kasi'))
             $enabled1ka = true;
+
         
+        // Squalo
+        $squalo = new SurveyInvitationsSqualo($this->sid);
+        if($squalo->getSqualoEnabled()){
+
+            // Vklop squalo
+            echo '<div class="squalo_switch"><p>';
+
+            echo '<span class="bold">'.$lang['srv_squalo'].':</span>&nbsp;';
+
+            echo '<input type="hidden" name="squalo_mode" value="0">';
+            echo '<label><input type="checkbox" name="squalo_mode" id="squalo_mode" value="1" '.($squalo->getSqualoActive() ? 'checked ="checked" ' : '').' style="vertical-align:-2px;" onclick="squaloSwitch();">';
+            echo $lang['srv_squalo_sending'].' </label>';
+
+            echo '</p></div>';
+
+
+            // Squalo nastavitve...
+            echo '<div class="squalo_settings '.(!$squalo->getSqualoActive() ? ' displayNone' : '').'">';
+
+            echo $lang['srv_squalo_active'];
+
+            echo '</div>';
+        }
+
+
+        // Izbira streznika
+        echo '<div class="mail_mode_switch '.($squalo->getSqualoActive() ? ' displayNone' : '').'">';
+
         // Opozorilo, ce imamo vklopljena vabila, da gre za iste nastavitve
 		echo '<p class="red bold">'.$lang['srv_email_server_settings_warning'].'</p>';
 
@@ -9894,10 +10351,13 @@ class SurveyInvitationsNew {
         echo $lang['srv_email_setting_adapter2'].' </label>';
 
 		echo Help :: display('srv_mail_mode');
+
+        echo '</div>';
+
 		
 		#1KA
 		$enkaSettings = $MA->get1KASettings($raziskave=true);
-		echo '<div id="send_mail_mode0" '.(!$MA->is1KA() ? ' class="displayNone"' : '').'>';
+		echo '<div id="send_mail_mode0" '.(!$MA->is1KA() || $squalo->getSqualoActive() ? ' class="displayNone"' : '').'>';
 		echo '<br /><span class="bold">'.$lang['srv_email_setting_settings'].'</span>';
 		echo '<br />';	
 		# from
@@ -9928,7 +10388,7 @@ class SurveyInvitationsNew {
 		
 		#GMAIL - Google
 		$enkaSettings = $MA->getGoogleSettings();
-		echo '<div id="send_mail_mode1" '.(!$MA->isGoogle() ? ' class="displayNone"' : '').'>';
+		echo '<div id="send_mail_mode1" '.(!$MA->isGoogle() || $squalo->getSqualoActive() ? ' class="displayNone"' : '').'>';
 		echo '<br /><span class="italic">'.$lang['srv_email_setting_adapter1_note'].'</span><br />';
 		echo '<br /><span class="bold">'.$lang['srv_email_setting_settings'].'</span><br />';
 		# from
@@ -9944,7 +10404,7 @@ class SurveyInvitationsNew {
 
 		#SMTP
 		$enkaSettings = $MA->getSMTPSettings();
-		echo '<div id="send_mail_mode2" '.(!$MA->isSMTP() ? ' class="displayNone"' : '').'>';
+		echo '<div id="send_mail_mode2" '.(!$MA->isSMTP() || $squalo->getSqualoActive() ? ' class="displayNone"' : '').'>';
 		echo '<br /><span class="italic">'.$lang['srv_email_setting_adapter2_note'].'</span><br />';
 		echo '<br /><span class="bold">'.$lang['srv_email_setting_settings'].'</span><br />';
 		# from - NICE
@@ -9965,7 +10425,7 @@ class SurveyInvitationsNew {
 		#autentikacija
 		echo '<p>';
 		echo $lang['srv_email_setting_autentication'];
-		echo '<input type="radio" name="SMTPAuth2" value="0" '.((int)$enkaSettings['SMTPAuth'] != 1 ? 'checked ="checked" ' : '').'>';
+		echo '<label><input type="radio" name="SMTPAuth2" value="0" '.((int)$enkaSettings['SMTPAuth'] != 1 ? 'checked ="checked" ' : '').'>';
 		echo $lang['srv_email_setting_no'].'</label>';
 		echo '<label><input type="radio" name="SMTPAuth2" value="1" '.((int)$enkaSettings['SMTPAuth'] == 1 ? 'checked ="checked" ' : '').'>';
 		echo $lang['srv_email_setting_yes'].'</label>';
@@ -9973,7 +10433,7 @@ class SurveyInvitationsNew {
 		#Varnost SMTPSecure
 		echo '<p>';
 		echo $lang['srv_email_setting_encryption'];
-		echo '<input type="radio" name="SMTPSecure2" value="0" '.((int)$enkaSettings['SMTPSecure'] == 0 ? 'checked ="checked" ' : '').'>';
+		echo '<label><input type="radio" name="SMTPSecure2" value="0" '.((int)$enkaSettings['SMTPSecure'] == 0 ? 'checked ="checked" ' : '').'>';
 		echo $lang['srv_email_setting_encryption_none'].'</label>';
 		echo '<label><input type="radio" name="SMTPSecure2" value="ssl" '.($enkaSettings['SMTPSecure'] == 'ssl' ? 'checked ="checked" ' : '').'>';
 		echo $lang['srv_email_setting_encryption_ssl'].'</label>';
@@ -10018,8 +10478,8 @@ class SurveyInvitationsNew {
 		echo $lang['srv_email_setting_btn_save'] . '</a></div></span>';
 		
 		// Gumb preveri nastavitve
-		echo '<span id="send_mail_mode_test"  class="floatRight spaceRight"><div class="buttonwrapper"><a class="ovalbutton ovalbutton_green" href="#" onclick="showTestSurveySMTP(); return false;">';
-		echo $lang['srv_email_setting_btn_test'].'</a></div></span>';
+        echo '<span id="send_mail_mode_test" class="floatRight spaceRight '.($squalo->getSqualoActive() ? ' displayNone' : '').'"><div class="buttonwrapper"><a class="ovalbutton ovalbutton_green" href="#" onclick="showTestSurveySMTP(); return false;">';
+        echo $lang['srv_email_setting_btn_test'].'</a></div></span>';
 		
 		
 		if ($_GET['s'] == '1') {

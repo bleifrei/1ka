@@ -449,6 +449,11 @@ iframe {
   margin: 20px 0 0 0 !important;
   padding: 0 !important;
 }
+#outercontainer #container .grupa .spremenljivka.tip_4 .upload_fotoresults_delete, #outercontainer #container .grupa .spremenljivka.tip_21 .upload_fotoresults_delete, #outercontainer #container .grupa .spremenljivka.tip_7 .upload_fotoresults_delete {
+  position: absolute;
+  left: 100px;
+  margin: 20px 0 10px 0;
+}
 #outercontainer #container .grupa .spremenljivka.tip_8 input[type=text],
 #outercontainer #container .grupa .spremenljivka.tip_8 input[type=email] {
   box-sizing: border-box;

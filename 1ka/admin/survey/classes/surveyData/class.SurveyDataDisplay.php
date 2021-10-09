@@ -1104,30 +1104,33 @@ class SurveyDataDisplay{
 		echo '<li>';
 		echo '  <input type="checkbox" onclick="setDataView(\''.VAR_DATA.'\',$(this).is(\':checked\'))" '.( self::$_VARS[VAR_DATA] ? ' checked="checked"' : '').(self::$_VARS[VAR_SHOW_SYSTEM] ? ' disabled' : '').' id="data" /><label for="data" '.(self::$_VARS[VAR_SHOW_SYSTEM] ? ' class="gray"' : '').'>'.$lang['srv_displaydata_data'].'</label>';
 		echo '</li>';
-		
-		// meta        
-		echo '<li>';
-		echo '  <input type="checkbox" onclick="setDataView(\''.VAR_METAFULL.'\',$(this).is(\':checked\'))" '.( self::$_VARS[VAR_METAFULL] ? ' checked="checked"' : '').(self::$_VARS[VAR_SHOW_SYSTEM] ? ' disabled' : '').' id="fullmeta" /><label for="fullmeta" '.(self::$_VARS[VAR_SHOW_SYSTEM] ? ' class="gray"' : '').'>'.$lang['srv_displaydata_meta'].'</label>';
-		echo '</li>';
+	
+        // Preverimo ce je vklopljen modul za volitve - potem nimamo identifikatorjev
+        if(!SurveyInfo::getInstance()->checkSurveyModule('voting')){
 
-		// če imamo sistemske podatke katere moramo prikazovati ločeno - IDENTIFIKATORJI
-		if (!isset(self::$_HEADERS['_settings']['count_system_data_variables'])	|| (isset(self::$_HEADERS['_settings']['count_system_data_variables']) && (int)self::$_HEADERS['_settings']['count_system_data_variables'] > 0)) {
-            
+            // Parapodatki        
             echo '<li>';
-			echo '  <label><input type="checkbox" onclick="setDataView(\''.VAR_SHOW_SYSTEM.'\',$(this).is(\':checked\'))" '.( self::$_VARS[VAR_SHOW_SYSTEM] ? ' checked="checked"' : '').' id="showsystem" />'.$lang['srv_displaydata_system_data'].'</label>';
-			echo '</li>';
-		}
-		// Po novem vedno prikazemo checkbox identifikatorji - samo je odkljukan in disablan
-		else{
-			echo '<li>';
-			echo '  <label class="gray"><input type="checkbox" checked="checked" disabled="disabled" id="showsystem" />'.$lang['srv_displaydata_system_data'].'</label>';
-			echo '</li>';
-		}
-		
-		// datum
-		echo '<li>';
-		echo '<label '.(self::$_VARS[VAR_SHOW_SYSTEM] ? ' class="gray"' : '').'><input type="checkbox" onclick="setDataView(\''.VAR_SHOW_DATE.'\',$(this).is(\':checked\'))" '.( self::$_VARS[VAR_SHOW_DATE] ? ' checked="checked"' : '').(self::$_VARS[VAR_SHOW_SYSTEM] ? ' disabled' : '').' id="showdate" />'.$lang['srv_data_date'].'</label>';
-        echo '</li>';
+            echo '  <input type="checkbox" onclick="setDataView(\''.VAR_METAFULL.'\',$(this).is(\':checked\'))" '.( self::$_VARS[VAR_METAFULL] ? ' checked="checked"' : '').(self::$_VARS[VAR_SHOW_SYSTEM] ? ' disabled' : '').' id="fullmeta" /><label for="fullmeta" '.(self::$_VARS[VAR_SHOW_SYSTEM] ? ' class="gray"' : '').'>'.$lang['srv_displaydata_meta'].'</label>';
+            echo '</li>';
+            
+            // če imamo sistemske podatke katere moramo prikazovati ločeno - IDENTIFIKATORJI
+            if(!isset(self::$_HEADERS['_settings']['count_system_data_variables'])	|| (isset(self::$_HEADERS['_settings']['count_system_data_variables']) && (int)self::$_HEADERS['_settings']['count_system_data_variables'] > 0)) {
+                echo '<li>';
+                echo '  <label><input type="checkbox" onclick="setDataView(\''.VAR_SHOW_SYSTEM.'\',$(this).is(\':checked\'))" '.( self::$_VARS[VAR_SHOW_SYSTEM] ? ' checked="checked"' : '').' id="showsystem" />'.$lang['srv_displaydata_system_data'].'</label>';
+                echo '</li>';
+            }
+            // Po novem vedno prikazemo checkbox identifikatorji - samo je odkljukan in disablan
+            else{
+                echo '<li>';
+                echo '  <label class="gray"><input type="checkbox" checked="checked" disabled="disabled" id="showsystem" />'.$lang['srv_displaydata_system_data'].'</label>';
+                echo '</li>';
+            }
+
+            // datum
+            echo '<li>';
+            echo '<label '.(self::$_VARS[VAR_SHOW_SYSTEM] ? ' class="gray"' : '').'><input type="checkbox" onclick="setDataView(\''.VAR_SHOW_DATE.'\',$(this).is(\':checked\'))" '.( self::$_VARS[VAR_SHOW_DATE] ? ' checked="checked"' : '').(self::$_VARS[VAR_SHOW_SYSTEM] ? ' disabled' : '').' id="showdate" />'.$lang['srv_data_date'].'</label>';
+            echo '</li>';
+        }
         
 		// zaporedna številka
 		echo '<li>';
@@ -1422,8 +1425,6 @@ class SurveyDataDisplay{
 		echo '<colgroup>';
 		# colspan za ikonce
 		if ($stolpci > 0) {
-			//for ($i=0; $i<$stolpci; $i++)
-			//	echo '<col class="data_edit">';
 			echo '<col class="data_edit"'.($stolpci > 1 ? (' span="'.$stolpci.'"') : '').'>';
 		}
 
@@ -1533,8 +1534,6 @@ class SurveyDataDisplay{
 
 		# colspan za ikonce
 		if ($stolpci > 0) {
-			//for ($i=0; $i<$stolpci; $i++)
-			//	echo '<th class="data_edit">&nbsp;</th>';
 			echo '<th class="data_edit"'.($stolpci > 1 ? (' colspan="'.$stolpci.'"') : '').'>&nbsp;</td>';
 		}
 
@@ -1547,7 +1546,7 @@ class SurveyDataDisplay{
 			if (isset(self::$_SVP_PV[$spid]) && count($spremenljivka['grids']) > 0) {
 				if(self::$showLineNumber &&  $spr_cont+1 == self::$lineoffset) {
 					echo '<th title="'.$lang['srv_line_number'].'" spr_id="lineNo">';
-					echo '<div class="dataCell" >'.$lang['srv_line_number'].'</div>';
+					echo '<div class="dataCell">'.$lang['srv_line_number'].'</div>';
 					echo '</th>';
 				}
 				
@@ -2749,7 +2748,7 @@ class SurveyDataDisplay{
 		echo '</div>';
 
 
-		//div na desni z metapodatki
+		// Div na desni z metapodatki
 		echo '<div id="quick_edit_meta">';
 		self::displayQuickEditMeta();
 		echo '</div>';
@@ -2990,21 +2989,25 @@ class SurveyDataDisplay{
 		echo '<tr><td class="left">'.$lang['srv_recnum'].':</td>';
 		echo '<td class="right">'.($rowu['recnum'] ? $rowu['recnum']  : '&nbsp;').'</td></tr>';
 		
-		// browser
-		echo '<tr><td class="left">'.$lang['browser'].':</td>';
-		echo '<td class="right">'.($rowu['useragent'] ? $rowu['useragent'] : '&nbsp;').'</td></tr>';
-		
-		// javascript
-		echo '<tr><td class="left">'.$lang['javascript'].':</td>';
-		echo '<td class="right">'.(($rowu['javascript'] == 1) ? $lang['yes'] : $lang['no1']).'</td></tr>';
-		
-		// jezik
-		// Dobimo vse jezike za katere obstaja jezikovna datoteka
-        include_once($site_path.'lang/jeziki.php');
-		$jeziki = $lang_all_global['ime'];
-		$jeziki['0'] = $lang['language'];
-		echo '<tr><td class="left">'.$lang['lang'].':</td>';
-		echo '<td class="right">'.$jeziki[$rowu['language']].'</td></tr>';
+        // Pri volitvah nimamo parapodatkov
+        if (!SurveyInfo::getInstance()->checkSurveyModule('voting')){
+
+            // browser
+            echo '<tr><td class="left">'.$lang['browser'].':</td>';
+            echo '<td class="right">'.($rowu['useragent'] ? $rowu['useragent'] : '&nbsp;').'</td></tr>';
+            
+            // javascript
+            echo '<tr><td class="left">'.$lang['javascript'].':</td>';
+            echo '<td class="right">'.(($rowu['javascript'] == 1) ? $lang['yes'] : $lang['no1']).'</td></tr>';
+            
+            // jezik
+            // Dobimo vse jezike za katere obstaja jezikovna datoteka
+            include_once($site_path.'lang/jeziki.php');
+            $jeziki = $lang_all_global['ime'];
+            $jeziki['0'] = $lang['language'];
+            echo '<tr><td class="left">'.$lang['lang'].':</td>';
+            echo '<td class="right">'.$jeziki[$rowu['language']].'</td></tr>';
+        }
 		
 		// status
 		echo '<tr><td class="left">'.$lang['status'].':</td>';
@@ -3014,77 +3017,78 @@ class SurveyDataDisplay{
 		echo '<tr><td class="left">'.$lang['srv_data_lurker'].':</td>';
 		echo '<td class="right">'.(($rowu['lurker'] == 1) ? $lang['yes'] : $lang['no1']).'</td></tr>';
 		
-		//referer
-		echo '<tr><td class="left">'.$lang['referer'].':</td>';
-		echo '<td class="right">'.($rowu['referer'] ? $rowu['referer'] : '&nbsp;').'</td></tr>';
+        // Pri volitvah nimamo parapodatkov
+        if (!SurveyInfo::getInstance()->checkSurveyModule('voting')){
 
-		//email - samo forma
-		if($rowa['survey_type'] == 1){
-			echo '<tr><td class="left">'.$lang['email'].':</td>';
-			echo '<td class="right">'.($rowu['email'] ? $rowu['email'] : '&nbsp;').'</td></tr>';
-		}
+            // referer
+            echo '<tr><td class="left">'.$lang['referer'].':</td>';
+            echo '<td class="right">'.($rowu['referer'] ? $rowu['referer'] : '&nbsp;').'</td></tr>';
 
-		// spreminjal
-		$datetime = strtotime($rowu['time_insert']);
-		$text = date("d.m.Y, H:i:s", $datetime);
-		echo '<tr><td class="left">'.$lang['timeinsert'].':</td>';
-		echo '<td class="right">'.$text.'</td></tr>';
+            // email - samo forma
+            if($rowa['survey_type'] == 1){
+                echo '<tr><td class="left">'.$lang['email'].':</td>';
+                echo '<td class="right">'.($rowu['email'] ? $rowu['email'] : '&nbsp;').'</td></tr>';
+            }
 
-		$datetime = strtotime($rowu['time_edit']);
-		$text = date("d.m.Y, H:i:s", $datetime);
-		echo '<tr><td class="left">'.$lang['timeedit'].':</td>';
-		echo '<td class="right">'.$text.'</td></tr>';
+            // spreminjal
+            $datetime = strtotime($rowu['time_insert']);
+            $text = date("d.m.Y, H:i:s", $datetime);
+            echo '<tr><td class="left">'.$lang['timeinsert'].':</td>';
+            echo '<td class="right">'.$text.'</td></tr>';
 
-		// preberemo popravljanje po straneh
-		$sqlG =  sisplet_query("SELECT ug.time_edit, g.naslov FROM srv_user_grupa".self::$db_table." ug, srv_grupa g WHERE g.ank_id = '".self::$sid."' AND ug.usr_id = '".self::$usr_id."' AND g.id = ug.gru_id ORDER BY g.vrstni_red ASC");
-		while($rowG = mysqli_fetch_array($sqlG)){
+            $datetime = strtotime($rowu['time_edit']);
+            $text = date("d.m.Y, H:i:s", $datetime);
+            echo '<tr><td class="left">'.$lang['timeedit'].':</td>';
+            echo '<td class="right">'.$text.'</td></tr>';
 
-			$datetime = strtotime($rowG['time_edit']);
-			$text = date("d.m.Y, H:i:s", $datetime);
+            // preberemo popravljanje po straneh
+            $sqlG =  sisplet_query("SELECT ug.time_edit, g.naslov FROM srv_user_grupa".self::$db_table." ug, srv_grupa g WHERE g.ank_id = '".self::$sid."' AND ug.usr_id = '".self::$usr_id."' AND g.id = ug.gru_id ORDER BY g.vrstni_red ASC");
+            while($rowG = mysqli_fetch_array($sqlG)){
 
-			echo '<tr><td class="left">'.$rowG['naslov'].':</td>';
-			echo '<td class="right">'.$text.'</td></tr>';
-		}
+                $datetime = strtotime($rowG['time_edit']);
+                $text = date("d.m.Y, H:i:s", $datetime);
 
-		if ( $admin_type <= 1 /* && what more??? */ ) {
-			
-			echo '<tr><td class="left">'.$lang['srv_sc_txt1'].':</td>';
-			echo '<td class="right"><a href="#" onclick="sc_display(\''.self::$usr_id.'\'); return false;">'.$lang['srv_sc_txt2'].'</a></td></tr>';
-			
-		}
+                echo '<tr><td class="left">'.$rowG['naslov'].':</td>';
+                echo '<td class="right">'.$text.'</td></tr>';
+            }
+
+            if ( $admin_type <= 1) {
+                
+                echo '<tr><td class="left">'.$lang['srv_sc_txt1'].':</td>';
+                echo '<td class="right"><a href="#" onclick="sc_display(\''.self::$usr_id.'\'); return false;">'.$lang['srv_sc_txt2'].'</a></td></tr>';
+                
+            }
+        }
 		
-                # preberemo vklopljene module
-                //potrebuje se za modul MAZA, da aplikacija izpolni te hidden inpute
-                //rabi pa se to za povezavo respondenta med tebelama maza_app_users in srv_user
-                if(SurveyInfo::checkSurveyModule('maza')){
-                    $maza_query = "SELECT mau.identifier, mau.deviceInfo, mau.tracking_log FROM maza_app_users as mau
-                        JOIN maza_srv_users AS msu ON mau.id = msu.maza_user_id
-                        JOIN srv_user AS su ON msu.srv_user_id = su.id 
-                     WHERE su.id = '".self::$usr_id."';";
-                    
-                    $sql = sisplet_query($maza_query, 'array');
-                    
-                    //it is already there
-                    if(count($sql) > 0){
-                        //NextPin link
-                        echo '<tr><td class="left">'.$lang['srv_maza_nextpin_link'].':</td>';
-                        echo '<td class="right"><a href="http://traffic.ijs.si/NextPin/?user=1KAPanel_'.$sql[0]['identifier'].'">'
-                                . 'http://traffic.ijs.si/NextPin/?user=1KAPanel_'.$sql[0]['identifier'].'</a></td></tr>';
-                        //Device info
-                        echo '<tr><td class="left">'.$lang['srv_maza_device_info'].':</td>';
-                        echo '<td class="right">'.$sql[0]['deviceInfo'].'</td></tr>';
-                        //Tracking logs
-                        echo '<tr><td class="left">'.$lang['srv_maza_user_app_logs'].':</td>';
-                        echo '<td class="right">'.$sql[0]['tracking_log'].'</td></tr>';
-                    }
-                }
+        # preberemo vklopljene module
+        //potrebuje se za modul MAZA, da aplikacija izpolni te hidden inpute
+        //rabi pa se to za povezavo respondenta med tebelama maza_app_users in srv_user
+        if(SurveyInfo::checkSurveyModule('maza')){
+            $maza_query = "SELECT mau.identifier, mau.deviceInfo, mau.tracking_log FROM maza_app_users as mau
+                JOIN maza_srv_users AS msu ON mau.id = msu.maza_user_id
+                JOIN srv_user AS su ON msu.srv_user_id = su.id 
+                WHERE su.id = '".self::$usr_id."';";
+            
+            $sql = sisplet_query($maza_query, 'array');
+            
+            //it is already there
+            if(count($sql) > 0){
+                //NextPin link
+                echo '<tr><td class="left">'.$lang['srv_maza_nextpin_link'].':</td>';
+                echo '<td class="right"><a href="http://traffic.ijs.si/NextPin/?user=1KAPanel_'.$sql[0]['identifier'].'">'
+                        . 'http://traffic.ijs.si/NextPin/?user=1KAPanel_'.$sql[0]['identifier'].'</a></td></tr>';
+                //Device info
+                echo '<tr><td class="left">'.$lang['srv_maza_device_info'].':</td>';
+                echo '<td class="right">'.$sql[0]['deviceInfo'].'</td></tr>';
+                //Tracking logs
+                echo '<tr><td class="left">'.$lang['srv_maza_user_app_logs'].':</td>';
+                echo '<td class="right">'.$sql[0]['tracking_log'].'</td></tr>';
+            }
+        }
                 
 		echo '</table>';
 		
-		
 		echo '<div id="survey-connect-disp" style="display:none"></div>';
-		//echo '<script> sc_display(\''.self::$usr_id.'\'); </script>';
-	
 	}
 
 

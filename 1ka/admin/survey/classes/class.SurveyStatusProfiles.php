@@ -1,4 +1,5 @@
 <?php
+
 /** @author: Gorazd Veselič
  * 
  * 	@Desc: za upravljanje z profili statusov za podatke in izvoze
@@ -1112,22 +1113,29 @@ class SurveyStatusProfiles
 		$values = self::getProfilesValues();
 		$collect_all_status = $values['all_status'];
 		
-		#če ni ustreznih uporabnikov je privzeto vsi
+		// če ni ustreznih uporabnikov je privzeto vsi
 		if (self::$allValidCount == 0) {
-			$pid = 1;
+			
+            $pid = 1;
 			$disabledValid = ' disabled="disabled"';
 			$disabledGray = ' gray';
-		} else if (self::$allValidCount > 0 && $collect_all_status == 0) {
-			if ( $pid == 1 ) {
+		} 
+        else if (self::$allValidCount > 0 && $collect_all_status == 0) {
+			
+            /*if ( $pid == 1 ) {
 				#$pid = 2;
 				$pid = self::$survayDefaultUstrezni;
-			}
-			$disabledAll = ' disabled="disabled"';
-			$disabledAllGray = ' gray';
+			}*/
+
+            if((int)self::$allUserCount > 1000){
+			    $disabledAll = ' disabled="disabled"';
+			    $disabledAllGray = ' gray';
+            }
 		} 
+
 		echo '<label class="middle'.$disabledAllGray.'">';
 		echo '<input type="radio" id="statusAllUnit" name="statusOnlyValid" value="1"'.($pid == 1?' checked="checked"':'').$disabledAll.' onchange="changeOnlyValidRadio();" autocomplete="off">';
-		echo $lang['srv_data_all_units'].'&nbsp;('.(int)self::$allUserCount.')';;
+		echo $lang['srv_data_all_units'].'&nbsp;('.(int)self::$allUserCount.')';
 		echo '</label>';
 		echo '&nbsp;';
 		
@@ -1136,11 +1144,11 @@ class SurveyStatusProfiles
 			echo '<input type="radio" id="statusValidUnit" name="statusOnlyValid" value="2"'.($pid==2?' checked="checked"':'').$disabledValid.' onchange="changeOnlyValidRadio();" autocomplete="off">';
 			echo $lang['srv_data_valid_units'].'&nbsp;('.(int)self::$allValidCount.')';
 			echo '</label>';
-		} else {
+		} 
+        else {
 			echo '<label class="middle'.$disabledGray .'">';
 			echo '<input type="radio" id="statusValidUnit" name="statusOnlyValid" value="3"'.($pid==3?' checked="checked"':'').$disabledValid.' onchange="changeOnlyValidRadio();" autocomplete="off">';
-			echo $lang['srv_data_finished_units'].'&nbsp;('.(int)self::$allValidCount.')';
-				
+			echo $lang['srv_data_finished_units'].'&nbsp;('.(int)self::$allValidCount.')';	
 		}
 	
 		echo '&nbsp;'.Help::display('srv_data_only_valid');

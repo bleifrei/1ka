@@ -168,7 +168,8 @@ class SurveyList {
 		
         // Ali prikazujemo folderje ali ne
         $userAccess = UserAccess::getInstance($global_user_id);
-        if($userAccess->checkUserAccess('my_survey_folders'))
+        $detect = New Mobile_Detect();
+        if($userAccess->checkUserAccess('my_survey_folders') && !$detect->isMobile() && !$detect->isTablet())
 		    $this->show_folders = UserSetting::getInstance()->getUserSetting('survey_list_folders');
 		
 		# koliko zapisov prikazujemo na stran
@@ -1505,7 +1506,6 @@ class SurveyList {
 			echo ' <span class="spaceRight" style="vertical-align:0px;">'.$folder['naslov'].'</span>';
 			
 			// Ikona za dodajanje folderja
-			//echo ' <a href="#" title="'.$lang['srv_mySurvey_create_folder'].'" onClick="create_folder(\''.$folder['id'].'\'); return false;"><span class="sprites add_blue pointer" style="height: 16px;"></span></a>';
 			echo '</div>';
 			
 			
@@ -1524,7 +1524,7 @@ class SurveyList {
 			echo ' <span class="faicon folder icon-blue"></span> <span id="folder_title_text_'.$folder['id'].'" class="folder_title_text spaceRight" style="vertical-align:0px;"><a href="#" onClick="edit_title_folder(\''.$folder['id'].'\'); return false;">'.$folder['naslov'].'</a></span>';
 			
 			// Ikona za dodajanje folderja
-			echo ' <a href="#" title="'.$lang['srv_mySurvey_create_folder'].'" onClick="create_folder(\''.$folder['id'].'\'); return false;"><span class="faicon add icon-blue pointer map_holder_control"></span></a>';
+			echo ' <a href="#" title="'.$lang['srv_mySurvey_create_subfolder'].'" onClick="create_folder(\''.$folder['id'].'\'); return false;"><span class="faicon add icon-blue pointer map_holder_control"></span></a>';
 			
 			// Ikona za brisanje folderja
 			echo ' <a href="#" title="'.$lang['srv_mySurvey_delete_folder'].'" onClick="delete_folder(\''.$folder['id'].'\'); return false;"><span class="faicon remove icon-orange pointer map_holder_control"></span></a>';
@@ -1541,7 +1541,7 @@ class SurveyList {
 			$this->displayNewSurveyList($folder['id']);
 			
 			// Izpisemo se vse folderje znotraj trenutnega folderja
-			$sql = sisplet_query("SELECT * FROM srv_mysurvey_folder WHERE usr_id='$global_user_id' AND parent='".$folder['id']."' ORDER BY naslov ASC");
+			$sql = sisplet_query("SELECT * FROM srv_mysurvey_folder WHERE usr_id='$global_user_id' AND parent='".$folder['id']."' ORDER BY id DESC");
 			if(mysqli_num_rows($sql) > 0) {								
 				while($row = mysqli_fetch_array($sql)){
 					echo '<div id="folder_holder_'.$row['id'].'" class="folder_holder">';
@@ -2934,6 +2934,13 @@ class SurveyList {
 			$sql = sisplet_query("UPDATE srv_mysurvey_folder SET open='1' WHERE id='".$parent."' AND usr_id='$global_user_id'");
 			
 			$sql = sisplet_query("INSERT INTO srv_mysurvey_folder (usr_id, parent, naslov) VALUES ('".$global_user_id."','".$parent."', '".$lang['srv_mySurvey_new_folder']."')");
+
+            $new_folder_id = mysqli_insert_id($GLOBALS['connect_db']);
+           
+            $SL = new SurveyList();
+			$SL->getSurveys();
+            
+            echo '<input type="hidden" id="new_added_folder" value="'.$new_folder_id.'">';
 		}
 		
 		// Pobrisali smo obstojec folder

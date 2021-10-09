@@ -20,20 +20,12 @@ return [
 
         // jquery in jquery ui vkljucimo ze minificirana, da bo slo mal hitrej
         new Minify_Source(['filepath' => dirname(__FILE__).'/../script/jquery/ui-1.8.18/js/jquery-1.7.1.min.js',]),
-        // fix za IE in draggables -- http://dev.jqueryui.com/ticket/5374 (v novi verziji zgleda da to dela)
-        //new Minify_Source( array('filepath' => dirname(__FILE__) .'/../script/jquery/ui-1.8.4/js/jquery-1.4.2.mod.min.js',)),
-        //dirname(__FILE__) .'/../script/jquery/ui-1.8.4/development-bundle/jquery-1.4.2.mod.js',
-
-        // Priprava za posodobitev jQuery na novejšo verzijo
-        //    dirname(__FILE__).'/../script/jquery/jquery-1.12.4.min.js',
-        //    dirname(__FILE__).'/../script/jquery/jquery-migrate-1.4.1.js',
-
         new Minify_Source(['filepath' => dirname(__FILE__).'/../script/jquery/ui-1.8.18/js/jquery-ui-1.8.18.custom.min.js',]),
-        //new Minify_Source( array('filepath' => dirname(__FILE__) .'/../script/jquery/ui-1.8.4/js/jquery-ui-1.8.4.custom.min.js',)),
 
         new Minify_Source(['filepath' => dirname(__FILE__).'/../script/jquery/ui.drag_drop_selectable.js',]),
         new Minify_Source(['filepath' => dirname(__FILE__).'/../script/jquery/jquery_touch_punch/jquery.ui.touch-punch.min.js',]),
-        //dirname(__FILE__) .'/../script/jquery/ui.draggable.orig.js',
+
+        dirname(__FILE__).'/../script/mobileMenu/zeynep.min.js',
 
         dirname(__FILE__).'/../script/jquery/jquery.timer.js',
         dirname(__FILE__).'/../script/jquery/farbtastic.js',
@@ -45,6 +37,7 @@ return [
 
         dirname(__FILE__).'/../script/onload.js',
         dirname(__FILE__).'/../script/script.js',
+        dirname(__FILE__).'/../script/mobile.js',
         dirname(__FILE__).'/../script/branching.js',
         dirname(__FILE__).'/../script/folders.js',
         dirname(__FILE__).'/../script/surveyList.js',
@@ -194,6 +187,11 @@ return [
         new Minify_Source(['filepath' => dirname(__FILE__).'/../script/jquery/ui-1.8.18/js/jquery-1.7.1.min.js',]),
         new Minify_Source(['filepath' => dirname(__FILE__).'/../script/jquery/ui-1.8.18/js/jquery-ui-1.8.18.custom.min.js',]),
         
+        dirname(__FILE__).'/../script/script.js',
+
+        dirname(__FILE__).'/../script/mobileMenu/zeynep.min.js',
+        dirname(__FILE__).'/../script/mobile.js',
+
         dirname(__FILE__).'/../script/datatables/jquery.dataTables.min.js',
         dirname(__FILE__).'/../script/select2/select2.min.js',
         dirname(__FILE__).'/../script/datatables/dataTables.buttons.min.js',

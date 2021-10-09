@@ -2035,13 +2035,16 @@ function dodaj_blok_interpretacije() {
 // ---------------------------------------
 
 // refresha levo stran z branchingom
-function refreshLeft(spremenljivka, removeID) {
+function refreshLeft(spremenljivka, callback) {
 
     $.post('ajax.php?t=branching&a=refresh_left', {
         spremenljivka: spremenljivka,
         anketa: srv_meta_anketa_id
     }, function (data) {
         $('#branching').html(data);
+
+        if (typeof callback == "function")
+            callback();
     });
 
 }

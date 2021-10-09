@@ -392,7 +392,7 @@ class Hierarhija {
 			echo '</div>';
 
 			// popup za urejanje vrednosti
-			echo '<div id="vrednost_edit">';
+			echo '<div id="vrednost_edit" class="divPopUp">';
 			echo '</div>';
 
 			// fade pri fullscreen urejanje spremenljivke

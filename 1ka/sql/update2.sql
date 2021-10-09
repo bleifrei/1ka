@@ -9471,3 +9471,31 @@ UPDATE srv_gdpr_anketa SET export_legal_eng = export_legal_slo;
 UPDATE srv_gdpr_anketa SET note_eng = note_slo;
 
 UPDATE misc SET value='21.02.16' WHERE what="version";
+
+## Squalo nastavitve na anketi
+CREATE TABLE srv_squalo_anketa(
+    id int(11) NOT NULL auto_increment,
+    ank_id int(11) NOT NULL,
+    active ENUM('0', '1') NOT NULL DEFAULT '0',
+    PRIMARY KEY (id),
+    UNIQUE KEY (ank_id),
+    CONSTRAINT fk_srv_squalo_anketa_ank_id FOREIGN KEY (ank_id) REFERENCES srv_anketa (id) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+UPDATE misc SET value='21.03.17' WHERE what="version";
+
+ALTER TABLE srv_anketa ADD last_response_time DATETIME NOT NULL AFTER edit_time;
+
+UPDATE misc SET value='21.03.30' WHERE what="version";
+
+ALTER TABLE srv_anketa DROP COLUMN old_email_style;
+
+UPDATE misc SET value='21.03.30' WHERE what="version";
+
+# Drupal verzija je bila posodobljena in vpišemo na 1ka.si in te
+UPDATE misc SET value='7.80' WHERE what="drupal version";
+UPDATE misc SET value='21.05.24' WHERE what="version";
+
+INSERT INTO srv_help (help, what) VALUES ('Operatorji', 'srv_if_operator');
+
+UPDATE misc SET value='21.05.25' WHERE what="version";

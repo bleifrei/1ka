@@ -777,8 +777,10 @@ class SaveSurvey extends Model
                     }
 
 
-                    // textbox*
-                } elseif ($row['tip'] == 21) {
+                    
+                } 
+                // TEXTBOX
+                elseif ($row['tip'] == 21) {
 
                     if ($_POST['visible_' . $row['id']] == 1) {
 
@@ -814,7 +816,6 @@ class SaveSurvey extends Model
                                     $vrednost = uniqid();
                                     
                                     //pri fotografiji naredi tukaj da zbrise iz mape uploads morebitno prejsnjo sliko narejeno z webcam (lahko, da sta razlicna exstensiona in se ne povozi)
-
                                     sisplet_query("INSERT INTO srv_data_upload (ank_id, usr_id, code, filename) VALUES ('" . get('anketa') . "', '" . get('usr_id') . "', '$vrednost', '$filename')");
                                 } 
                                 // Ni bil nalozen noben file
@@ -833,7 +834,9 @@ class SaveSurvey extends Model
 
                                     // save to server (beware of permissions)
                                     $result = file_put_contents( 'uploads/' . $filename, $binary_data );
-                                    if (!$result) die("Could not save image!  Check file permissions.");
+                                    if (!$result){
+                                        die("Could not save image!  Check file permissions.");
+                                    }
                                     else{
                                         $vrednost = uniqid();
 
@@ -855,16 +858,12 @@ class SaveSurvey extends Model
                                     $vrednost = $_POST['vrednost_' . $row['id'] . '_kos_' . $row1['id']];    //vnešeno besedilo v input polje Podpis osebe
                                     $signature_name = $vrednost;
 
-                                    //$vrednost_signature = uniqid();    //vrednost, ki se beleži v bazi kot unique koda
                                     $vrednost_signature = $row['id'];    //vrednost, ki se beleži v bazi kot spr_id
 
-                                    //$sqlIsFilename = sisplet_query("SELECT filename FROM srv_data_upload WHERE usr_id = '" . get('usr_id') . "' AND ank_id = '" . get('anketa') . "' ");
                                     $sqlIsFilename = sisplet_query("SELECT filename FROM srv_data_upload WHERE usr_id = '" . get('usr_id') . "' AND ank_id = '" . get('anketa') . "' AND code = '" . $row['id'] . "' ");
                                     
                                     $rowSqlIsFilename = mysqli_fetch_array($sqlIsFilename);
-                                    
-                                    
-                                    
+                                             
                                     if (mysqli_num_rows($sqlIsFilename) == 0) {    //ce ni nicesar v bazi, ustvari datoteko s sliko in vpisi informacijo v bazo
                                             //odstranitev sumnikov in presledkov iz vnesenega imena podpisanega za shranjevanje datoteke
                                             $posebni_znaki = array("č", "ć", "ž", "š", "đ", "Č", "Ć", "Ž", "Š", "Đ");
@@ -891,15 +890,16 @@ class SaveSurvey extends Model
                                             sisplet_query("INSERT INTO srv_data_upload (ank_id, usr_id, code, filename) VALUES ('" . get('anketa') . "', '" . get('usr_id') . "', '$vrednost_signature', '$filename_signature')");
 
                                     }
-                                } else {
+                                } 
+                                else {
                                     $vrednost = '';
                                 }
-                            } else {
+                            } 
+                            else {
                                 $vrednost = $_POST['vrednost_' . $row['id'] . '_kos_' . $row1['id']];
                             }
 
                             if ($vrednost != '') {
-                                //sisplet_query("INSERT INTO srv_data_text (spr_id, vre_id, text, usr_id) VALUES ('$row[id]', '$row1[id]', '$vrednost', '".get('usr_id')."')");
                                 $srv_data_text .= "('$row[id]', '$row1[id]', '$vrednost', '', '" . get('usr_id') . "', $loop_id),";
                                 Model::user_not_lurker();
                                 $empty = false;
@@ -908,13 +908,8 @@ class SaveSurvey extends Model
 
                         if ($empty) {
                             if (isset($_POST['vrednost_mv_' . $row['id']])) {
-                                //sisplet_query("INSERT INTO srv_data_vrednost".get('db_table')." (spr_id, vre_id, usr_id) VALUES ('$row[id]', '-2', '".get('usr_id')."')");
                                 $srv_data_vrednost .= "('$row[id]', '" . $_POST['vrednost_mv_' . $row['id']][0] . "', '" . get('usr_id') . "', $loop_id),";
                             }
-
-                            #preverimo ali je missing
-                            //sisplet_query("INSERT INTO srv_data_vrednost".get('db_table')." (spr_id, vre_id, usr_id) VALUES ('$row[id]', '-1', '".get('usr_id')."')");
-                            //$srv_data_vrednost .= "('$row[id]', '-1', '".get('usr_id')."'),";
                         }
                         
                         if ($row['variable'] == 'email' && $row['sistem'] == '1') {
@@ -926,13 +921,14 @@ class SaveSurvey extends Model
                             User::sinhronizeInvitationEmail($vrednost);
                         }
                         
-                    } else {
+                    } 
+                    else {
                         //sisplet_query("INSERT INTO srv_data_vrednost".get('db_table')." (spr_id, vre_id, usr_id) VALUES ('$row[id]', '-2', '".get('usr_id')."')");
                         $srv_data_vrednost .= "('$row[id]', '-2', '" . get('usr_id') . "', $loop_id),";
-                    }
-
-                    // number
-                } elseif ($row['tip'] == 7) {
+                    }     
+                }
+                // NUMBER
+                elseif ($row['tip'] == 7) {
 
                     if ($_POST['visible_' . $row['id']] == 1) {
 

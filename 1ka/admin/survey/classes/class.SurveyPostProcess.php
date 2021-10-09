@@ -227,6 +227,9 @@ class SurveyPostProcess {
 		} elseif ($_GET['a'] == 'edit_data_question_save') {
 			$this->ajax_edit_data_question_save(0);
 			
+		} elseif ($_GET['a'] == 'edit_data_question_upload_delete') {
+			$this->ajax_edit_data_question_upload_delete();
+			
 		} elseif ($_GET['a'] == 'get_inline_edit') {
 			$this->ajax_get_inline_edit();
 			
@@ -255,11 +258,8 @@ class SurveyPostProcess {
 			$this->ajax_coding_merge();
 			
 		} elseif ($_GET['a'] == 'coding_filter') {
-			$this->ajax_coding_filter();
-			
-		}
-		
-		
+			$this->ajax_coding_filter();	
+		}	
 	}
 	
 	/**
@@ -546,6 +546,25 @@ class SurveyPostProcess {
 		
 		/*if ($refresh == 1)
 			header("Location: index.php?anketa=".$this->anketa."&a=data&m=edit");*/
+	}
+
+    // Pobrisemo upload datoteke v urejanju podatkov
+    function ajax_edit_data_question_upload_delete () {
+		Common::updateEditStamp();
+				
+		$spr_id = $_POST['spr_id'];
+		$usr_id = $_POST['usr_id'];
+		$code = $_POST['code'];
+
+        $s = sisplet_query("DELETE FROM srv_data_upload WHERE ank_id='".$this->anketa."' AND usr_id='".$usr_id."' AND code='".$code."'");
+		if (!$s) echo mysqli_error($GLOBALS['connect_db']);
+
+        $s2 = sisplet_query("DELETE FROM srv_data_text".$this->db_table." WHERE spr_id='".$spr_id."' AND usr_id='".$usr_id."'");
+		if (!$s2) echo mysqli_error($GLOBALS['connect_db']);
+
+        $this->ajax_edit_data_question();
+
+        self::forceRefreshData($this->anketa);
 	}
 	
 	function ajax_get_inline_edit () {

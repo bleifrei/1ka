@@ -170,35 +170,41 @@ class Model
 
         if ($order == '') $order = '1';
 
-        // Shranimo vrstni red ce imamo random
-        if($randomsort){
 
-            $vrstni_red = str_replace('\'', "", $order);
-            $vrstni_red = str_replace(' ', "", $vrstni_red);
+        // Ce nismo v admin vmesniku (preview) ne shranjujemo vrstnega reda
+        if(!isset($_GET['a']) || $_GET['a'] != 'preview_spremenljivka'){
 
-            $sql = sisplet_query("INSERT INTO srv_data_random_spremenljivkaContent 
-                                (usr_id, spr_id, vrstni_red) 
-                                VALUES 
-                                ('".$usr_id."', '".$spremenljivka."', '".$vrstni_red."')
-                                ON DUPLICATE KEY UPDATE vrstni_red='".$vrstni_red."'
-            ");
-            if (!$sql) echo mysqli_error($GLOBALS['connect_db']);
+            // Shranimo vrstni red ce imamo random
+            if($randomsort){
+
+                $vrstni_red = str_replace('\'', "", $order);
+                $vrstni_red = str_replace(' ', "", $vrstni_red);
+
+                $sql = sisplet_query("INSERT INTO srv_data_random_spremenljivkaContent 
+                                    (usr_id, spr_id, vrstni_red) 
+                                    VALUES 
+                                    ('".$usr_id."', '".$spremenljivka."', '".$vrstni_red."')
+                                    ON DUPLICATE KEY UPDATE vrstni_red='".$vrstni_red."'
+                ");
+                if (!$sql) echo mysqli_error($GLOBALS['connect_db']);
+            }
+            
+            // Napredni parapodatki - belezenje vrstnega reda pri random
+            if (SurveyAdvancedParadataLog::getInstance()->paradataEnabled() && $randomsort){
+                
+                $event_type = 'question';
+                $event = 'random_sort';
+                
+                $data = array('usr_id' => $usr_id);
+                $data['data'] = array(
+                    'spr_id' => $spremenljivka,
+                    'vre_order' => mysqli_real_escape_string($GLOBALS['connect_db'], $order)
+                );
+                
+                SurveyAdvancedParadataLog::getInstance()->logData($event_type, $event, $data);
+            }
         }
-		
-		// Napredni parapodatki - belezenje vrstnega reda pri random
-        if (SurveyAdvancedParadataLog::getInstance()->paradataEnabled() && $randomsort){
-			
-			$event_type = 'question';
-			$event = 'random_sort';
-			
-			$data = array('usr_id' => $usr_id);
-			$data['data'] = array(
-				'spr_id' => $spremenljivka,
-				'vre_order' => mysqli_real_escape_string($GLOBALS['connect_db'], $order)
-			);
-			
-			SurveyAdvancedParadataLog::getInstance()->logData($event_type, $event, $data);
-		}
+
 
         return $order;
     }

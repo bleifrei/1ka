@@ -296,7 +296,7 @@ class UserNarocila{
 
         // Ce ni polja v bazi oz je nastavljen paket na 1 ima osnovni paket
         if(!$user_access || $user_access['package_id'] == '1'){
-            echo '<p>'.$lang['srv_narocila_no_package'].'.</p>';
+            echo '<p>'.$lang['srv_narocila_current_package'].':</span> <span class="bold">1KA</span></p>';
         }
         // Imamo aktiviran paket - izpisemo podatke
         else{
@@ -312,7 +312,14 @@ class UserNarocila{
         echo '<fieldset>';
         echo '<legend>'.$lang['srv_narocila_list'].'</legend>'; 
 
-        $this->displayNarocilaTable();
+        $sqlNarocilaCount = sisplet_query("SELECT count(id) FROM user_access_narocilo WHERE usr_id='".$global_user_id."'");
+        $rowNarocilaCount = mysqli_fetch_array($sqlNarocilaCount);
+        if($rowNarocilaCount['count(id)'] > 0){
+            $this->displayNarocilaTable();
+        }
+        else{
+            echo '<p>'.$lang['srv_narocila_no_package_text'].'</p>';
+        }
 
         echo '</fieldset>';
     }
@@ -405,7 +412,7 @@ class UserNarocila{
         // Glava tabele
         echo '  <thead>';
         echo '      <tr>';
-
+        echo '          <th>ID</th>';
         echo '          <th>'.$lang['srv_narocilo_ime'].'</th>';
         echo '          <th>'.$lang['email'].'</th>';
         echo '          <th>'.$lang['srv_narocilo_paket'].'</th>';
@@ -436,7 +443,8 @@ class UserNarocila{
 
             echo '<tr class="'.$status_color.'_bg">';   
 
-            echo '<td>'.$data_row['name'].' '.$data_row['surname'].' '.($data_row['podjetje_ime'] != '' ? '('.$data_row['podjetje_ime'].')' : '').'</td>';
+            echo '<td>'.$data_row['id'].'</td>';
+            echo '<td>'.$data_row['ime'].' '.($data_row['podjetje_ime'] != '' ? '('.$data_row['podjetje_ime'].')' : '').'</td>';
             echo '<td><span class="as_link" onClick="edit_user(\''.$data_row['usr_id'].'\'); return false;">'.$data_row['email'].'</span></td>';
             echo '<td>'.$data_row['package_name'].'</td>';
             echo '<td>'.$data_row['trajanje'].'</td>';

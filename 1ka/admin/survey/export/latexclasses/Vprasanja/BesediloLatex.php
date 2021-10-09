@@ -141,12 +141,19 @@ class BesediloLatex extends LatexSurveyElement
 				$rowVrednost = mysqli_fetch_array($sqlVrednosti);					
 				
 				if($spremenljivke['tip'] == 21){	//ce je ta novo besedilo, ki je v uporabi
-					//$sqlUserAnswer = sisplet_query("SELECT text FROM srv_data_text".$db_table." WHERE spr_id='".$spremenljivke['id']."' AND usr_id='".$usr_id."' AND vre_id='".$rowVrednost['id']."' AND loop_id $loop_id");
-					$sqlUserAnswer = sisplet_query("SELECT text FROM srv_data_text".$db_table." WHERE spr_id='".$spremenljivke['id']."' AND usr_id='".$usr_id."' AND vre_id='".$rowVrednost['id']."' ");
+					$sqlUserAnswerString = "SELECT text FROM srv_data_text".$db_table." WHERE spr_id='".$spremenljivke['id']."' AND usr_id='".$usr_id."' AND vre_id='".$rowVrednost['id']."' ";
+					if($loop_id){ //ce je prisoten se loop_id, je tega potrebno dodati sql stavku
+						$sqlUserAnswerString .= " AND loop_id=$loop_id";
+					}
+					//echo $sqlUserAnswerString."</br>";
 				}elseif($spremenljivke['tip'] == 4){	//ce je ta staro besedilo, ki ni vec v uporabi vsaj 9 let (2020)
-					$sqlUserAnswer = sisplet_query("SELECT text FROM srv_data_text".$db_table." WHERE spr_id='".$spremenljivke['id']."' AND usr_id='".$usr_id."' ");
+					//$sqlUserAnswer = sisplet_query("SELECT text FROM srv_data_text".$db_table." WHERE spr_id='".$spremenljivke['id']."' AND usr_id='".$usr_id."' ");
+					$sqlUserAnswerString = "SELECT text FROM srv_data_text".$db_table." WHERE spr_id='".$spremenljivke['id']."' AND usr_id='".$usr_id."' ";
+					if($loop_id){ //ce je prisoten se loop_id, je tega potrebno dodati sql stavku
+						$sqlUserAnswerString .= " AND loop_id=$loop_id";
+					}
 				}
-				
+				$sqlUserAnswer = sisplet_query($sqlUserAnswerString);
 				$userAnswer = mysqli_fetch_assoc($sqlUserAnswer);
 				//echo "userAnswer: ".$userAnswer['text']."</br>";
 				//ureditev polja s podatki trenutnega uporabnika - konec ##############################################
@@ -237,20 +244,28 @@ class BesediloLatex extends LatexSurveyElement
 						$rowVrednost['naslov'] = $naslov;
 					}
 					
+					
 					//ureditev polja s podatki trenutnega uporabnika ######################################################
 					if($spremenljivke['tip'] == 21){	//ce je ta novo besedilo, ki je v uporabi
-						//$sqlUserAnswer = sisplet_query("SELECT text FROM srv_data_text".$db_table." WHERE spr_id='".$spremenljivke['id']."' AND usr_id='".$usr_id."' AND vre_id='".$rowVrednost['id']."' AND loop_id $loop_id");
-						$sqlUserAnswer = sisplet_query("SELECT text FROM srv_data_text".$db_table." WHERE spr_id='".$spremenljivke['id']."' AND usr_id='".$usr_id."' AND vre_id='".$rowVrednost['id']."' ");
-						$userAnswer = mysqli_fetch_assoc($sqlUserAnswer);
+						$sqlUserAnswerString = "SELECT text FROM srv_data_text".$db_table." WHERE spr_id='".$spremenljivke['id']."' AND usr_id='".$usr_id."' AND vre_id='".$rowVrednost['id']."' ";
+						if($loop_id){ //ce je prisoten se loop_id, je tega potrebno dodati sql stavku
+							$sqlUserAnswerString .= " AND loop_id=$loop_id";
+						}
 						//echo "userAnswer: ".$userAnswer['text']."</br>";
-					}elseif($spremenljivke['tip'] == 4){	//ce je ta staro besedilo, ki ni vec v uporabi vsaj 9 let (2020)
-						//$sqlUserAnswer = sisplet_query("SELECT text FROM srv_data_text".$db_table." WHERE spr_id='".$spremenljivke['id']."' AND usr_id='".$usr_id."' AND vre_id='".$rowVrednost['id']."' AND loop_id $loop_id");
-						$sqlUserAnswer = sisplet_query("SELECT text FROM srv_data_text".$db_table." WHERE spr_id='".$spremenljivke['id']."' AND usr_id='".$usr_id."' ");
-						$userAnswer = mysqli_fetch_assoc($sqlUserAnswer);
-						//echo "SELECT text FROM srv_data_text".$db_table." WHERE spr_id='".$spremenljivke['id']."' AND usr_id='".$usr_id."' </br>";
-						//echo "userAnswer: ".$userAnswer['text']."</br>";
+					}elseif($spremenljivke['tip'] == 4){	//ce je ta staro besedilo, ki ni vec v uporabi vsaj 9 let (2020)						
+						$sqlUserAnswerString = "SELECT text FROM srv_data_text".$db_table." WHERE spr_id='".$spremenljivke['id']."' AND usr_id='".$usr_id."' ";
+						if($loop_id){ //ce je prisoten se loop_id, je tega potrebno dodati sql stavku
+							$sqlUserAnswerString .= " AND loop_id=$loop_id";
+						}
 					}
+					$sqlUserAnswer = sisplet_query($sqlUserAnswerString);
+					$userAnswer = mysqli_fetch_assoc($sqlUserAnswer);
 					//ureditev polja s podatki trenutnega uporabnika - konec ##############################################
+
+					//priprava besedila za izpis
+					$stringNaslov = $rowVrednost['naslov'];
+					$stringNaslov = Common::getInstance()->dataPiping($stringNaslov, $usr_id, $loop_id);
+					//priprava besedila za izpis - konec
 					
 					//ce ni other ali missing
 					if( (int)$rowVrednost['other'] == 0 ){
@@ -295,9 +310,7 @@ class BesediloLatex extends LatexSurveyElement
 						}
 						
 						array_push($textBoxes, $dataTextBox);	//filanje polja s praznimi text box-i					
-						
-						array_push($besedila, $this->encodeText($rowVrednost['naslov']) );	//filanje polja z besedili
-						
+						array_push($besedila, $this->encodeText($stringNaslov));	//filanje polja z besedili
 
 						if($okvir == 0){
 							if($spremenljivke['tip'] == 21){	//ce je ta novo besedilo, ki je v uporabi
@@ -306,8 +319,8 @@ class BesediloLatex extends LatexSurveyElement
 								}
 								
 								//izpis besedila
-								if($polozajBesedila!=0){	//ce je prisotno dodatno besedilo ob okvirju								
-									$tex .= $this->encodeText($rowVrednost['naslov'])." ";
+								if($polozajBesedila!=0){	//ce je prisotno dodatno besedilo ob okvirju									
+									$tex .= $this->encodeText($stringNaslov)." ";
 								}
 								$tex .= ' '.$dataTextBox;
 							}elseif($spremenljivke['tip'] == 4){	//ce je ta staro besedilo, ki ni vec v uporabi vsaj 9 let (2020)
@@ -325,7 +338,7 @@ class BesediloLatex extends LatexSurveyElement
 								}
 								
 								//izpis besedila
-								$tex .= $this->encodeText($rowVrednost['naslov']);
+								$tex .= $this->encodeText($stringNaslov)." ";
 
 								//izpis text box-a dolocene sirine	in visine z besedilom odgovora								
 								$tex .= '  '.$dataTextBox;
@@ -335,8 +348,13 @@ class BesediloLatex extends LatexSurveyElement
 					}
 					else {	//drugace, ce imamo missinge ali podobne, jih zabelezi v polju
 						// imamo polje drugo - ne vem, zavrnil...
-						$array_others[$rowVrednost['id']] = array(
+						/* $array_others[$rowVrednost['id']] = array(
 							'naslov'=>$rowVrednost['naslov'],
+							'vrstni_red'=>$rowVrednost['vrstni_red'],
+							'value'=>$text[$rowVrednost['vrstni_red']],
+						); */
+						$array_others[$rowVrednost['id']] = array(
+							'naslov'=>$this->encodeText($stringNaslov),
 							'vrstni_red'=>$rowVrednost['vrstni_red'],
 							'value'=>$text[$rowVrednost['vrstni_red']],
 						);
@@ -434,7 +452,7 @@ class BesediloLatex extends LatexSurveyElement
 			} 
 		
 		}
-		
+		//echo "tex koda: ".$tex." in indeks $indeksZaWhile</br>";
 		return $tex;	
 	}
 	

@@ -154,7 +154,7 @@ function vprasanje_tab (spremenljivka, tab) {
 }
 
 // shrani nastavitve vprasanja
-function vprasanje_save (silentsave, spr) {
+function vprasanje_save (silentsave, spr, callback) {
 	
 	var spremenljivka = $('input[name=spremenljivka]').val() || spr;  // spr se prenese, ce je urejanje na desni zaprto
 
@@ -213,6 +213,9 @@ function vprasanje_save (silentsave, spr) {
 			inline_nova_vrednost(last);
 		}
 		
+        if (typeof callback == 'function') { 
+            callback(); 
+        }
 	});
 	
 }
@@ -270,6 +273,17 @@ function vrednost_new (spremenljivka, other, tip, mv) {
 	
 }
 
+// doda novo vrednost na mobitelu
+function vrednost_new_mobile (spremenljivka, tip) {
+	
+	$.post('ajax.php?t=vprasanje&a=vrednost_new', {spremenljivka: spremenljivka, other: 0, anketa: srv_meta_anketa_id, mv:0}, function (data) {
+
+        vprasanje_save(true, spremenljivka, function(){
+            $('#spremenljivka_contentdiv'+spremenljivka).find('#variable_holder div:last-child').find('.vrednost_inline').focus();
+        });        
+	});
+}
+
 //preverimo ce ze obstaja 
 function vrednost_new_dodatne (spremenljivka, mv, tip, checked){
 	var vrednost;
@@ -281,18 +295,8 @@ function vrednost_new_dodatne (spremenljivka, mv, tip, checked){
 		var vre_id = $('#spremenljivka_content_'+spremenljivka+' #variable_holder [other|="'+mv+'"]').attr('id');
 		vre_id = vre_id.replace('variabla_', '');
 		inline_vrednost_delete(spremenljivka, vre_id, '0');
+        
 		return false;
-		/*
-		temp = document.getElementById(mv).name;
-		var arr = new Array();
-		arr = temp.split('_');
-		vrednost = arr[2];
-		
-		$('#vrednost_'+vrednost).remove();
-		$.post('ajax.php?t=vprasanje&a=vrednost_delete', {vrednost: vrednost, spremenljivka: spremenljivka, anketa: srv_meta_anketa_id}, function () {
-			vprasanje_save(true);
-		})
-		*/
 	}
 }
 

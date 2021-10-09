@@ -1130,24 +1130,18 @@ class Vprasanje {
 			$this->edit_stolpci();
 		
 		if($row['tip'] == 2) {
-			//$this->edit_checkboxhide();  // TODO: a se to sploh kje uporablja? :)
-			//$this->edit_checkbox_limit();
 			$this->edit_checkbox_max_limit();
 			$this->edit_checkbox_min_limit();
 		}
 		
 		if($row['tip'] <= 3)
 			$this->edit_stat();
-		
-		/*if ($row['tip'] == 1 || $row['tip'] == 2 || $row['tip'] == 3 || $row['tip'] == 6)
-			$this->edit_skala();*/
-					
+				
 		if ($row['tip'] == 6)
 			$this->edit_grid_dynamic();
 		
 		if ($row['tip'] == 1 || $row['tip'] == 6) {
 			$this->edit_onchange_submit();
-			//$this->edit_hidden_default();
 		}
 		
 		if ($row['tip'] == 1 || $row['tip'] == 3)
@@ -1165,9 +1159,6 @@ class Vprasanje {
 		// Nastavitev za prikaz prejsnjih odgovorov pod text vprasanjem
 		if ($row['tip'] == 21)
 			$this->edit_show_prevAnswers();
-                
-                /*if (in_array($row['tip'], array(1,2,3,6,16,19,20,24)))
-			$this->edit_other_field();*/
 			
 		echo '</fieldset>';
 	
@@ -1885,10 +1876,7 @@ class Vprasanje {
 		$row = Cache::srv_spremenljivka($this->spremenljivka);
 		#'email','ime','priimek','telefon','naziv','drugo'
 		
-		echo '<p><span class="title">'.$lang['srv_label'].':</span><span class="content"><input type="text" name="label" value="'.$row['label'].'" maxlength="50" /></span></p>';
-		
-		//echo '<p><span class="title">'.$lang['srv_datapiping'].': '.Help::display('DataPiping').'</span> '.$lang['srv_datapiping_txt'].'</p>';
-		
+		echo '<p><span class="title">'.$lang['srv_label'].':</span><span class="content"><input type="text" name="label" value="'.$row['label'].'" maxlength="80" /></span></p>';		
 	}
 	
 	/**
@@ -4326,8 +4314,13 @@ class Vprasanje {
 		echo '<span class="content"><select id="presetValue" name="presetValue" style="width:120px; text-overflow:ellipsis;">';
 		echo '	<option value="0">'.$lang['no'].'</option>';
 		while($rowV = mysqli_fetch_array($sqlV)){
-			$naslov = (strlen($rowV['naslov']) > 20) ? substr($rowV['naslov'],0,20).'...' : $rowV['naslov'];
-			echo '	<option value="'.$rowV['id'].'" '.($presetValue == $rowV['id'] ? ' selected="selected"' : '').'>'.$rowV['variable'].' ('.$naslov.')</option>';
+			
+            $naslov = (strlen($rowV['naslov']) > 20) ? substr($rowV['naslov'], 0, 20).'...' : $rowV['naslov'];
+            $naslov = strip_tags($naslov);
+            $naslov = ($naslov == '') ? '' : '('.$naslov.')';
+
+
+			echo '	<option value="'.$rowV['id'].'" '.($presetValue == $rowV['id'] ? ' selected="selected"' : '').'>'.$rowV['variable'].' '.$naslov.'</option>';
 		}
 		echo '</select></span>';
 		

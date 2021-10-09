@@ -800,23 +800,26 @@ class InitClass extends Controller
                 if (!$sql2) echo mysqli_error($GLOBALS['connect_db']);
                 $row2 = mysqli_fetch_array($sql2);
 
-                if (mysqli_num_rows($sql2) > 0) {    // pravilna koda
+                // Pravilna koda
+                if (mysqli_num_rows($sql2) > 0) {    
                     
-					// Dodatno preverimo ce koda se ni potekla
-					$sqlC = sisplet_query("SELECT * FROM srv_invitations_recipients WHERE ank_id='".get('anketa')."' AND TRIM(password)='".$usercode."' AND DATE(NOW())>DATE(date_expired) AND date_expired!='0000-00-00 00:00:00'");
-					if(mysqli_num_rows($sqlC) > 0){
-						Display::getInstance()->displayNapaka(self::$lang['srv_expiredcode']);
-                        die();			
-					}
-					
-					$rand = $row2['cookie'];
+                    // Ce imamo vklopljen modul za volitve preskocimo kar nekaj korakov (anonimizacija)
+                    if(!SurveyInfo::checkSurveyModule('voting')){
 
-                    # nastavimo še da je uporabnik odgovoril na anketo za nov način e-mail vabil
-                    $sqlString = "UPDATE srv_invitations_recipients SET responded = '1', date_responded = NOW() WHERE ank_id='" . get('anketa') . "' AND TRIM(password) ='$usercode' AND responded = '0'";
-                    sisplet_query($sqlString);
+                        // Dodatno preverimo ce koda se ni potekla
+                        $sqlC = sisplet_query("SELECT * FROM srv_invitations_recipients WHERE ank_id='".get('anketa')."' AND TRIM(password)='".$usercode."' AND DATE(NOW())>DATE(date_expired) AND date_expired!='0000-00-00 00:00:00'");
+                        if(mysqli_num_rows($sqlC) > 0){
+                            Display::getInstance()->displayNapaka(self::$lang['srv_expiredcode']);
+                            die();			
+                        }
 
-                    sisplet_query("COMMIT");
+                        # nastavimo še da je uporabnik odgovoril na anketo za nov način e-mail vabil
+                        sisplet_query("UPDATE srv_invitations_recipients SET responded = '1', date_responded = NOW() WHERE ank_id='" . get('anketa') . "' AND TRIM(password) ='$usercode' AND responded = '0'");
 
+                        sisplet_query("COMMIT");
+                    }
+
+                    $rand = $row2['cookie'];
 
                     $this->set_cookie('survey-' . get('anketa'), $rand, $this->expire);
 
@@ -844,7 +847,7 @@ class InitClass extends Controller
                         if ($ip == 0) $_ip = Helper::remote_address(); else $ip = "";
                         if ($date == 0) $_time_insert = "NOW()"; else $_time_insert = "''";
                         if ($referal == 0) $_referer = $referer; else $_referer = '';
-                        if ($browser == 0) $_useragent = $_SERVER[HTTP_USER_AGENT]; else $_useragent = '';
+                        if ($browser == 0) $_useragent = $_SERVER['HTTP_USER_AGENT']; else $_useragent = '';
 
                         // Ce dovolimo useragent in ce je instaliran browscap
                         $_browser = '';
@@ -1138,11 +1141,13 @@ class InitClass extends Controller
     private function set_userstatus($status)
     {
         $sql_userbase = sisplet_query("SELECT MAX(tip) AS tip FROM srv_userbase WHERE usr_id = '" . get('usr_id') . "'");
-        if (!$sql_userbase) echo mysqli_error($GLOBALS['connect_db']);
+        if (!$sql_userbase) echo mysqli_error($GLOBALS['connect_db']);  
         $row_userbase = mysqli_fetch_array($sql_userbase);
+        
         if ($row_userbase['tip'] > 0) {
             $tip = $row_userbase['tip'];
-        } else {
+        } 
+        else {
             $tip = 0;
         }
 
@@ -1151,15 +1156,13 @@ class InitClass extends Controller
         $rowu = mysqli_fetch_array($sqlu);
 
         $sqlu = sisplet_query("SELECT inv_res_id FROM srv_user WHERE id = '" . get('usr_id') . "' AND inv_res_id IS NOT NULL");
-//        ddd(get('usr_id'), "SELECT inv_res_id FROM srv_user WHERE id = '".get('usr_id')."' AND inv_res_id IS NOT NULL");
         $inv_res_id = null;
         if (mysqli_num_rows($sqlu) > 0) {
-            //dd('not');
             # userj je dodan preko novih vabil zato updejtamo status še tam
             $row_inv_res_id = mysqli_fetch_assoc($sqlu);
             $inv_res_id = (int)$row_inv_res_id['inv_res_id'];
         }
-//		ddd($inv_res_id);
+
         // spremenimo tip
         if ($status > $rowu['status'] && is_numeric(get('usr_id'))) {
 
@@ -1199,14 +1202,24 @@ class InitClass extends Controller
             sisplet_query("UPDATE srv_user SET time_edit = " . $_time_insert . ", language='" . get('language') . "' WHERE id='" . get('usr_id') . "'");
 
         }
+
+        // Ce ne belezimo parapodatka za cas responsa, anonimno zabelezimo cas zadnjega responsa
+        if(SurveySetting::getInstance()->getSurveyMiscSetting('survey_date') == 1) {
+            sisplet_query("UPDATE srv_anketa SET last_response_time=NOW() WHERE id='".get('anketa')."'");
+        }
+
         # dodamo še tracking arhivov vabil
         if (get('user_inv_archive') > 0 && $inv_res_id > 0) {
+            
             # ignoriramo podvojene kluče
-            $updateString = "INSERT IGNORE INTO srv_invitations_tracking (inv_arch_id, time_insert, res_id, status) VALUES ('" . (int)get('user_inv_archive') . "',NOW(),'$inv_res_id','$status')";
-
-            $s = sisplet_query($updateString);
+            $s = sisplet_query("INSERT IGNORE INTO srv_invitations_tracking 
+                                    (inv_arch_id, time_insert, res_id, status) 
+                                    VALUES 
+                                    ('" . (int)get('user_inv_archive') . "',NOW(),'$inv_res_id','$status')
+                            ");
             if (!$s) echo mysqli_error($GLOBALS['connect_db']);
-        } else {
+        } 
+        else {
         }
 
         # potrebno bo osvežit seznam anket

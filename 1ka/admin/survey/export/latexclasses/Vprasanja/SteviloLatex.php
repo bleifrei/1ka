@@ -273,7 +273,9 @@ class SteviloLatex extends LatexSurveyElement
 							}
 
 							//izpis besedila enote
-							$tex .= $this->encodeText($rowVrednost['naslov']);
+							$stringEnota = $rowVrednost['naslov'];
+							$stringEnota = Common::getInstance()->dataPiping($stringEnota, $usr_id, $loop_id);							
+							$tex .= $this->encodeText($stringEnota);
 							
 							if($okvir == 1){	//ce rabimo prazen okvir, izpisi
 								//izpis praznega text box-a dolocene sirine	in visine
@@ -315,9 +317,11 @@ class SteviloLatex extends LatexSurveyElement
 								$tex .= ' \\\\ ';	//pojdi v novo vrstico
 							}else{
 								$tex .= ' & ';	//v nov stolpec tabele
-							}								
-							
-							$tex .= ' '.$this->encodeText($rowVrednost['naslov']);
+							}	
+
+							$stringEnota = $rowVrednost['naslov'];
+							$stringEnota = Common::getInstance()->dataPiping($stringEnota, $usr_id, $loop_id);							
+							$tex .= ' '.$this->encodeText($stringEnota);
 							
 							if($indeksZaWhile==1&&$export_format=='pdf'){	//ce je prvi okvir in je pdf
 								//$tex .= ' \hspace{0.5cm} ';	//dodaj še nekaj prostora, za prvim okvirjem, da bo dovolj prostora

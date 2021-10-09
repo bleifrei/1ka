@@ -816,12 +816,12 @@ class MultigridMobileController extends Controller{
                     echo ' <input type="text" name="textfield_' . $row1['id'] . '" value="' . ($is_missing ? '' : $row3['text']) . '" style="' . ($otherWidth != -1 ? ' width:' . $otherWidth . '%;' : '') . '" ' . ($is_missing ? ' disabled' : '') . ' />';
             }
 
-            echo '  <div class="grid_mobile_title_text">';
+            echo '</div>';
 			
 			// Puscica za razpiranje ce imamo vklopljene mobilne tabele z razpiranjem
 			if($mobile_tables == 2)
 				echo '<span class="faicon arrow_up mobile_expanding_arrow"></span>';
-            
+
 			echo '</div>';
 			
 			

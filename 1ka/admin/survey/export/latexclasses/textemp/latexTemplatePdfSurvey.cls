@@ -14,6 +14,8 @@
 \usepackage[export]{adjustbox}	% za poravnavo slik
 \usepackage{wasysym}	% za izris radio button, checkbox
 
+\usepackage{tikzsymbols}	%za izpis emoji-jev
+
 \usepackage{textgreek}	%za resevanje grskih crk
 
 \usepackage[T2A,T1]{fontenc} %za cirilico
@@ -22,12 +24,94 @@
 
 \usepackage[utf8]{inputenc} % za uporabo utf8
 \usepackage{amssymb}	%za unicode simbole
+
+%DEFINIRANJE NADOMESTIL NEIZPISLJIVIH UNICODE CHARACTER-JEV
 \DeclareUnicodeCharacter{200B}{{\hskip 0pt}}
 \DeclareUnicodeCharacter{03C7}{$\chi$}
 \DeclareUnicodeCharacter{2265}{$\geq$}
 \DeclareUnicodeCharacter{03B5}{$\epsilon$}
 \DeclareUnicodeCharacter{2003}{$\enspace$}
 \DeclareUnicodeCharacter{0014}{$\thinspace$}	%ni ta pravi nadomestek, ker v Latexu tak simbol ne obstaja
+
+%Emoji - izpis urejen s slikicami emoji-jev
+\DeclareUnicodeCharacter{1F600}{\includegraphics[height=1em]{1F600.png}}
+\DeclareUnicodeCharacter{1F601}{\includegraphics[height=1em]{1F601.png}}
+\DeclareUnicodeCharacter{1F602}{\includegraphics[height=1em]{1F602.png}}
+\DeclareUnicodeCharacter{1F603}{\includegraphics[height=1em]{1F603.png}}
+\DeclareUnicodeCharacter{1F604}{\includegraphics[height=1em]{1F604.png}}
+\DeclareUnicodeCharacter{1F605}{\includegraphics[height=1em]{1F605.png}}
+\DeclareUnicodeCharacter{1F606}{\includegraphics[height=1em]{1F606.png}}
+\DeclareUnicodeCharacter{1F609}{\includegraphics[height=1em]{1F609.png}}
+\DeclareUnicodeCharacter{1F60A}{\includegraphics[height=1em]{1F60A.png}}
+\DeclareUnicodeCharacter{1F60B}{\includegraphics[height=1em]{1F60B.png}}
+\DeclareUnicodeCharacter{1F60E}{\includegraphics[height=1em]{1F60C.png}}
+\DeclareUnicodeCharacter{1F60D}{\includegraphics[height=1em]{1F60D.png}}
+\DeclareUnicodeCharacter{1F60E}{\includegraphics[height=1em]{1F60E.png}}
+\DeclareUnicodeCharacter{1F60D}{\includegraphics[height=1em]{1F60F.png}}
+
+\DeclareUnicodeCharacter{1F600}{\includegraphics[height=1em]{1F610.png}}
+\DeclareUnicodeCharacter{1F611}{\includegraphics[height=1em]{1F611.png}}
+\DeclareUnicodeCharacter{1F612}{\includegraphics[height=1em]{1F612.png}}
+\DeclareUnicodeCharacter{1F613}{\includegraphics[height=1em]{1F613.png}}
+\DeclareUnicodeCharacter{1F614}{\includegraphics[height=1em]{1F614.png}}
+\DeclareUnicodeCharacter{1F615}{\includegraphics[height=1em]{1F615.png}}
+\DeclareUnicodeCharacter{1F616}{\includegraphics[height=1em]{1F616.png}}
+\DeclareUnicodeCharacter{1F619}{\includegraphics[height=1em]{1F619.png}}
+\DeclareUnicodeCharacter{1F61A}{\includegraphics[height=1em]{1F61A.png}}
+\DeclareUnicodeCharacter{1F61B}{\includegraphics[height=1em]{1F61B.png}}
+\DeclareUnicodeCharacter{1F61E}{\includegraphics[height=1em]{1F61C.png}}
+\DeclareUnicodeCharacter{1F61D}{\includegraphics[height=1em]{1F61D.png}}
+\DeclareUnicodeCharacter{1F61E}{\includegraphics[height=1em]{1F61E.png}}
+\DeclareUnicodeCharacter{1F61D}{\includegraphics[height=1em]{1F61F.png}}
+
+\DeclareUnicodeCharacter{1F600}{\includegraphics[height=1em]{1F620.png}}
+\DeclareUnicodeCharacter{1F621}{\includegraphics[height=1em]{1F621.png}}
+\DeclareUnicodeCharacter{1F622}{\includegraphics[height=1em]{1F622.png}}
+\DeclareUnicodeCharacter{1F623}{\includegraphics[height=1em]{1F623.png}}
+\DeclareUnicodeCharacter{1F624}{\includegraphics[height=1em]{1F624.png}}
+\DeclareUnicodeCharacter{1F625}{\includegraphics[height=1em]{1F625.png}}
+\DeclareUnicodeCharacter{1F626}{\includegraphics[height=1em]{1F626.png}}
+\DeclareUnicodeCharacter{1F629}{\includegraphics[height=1em]{1F629.png}}
+\DeclareUnicodeCharacter{1F62A}{\includegraphics[height=1em]{1F62A.png}}
+\DeclareUnicodeCharacter{1F62B}{\includegraphics[height=1em]{1F62B.png}}
+\DeclareUnicodeCharacter{1F62E}{\includegraphics[height=1em]{1F62C.png}}
+\DeclareUnicodeCharacter{1F62D}{\includegraphics[height=1em]{1F62D.png}}
+\DeclareUnicodeCharacter{1F62E}{\includegraphics[height=1em]{1F62E.png}}
+\DeclareUnicodeCharacter{1F62D}{\includegraphics[height=1em]{1F62F.png}}
+
+\DeclareUnicodeCharacter{1F600}{\includegraphics[height=1em]{1F630.png}}
+\DeclareUnicodeCharacter{1F631}{\includegraphics[height=1em]{1F631.png}}
+\DeclareUnicodeCharacter{1F632}{\includegraphics[height=1em]{1F632.png}}
+\DeclareUnicodeCharacter{1F633}{\includegraphics[height=1em]{1F633.png}}
+\DeclareUnicodeCharacter{1F634}{\includegraphics[height=1em]{1F634.png}}
+\DeclareUnicodeCharacter{1F635}{\includegraphics[height=1em]{1F635.png}}
+\DeclareUnicodeCharacter{1F636}{\includegraphics[height=1em]{1F636.png}}
+\DeclareUnicodeCharacter{1F639}{\includegraphics[height=1em]{1F639.png}}
+\DeclareUnicodeCharacter{1F63A}{\includegraphics[height=1em]{1F63A.png}}
+\DeclareUnicodeCharacter{1F63B}{\includegraphics[height=1em]{1F63B.png}}
+\DeclareUnicodeCharacter{1F63E}{\includegraphics[height=1em]{1F63C.png}}
+\DeclareUnicodeCharacter{1F63D}{\includegraphics[height=1em]{1F63D.png}}
+\DeclareUnicodeCharacter{1F63E}{\includegraphics[height=1em]{1F63E.png}}
+\DeclareUnicodeCharacter{1F63D}{\includegraphics[height=1em]{1F63F.png}}
+
+\DeclareUnicodeCharacter{1F600}{\includegraphics[height=1em]{1F640.png}}
+\DeclareUnicodeCharacter{1F641}{\includegraphics[height=1em]{1F641.png}}
+\DeclareUnicodeCharacter{1F642}{\includegraphics[height=1em]{1F642.png}}
+\DeclareUnicodeCharacter{1F643}{\includegraphics[height=1em]{1F643.png}}
+\DeclareUnicodeCharacter{1F644}{\includegraphics[height=1em]{1F644.png}}
+\DeclareUnicodeCharacter{1F645}{\includegraphics[height=1em]{1F645.png}}
+\DeclareUnicodeCharacter{1F646}{\includegraphics[height=1em]{1F646.png}}
+\DeclareUnicodeCharacter{1F649}{\includegraphics[height=1em]{1F649.png}}
+\DeclareUnicodeCharacter{1F64A}{\includegraphics[height=1em]{1F64A.png}}
+\DeclareUnicodeCharacter{1F64B}{\includegraphics[height=1em]{1F64B.png}}
+\DeclareUnicodeCharacter{1F64E}{\includegraphics[height=1em]{1F64C.png}}
+\DeclareUnicodeCharacter{1F64D}{\includegraphics[height=1em]{1F64D.png}}
+\DeclareUnicodeCharacter{1F64E}{\includegraphics[height=1em]{1F64E.png}}
+\DeclareUnicodeCharacter{1F64D}{\includegraphics[height=1em]{1F64F.png}}
+
+%Emoji - izpis urejen s slikicami emoji-jev - konec
+
+%DEFINIRANJE NADOMESTIL NEIZPISLJIVIH UNICODE CHARACTER-JEV - KONEC
 
 \usepackage{graphicx}	% za prikazovanje slik in ostalih grafik
 \usepackage{colortbl}		%The pack­age al­lows rows and columns to be coloured, and even in­di­vid­ual cells

@@ -39,6 +39,7 @@
     define("NAVI_HIERARHIJA_SUPERADMIN", "NAVI_HIERARHIJA_SUPERADMIN");
     define("NAVI_HIERARHIJA", "NAVI_HIERARHIJA");
     define("NAVI_KVIZ", "NAVI_KVIZ");
+    define("NAVI_VOTING", "NAVI_VOTING");
     define("NAVI_VNOS", "NAVI_VNOS");
     define("NAVI_PHONE", "NAVI_PHONE");
     define("NAVI_360", "NAVI_360");
@@ -56,6 +57,7 @@
 	define("A_NONRESPONSE_GRAPH", "nonresponse_graph");
 	define("A_PARA_GRAPH", "para_graph");
 	define("A_USABLE_RESP", "usable_resp");
+	define("A_KAKOVOST_RESP", "kakovost_resp");
 	define("A_SPEEDER_INDEX", "speeder_index");
 	define("A_TEXT_ANALYSIS", "text_analysis");
 	define("A_GEOIP_LOCATION", "geoip_location");
@@ -178,6 +180,7 @@
 	define('A_UPORABNOST', 'uporabnost');
 	define('A_HIERARHIJA_SUPERADMIN', 'hierarhija_superadmin');
 	define('A_KVIZ', 'kviz');
+	define('A_VOTING', 'voting');
 	define('A_VNOS', 'vnos');
 	define('A_PHONE', 'telefon'); # Telefon
 	define('T_PHONE', 'telefon'); # Telefon

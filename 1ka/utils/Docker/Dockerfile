@@ -11,7 +11,7 @@ RUN apt-get update -y \
         libxml2-dev \
         zlib1g-dev \
 		texlive-full \
-		latex2rtf \
+	    latex2rtf \
         libzip-dev \
         zip \
 	&& apt-get clean \

@@ -266,11 +266,8 @@ function urediVrsticoHierarhije(id) {
  * Prikaži pop-up za uvoz vseh uporabnikov preko tekstovnega polja
  */
 function uvoziUporabnike() {
-    $('#fade').fadeTo('slow', 0.5);
+    $('#fade').fadeTo('slow', 1);
     $('#vrednost_edit').html('').fadeIn('slow').load('ajax.php?anketa=' + anketa_id + '&t=hierarhija-ajax&a=gradnja-hierarhije&m=import-user&s=get');
-
-    var position = $(window).scrollTop();
-    $('#vrednost_edit').css('top', position + 300);
 }
 
 function shraniVseVpisaneUporabnike() {
@@ -305,25 +302,19 @@ function kopirajVrsticoHierarhije(id) {
 function odpriPopup(id, last) {
     var last = last || 0;
 
-    $('#fade').fadeTo('slow', 0.5);
+    $('#fade').fadeTo('slow', 1);
     $('#vrednost_edit').html('').fadeIn('slow').load('ajax.php?anketa=' + anketa_id + '&t=hierarhija-ajax&a=gradnja-hierarhije&m=uredi-uporabnike-v-strukturi', {
         struktura: id,
         last: last
     });
-
-    var position = $(window).scrollTop();
-    $('#vrednost_edit').css('top', position + 300);
 }
 
 /**
  * Zamenjamo email uporabnika na zadnjem nivoju z novim emailom - find and replace all
  */
 function zamenjajUporabnikaZNovim() {
-    $('#fade').fadeTo('slow', 0.5);
+    $('#fade').fadeTo('slow', 1);
     $('#vrednost_edit').html('').fadeIn('slow').load('ajax.php?anketa=' + anketa_id + '&t=hierarhija-ajax&a=gradnja-hierarhije&m=zamenjaj-uporabnika-v-strukturi');
-
-    var position = $(window).scrollTop();
-    $('#vrednost_edit').css('top', position + 300);
 }
 
 /**
@@ -613,16 +604,10 @@ function shraniKomentar() {
  * @param int vrsta - za katero vrsta emaila gre
  */
 function previewMail(vrsta) {
-
-
-    $('#fade').fadeTo('slow', 0.5);
-
+    $('#fade').fadeTo('slow', 1);
     $('#vrednost_edit').html('').fadeIn('slow').load('ajax.php?anketa=' + anketa_id + '&t=hierarhija-ajax&a=ostalo&m=preview-mail', {
         vrsta: vrsta,
     });
-
-    var position = $(window).scrollTop();
-    $('#vrednost_edit').css('top', position + 300);
 }
 
 
@@ -767,19 +752,16 @@ function jstree_vkljuci(jsonData) {
 }
 
 function dodajKomentar() {
-    $('#fade').fadeTo('slow', 0.5);
-    $('#vrednost_edit').html('').fadeIn('slow').load('ajax.php?anketa=' + anketa_id + '&t=hierarhija-ajax&a=komentar-k-hierarhiji&m=get');
-
-    var position = $(window).scrollTop();
-    $('#vrednost_edit').css('top', position + 300);
+    $('#fade').fadeTo('slow', 1);
+    $('#vrednost_edit').wrapAll('<div class="fixed-position"></div>').html('').fadeIn('slow').load('ajax.php?anketa=' + anketa_id + '&t=hierarhija-ajax&a=komentar-k-hierarhiji&m=get');
 }
 
 /**
  * Odpre popup za nalaganje logotipa
  */
 function uploadLogo() {
-    $('#fade').fadeTo('slow', 0.5);
-    $('#vrednost_edit').html('').fadeIn('slow').load('ajax.php?anketa=' + anketa_id + '&t=hierarhija-ajax&a=upload-logo&m=get', function () {
+    $('#fade').fadeTo('slow', 1);
+    $('#vrednost_edit').wrapAll('<div class="fixed-position"></div>').html('').fadeIn('slow').load('ajax.php?anketa=' + anketa_id + '&t=hierarhija-ajax&a=upload-logo&m=get', function () {
 
         //Vklopi nice input file
         $("input[type=file]").nicefileinput({
@@ -787,10 +769,6 @@ function uploadLogo() {
         });
 
     });
-
-
-    var position = $(window).scrollTop();
-    $('#vrednost_edit').css('top', position + 300);
 }
 
 /**
@@ -1617,7 +1595,7 @@ $(document).ready(function () {
 
                 // Uvoz in izviz hierarhije v CSV
                 uvozHierarhije: function () {
-                    $('#fade').fadeTo('slow', 0.5);
+                    $('#fade').fadeTo('slow', 1);
                     $('#vrednost_edit').html('').fadeIn('slow').load('ajax.php?anketa=' + this.anketaId + '&t=hierarhija-ajax&a=uvozi-hierarhijo', function () {
 
                         //Vklopi nice input file

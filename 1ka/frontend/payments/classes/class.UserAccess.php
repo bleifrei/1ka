@@ -74,6 +74,7 @@ class UserAccess{
         'uporabnost'                => 3,   // Evalvacija strani (split screen)
         //'vnos'                      => 2,   // Vnos vprasalnikov
         'kviz'                      => 2,   // Kviz
+        'voting'                    => 3,   // Volitve
         'social_network'            => 3,   // Socialna omrezja
         'slideshow'                 => 3,   // Prezentacija
         'telephone'                 => 3,   // Telefonska anketa

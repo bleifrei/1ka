@@ -14,6 +14,7 @@ use App\Controllers\HelperController as Helper;
 use App\Models\Model;
 use Cache;
 use enkaParameters;
+use Mobile_Detect;
 use SurveyAdvancedParadataLog;
 use SurveyInfo;
 use SurveySetting;
@@ -2702,13 +2703,36 @@ class JsController extends Controller
 				
 				if (in_array($row['text'], array('0','1','2','3'))){
 				
-					$sqlU = sisplet_query("SELECT device FROM srv_user WHERE ank_id='".get('anketa')."' AND id='".get('usr_id')."'");
+                    // Star nacin detekcije - vedno vezan na prvi prihod, po novem detektiramo vsakic posebej
+					/*$sqlU = sisplet_query("SELECT device FROM srv_user WHERE ank_id='".get('anketa')."' AND id='".get('usr_id')."'");
 					$rowU = mysqli_fetch_array($sqlU);
+
+                    $echo .= $row['text'] . ' == ' . $rowU['device'];*/
+
+                    $device = 0;
+                    $useragent = $_SERVER['HTTP_USER_AGENT'];
+
+                    if ($useragent != '' && get_cfg_var('browscap')) {
+
+                        $browser_detect = get_browser($useragent, true);
+
+                        $detect = New Mobile_Detect();
+                        $detect->setUserAgent($useragent);
+
+                        // Detect naprave (pc, mobi, tablet, robot)
+                        if ($detect->isMobile()) {
+                            if ($detect->isTablet())
+                                $device = 2;
+                            else
+                                $device = 1;
+                        } 
+                        elseif ($browser_detect['crawler'] == 1){
+                            $device = 3;
+                        }
+                    }
 				
-					$echo .= ' ( ';
-
-					$echo .= $row['text'] . ' == ' . $rowU['device'];
-
+					$echo .= ' ( ';	
+					$echo .= $row['text'] . ' == ' . $device;
 					$echo .= ' ) ';
 				}
             }

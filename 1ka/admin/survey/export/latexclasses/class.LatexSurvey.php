@@ -440,21 +440,29 @@ class LatexSurvey{
 		if ( !$this->getGrupa() ){
 			if ( SurveyInfo::getInstance()->getSurveyShowConcl() && SurveyInfo::getInstance()->getSurveyConcl() )
 			{		// ce obstaja footer izpisemo footer
-/* 				$this->pdf->Ln(LINE_BREAK);
-				$this->pdf->drawLine();
-				$this->pdf->Ln(LINE_BREAK);
-				$this->pdf->Write  (0, $this->encodeText(SurveyInfo::getInstance()->getSurveyConcl()), '', 0, 'L', 1, 1); */
+
 			}
 		}
 
-		
-		########
-						
-		// Pripravimo podatke, ki se uporabijo v tabelah
-		
-		// Loop cez vsa vprasanja
-		// Znotraj loopa vsak element posebej izrisemo kot objekt LatexFreqElement - pomembno, ker zelimo recimo posamezno tabelo frekvenc (sa specificno vprasanje) izrisati tudi v kaksnem drugem porocilu (npr custom report). Zato se mora vsak element neodvisno izrisovati.
-		//$this->tex .= ' testni tekst display survey';
+
+        // Izpis grafa in tabele za NIJZ na koncu dokumenta
+        global $site_domain;
+        if( ($site_domain == 'test.1ka.si' && $this->anketa == '8892') || ($site_domain == 'anketa.nijz.si' && $this->anketa == '126738') ){	
+
+            // Page break
+            $tex .= '\cleardoublepage';
+
+            // Naslov "Ocena bivalnega okolja"
+            $tex .= '\begin{center} \textbf{Ocena bivalnega okolja} \end{center}';
+
+            $nijz = new SurveyNIJZ($this->anketa, $this->usr_id);
+            
+            // Latex nijz slika grafa
+            $tex .= $nijz->displayRadarLatex();
+
+            // Latex nijz tabela
+            $tex .= $nijz->displayTableLatex();
+        }
 		
 		return $tex;
 	}
@@ -1049,12 +1057,6 @@ class LatexSurvey{
 	        $output .= ' '.$row_if['label'].' ';
 	        $output .= ') ';      		
         }
-		//echo $output."</br>";
-/* 		$this->pdf->SetTextColor(0,0,150);
-		$this->pdf->setFont('','B',$this->font);
-		$this->pdf->MultiCell(90, 1, $this->encodeText($output),0,'L',0,1,0,0);
-		$this->pdf->SetTextColor(0,0,0);
-		$this->pdf->setFont('','',$this->font); */
 
 		return $output;
 	}
@@ -1242,56 +1244,7 @@ class LatexSurvey{
 		$posLi = strpos($text, $findLi);
 		$posPar = strpos($text, $findPar);
 
-		//ureditev izrisa slike
-/* 		if($posImg !== false){
-			$numOfImgs = substr_count($text, $findImg);	//stevilo '<img	' v tekstu
-			$posImg = strpos($text, $findImg);
-			$textPrej = '';
-			$textPotem = '';			
-			for($i=0; $i<$numOfImgs; $i++){				
-				$posImg = strpos($text, $findImg);
-				$textPrej = substr($text, 0, $posImg);	//tekst do img
-				$textPotem = substr($text, $posImg);	//tekst po img, z vkljuceno hmlt kodo z img
-				$posImgEnd = strpos($textPotem, '/>');	//pozicija, kjer se konca html koda za img
-				$textPotem = substr($textPotem, $posImgEnd+strlen('/>'));	//tekst od konca html kode za img dalje
-
-				//$text = $textPrej.' '.PIC_SIZE_ANS."{".$this->path2UploadedImages."".$this->getImageName($text, 0, '<img')."}".' '.$textPotem;				
-				//$text = $textPrej.' '.PIC_SIZE_ANS."{".$this->path2UploadedImages."".$this->getImageName($text, 0, '<img', $vre_id)."}".' '.$textPotem;
-				$imageName = $this->path2UploadedImages."".$this->getImageName($text, 0, '<img', $vre_id);
-				$imageNameTest = $imageName.'.png';	//za preveriti, ali obstaja slikovna datoteka na strezniku
-				//error_log("iz survey element: ".$imageNameTest);
-				//echo("iz survey element: ".$imageNameTest."</br>");
-				if(filesize($imageNameTest) > 0){
-					$text = $textPrej.' '.PIC_SIZE_ANS."{".$imageName."}".' '.$textPotem;
-				}else{
-					$image = $lang['srv_pc_unavailable'];
-					$text = $textPrej.' '.$image.' '.$textPotem;
-				}				
-			}
-			
-			//pred ureditvijo posebnih karakterjev, odstrani del teksta s kodo za sliko, da se ne pojavijo tezave zaradi imena datoteke od slike
-			$findImgCode = '\includegraphics';
-			$posOfImgCode = strpos($text, $findImgCode);
-			//echo $posOfImgCode."</br>";
-			$textToImgCode = substr($text, 0, $posOfImgCode);	//tekst do $findImgCode
-			//echo $textToImgCode."</br>";
-			$textFromImgCode = substr($text, $posOfImgCode);	//tekst po $findImgCode
-			//echo $textFromImgCode."</br>";
-			$findImgCodeEnd = '}';
-			//$posOfImgCodeEnd = strpos($text,  $findImgCodeEnd);
-			$posOfImgCodeEnd = strpos($textFromImgCode, $findImgCodeEnd);
-			//echo $posOfImgCodeEnd."</br>";
-			$textAfterImgCode = substr($textFromImgCode, $posOfImgCodeEnd+1);	//tekst po $findImgCodeEnd
-			//echo $textAfterImgCode."</br>";
-			$textOfImgCode = substr($text, $posOfImgCode, $posOfImgCodeEnd+1);
-			//echo $textOfImgCode."</br>";
-			
-			$text = $textToImgCode.$textAfterImgCode;
-			
-			//pred ureditvijo posebnih karakterjev, odstrani del teksta s kodo za sliko, da se ne pojavijo tezave zaradi imena datoteke od slike - konec
-		} */
-		//ureditev izrisa slike - konec	
-		
+        
 		//ureditev posebnih karakterjev za Latex	http://www.cespedes.org/blog/85/how-to-escape-latex-special-characters, https://en.wikibooks.org/wiki/LaTeX/Special_Characters#Other_symbols
 		$text = str_replace('\\','\textbackslash{} ',$text);
 		//$text = str_replace('{','\{',$text);		
@@ -1327,13 +1280,7 @@ class LatexSurvey{
 			######################
 		}
 		//ureditev preureditve html kode ul in li v latex itemize - konec
-		
-		//po ureditvi posebnih karakterjev, dodati del teksta s kodo za sliko, ce je slika prisotna
-/* 		if($posImg !== false){
-			$text = substr_replace($text, $textOfImgCode, $posOfImgCode, 0);
-		} */
-		//po ureditvi posebnih karakterjev, dodati del teksta s kodo za sliko, ce je slika prisotna	
-		
+				
 		if($posPar !== false){	//ce je kaksen html tag <p>, dodaj prazno vrstico oz. break			
 			if($numOfUl!=0 && $posLi !== false){	//ce imamo ul in li	
 				$divider = ' ';

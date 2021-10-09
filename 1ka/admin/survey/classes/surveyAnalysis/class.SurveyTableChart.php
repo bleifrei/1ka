@@ -1396,7 +1396,7 @@ class SurveyTableChart {
 			'radar_type' 	=> 0,	// tip radarj (crte / liki)
 			'radar_scale' 	=> 0,	// skala pri radarju (na osi / diagonalno)
 			'labelWidth' 	=> 50,	// sirina label (50% / 20%)
-			'barLabel'	 	=> 0,	// prikaz label v stolpicnih grafih
+			'barLabel'	 	=> 1,	// prikaz label v stolpicnih grafih
 			'rotate'	 	=> 0,	// obrnjeni gridi in variable (pri multinumber...)
 			'hq'	 		=> 1,	// visoka locljivost grafa
 			'show_numerus'	=> 1,	// prikaz numerusa

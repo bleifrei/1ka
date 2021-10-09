@@ -95,8 +95,9 @@ class RadioCheckboxSelectLatex extends LatexSurveyElement
 							if (strip_tags($rowl['naslov2']) != '') $rowVrednost['naslov2'] = $rowl['naslov2'];							
 							#ce je respondent odgovarjal v drugem jeziku - konec ################
 							
-							$stringTitle = ($this->encodeText(( $rowVrednost['naslov'] ) ? $rowVrednost['naslov'] : ( ( $rowVrednost['naslov2'] ) ? $rowVrednost['naslov2'] : $rowVrednost['variable'] ), $rowVrednost['id']  ));
-							$stringTitle = '\\textcolor{crta}{'.$stringTitle.'}';
+							$stringTitle = ( $rowVrednost['naslov'] ) ? $rowVrednost['naslov'] : ( ( $rowVrednost['naslov2'] ) ? $rowVrednost['naslov2'] : $rowVrednost['variable'] );						
+							$stringTitle = Common::getInstance()->dataPiping($stringTitle, $usr_id, $loop_id);
+							$stringTitle = '\\textcolor{crta}{'.$this->encodeText($stringTitle).'}';
 							
 							//echo $stringTitle."za indeks: ".$indeksZaWhile."</br>";
 							//stetje stevila vrstic
@@ -263,14 +264,14 @@ class RadioCheckboxSelectLatex extends LatexSurveyElement
 				while ($rowVrednost = mysqli_fetch_assoc($sqlVrednosti)){
 					$prop['full'] = ( isset($userAnswer[$rowVrednost['id']]) );	
 					
-					
-					//if($this->language>1){ //ce je prevod ankete
 					if($this->prevod){ //ce je prevod ankete
 						$rowl = $this->srv_language_vrednost($rowVrednost['id']);	//pridobi prevod naslova v ustreznem jeziku						
 						$stringTitle = ((( $rowl['naslov'] ) ? $rowl['naslov'] : ( ( $rowl['naslov2'] ) ? $rowl['naslov2'] : $rowl['variable'] ) )); //prevod naslova v ustreznem jeziku
 					}else{						
 						$stringTitle = ((( $rowVrednost['naslov'] ) ? $rowVrednost['naslov'] : ( ( $rowVrednost['naslov2'] ) ? $rowVrednost['naslov2'] : $rowVrednost['variable'] ) ));
 					}
+
+					$stringTitle = Common::getInstance()->dataPiping($stringTitle, $usr_id, $loop_id);					
 					
 					//echo "naslov: $stringTitle</br>";
 					//echo "jezik: ".$this->language."</br>";

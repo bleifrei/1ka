@@ -1169,7 +1169,19 @@ class ApiLogin
 
     private function preveriNapake($parametri)
     {
-        global $lang;
+
+        // Nastavimo jezik
+        $language = 1;
+        if(isset($_POST['language'])){
+          $language = $_POST['language'];
+        }
+        elseif(isset($_POST['jezik'])){
+          $language = ($_POST['jezik'] == 'en' ? 2 : 1);
+        }
+
+        if(is_numeric($language)){
+          include_once('../../lang/'.$language.'.php');
+        }
 
         $napaka = [];
 

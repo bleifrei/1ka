@@ -441,86 +441,106 @@ class SurveyAdminSettings {
 
 		/* PISKOTEK */
 		if ($_GET['a'] == A_PRIKAZ) {
+
 			echo '<fieldset>';
 			echo '<legend>' . $lang['srv_data_valid_units_settings'] . '</legend>';
+
 			echo '<p>';
 			echo '<span class="strong" >'.$lang['srv_prikaz_default_valid'].'</span>';
 			echo '<label><input type="radio" name="defValidProfile" '.($row['defValidProfile']==2?' checked':'').' value="2">'.'(5,6) '.$lang['srv_data_valid_units'].'</label>';
 			echo '<label><input type="radio" name="defValidProfile" '.($row['defValidProfile']==3?' checked':'').' value="3">'.'(6) '.$lang['srv_data_finished_units'].'</label>';
 			echo '</p>';
-			echo '<p>';
-			echo '<span class="strong" >'.$lang['srv_prikaz_showItime'].'</span>';
-			echo '<label><input type="radio" name="showItime" '.((int)$row['showItime']==0?' checked':'').' value="0">'.$lang['no1'].'</label>';
-			echo '<label><input type="radio" name="showItime" '.((int)$row['showItime']==1?' checked':'').' value="1">'.$lang['yes'].'</label>';
-			echo '</p>';
+
+            // Pri volitvah ne moremo prikazati datuma respondenta
+            if(!SurveyInfo::getInstance()->checkSurveyModule('voting')){
+                echo '<p>';
+                echo '<span class="strong" >'.$lang['srv_prikaz_showItime'].'</span>';
+                echo '<label><input type="radio" name="showItime" '.((int)$row['showItime']==0?' checked':'').' value="0">'.$lang['no1'].'</label>';
+                echo '<label><input type="radio" name="showItime" '.((int)$row['showItime']==1?' checked':'').' value="1">'.$lang['yes'].'</label>';
+                echo '</p>';
+            }
+
 			echo '<p>';
 			echo '<span class="strong" >'.$lang['srv_prikaz_showLineNumber'].'</span>';
 			echo '<label><input type="radio" name="showLineNumber" '.((int)$row['showLineNumber']==0?' checked':'').' value="0">'.$lang['no1'].'</label>';
 			echo '<label><input type="radio" name="showLineNumber" '.((int)$row['showLineNumber']==1?' checked':'').' value="1">'.$lang['yes'].'</label>';
 			echo '</p>';
+
 			echo '</fieldset>';
-			
 		}
 
 		/*Piskotek*/
 		if ($_GET['a'] == 'piskot') {
-			
-			echo '<fieldset style="position:relative">';
-			
-			echo '<div id="cookie_alert" class="google_yellow">';
-			echo '<span class="">'.$lang['srv_cookie_alert_title'].'</span>';
-			echo '<span class="">'.$lang['srv_cookie_alert_1'].'</span>';
-			echo '<span class="">'.$lang['srv_cookie_alert_2'].'</span>';
-			echo '<span class="">'.$lang['srv_cookie_alert'].'</span>';
-			echo '</div>';
-			
-			echo '<legend>' . $lang['srv_cookie'] . '</legend>';
-			
-			// Shrani piskotek za X casa
-			echo '<span class="nastavitveSpan3 bold" ><label>' . $lang['srv_cookie'] . Help :: display('srv_cookie') .':</label></span>';
-			echo '            <label for="cookie_-1"><input type="radio" name="cookie" value="-1" id="cookie_-1"' . ($row['cookie'] == -1 ? ' checked="checked"' : '') . ' onclick="checkcookie();" />' . $lang['srv_cookie_-1'] . '</label>' . "\n\r";
-			echo '            <label for="cookie_0"><input type="radio" name="cookie" value="0" id="cookie_0"' . ($row['cookie'] == 0 ? ' checked="checked"' : '') . ' onclick="checkcookie();" />' . $lang['srv_cookie_0'] . '</label>' . "\n\r";
-			echo '            <label for="cookie_1"><input type="radio" name="cookie" value="1" id="cookie_1"' . ($row['cookie'] == 1 ? ' checked="checked"' : '') . ' onclick="checkcookie();" />' . $lang['srv_cookie_1'] . '</label>' . "\n\r";
-			echo '            <label for="cookie_2"><input type="radio" name="cookie" value="2" id="cookie_2"' . ($row['cookie'] == 2 ? ' checked="checked"' : '') . ' onclick="checkcookie();" />' . $lang['srv_cookie_2'] . '</label>' . "\n\r";
-			echo '<br/>';
-			
-			// Ko se uporabnik vrne (zacne od zacetka/nadaljuje kjer je ostal)
-			echo '<span class="nastavitveSpan3 bold" ><label>' . $lang['srv_cookie_return'] . Help :: display('srv_cookie_return') . ':</label></span>';
-			echo '            <label for="cookie_return_0"><input type="radio" name="cookie_return" value="0" id="cookie_return_0"' . ($row['cookie_return'] == 0 ? ' checked="checked"' : '') . ' onclick="checkcookie();" />' . $lang['srv_cookie_return_start'] . '</label>' . "\n\r";
-			echo '            <div class="no-cookie"><label for="cookie_return_1"><input type="radio" name="cookie_return" value="1" id="cookie_return_1"' . ($row['cookie_return'] == 1 ? ' checked="checked"' : '') . ' onclick="checkcookie();" />' . $lang['srv_cookie_return_middle'] . '</label></div>' . "\n\r";
-			echo '<br>';
-			
-			// Ce je zakljucil lahko naknadno ureja svoje odgovore
-			echo '<div class="no-cookie no-cookie-return"><span class="nastavitveSpan3 bold" ><label>' . $lang['srv_return_finished'] . Help :: display('srv_return_finished') . ':</label></span>';
-			echo '            <label for="return_finished_1"><input type="radio" name="return_finished" value="1" id="return_finished_1"' . ($row['return_finished'] == 1 ? ' checked="checked"' : '') . ' />' . $lang['srv_return_finished_yes'] . '</label>' . "\n\r";
-			echo '            <label for="return_finished_0"><input type="radio" name="return_finished" value="0" id="return_finished_0"' . ($row['return_finished'] == 0 ? ' checked="checked"' : '') . ' />' . $lang['srv_return_finished_no'] . '</label></div>' . "\n\r";
+
+            // Pri volitvah ne moremo popravljati nastavitev piskotka
+            if(SurveyInfo::getInstance()->checkSurveyModule('voting')){
+                
+                echo '<fieldset style="position:relative">';
+                echo '<legend>' . $lang['srv_cookie'] . '</legend>';
+                echo '<span class="red bold">'.$lang['srv_voting_no_cookie'].'</span>';
+                echo '</fieldset>';
+                
+                echo '</form>';
+
+                return;
+            }
+            
+            echo '<fieldset style="position:relative">';
+
+            echo '<div id="cookie_alert" class="google_yellow">';
+            echo '<span class="">'.$lang['srv_cookie_alert_title'].'</span>';
+            echo '<span class="">'.$lang['srv_cookie_alert_1'].'</span>';
+            echo '<span class="">'.$lang['srv_cookie_alert_2'].'</span>';
+            echo '<span class="">'.$lang['srv_cookie_alert'].'</span>';
+            echo '</div>';
+            
+            echo '<legend>' . $lang['srv_cookie'] . '</legend>';
+            
+            // Shrani piskotek za X casa
+            echo '<span class="nastavitveSpan3 bold" ><label>' . $lang['srv_cookie'] . Help :: display('srv_cookie') .':</label></span>';
+            echo '            <label for="cookie_-1"><input type="radio" name="cookie" value="-1" id="cookie_-1"' . ($row['cookie'] == -1 ? ' checked="checked"' : '') . ' onclick="checkcookie();" />' . $lang['srv_cookie_-1'] . '</label>' . "\n\r";
+            echo '            <label for="cookie_0"><input type="radio" name="cookie" value="0" id="cookie_0"' . ($row['cookie'] == 0 ? ' checked="checked"' : '') . ' onclick="checkcookie();" />' . $lang['srv_cookie_0'] . '</label>' . "\n\r";
+            echo '            <label for="cookie_1"><input type="radio" name="cookie" value="1" id="cookie_1"' . ($row['cookie'] == 1 ? ' checked="checked"' : '') . ' onclick="checkcookie();" />' . $lang['srv_cookie_1'] . '</label>' . "\n\r";
+            echo '            <label for="cookie_2"><input type="radio" name="cookie" value="2" id="cookie_2"' . ($row['cookie'] == 2 ? ' checked="checked"' : '') . ' onclick="checkcookie();" />' . $lang['srv_cookie_2'] . '</label>' . "\n\r";
+            echo '<br/>';
+            
+            // Ko se uporabnik vrne (zacne od zacetka/nadaljuje kjer je ostal)
+            echo '<span class="nastavitveSpan3 bold" ><label>' . $lang['srv_cookie_return'] . Help :: display('srv_cookie_return') . ':</label></span>';
+            echo '            <label for="cookie_return_0"><input type="radio" name="cookie_return" value="0" id="cookie_return_0"' . ($row['cookie_return'] == 0 ? ' checked="checked"' : '') . ' onclick="checkcookie();" />' . $lang['srv_cookie_return_start'] . '</label>' . "\n\r";
+            echo '            <div class="no-cookie"><label for="cookie_return_1"><input type="radio" name="cookie_return" value="1" id="cookie_return_1"' . ($row['cookie_return'] == 1 ? ' checked="checked"' : '') . ' onclick="checkcookie();" />' . $lang['srv_cookie_return_middle'] . '</label></div>' . "\n\r";
+            echo '<br>';
+            
+            // Ce je zakljucil lahko naknadno ureja svoje odgovore
+            echo '<div class="no-cookie no-cookie-return"><span class="nastavitveSpan3 bold" ><label>' . $lang['srv_return_finished'] . Help :: display('srv_return_finished') . ':</label></span>';
+            echo '            <label for="return_finished_1"><input type="radio" name="return_finished" value="1" id="return_finished_1"' . ($row['return_finished'] == 1 ? ' checked="checked"' : '') . ' />' . $lang['srv_return_finished_yes'] . '</label>' . "\n\r";
+            echo '            <label for="return_finished_0"><input type="radio" name="return_finished" value="0" id="return_finished_0"' . ($row['return_finished'] == 0 ? ' checked="checked"' : '') . ' />' . $lang['srv_return_finished_no'] . '</label></div>' . "\n\r";
             echo '<br/>';
             
             // Nikoli ne more popravljati svojih odgovorov (tudi ce se npr. vrne na prejsnjo stran)
-			echo '<div class="no-subsequent-answers"><span class="nastavitveSpan3 bold" ><label>' . $lang['srv_subsequent_answers'] . Help :: display('srv_subsequent_answers') . ':</label></span>';
-			echo '            <label for="subsequent_answers_1"><input type="radio" name="subsequent_answers" value="1" id="subsequent_answers_1"' . ($row['subsequent_answers'] == 1 ? ' checked="checked"' : '') . ' />' . $lang['srv_subsequent_answers_yes'] . '</label>' . "\n\r";
-			echo '            <label for="subsequent_answers_0"><input type="radio" name="subsequent_answers" value="0" id="subsequent_answers_0"' . ($row['subsequent_answers'] == 0 ? ' checked="checked"' : '') . ' />' . $lang['srv_subsequent_answers_no'] . '</label></div>' . "\n\r";
-			echo '<br/>';
-			
-			// Ce ni sprejel piskotka lahko/ne more nadaljevati
-			echo '<div class="no-cookie"><span class="nastavitveSpan3 bold" ><label>' . $lang['srv_cookie_continue'] . Help :: display('srv_cookie_continue') . ':</label></span>';
-			echo '            <label for="cookie_continue_1"><input type="radio" name="cookie_continue" value="1" id="cookie_continue_1"' . ($row['cookie_continue'] == 1 ? ' checked="checked"' : '') . ' />' . $lang['srv_cookie_continue_yes'] . '</label>' . "\n\r";
-			echo '            <label for="cookie_continue_0"><input type="radio" name="cookie_continue" value="0" id="cookie_continue_0"' . ($row['cookie_continue'] == 0 ? ' checked="checked"' : '') . ' />' . $lang['srv_cookie_continue_no'] . '</label></div>' . "\n\r";
-			echo '<br/>';
-			
-			echo '<br/>';
-			
-			// Prepoznaj respondenta
-			echo '<span class="nastavitveSpan3 bold" ><label>' . $lang['srv_user'] . Help :: display('srv_user_from_cms') . ':</label></span>';
-			echo '            <label for="user_1"><input type="radio" name="user_from_cms" value="1" id="user_1"' . ($row['user_from_cms'] == 1 ? ' checked="checked"' : '') . ' onclick="javascript:checkcookie(); $(\'#user_1_email\').removeAttr(\'disabled\')" />' . $lang['srv_respondent'] . '</label>' . "\n\r";
-			echo '            <label for="user_2"><input type="radio" name="user_from_cms" value="2" id="user_2"' . ($row['user_from_cms'] == 2 ? ' checked="checked"' : '') . ' onclick="javascript:checkcookie(); $(\'#user_1_email\').removeAttr(\'disabled\')" />' . $lang['srv_vnasalec'] . '</label>' . "\n\r";
-			echo '            <label for="user_0"><input type="radio" name="user_from_cms" value="0" id="user_0"' . ($row['user_from_cms'] == 0 ? ' checked="checked"' : '') . ' onclick="javascript:checkcookie(); $(\'#user_1_email\').attr(\'disabled\', true); _user_from_cms(); " />' . $lang['no1'] . '</label>' . "\n\r";
-			echo '<br/>';
-			
-			// Ob izpolnjevanju prikazi email
-			echo '<div id="cms_email">';
-			echo '  <span class="nastavitveSpan3 bold" >&nbsp;</span><label>' . $lang['srv_user_cms_show'] . Help :: display('srv_user_from_cms_email') . ':</label>';
-			echo '            <label for="user_1_email"><input type="checkbox" name="user_from_cms_email" value="1" id="user_1_email"' . ($row['user_from_cms_email'] == 1 ? ' checked="checked"' : '') . ' '.($row['user_from_cms']>0?'':' disabled="true" ').'/>' . $lang['srv_user_cms_email'] . '</label>' . "\n\r";
+            echo '<div class="no-subsequent-answers"><span class="nastavitveSpan3 bold" ><label>' . $lang['srv_subsequent_answers'] . Help :: display('srv_subsequent_answers') . ':</label></span>';
+            echo '            <label for="subsequent_answers_1"><input type="radio" name="subsequent_answers" value="1" id="subsequent_answers_1"' . ($row['subsequent_answers'] == 1 ? ' checked="checked"' : '') . ' />' . $lang['srv_subsequent_answers_yes'] . '</label>' . "\n\r";
+            echo '            <label for="subsequent_answers_0"><input type="radio" name="subsequent_answers" value="0" id="subsequent_answers_0"' . ($row['subsequent_answers'] == 0 ? ' checked="checked"' : '') . ' />' . $lang['srv_subsequent_answers_no'] . '</label></div>' . "\n\r";
+            echo '<br/>';
+            
+            // Ce ni sprejel piskotka lahko/ne more nadaljevati
+            echo '<div class="no-cookie"><span class="nastavitveSpan3 bold" ><label>' . $lang['srv_cookie_continue'] . Help :: display('srv_cookie_continue') . ':</label></span>';
+            echo '            <label for="cookie_continue_1"><input type="radio" name="cookie_continue" value="1" id="cookie_continue_1"' . ($row['cookie_continue'] == 1 ? ' checked="checked"' : '') . ' />' . $lang['srv_cookie_continue_yes'] . '</label>' . "\n\r";
+            echo '            <label for="cookie_continue_0"><input type="radio" name="cookie_continue" value="0" id="cookie_continue_0"' . ($row['cookie_continue'] == 0 ? ' checked="checked"' : '') . ' />' . $lang['srv_cookie_continue_no'] . '</label></div>' . "\n\r";
+            echo '<br/>';
+            
+            echo '<br/>';
+            
+            // Prepoznaj respondenta
+            echo '<span class="nastavitveSpan3 bold" ><label>' . $lang['srv_user'] . Help :: display('srv_user_from_cms') . ':</label></span>';
+            echo '            <label for="user_1"><input type="radio" name="user_from_cms" value="1" id="user_1"' . ($row['user_from_cms'] == 1 ? ' checked="checked"' : '') . ' onclick="javascript:checkcookie(); $(\'#user_1_email\').removeAttr(\'disabled\')" />' . $lang['srv_respondent'] . '</label>' . "\n\r";
+            echo '            <label for="user_2"><input type="radio" name="user_from_cms" value="2" id="user_2"' . ($row['user_from_cms'] == 2 ? ' checked="checked"' : '') . ' onclick="javascript:checkcookie(); $(\'#user_1_email\').removeAttr(\'disabled\')" />' . $lang['srv_vnasalec'] . '</label>' . "\n\r";
+            echo '            <label for="user_0"><input type="radio" name="user_from_cms" value="0" id="user_0"' . ($row['user_from_cms'] == 0 ? ' checked="checked"' : '') . ' onclick="javascript:checkcookie(); $(\'#user_1_email\').attr(\'disabled\', true); _user_from_cms(); " />' . $lang['no1'] . '</label>' . "\n\r";
+            echo '<br/>';
+            
+            // Ob izpolnjevanju prikazi email
+            echo '<div id="cms_email">';
+            echo '  <span class="nastavitveSpan3 bold" >&nbsp;</span><label>' . $lang['srv_user_cms_show'] . Help :: display('srv_user_from_cms_email') . ':</label>';
+            echo '            <label for="user_1_email"><input type="checkbox" name="user_from_cms_email" value="1" id="user_1_email"' . ($row['user_from_cms_email'] == 1 ? ' checked="checked"' : '') . ' '.($row['user_from_cms']>0?'':' disabled="true" ').'/>' . $lang['srv_user_cms_email'] . '</label>' . "\n\r";
             echo '</div>';
             
             echo '</fieldset>';
@@ -538,54 +558,54 @@ class SurveyAdminSettings {
                         
             // For modul maza, show all cookie settings
             $isMaza = (SurveyInfo::checkSurveyModule('maza')) ? 1 : 0;
-			
-			?> <script>
+            
+            ?> <script>
                 
-				function checkcookie () {
+                function checkcookie () {
 
-					if ($('input[name=cookie]:checked').val() == '-1' && $('input[name=user_from_cms]:checked').val() == '0' && <?echo $row['user_base'];?> != 1 && <?echo $isMaza;?> != 1) {
-						$('input[name=cookie_return]').attr('disabled', true);
-						$('input[name=return_finished]').attr('disabled', true);
-						$('.no-cookie').css('visibility', 'hidden');
-					} 
+                    if ($('input[name=cookie]:checked').val() == '-1' && $('input[name=user_from_cms]:checked').val() == '0' && <?echo $row['user_base'];?> != 1 && <?echo $isMaza;?> != 1) {
+                        $('input[name=cookie_return]').attr('disabled', true);
+                        $('input[name=return_finished]').attr('disabled', true);
+                        $('.no-cookie').css('visibility', 'hidden');
+                    } 
                     else {
-						$('input[name=cookie_return]').attr('disabled', false);
-						$('input[name=return_finished]').attr('disabled', false);
-						$('.no-cookie').css('visibility', 'visible');
-					}
-					
-					if ( $('input[name=cookie_return]:checked').val() == 1 ) {
-						$('.no-cookie-return').css('visibility', 'hidden');
-					} 
+                        $('input[name=cookie_return]').attr('disabled', false);
+                        $('input[name=return_finished]').attr('disabled', false);
+                        $('.no-cookie').css('visibility', 'visible');
+                    }
+                    
+                    if ( $('input[name=cookie_return]:checked').val() == 1 ) {
+                        $('.no-cookie-return').css('visibility', 'hidden');
+                    } 
                     else {
-						$('.no-cookie-return').css('visibility', 'visible');
-					}
-					
-					if ( $('input[name=user_from_cms]:checked').val() == 0 ) {
-						$('#cms_email').css('visibility', 'hidden');
-					} 
+                        $('.no-cookie-return').css('visibility', 'visible');
+                    }
+                    
+                    if ( $('input[name=user_from_cms]:checked').val() == 0 ) {
+                        $('#cms_email').css('visibility', 'hidden');
+                    } 
                     else {
-						$('#cms_email').css('visibility', 'visible');
+                        $('#cms_email').css('visibility', 'visible');
                     }
                     
                     if ( $('input[name=user_from_cms]:checked').val() == 2 ) {
-						$('#vnos_modul').show();
-					} 
+                        $('#vnos_modul').show();
+                    } 
                     else {
-						$('#vnos_modul').hide();
-					}
-				}
+                        $('#vnos_modul').hide();
+                    }
+                }
 
-				checkcookie();
-				cookie_alert();
+                checkcookie();
+                cookie_alert();
 
             </script> <?
 
-			$stringDostopAvtor = "SELECT count(*) as isAvtor FROM srv_dostop WHERE ank_id = '" . $this->anketa . "' AND (uid='" . $global_user_id . "' OR uid IN (SELECT user FROM srv_dostop_manage WHERE manager='$global_user_id' ))";
-			$sqlDostopAvtor = sisplet_query($stringDostopAvtor);
-			$rowDostopAvtor = mysqli_fetch_assoc($sqlDostopAvtor);
-			$avtorRow = SurveyInfo::getInstance()->getSurveyRow();
-				
+            $stringDostopAvtor = "SELECT count(*) as isAvtor FROM srv_dostop WHERE ank_id = '" . $this->anketa . "' AND (uid='" . $global_user_id . "' OR uid IN (SELECT user FROM srv_dostop_manage WHERE manager='$global_user_id' ))";
+            $sqlDostopAvtor = sisplet_query($stringDostopAvtor);
+            $rowDostopAvtor = mysqli_fetch_assoc($sqlDostopAvtor);
+            $avtorRow = SurveyInfo::getInstance()->getSurveyRow();
+                
 
             echo '<br/>';
 
@@ -626,15 +646,15 @@ class SurveyAdminSettings {
             echo '</fieldset>';
 
 
-			echo '<br/>';
+            echo '<br/>';
             
             
             // Preverimo, ce je funkcionalnost v paketu, ki ga ima uporabnik
             global $global_user_id;
             $userAccess = UserAccess::getInstance($global_user_id);
 
-			// dodajanje gesel za anketo
-			echo '<fieldset><legend>'.$lang['srv_password'].' '.Help::display('srv_dostop_password').'</legend>';
+            // dodajanje gesel za anketo
+            echo '<fieldset><legend>'.$lang['srv_password'].' '.Help::display('srv_dostop_password').'</legend>';
 
             if(!$userAccess->checkUserAccess($what='password')){
                 $userAccess->displayNoAccess($what='password');
@@ -810,13 +830,16 @@ class SurveyAdminSettings {
 					echo '</a>';
 				}
 				
-				
-				#<a href="#" onclick="$(\'#komentarji_napredno\').toggle(); return false;">'.$lang['srv_detail_settings'].'</a>'
 				echo '</p>';
-				echo '<p><a href="#" onclick="$(\'#komentarji_napredno\').toggle(); return false;"><span class="bold">'.$lang['srv_detail_settings'].'</span></a></p>';
+
 				
-				echo '<p><a href="index.php?anketa='.$this->anketa.'&a=komentarji"><span class="bold">'.$lang['comments'].'</span></a><br>';
-				echo '<a href="index.php?anketa='.$this->anketa.'&a=vabila"><span class="bold">'.$lang['srv_vabila'].'</span></a></p>';
+				echo '<p><a href="index.php?anketa='.$this->anketa.'&a=komentarji"><span class="bold">'.$lang['comments'].'</span></a></p>';
+				echo '<p><a href="index.php?anketa='.$this->anketa.'&a=vabila"><span class="bold">'.$lang['srv_vabila'].'</span></a></p>';
+				
+                echo '<p><a href="#" onclick="$(\'#komentarji_napredno\').fadeToggle(); $(\'#komentarji_napredno_arrow\').toggleClass(\'arrow2_d\'); $(\'#komentarji_napredno_arrow\').toggleClass(\'arrow2_u\'); return false;">';
+                echo '  <span class="bold">'.$lang['srv_detail_settings'].'&nbsp;</span>';
+                echo '  <span id="komentarji_napredno_arrow" class="faicon arrow2_d"></span>';
+                echo '</a></p>';
 				
 				echo '</fieldset>';
 				
@@ -1392,16 +1415,34 @@ class SurveyAdminSettings {
 			$browser = SurveySetting::getInstance()->getSurveyMiscSetting('survey_browser');
 			$referal = SurveySetting::getInstance()->getSurveyMiscSetting('survey_referal');
 			$date = SurveySetting::getInstance()->getSurveyMiscSetting('survey_date');
-			
+
 
 			echo '<fieldset class="wide">';
 			echo '<legend>'.$lang['srv_sledenje'].'</legend>';
 				
+            // Preverimo ce je vklopljen modul za volitve - potem ne pustimo nobenih preklopov
+            $voting_disabled = '';
+            $voting_disabled_class = '';
+            if(SurveyInfo::getInstance()->checkSurveyModule('voting')){
+                $voting_disabled = ' disabled';
+                $voting_disabled_class = ' class="gray"';
+
+                echo '<p class="red">'.$lang['srv_voting_warning_paradata'].'</p>';	
+            }
+			
 			echo '<p>'.$lang['srv_metadata_desc'].'</p>';	
 				
-			echo '<span class="nastavitveSpan1 wide"><label>'.$lang['srv_sledenje_browser'].':</label></span> <label for="survey_browser_1"><input type="radio" name="survey_browser" id="survey_browser_1" value="1"'.($browser==1?' checked':'').'>'.$lang['no'].'</label> <label for="survey_browser_0"><input type="radio" name="survey_browser" id="survey_browser_0" value="0"'.($browser==0?' checked':'').'>'.$lang['yes'].'</label><br class="clr"/>';
-			echo '<span class="nastavitveSpan1 wide"><label>'.$lang['srv_sledenje_referal'].':</label></span> <label for="survey_referal_1"><input type="radio" name="survey_referal" id="survey_referal_1" value="1"'.($referal==1?' checked':'').'>'.$lang['no'].'</label> <label for="survey_referal_0"><input type="radio" name="survey_referal" id="survey_referal_0" value="0"'.($referal==0?' checked':'').'>'.$lang['yes'].'</label><br class="clr"/>';
-			echo '<span class="nastavitveSpan1 wide"><label>'.$lang['srv_sledenje_date'].':</label></span> <label for="survey_date_1"><input type="radio" name="survey_date" id="survey_date_1" value="1"'.($date==1?' checked':'').'>'.$lang['no'].'</label> <label for="survey_date_0"><input type="radio" name="survey_date" id="survey_date_0" value="0"'.($date==0?' checked':'').'>'.$lang['yes'].'</label><br class="clr"/>';
+			echo '<span class="nastavitveSpan1 wide"><label>'.$lang['srv_sledenje_browser'].':</label></span>';
+            echo ' <label for="survey_browser_1" '.$voting_disabled_class.'><input type="radio" name="survey_browser" id="survey_browser_1" value="1"'.($browser==1?' checked':'').' '.$voting_disabled.'>'.$lang['no'].'</label>';
+            echo ' <label for="survey_browser_0" '.$voting_disabled_class.'><input type="radio" name="survey_browser" id="survey_browser_0" value="0"'.($browser==0?' checked':'').' '.$voting_disabled.'>'.$lang['yes'].'</label><br class="clr"/>';
+			
+            echo '<span class="nastavitveSpan1 wide"><label>'.$lang['srv_sledenje_referal'].':</label></span>';
+            echo ' <label for="survey_referal_1" '.$voting_disabled_class.'><input type="radio" name="survey_referal" id="survey_referal_1" value="1"'.($referal==1?' checked':'').' '.$voting_disabled.'>'.$lang['no'].'</label>';
+            echo ' <label for="survey_referal_0" '.$voting_disabled_class.'><input type="radio" name="survey_referal" id="survey_referal_0" value="0"'.($referal==0?' checked':'').' '.$voting_disabled.'>'.$lang['yes'].'</label><br class="clr"/>';
+			
+            echo '<span class="nastavitveSpan1 wide"><label>'.$lang['srv_sledenje_date'].':</label></span>';
+            echo ' <label for="survey_date_1" '.$voting_disabled_class.'><input type="radio" name="survey_date" id="survey_date_1" value="1"'.($date==1?' checked':'').' '.$voting_disabled.'>'.$lang['no'].'</label>';
+            echo ' <label for="survey_date_0" '.$voting_disabled_class.'><input type="radio" name="survey_date" id="survey_date_0" value="0"'.($date==0?' checked':'').' '.$voting_disabled.'>'.$lang['yes'].'</label><br class="clr"/>';
 	
 			echo '</fieldset>';
 	
@@ -1410,17 +1451,24 @@ class SurveyAdminSettings {
 	
 	
 			echo '<fieldset>';
+
 			echo '<legend>'.$lang['srv_sledenje_ip_title'].'</legend>';
 			
-			echo '<span class="nastavitveSpan1 wide"><label>'.$lang['srv_sledenje_ip'].':</label></span> <label for="survey_ip_1"><input type="radio" name="survey_ip" id="survey_ip_1" value="1"'.($ip==1?' checked':'').'>'.$lang['no'].'</label> <label for="survey_ip_0"><input type="radio" name="survey_ip" id="survey_ip_0" value="0"'.($ip==0?' checked':'').'>'.$lang['yes'].'</label>';
-			if($ip == 0 && $ip_show != 1)
+			echo '<span class="nastavitveSpan1 wide"><label>'.$lang['srv_sledenje_ip'].':</label></span>';
+            echo ' <label for="survey_ip_1" '.$voting_disabled_class.'><input type="radio" name="survey_ip" id="survey_ip_1" value="1"'.($ip==1?' checked':'').' '.$voting_disabled.'>'.$lang['no'].'</label>';
+            echo ' <label for="survey_ip_0" '.$voting_disabled_class.'><input type="radio" name="survey_ip" id="survey_ip_0" value="0"'.($ip==0?' checked':'').' '.$voting_disabled.'>'.$lang['yes'].'</label>';
+			
+            if($ip == 0 && $ip_show != 1)
 				echo '<div class="spaceLeft floatRight red" style="display:inline; width:520px;">'.$lang['srv_sledenje_ip_alert'].'</div>';
 				
 			echo '<br class="clr"/>';
 			
 			if($ip == 0 && ($admin_type == 0 || $admin_type == 1)){
-				echo '<span class="nastavitveSpan1 wide"><label>'.$lang['srv_show_ip'].':</label></span> <label for="survey_show_ip_0"><input type="radio" name="survey_show_ip" id="survey_show_ip_0" value="0"'.($ip_show==0?' checked':'').'>'.$lang['no'].'</label> <label for="survey_show_ip_1"><input type="radio" name="survey_show_ip" id="survey_show_ip_1" value="1"'.($ip_show==1?' checked':'').'>'.$lang['yes'].'</label>';
-				if($ip_show == 1)
+				echo '<span class="nastavitveSpan1 wide"><label>'.$lang['srv_show_ip'].':</label></span>';
+                echo ' <label for="survey_show_ip_0" '.$voting_disabled_class.'><input type="radio" name="survey_show_ip" id="survey_show_ip_0" value="0"'.($ip_show==0?' checked':'').' '.$voting_disabled.'>'.$lang['no'].'</label>';
+                echo ' <label for="survey_show_ip_1" '.$voting_disabled_class.'><input type="radio" name="survey_show_ip" id="survey_show_ip_1" value="1"'.($ip_show==1?' checked':'').' '.$voting_disabled.'>'.$lang['yes'].'</label>';
+				
+                if($ip_show == 1)
 					echo '<div class="spaceLeft floatRight red" style="display:inline; width:520px;">'.$lang['srv_show_ip_alert'].'</div>';
 			}
 	
@@ -1433,9 +1481,12 @@ class SurveyAdminSettings {
 				echo '<fieldset class="wide">';
 				echo '<legend>'.$lang['srv_sledenje_identifikatorji_title'].' '.Help::display('srv_email_with_data').'</legend>';
 				
-				echo '<span class="nastavitveSpan1 wide"><label>'.$lang['srv_sledenje_identifikatorji'].':</label></span> <label for="show_email_0"><input type="radio" name="show_email" id="show_email_0" value="0"'.($row['show_email']==0?' checked':'').'>'.$lang['no'].'</label> <label for="show_email_1"><input type="radio" name="show_email" id="show_email_1" value="1"'.($row['show_email']==1?' checked':'').'>'.$lang['yes'].'</label>';
-				if($row['show_email'] == 1)
-						echo '<div class="spaceLeft floatRight red" style="display:inline; width:520px;">'.$lang['srv_show_mail_with_data3'].'</div>';
+				echo '<span class="nastavitveSpan1 wide"><label>'.$lang['srv_sledenje_identifikatorji'].':</label></span>';
+                echo ' <label for="show_email_0" '.$voting_disabled_class.'><input type="radio" name="show_email" id="show_email_0" value="0"'.($row['show_email']==0?' checked':'').' '.$voting_disabled.'>'.$lang['no'].'</label>';
+                echo ' <label for="show_email_1" '.$voting_disabled_class.'><input type="radio" name="show_email" id="show_email_1" value="1"'.($row['show_email']==1?' checked':'').' '.$voting_disabled.'>'.$lang['yes'].'</label>';
+				
+                if($row['show_email'] == 1)
+					echo '<div class="spaceLeft floatRight red" style="display:inline; width:520px;">'.$lang['srv_show_mail_with_data3'].'</div>';
 					
 				echo '</fieldset>';
 			}
@@ -2731,95 +2782,46 @@ class SurveyAdminSettings {
 			
 			echo '    <fieldset>'. "\n";
 			echo '    <legend>' . $lang['srv_alert_prejemnik'] . '</legend>'. "\n";
-			
-			// Vklop/izklop obvescanja lahko naredi samo admin ali manager
-			if(true /*$admin_type == 0 || $admin_type == 1 || (isset($app_settings['commercial_packages']) && $app_settings['commercial_packages'] == true)*/){
-				// respondent - ne prikazemo ce gre za glasovanje
-				if($rowS['survey_type'] != 0){
-					echo '<p>';
-					echo '<input type="checkbox" name="alert_finish_respondent" id="alert_finish_respondent" value="1" onChange="change_alert_respondent(\'finish_respondent\', $(this)); $(\'form[name=alertanketa_' . $anketa . ']\').submit(); return false;" ' . ($rowAlert['finish_respondent'] == 1 ? ' checked' : '') . '>';
-					echo '<span id="label_alert_finish_respondent">';
-					$this->display_alert_label('finish_respondent',($rowAlert['finish_respondent'] == 1));
-					echo '</span>'. "\n";
-					
-					// Ce imamo vec prevodov omogocimo za vsak prevod svoj email
-					$this->display_alert_label('finish_respondent_language',($rowAlert['finish_respondent'] == 1));
-					echo '</p>';
-				}
-				//respondent iz cms
-				echo '<p><input type="checkbox" name="alert_finish_respondent_cms" id="alert_finish_respondent_cms" value="1" onChange="change_alert_respondent(\'finish_respondent_cms\', $(this)); chnage_alert_instruction($(this)); $(\'form[name=alertanketa_' . $anketa . ']\').submit(); return false;" ' . ($rowAlert['finish_respondent_cms'] == 1 ? ' checked' : '') . '>';
-				echo '<span id="label_alert_finish_respondent_cms">';
-				$this->display_alert_label('finish_respondent_cms',($rowAlert['finish_respondent_cms'] == 1));
-				echo '</span></p>'. "\n";
-
-				// avtor ankete oz osebe z dostopom
-				//echo '<p><input type="checkbox" name="alert_finish_author" id="alert_finish_author" value="1" onChange="change_alert_respondent(\'finish_author\', $(this)); $(\'form[name=alertanketa_' . $anketa . ']\').submit(); return false;"' . ($rowAlert['finish_author'] == 1 ? ' checked' : '') . '>';
-				echo '<p><input type="checkbox" name="alert_finish_author" id="alert_finish_author" value="1" onChange="change_alert_respondent(\'finish_author\', $(this));"' . ($rowAlert['finish_author'] == 1 ? ' checked' : '') . '>';
-				echo '<span id="label_alert_finish_author">';
-				$this->display_alert_label('finish_author',($rowAlert['finish_author'] == 1));
-				echo '</span></p>';
-
-				// posebej navedeni maili
-				echo '<p><input type="checkbox" name="alert_finish_other"  id="alert_finish_other"  value="1"' . (($rowAlert['finish_other'] == 1 || ($rowAlert['finish_other_emails'] && $rowAlert['finish_other'] != 0)) ? ' checked' : '') . ' onchange="toggleStatusAlertOtherCheckbox(\'finish_other\'); if ( ! $(this).attr(\'checked\') ) { $(\'form[name=alertanketa_' . $anketa . ']\').submit(); }"><label for="alert_finish_other">' . $lang['email_prejemniki'] . $lang['email_one_per_line'] . '</label>';
-				echo ' <a href="#" onclick="alert_custom(\'other\', \'0\'); return false;" title="'.$lang['srv_alert_custom'].'"><span class="faicon text_file_small"></span></a>';
-				echo ' <a href="#" onclick="alert_edit_if(\'4\'); return false;"><span class="faicon if_add" '.($rowAlert['finish_other_if']==0?'style=""':'').'></span></a> ';
-				if ($rowAlert['finish_other_if']>0) { if ($b==null) $b = new Branching($this->anketa); $b->conditions_display($rowAlert['finish_other_if']); }		
-				echo '</p>';
-					
-				echo '<p id="alert_holder_finish_other_emails" '.($rowAlert['finish_other'] == 0 ? 'class="displayNone"' : '' ).'>';
-				echo '<label for="alert_finish_other_emails">' . $lang['email'] . ':</label>' .
-				'<textarea name="alert_finish_other_emails" id="alert_finish_other_emails" style="height:100px" onblur="$(\'form[name=alertanketa_' . $anketa . ']\').submit();">' . $rowAlert['finish_other_emails'] . '</textarea>' .
-				'</p>';
-			}
-			// Ostali samo vidijo kaj je vklopljeno
-			else{
-				// Text z obvestilom in linkom na cenik/obrazec za vklop nastavitev
-				echo '<p>'.$lang['srv_alert_turnOn_text'].'</p>';
 				
-				// respondent - ne prikazemo ce gre za glasovanje
-				if($rowS['survey_type'] != 0){
-					echo '<p>';
-					echo '<input type="checkbox" ' . ($rowAlert['finish_respondent'] == 1 ? ' checked' : '') . ' disabled="disabled">';
-					$value = $rowAlert['finish_respondent'] == 1 ? 1 : 0;
-					echo '<input type="hidden" name="alert_finish_respondent" value="'.$value.'">';
-					echo '<span id="label_alert_finish_respondent">';
-					$this->display_alert_label('finish_respondent',($rowAlert['finish_respondent'] == 1));
-					echo '</span>'. "\n";
-					
-					// Ce imamo vec prevodov omogocimo za vsak prevod svoj email
-					$this->display_alert_label('finish_respondent_language',($rowAlert['finish_respondent'] == 1));
-					echo '</p>';
-				}
-				//respondent iz cms
-				echo '<p><input type="checkbox" ' . ($rowAlert['finish_respondent_cms'] == 1 ? ' checked' : '') . ' disabled="disabled">';
-				$value = $rowAlert['finish_respondent_cms'] == 1 ? 1 : 0;
-				echo '<input type="hidden" name="alert_finish_respondent_cms" value="'.$value.'">';
-				echo '<span id="label_alert_finish_respondent_cms">';
-				$this->display_alert_label('finish_respondent_cms',($rowAlert['finish_respondent_cms'] == 1));
-				echo '</span></p>'. "\n";
+            // respondent - ne prikazemo ce gre za glasovanje oz. volitve
+            if($rowS['survey_type'] != 0 && !SurveyInfo::getInstance()->checkSurveyModule('voting')){
+                echo '<p>';
+                echo '<input type="checkbox" name="alert_finish_respondent" id="alert_finish_respondent" value="1" onChange="change_alert_respondent(\'finish_respondent\', $(this)); $(\'form[name=alertanketa_' . $anketa . ']\').submit(); return false;" ' . ($rowAlert['finish_respondent'] == 1 ? ' checked' : '') . '>';
+                echo '<span id="label_alert_finish_respondent">';
+                $this->display_alert_label('finish_respondent',($rowAlert['finish_respondent'] == 1));
+                echo '</span>'. "\n";
+                
+                // Ce imamo vec prevodov omogocimo za vsak prevod svoj email
+                $this->display_alert_label('finish_respondent_language',($rowAlert['finish_respondent'] == 1));
+                echo '</p>';
+            }
 
-				// avtor ankete oz osebe z dostopom
-				echo '<p><input type="checkbox" ' . ($rowAlert['finish_author'] == 1 ? ' checked' : '') . ' disabled="disabled">';
-				$value = $rowAlert['finish_author'] == 1 ? 1 : 0;
-				echo '<input type="hidden" name="alert_finish_author" value="'.$value.'">';
-				echo '<span id="label_alert_finish_author">';
-				$this->display_alert_label('finish_author',($rowAlert['finish_author'] == 1));
-				echo '</span></p>';
+            // respondent iz cms ne prikazemo ce gre za volitve
+            if(!SurveyInfo::getInstance()->checkSurveyModule('voting')){
+                echo '<p><input type="checkbox" name="alert_finish_respondent_cms" id="alert_finish_respondent_cms" value="1" onChange="change_alert_respondent(\'finish_respondent_cms\', $(this)); chnage_alert_instruction($(this)); $(\'form[name=alertanketa_' . $anketa . ']\').submit(); return false;" ' . ($rowAlert['finish_respondent_cms'] == 1 ? ' checked' : '') . '>';
+                echo '<span id="label_alert_finish_respondent_cms">';
+                $this->display_alert_label('finish_respondent_cms',($rowAlert['finish_respondent_cms'] == 1));
+                echo '</span></p>'. "\n";
+            }
 
-				// posebej navedeni maili
-				echo '<p><input type="checkbox" ' . (($rowAlert['finish_other'] == 1 || ($rowAlert['finish_other_emails'] && $rowAlert['finish_other'] != 0)) ? ' checked' : '') . ' disabled="disabled"><label for="alert_finish_other">' . $lang['email_prejemniki'] .'</label>'. $lang['email_one_per_line'];
-				$value = $rowAlert['finish_other'] == 1 || ($rowAlert['finish_other_emails'] && $rowAlert['finish_other'] != 0) ? 1 : 0;
-				echo '<input type="hidden" name="alert_finish_other" value="'.$value.'">';
-				echo ' <a href="#" onclick="alert_custom(\'other\', \'0\'); return false;" title="'.$lang['srv_alert_custom'].'"><span class="faicon text_file_small"></span></a>';
-				echo ' <a href="#" onclick="alert_edit_if(\'4\'); return false;"><span class="faicon if_add" '.($rowAlert['finish_other_if']==0?'style=""':'').'></span></a> ';
-				if ($rowAlert['finish_other_if']>0) { if ($b==null) $b = new Branching($this->anketa); $b->conditions_display($rowAlert['finish_other_if']); }		
-				echo '</p>';
-					
-				echo '<p id="alert_holder_finish_other_emails" '.($rowAlert['finish_other'] == 0 ? 'class="displayNone"' : '' ).'>';
-				echo '<label for="alert_finish_other_emails">' . $lang['email'] . ':</label>' .
-				'<textarea name="alert_finish_other_emails" id="alert_finish_other_emails" style="height:100px" onblur="$(\'form[name=alertanketa_' . $anketa . ']\').submit();">' . $rowAlert['finish_other_emails'] . '</textarea>' .
-				'</p>';		
-			}
+            // avtor ankete oz osebe z dostopom
+            //echo '<p><input type="checkbox" name="alert_finish_author" id="alert_finish_author" value="1" onChange="change_alert_respondent(\'finish_author\', $(this)); $(\'form[name=alertanketa_' . $anketa . ']\').submit(); return false;"' . ($rowAlert['finish_author'] == 1 ? ' checked' : '') . '>';
+            echo '<p><input type="checkbox" name="alert_finish_author" id="alert_finish_author" value="1" onChange="change_alert_respondent(\'finish_author\', $(this));"' . ($rowAlert['finish_author'] == 1 ? ' checked' : '') . '>';
+            echo '<span id="label_alert_finish_author">';
+            $this->display_alert_label('finish_author',($rowAlert['finish_author'] == 1));
+            echo '</span></p>';
+
+            // posebej navedeni maili
+            echo '<p><input type="checkbox" name="alert_finish_other"  id="alert_finish_other"  value="1"' . (($rowAlert['finish_other'] == 1 || ($rowAlert['finish_other_emails'] && $rowAlert['finish_other'] != 0)) ? ' checked' : '') . ' onchange="toggleStatusAlertOtherCheckbox(\'finish_other\'); if ( ! $(this).attr(\'checked\') ) { $(\'form[name=alertanketa_' . $anketa . ']\').submit(); }"><label for="alert_finish_other">' . $lang['email_prejemniki'] . $lang['email_one_per_line'] . '</label>';
+            echo ' <a href="#" onclick="alert_custom(\'other\', \'0\'); return false;" title="'.$lang['srv_alert_custom'].'"><span class="faicon text_file_small"></span></a>';
+            echo ' <a href="#" onclick="alert_edit_if(\'4\'); return false;"><span class="faicon if_add" '.($rowAlert['finish_other_if']==0?'style=""':'').'></span></a> ';
+            if ($rowAlert['finish_other_if']>0) { if ($b==null) $b = new Branching($this->anketa); $b->conditions_display($rowAlert['finish_other_if']); }		
+            echo '</p>';
+                
+            echo '<p id="alert_holder_finish_other_emails" '.($rowAlert['finish_other'] == 0 ? 'class="displayNone"' : '' ).'>';
+            echo '<label for="alert_finish_other_emails">' . $lang['email'] . ':</label>' .
+            '<textarea name="alert_finish_other_emails" id="alert_finish_other_emails" style="height:100px" onblur="$(\'form[name=alertanketa_' . $anketa . ']\').submit();">' . $rowAlert['finish_other_emails'] . '</textarea>' .
+            '</p>';
 			
 			echo '</fieldset>';
 			
@@ -8697,6 +8699,36 @@ class SurveyAdminSettings {
 			}
 			echo '</div>';
 		} 
+        elseif ($_GET['a'] == 'voting'){
+			
+            // Ce so vabila ze vklopljena ne pustimo vklopa
+            if(isset($modules['voting']) || (!isset($modules['voting']) && SurveyInfo::getInstance()->checkSurveyModule('email'))){
+                $disabled = ' disabled="disabled"';
+                $css_disabled = ' gray';
+            }
+
+			echo '<fieldset><legend>'.$lang['srv_voting'].'</legend>';
+			
+            echo '<label class="strong'.$css_disabled.'"><input type="checkbox" id="advanced_module_voting" name="voting" value="1" '. (isset($modules['voting']) ? ' checked="checked"' : '').$disabled.' onChange="toggleAdvancedModule(\'voting\');" />';
+			echo $lang['srv_vrsta_survey_type_18'] . '</label>';
+            echo '<br><i>'.$lang['srv_voting_info'].'</i>';
+
+            // Opozorilo, da so vabila ze vklopljena in zato modula ni mogoce vklopiti
+            if(!isset($modules['voting']) && SurveyInfo::getInstance()->checkSurveyModule('email')){
+                echo '<br><br><i class="red bold">'.$lang['srv_voting_info_error'].'</i><br>';
+            }
+			
+            echo '</fieldset>';
+			
+			echo '<br />';
+		
+			echo '<div id="globalSettingsInner">';
+			if(isset($modules['voting'])){
+				$sv = new SurveyVoting($this->anketa);
+				$sv->displaySettings();
+			}
+			echo '</div>';
+		}
 		elseif ($_GET['a'] == 'advanced_paradata'){
 			
 			echo '<fieldset><legend>'.$lang['srv_advanced_paradata'].'</legend>';
@@ -9267,6 +9299,8 @@ class SurveyAdminSettings {
 		echo '<span class="nastavitveSpan6">'.$lang['srv_api_auth'].': </span>';
 		echo '<a href="#" onClick="generate_API_key(); return false;">'.$lang['srv_api_auth2'].'</a>';
 		echo '<br /><br />';
+
+        echo $lang['additional_info_api'];
 		
 		echo '</fieldset>';
 		
@@ -9475,9 +9509,8 @@ class SurveyAdminSettings {
 		// Save gumb - ce ni AAI
         if(!$aai_instalacija){
 
+            echo '  <div class="buttonwrapper floatLeft spaceLeft"><a class="ovalbutton ovalbutton_gray" href="#" onclick="izbrisi1kaRacun();"><span>'.$lang['delete_account'] . '</span></a></div>';
             echo '  <div class="buttonwrapper floatLeft spaceLeft"><a class="ovalbutton ovalbutton_orange btn_savesettings" href="#" onclick="save1kaRacunSettings();"><span>'.$lang['edit1337'] . '</span></a></div>';
-
-            echo '  <div class="buttonwrapper floatLeft spaceLeft"><a class="ovalbutton ovalbutton_orange" href="#" onclick="izbrisi1kaRacun();"><span>'.$lang['delete_account'] . '</span></a></div>';
 
             echo '<span class="clr"></span>';
             

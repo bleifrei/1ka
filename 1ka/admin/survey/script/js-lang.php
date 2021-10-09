@@ -192,6 +192,7 @@ lang('srv_alert_upload_size');
 lang('srv_alert_upload_ext');
 lang('srv_trans_lang');
 lang('srv_manager_remove_alert');
+lang('srv_resevanje_foto_pre_result');
 
 
 //LOKACIJA

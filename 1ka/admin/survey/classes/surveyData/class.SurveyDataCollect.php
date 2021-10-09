@@ -1427,7 +1427,7 @@ class SurveyDataCollect{
 				$_dataLine .= STR_DLMT. (($rowUser['status'] == 5 || $rowUser['status'] == 6) && $rowUser['lurker'] == 0 ? '1' : '0');
 				
 				# dodamo email (invitation)k podatkom - če je bilo poslano z emailom ali je uporabnik ročno vnesel email
-				$_dataLine .= STR_DLMT. ((int)$rowUser['inv_res_id'] > 0
+				$_dataLine .= STR_DLMT. ((int)$rowUser['inv_res_id'] > 0 || (int)$rowUser['inv_res_id'] == -1
 						# uporabnik je bil dodan z email vabilom
 						? ((int)$rowUser['status'] == 1 || (int)$rowUser['status'] >= 3
 								# email je bil odposlan

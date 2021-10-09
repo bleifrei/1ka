@@ -1745,3 +1745,19 @@ function smtpAAIAccept(){
     else
         $('#aai_smtp_button').hide();
 }
+
+
+// SQUALO
+function squaloSwitch(){
+
+    if($('#squalo_mode').prop('checked')){
+        $('#send_mail_mode0, #send_mail_mode1, #send_mail_mode2, .mail_mode_switch, #send_mail_mode_test').hide();
+        $('#success_save').hide();
+    }
+    else{
+        $('.squalo_settings').hide();
+        $('#send_mail_mode2, .mail_mode_switch, #send_mail_mode_test').show();
+        $('#success_save').hide();
+    }
+}
+

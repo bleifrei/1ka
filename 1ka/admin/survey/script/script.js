@@ -5468,3 +5468,10 @@ function consultingPopupClose(){
     $('#popup_note').fadeOut('slow').html('');
 	$('#fade').fadeOut('slow');
 }
+
+
+// Brisanje datoteke iz podatkov
+function removeUploadFromData(usr_id, spr_id, code){
+    
+    $("#fullscreen").load('ajax.php?t=postprocess&a=edit_data_question_upload_delete', {anketa: srv_meta_anketa_id, usr_id: usr_id, spr_id: spr_id, code: code});
+}

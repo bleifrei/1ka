@@ -288,32 +288,32 @@ class Library {
                                     // Anketa ze obstaja v javni knjiznici - jo pobrisemo
                                     if (mysqli_num_rows($sqlPublic) > 0) {
                                         echo '  <a href="/" onclick="surveyList_knjiznica_new(\''.$row1['id'].'\'); return false;" title="'.$lang['srv_ank_lib_off'].'">';
-                                        echo '      <span class="sprites faicon remove icon-orange small"></span> '.$lang['srv_ank_lib_off'];
+                                        echo '      <span class="sprites faicon remove icon-orange small"></span> <span class="library_item_setting_text">'.$lang['srv_ank_lib_off'].'</span>';
                                         echo '  </a>';
                                     }
                                     // Anketo dodamo v javno knjiznico
                                     else{
                                         echo '  <a href="/" onclick="surveyList_knjiznica_new(\''.$row1['id'].'\'); return false;" title="'.$lang['srv_ank_lib_on'].'">';
-                                        echo '      <span class="sprites faicon library"></span> '.$lang['srv_ank_lib_on'];
+                                        echo '      <span class="sprites faicon library"></span> <span class="library_item_setting_text">'.$lang['srv_ank_lib_on'].'</span>';
                                         echo '  </a>';
                                     }
                                 }
 
                                 // nova anketa kot template iz knjiznice
-                                echo '<a href="/" onclick="anketa_copy(\''.$row1['id'].'\'); return false;" title="'.$lang['srv_library_use_survey'].'"><span class="faicon copy"></span> '.$lang['srv_anketacopy'].'</a> ';
-                                echo '<a href="'.$site_url.'main/survey/'.(!SurveyInfo::getInstance()->checkSurveyModule('uporabnost') ? 'index' : 'uporabnost').'.php?anketa='.$row1['id'].'&preview=on" target="_blank" title="'.$lang['srv_poglejanketo'].'"><span class="faicon preview"></span> '.$lang['srv_poglejanketo2'].'</a> ';
+                                echo '<a href="/" onclick="anketa_copy(\''.$row1['id'].'\'); return false;" title="'.$lang['srv_library_use_survey'].'"><span class="faicon copy"></span> <span class="library_item_setting_text">'.$lang['srv_anketacopy'].'</span></a> ';
+                                echo '<a href="'.$site_url.'main/survey/'.(!SurveyInfo::getInstance()->checkSurveyModule('uporabnost') ? 'index' : 'uporabnost').'.php?anketa='.$row1['id'].'&preview=on" target="_blank" title="'.$lang['srv_poglejanketo'].'"><span class="faicon preview"></span> <span class="library_item_setting_text">'.$lang['srv_poglejanketo2'].'</span></a> ';
                                 
                                 // brisi iz knjiznice
                                 if ($admin_type == 0) {
-                                    echo ' <a href="index.php?anketa='.$row1['id'].'" title="'.$lang['srv_editirajanketo'].'"><span class="faicon edit"></span> '.$lang['edit3'].'</a>';
+                                    echo ' <a href="index.php?anketa='.$row1['id'].'" title="'.$lang['srv_editirajanketo'].'"><span class="faicon edit"></span> <span class="library_item_setting_text">'.$lang['edit3'].'</span></a>';
                                 }
                                 
                                 if ($admin_type==0 && $this->tab==2) {// sistemska
-                                    echo ' <a href="/" onclick="library_del_anketa(\''.$row1['id'].'\', \''.$lang['srv_anketadeletelibrary_4'].'\',\''.$this->tab.'\',\''.$this->prva.'\'); return false;" title="'.$lang['srv_ank_lib_off'].'"><span class="sprites faicon remove icon-orange small"></span> '.$lang['hour_remove'].'</a>';
+                                    echo ' <a href="/" onclick="library_del_anketa(\''.$row1['id'].'\', \''.$lang['srv_anketadeletelibrary_4'].'\',\''.$this->tab.'\',\''.$this->prva.'\'); return false;" title="'.$lang['srv_ank_lib_off'].'"><span class="sprites faicon remove icon-orange small"></span> <span class="library_item_setting_text">'.$lang['hour_remove'].'</span></a>';
                                 }
                                 
                                 if($this->tab==3){// moja knjiznica
-                                    echo ' <a href="/" onclick="library_del_myanketa(\''.$row1['id'].'\', \''.$lang['srv_anketadeletelibrary_3'].'\',\''.$this->tab.'\',\''.$this->prva.'\'); return false;" title="'.$lang['srv_ank_mylib_off'].'"><span class="faicon remove icon-orange small"></span> '.$lang['hour_remove'].'</a>';
+                                    echo ' <a href="/" onclick="library_del_myanketa(\''.$row1['id'].'\', \''.$lang['srv_anketadeletelibrary_3'].'\',\''.$this->tab.'\',\''.$this->prva.'\'); return false;" title="'.$lang['srv_ank_mylib_off'].'"><span class="faicon remove icon-orange small"></span> <span class="library_item_setting_text">'.$lang['hour_remove'].'</span></a>';
                                 }
                             }
                             else {

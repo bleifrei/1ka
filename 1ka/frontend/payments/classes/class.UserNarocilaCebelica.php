@@ -175,6 +175,7 @@ class UserNarocilaCebelica{
             $tip_placila = 1;
 
         $podatki = array(
+            'narocilo_id'	=> $this->narocilo['id'],	                                // id narocila
             'stranka'		=> $this->narocilo['ime'],	                                // ime kupca
             'email'		    => $this->narocilo['email'],				                // email kupca
             'datum'			=> date("j.n.Y"),				                            // datum izdaje računa

@@ -1918,6 +1918,7 @@ class GDPR{
         // PODATKI O POOBLAŠČENI OSEBI ZA VARSTVO OSEBNIH PODATKOV
         $result[4]['heading'] = $lang['srv_gdpr_survey_gdpr_about_text5_1'];
         
+        // DPO
         if($gdpr_survey_settings['authorized'] == ''){
             
             // Zasebnik brez DPO
@@ -1941,18 +1942,42 @@ class GDPR{
                 }
                 // Ce ga ni vnesel, je DPO mail enak splosnemu mailu oz. mailu avtorja ankete
                 else{
-                    if($gdpr_settings['email'] != '')
+                    if($gdpr_settings['email'] != ''){
                         $gdpr_authorized = $gdpr_settings['email'];
-                    else
+                    }
+                    else{
                         $gdpr_authorized = User::getInstance()->primaryEmail();
+                    }
                 }
             }
         }
         else{
             $gdpr_authorized = $gdpr_survey_settings['authorized'];
         }
-        $result[4]['text'][0] = $lang['srv_gdpr_survey_gdpr_about_text5_2'].' <strong>'.$gdpr_authorized.'</strong>';
 
+        // Kontaktni email
+        if($gdpr_survey_settings['contact_email'] == ''){
+
+            $user_settings = self::getUserSettings();
+
+            // Kontaktni mail je enak mailu, ki ga je vnesel v splosnih nastavitvah
+            if($user_settings['email'] != ''){
+                $gdpr_contact_email = $user_settings['email'];
+            }
+            // Ce ga ni vnesel, je kontaktni mail enak mailu avtorja ankete
+            else{
+                $gdpr_contact_email = User::getInstance()->primaryEmail();
+            }
+        }
+        else{
+            $gdpr_contact_email = $gdpr_survey_settings['contact_email'];
+        }
+
+        $result[4]['text'][0] = $lang['srv_gdpr_survey_gdpr_about_text5_2'].' <strong>'.$gdpr_authorized.'</strong>';
+        
+        // Ce mail ni isti izpisemo se avtorja
+        if($gdpr_authorized != $gdpr_contact_email)
+            $result[4]['text'][1] = $lang['srv_gdpr_survey_gdpr_about_text5_2_2'].' <strong>'.$gdpr_contact_email.'</strong>';
 
         // ZAVAROVANJE PODATKOV
         $result[5]['heading'] = $lang['srv_gdpr_survey_gdpr_about_text6_1'];

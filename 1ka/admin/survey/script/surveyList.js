@@ -70,8 +70,12 @@ function delete_folder (folder) {
 
 // Ustvarimo folder
 function create_folder (parent) {
-	$.post('ajax.php?t=surveyList&a=folder_create', {parent: parent}, function(){
-		window.location.reload();
+	
+    $('#survey_list').load('ajax.php?t=surveyList&a=folder_create', {parent: parent}, function(){
+		
+        var added_folder_id = $('#new_added_folder').val();
+        
+        edit_title_folder(added_folder_id);    
 	});
 }
 

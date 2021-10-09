@@ -57,9 +57,8 @@ class SurveyDataFile {
 		$this->data_file_name = $folder . 'export_data_'.$this->anketa.'.dat';
         
         // Vedno ob inicializaciji preverimo status datoteke
-        if($this->checked == false) {
+        if($this->checked == false)
     		$this->checkFile();
-    	}
     }
     
 
@@ -212,6 +211,19 @@ class SurveyDataFile {
                                                     FROM srv_user AS u 
                                                     WHERE u.ank_id = '".$this->anketa."' AND preview='0' AND (u.testdata = '1' OR u.testdata = '2') AND u.deleted = '0'");
             list($this->has_test_data) = mysqli_fetch_row($_qry_cnt_testdata);
+
+
+            // Ce ne belezimo parapodatka o datumu responsa, preverimo zadnji timestamp resevanja ankete
+            if(SurveySetting::getInstance()->getSurveyMiscSetting('survey_date') == 1) {
+ 
+                $sql_last_response_time = sisplet_query("SELECT UNIX_TIMESTAMP(last_response_time) AS last_response_time FROM srv_anketa WHERE id='".$this->anketa."'");
+                list($last_response_time) = mysqli_fetch_row($sql_last_response_time);
+
+                if($this->data_file_time < $last_response_time){
+                    $this->clearFiles();
+                    $this->file_status = FILE_STATUS_NO_FILE;
+                }
+            }
 
             // Preverimo ce imamo usability stolpec v header datoteki ali ce imamo na novo testne podatke - potem pobrisemo vse datoteke, ker moramo vse generirati na novo
             if($this->checkUsability() || $this->checkTestData()){

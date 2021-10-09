@@ -774,15 +774,55 @@ class TextController extends Controller
 					';
                 } 
                 
+                // Smo v admin podatkih in uplodamo datoteko ali fotografijo
+                elseif( ($row['upload'] == 1 || $row['upload'] == 2) && ($_GET['t'] == 'postprocess' || $_GET['m'] == 'quick_edit') ){
+
+                    $sqlUpload = sisplet_query("SELECT filename FROM srv_data_upload WHERE usr_id='".get('usr_id')."' AND code='".$row2['text']."'");
+
+                    // Ze imamo datoteko - moznost brisanja v adminu
+                    if(mysqli_num_rows($sqlUpload) > 0){
+
+                        $rowUpload = mysqli_fetch_array($sqlUpload);
+                        $file = $rowUpload[0];
+    
+                        global $site_url;
+                        echo '<div style="font-size:14px;"><a href="'.$site_url.'/main/survey/download.php?anketa='.get('anketa').'&code='.$row2['text'].'">'.$file.'</a></div>';
+
+                        // Remove file button
+                        if($_GET['quick_view'] != '1'){
+                            echo '<div class="buttonwrapper floatLeft">
+                                    <a 
+                                        class="ovalbutton ovalbutton_orange btn_savesettings" 
+                                        href="#"
+                                        style="margin: 10px 0 0 0;"
+                                        id="remove_file_'.$spremenljivka.'_vrednost_'.$i.'" 
+                                        onClick="removeUploadFromData(\''.get('usr_id').'\', \''.$spremenljivka.'\', \''.$row2['text'].'\')"
+                                    >';
+                            echo self::$lang['srv_alert_upload_remove'];
+                            echo '</div>';
+                        }
+                    }
+                    // Uploadamo datoteko preko admina - TODO
+                    else{
+
+                        echo '<input name="vrednost_' . $spremenljivka . '_kos_' . $row1['id'] . '" 
+                                type="file" 
+                                id="spremenljivka_' . $spremenljivka . '_vrednost_' . $i . '"
+                                class="pointer"
+                        >';
+                    }
+                }
+
                 // Upload
                 elseif ($row['upload'] == 1) {
+
                     echo '<input name="vrednost_' . $spremenljivka . '_kos_' . $row1['id'] . '" 
-                                    type="file" 
-                                    id="spremenljivka_' . $spremenljivka . '_vrednost_' . $i . '"
-                                     ' . (!$missing ? '' : ' disabled') . ' 
-                                    class="pointer"
-                                    onChange="checkUpload(this, \''.$spremenljivka.'_vrednost_'.$i.'\');"
-                            >';
+                                type="file" 
+                                id="spremenljivka_' . $spremenljivka . '_vrednost_' . $i . '"
+                                    ' . (!$missing ? '' : ' disabled') . ' 
+                                class="pointer"
+                                onChange="checkUpload(this, \''.$spremenljivka.'_vrednost_'.$i.'\');"
+                        >';
 
                     // Remove file button
                     echo '<div class="remove_file pointer" 
@@ -794,19 +834,28 @@ class TextController extends Controller
                     echo '</div>';
                 }
 
-                //Fotografiranje
+                // Fotografiranje
                 elseif ($row['upload'] == 2) {
+
                     $inpname = 'vrednost_' . $spremenljivka . '_kos_' . $row1['id'];
                     $inpid = 'spremenljivka_' . $spremenljivka . '_vrednost_' . $i;
                     
                     echo '<label class="custom-foto-upload" for="'.$inpid. '"></label>';
                     echo '<input class="upload_foto_file" name="'.$inpname . '" type="file" accept="image/*" id="'.$inpid. '" capture="camera">';
-                    echo '<div><img id="upload_foto_result_'.$inpid. '" class="upload_foto_result" src="#"></div>';
+                    echo '<div class="fotoresults_delete upload_fotoresults_delete pointer" id="upload_fotoresults_delete_'.$inpid.'" onClick="delete_upload_foto(\''.$inpid.'\');">'.$lang['srv_alert_foto_remove'].'</div>';
+                    
+                    echo '<div id="upload_foto_result_'.$inpid.'_holder">
+                        <img id="upload_foto_result_'.$inpid. '" class="upload_foto_result" src="#">
+                    </div>';
                     
                     echo '<div class="fotoparent" id="fotoparent_'.$inpid.'" style="visibility: hidden; display : none;">
                         <div class="fotoresults_div">
                             <p style="padding: 4px;"><i>'.self::$lang['srv_resevanje_foto_result_title'].'</i></p>
-                            <div class="fotoresults" id="fotoresults_'.$inpid.'"><p style="padding: 6px;  border:1px solid;">'.self::$lang['srv_resevanje_foto_pre_result'].'</p></div>
+                            
+                            <div class="fotoresults" id="fotoresults_'.$inpid.'">
+                                <p>'.self::$lang['srv_resevanje_foto_pre_result'].'</p>
+                            </div>
+                            <div class="fotoresults_delete pointer" id="fotoresults_delete_'.$inpid.'" onClick="delete_snapshot(\''.$inpid.'\');">'.$lang['srv_alert_foto_remove'].'</div>
                         </div>
                         <input id="foto_'.$inpid.'" type="hidden" name="foto_'.$inpname.'" value=""/>
 
@@ -837,6 +886,7 @@ class TextController extends Controller
                                 reader.onload = function (e) {
                                     $('#upload_foto_result_'+inpid).css("display", "inline"); 
                                     $('#upload_foto_result_'+inpid).attr('src', e.target.result);
+                                    $('#upload_fotoresults_delete_'+inpid).show();
                                 };
 
                                 reader.readAsDataURL(input.files[0]);

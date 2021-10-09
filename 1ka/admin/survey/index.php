@@ -182,10 +182,6 @@
     $sql = sisplet_query("SELECT email FROM users WHERE id='$global_user_id'");
     $row = mysqli_fetch_assoc($sql);
 
-    if ( $row['email'] == 'test@1ka.si') {
-        $cssBodyClass .= ' test_user';
-    }
-
 
     /**************** BODY ****************/
     echo '<body class="mainBody'.$cssBodyClass.'">'."\n";
