@@ -1,0 +1,126 @@
+<?php
+
+
+// Debuging - 0 ali 1, ali imamo debug vključen (privzeto je izključen)
+$debug = 0;
+
+// Max stevilo klikov na doloceno anketo (izpolnjevanje) v eni minuti (zascita, da se streznik ne sesuje) (ce je 0 ni limita)
+$clicks_per_minute_limit = 0;
+
+
+// Ce gre za virtualno domeno
+$virtual_domain = false;
+
+// Ce gre za lastno instalacijo
+$lastna_instalacija = true;  
+
+// Ce gre za aai instalacijo
+$aai_instalacija = false;
+
+
+
+/* DODATNE NASTAVITVE APLIKACIJE ZA LASTNE NAMESTITVE */
+$app_settings = array(
+    'app_name'                  => '',          // Ime aplikacije 
+    'admin_email'               => '',          // Email administratorja aplikacije (gdpr zahtevki, kontakt, potrditev registracije...)
+    'owner'                     => '',          // Ime lastnika aplikacije (podjetje...)
+    'owner_website'             => '',          // Spletna stran lastnika aplikacije (podjetje...)
+
+    'footer_custom'             => 0,           // Custom ali default footer
+    'footer_text'               => '',          // Text v footerju
+    'footer_survey_custom'      => 0,           // Custom ali default footer ankete   
+    'footer_survey_text'        => '',          // Text v footerju ankete
+
+    'email_signature_custom'    => 0,           // Custom ali default podpis v emailih
+    'email_signature_text'      => '',          // Podpis v emailih
+
+    'survey_finish_url'         => '',          // Skok na url po koncani anketi (ce je prazno se uporabi default www.1ka.si)
+
+    'admin_allow_only_ip'       => '',          // Dovolimo dostop do admina samo dolocenim ip-jem (array ip-jev)
+
+    'export_type'               => 'new',       // Uporaba novih ("new") / novih samo za admine ("new_admin") / starih ("old") izvozov
+
+    'commercial_packages'       => false        // Ce so vklopljeni komercialni paketi
+);
+
+
+// Nastavitev email streznika za posiljanje mailov
+$email_server_settings = array(
+    'SMTPFrom'		=>	'',			// polje "from" pri posiljanju
+    'SMTPFromNice'	=>	'',			// izpisano ime posiljatelja
+    'SMTPReplyTo'	=>	'',			// polje "reply to" pri posiljanju
+
+    'SMTPHost'		=>	'',		    // smtp streznik za posiljanje
+    'SMTPPort'		=>	'',			// št. porta
+    'SMTPSecure'	=>	'',			// tls ali ssl
+    'SMTPAuth'		=>	1,		    // 1 oz. 0
+    'SMTPUsername'	=>	'',			// username za smtp streznik
+    'SMTPPassword'	=>	''			// geslo za smtp streznik
+);
+
+/**
+ * Email streznik, ki se uporablja pri posiljanju emailov iz posamezne ankete
+ *  - TRUE - emaili iz ankete se posiljajo preko istega streznika kot splosni emaili
+ *  - FALSE (default) - pri vsaki anketi je potrebno posebej vnesti smtp streznik
+ */
+$email_server_fromSurvey = false;
+
+
+
+
+/* DODATNE NASTAVITVE APLIKACIJE ZA ADMINISTRATORJE */
+// Po registraciji je lahko uporabnik neaktiven (banan) in ga mora administrator inštalacije še ročno potrditi (dobi na mail obvestilo o registraciji)
+$confirm_registration = 0;
+$confirm_registration_admin = $app_settings['admin_email'];
+
+// Dodatna opcijska nastavitev, kam se pošlje email GDPR zahtevka za izbris (administratir instalacije)
+$gdpr_admin_email = $app_settings['admin_email'];
+
+
+
+
+/* DODATNE FUNKCIONALNOSTI APLIKACIJE */
+// Google reCaptcha - potrebno za delovanje recaptche pri registraciji in tipa vprašanja "captcha" v anketi
+$recaptcha_sitekey = '';
+$secret_captcha = '';
+
+/**
+ * Google login podatki za prijavo v 1KO
+ * Pridobi API: https://developers.google.com/identity/sign-in/web
+ * Pregled vseh API-jev: https://console.developers.google.com/apis
+ */
+$google_login_client_id = '';
+$google_login_client_secret = '';
+
+
+/**
+ * Google maps - potrebno za delovanje tipa vprašanja "lokacija"
+ * Google's API key (CREATE YOUR OWN!) needed when working with Google Maps
+ * Instructions to get API key: https://developers.google.com/maps/documentation/javascript/get-api-key
+ * APIs need to be enabled: Google Maps JavaScript API, Google Maps Geocoding API, Google Places API Web Service
+ */
+$google_maps_API_key = '';
+
+/**
+ * Facebook developer api - potrebno za delovanje prijave in registracije s FB računom
+ * Uporabi jscript include iz 1ka-grey header.php v svojem skinu
+*/
+$facebook_appid = '';
+$facebook_appsecret = '';
+
+/**
+ * Potrebno za delovanje modula "maza"
+ * Firebase Cloud Messaging server key is needed to work with module "Mobile aplication for respondents"
+ * NextPinMainToken and password is needed to work with NextPin API
+ */
+$FCM_server_key = '';
+$APP_special_login_key = '';
+$NextPinMainToken = '';
+$NextPinMainPassword = '';
+
+/**
+ * Nastavitve hierarhije
+ */
+ $hierarhija_folder_id = ''; // Skupna mapa iz knjižnice za SA ankete
+ $hierarhija_default_id = ''; // privzeta SA anketa
+

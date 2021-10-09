@@ -1,0 +1,329 @@
+/* 1KA new default theme */
+
+body {
+	margin: 0;
+	padding: 0;
+  color: #333;
+  font-size: 75%;
+	font-family: Arial, Verdana, Sans-Serif;
+	font-family: Open Sans, Arial, Sans-Serif !important;
+}
+body.preview, body.testdata{
+	margin-top: 26px;
+}
+
+#outercontainer {
+	width: 100%;
+	margin: 0 auto;
+	background: #ffffff url('Otroci_Safe/otroci-2.png') top left repeat-x;
+}
+#container {
+	position: relative;	
+	width: 100%;
+	max-width: 980px;
+	margin: 0px auto 10px;
+	background:url('Otroci_Safe/otroci-2-figure.png') top right no-repeat;
+}
+
+
+/* Warning bar (preview, cookie) */
+#cookie_alert, #test_alert {   
+    height: 26px;
+	
+	line-height: 25px;
+	color: #ffffff;
+	
+	background-color: #fe9c5c;
+    border-bottom: 1px solid #fe9c5c;
+}
+#cookie_alert a, #test_alert a {
+	text-decoration: none;
+	font-weight: bold;
+	color: #ffffff;
+}
+#cookie_alert a:hover, #test_alert a:hover {
+	text-decoration: underline;
+}
+#cookie_alert span, #test_alert span {
+    color: #ffffff;
+}
+#cookie_alert span a, #test_alert span a {
+	color: #ffffff;
+	font-weight: normal;
+}
+
+
+/* Admin nastavitve okno pri testnih vnosih in previewju */
+#admin_options {
+	left: 20px;
+	position: fixed;
+}
+#preview_open{
+	top: 40px;
+}
+#preview_open a.close{
+	top: 13px;
+	right: 9px;
+	width: 15px;
+	height: 15px;
+
+	color: transparent;
+	background-image: url('1ka/plus.png');
+}
+
+#preview_switch{
+	top: 83px;
+	right: 13px;
+	z-index: 1000;
+
+	padding: 0 20px 7px 20px;
+	
+	font-size: 11px;
+	
+	border-bottom: 1px #8a9fbf dashed;
+}
+
+#preview-holder{
+	top: 45px;
+	
+	font-size: 11px;
+	
+	border-top: 30px #e2e4e7 solid;
+	background-color: #e8ecf2;
+}
+#preview {
+	margin: 40px 15px 10px 15px;
+	padding: 0;
+	border: 0;
+}
+#preview a.close{
+	top: -22px;
+	right: 8px;
+	
+	width: 14px;
+	height: 15px;
+	
+	text-indent: -9999px; 
+	
+	background-image: url('1ka/close.png');
+}
+#preview a, #preview_switch a, #preview-holder div span a{
+	color: #0C377A;
+	text-decoration: none;
+}
+#preview a:hover, #preview_switch a:hover, #preview-holder div span a:hover{
+	color: #fa4913;
+}
+
+#preview-holder div span.floatLeft{
+	margin-left: 15px;
+}
+#preview-holder div span.floatRight{
+	margin-right: 15px;
+}
+#preview-holder div span.floatRight{
+	margin-right: 15px;
+}
+
+div.qtip-content {
+	font-size: 9px;
+}
+.qtip-wrapper, .qtip-contentWrapper{
+	border: 0 !important;
+}
+.qtip-borderTop, .qtip-borderBottom{
+	display: none !important;
+}
+.qtip-title{
+	color: #0C377A !important;
+	background-color: #D8DFEA !important;
+}
+.qtip-content{
+	padding: 12px 9px !important;
+	background-color: #f7f7f7 !important;
+	border: 1px #D8DFEA solid;
+}
+
+
+
+/* Header - logo, naslov, progressbar */
+h1 {
+ margin: 0px auto 50px;
+	padding: 100px 0 0 0;
+	font-size: 22px;
+	color: #000;
+  text-align: center;
+}
+h1.evalvacija{
+	margin-bottom: 0;
+}
+
+#logo {
+	left: 0px;
+	top: 20px;	
+	background: url(Otroci_Safe/otroci-logo.png) no-repeat 0 0 ;
+}
+#logo.english{
+}
+#logo a{
+	width:165px;
+	height:69px;
+}
+
+#progress_bar {
+	right: 210px;
+	left: auto;
+	top: 20px;
+}
+#progress_bar span {
+	float: left !important;	/* ie6,7 doesnt support inline-block */
+	display: block;
+	width: 20px;
+	font-size: 11px;
+	color: #000;
+}
+#progress_bar div {
+	height: 10px;
+	width: 130px;
+	padding: 2px;
+	margin: 0 5px;
+	border: 1px #cccccc solid;
+	background-color: #ffffff;
+}
+#progress_bar div span {
+	height: 10px;
+	background-color: #000;
+}
+
+#progress_bar p a {
+	color: #0C377A;
+	text-decoration: none;
+}
+#progress_bar p a:hover {
+	color: #fa4913;
+}
+
+
+/* Spremenljivke */
+.spremenljivka {
+  margin: 20px 10px 20px 10px;
+  padding: 20px 2px 20px 12px !important;	
+	border-top: 1px #B9C5D9 solid;
+}
+.spremenljivka.limited{
+	outline: 1px #F15A24 solid;
+}
+.required, .required_require, .required_limit {
+	outline: 1px #F15A24 solid;
+}
+
+.spremenljivka .naslov{
+	padding-left: 5px;
+	font-size: 13px;
+	font-weight:bold;
+	color: #000;
+}
+.spremenljivka .naslov .spremenljivka_info{
+	font-size: 70%;
+}
+
+div.variabla, 
+td.variabla,
+td.question,
+td.differential{
+	font-size: 13px;
+}
+
+div.variable_holder {
+	padding: 0 30px;
+}
+
+div.variable_holder thead {
+	font-weight: 600;
+}
+table.grid_table tbody tr:nth-child(2n+1) {
+	background-color: #f7f7f7;
+}
+
+div.variable_holder .frame_ranking{
+	border: 1px #B9C5D9 solid;
+	background-color: #f7f7f7;
+}
+div.variable_holder .frame_ranking_hover {
+	border: 1px #8A9FBF solid;
+	background-color: #e2e4e7;
+}
+
+span.reminder {
+	left: 3px;
+}
+
+
+/* Gumbi na dnu */
+div.buttons {
+	padding: 30px 20px 35px;
+	margin: 0 10px;
+	border-top: 1px #B9C5D9 solid;
+}
+div.buttons input {
+	cursor: pointer;
+	margin: 8px 10px;
+	padding: 6px 8px;
+	text-align: center;
+	font-size: 13px;
+  color: #FFFFFF;
+	border-radius: 4px;
+	border: 0; 
+}
+div.buttons input.next {
+	background-color: #ef6111;
+	border: 1px solid #dd530e;
+	color:#fff;
+}
+div.buttons input.next:hover {
+	background-color: #dd530e;
+	border: 1px solid #dd530e;
+	color:#fff;
+}
+div.buttons input.prev {
+	background-color: #ef6111;
+	border: 1px solid #dd530e;
+	color:#ffff;
+}
+div.buttons input.prev:hover {
+	background-color: #dd530e;
+	border: 1px solid #dd530e;
+	color:#fff;
+}
+
+
+/* Footer */
+#footer_survey {
+	padding: 20px;
+	background-color: #e7e5e0;
+	border-top: 3px #cecece solid;
+}
+#footer_survey a, #footer_survey a:visited {
+	color: #000;
+	text-decoration: none;
+}
+#footer_survey a:hover, #footer_survey a:active {
+	text-decoration: underline;
+}
+
+
+select { width:95%;}
+/* #Tablet (Portrait) */
+@media only screen and (min-width: 768px) and (max-width: 959px) {
+select { width:95%;}
+}
+
+/*  #Mobile (Portrait) */
+@media only screen and (max-width: 767px) {
+select { width:95%;}
+}
+
+/* #Mobile (Landscape) */
+@media only screen and (min-width: 480px) and (max-width: 767px) {
+select { width:95%;}
+}

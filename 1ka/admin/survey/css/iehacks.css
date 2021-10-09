@@ -1,0 +1,41 @@
+/* for IE up to version 6 only */
+html {
+ font-size: x-small; /* for winIE5 */
+ voice-family: "\"}\"",inherit; /* stop winIE5 */
+ font-size: small; /* for winIE6 */ 
+}
+body {
+ text-align: center; /* for winIE5 - center align */
+ voice-family: "\"}\"",inherit; /* stop winIE5 */
+ text-align: left; /* for winIE6 */
+}
+
+li.highlightTabRed a {
+	margin-left:15px!important;
+	padding:5px 3px 3px 3px;
+}
+
+div.linenavigation {
+	height:10px;
+}
+
+div.tabnavigation1,ul.tabnavigation1  {
+	height:17px;
+}
+
+div.Slo {
+	height:100px!important;
+}
+
+ul.tabnavigation1 li.nonhighlight {
+	border-top: 1px solid;
+}
+
+ul.tabnavigation1 a{
+	margin-top:5px;
+}
+#h_sl_avtor, #h_sl_spreminjal {width: 10px;}
+.if_remove,.spr_edit 	{visibility: visible !important;}
+#fade 					{filter: alpha(opacity=50);}
+#missingProfileCoverDiv {filter: alpha(opacity=40);}
+.ui-draggable-helper	{filter: alpha(opacity=60);}

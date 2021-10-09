@@ -1,0 +1,529 @@
+/*
+	Default tema ankete - 1ka - Zelena barva
+*/
+/* Barve */
+/* Import osnovne postavitve */
+/*
+	Osnovna tema ankete - 1ka - brez definiranih barv
+*/
+/* Fonti */
+body {
+  margin: 0;
+  padding: 0;
+  color: #505050;
+  font-size: 100%;
+  font-family: Montserrat, Arial, Sans-Serif !important;
+  background: #ffffff;
+}
+
+body.preview, body.testdata {
+  margin-top: 26px;
+}
+
+#outercontainer {
+  width: 100%;
+  margin: 0 auto;
+}
+#outercontainer .outercontainer_header {
+  position: absolute;
+  width: 100%;
+  height: 80px;
+  border-bottom: 6px #2e7d3a solid;
+}
+#outercontainer #container {
+  position: relative;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0px auto 10px;
+}
+
+/* Warning bar (preview, cookie) */
+#cookie_alert,
+#test_alert {
+  height: 26px;
+  font-size: 15px;
+  line-height: 25px;
+  color: #ffffff;
+  background-color: #ffa608;
+  border-bottom: 1px solid #ffa608;
+}
+#cookie_alert a,
+#test_alert a {
+  text-decoration: none;
+  font-weight: bold;
+  color: #ffffff;
+}
+#cookie_alert a:hover,
+#test_alert a:hover {
+  text-decoration: underline;
+}
+#cookie_alert span,
+#test_alert span {
+  color: #ffffff;
+}
+#cookie_alert span a,
+#test_alert span a {
+  color: #ffffff;
+  font-weight: normal;
+}
+
+/* Header - logo, naslov, progressbar */
+h1 {
+  margin: 0px auto 30px;
+  padding: 120px 0 50px 0;
+  font-size: 28px;
+  color: #2e7d3a;
+  text-align: center;
+  border-bottom: 1px solid #e2f2e2;
+}
+
+h1.evalvacija {
+  margin-bottom: 0;
+}
+
+#logo {
+  right: auto;
+  left: 25px;
+  top: 13px;
+  max-height: 56px !important;
+  background: url("../../../public/img/logo/1ka_slo.svg");
+  background-repeat: no-repeat !important;
+  background-size: auto 100% !important;
+}
+#logo a {
+  width: 250px;
+  height: 56px;
+}
+
+#logo.english {
+  background: url("../../../public/img/logo/1ka_eng.svg");
+}
+
+.header_settings_holder {
+  top: 0px;
+  right: 20px;
+  left: auto;
+}
+.header_settings_holder .progress_bar span {
+  float: left !important;
+  /* ie6,7 doesnt support inline-block */
+  display: block;
+  width: 20px;
+  font-size: 11px;
+  color: #6D87AF;
+}
+.header_settings_holder .progress_bar div {
+  height: 10px;
+  width: 130px;
+  padding: 2px;
+  margin: 0 5px;
+  border: 1px #cccccc solid;
+  background-color: #ffffff;
+}
+.header_settings_holder .progress_bar div span {
+  height: 10px;
+  background-color: #2e7d3a;
+}
+.header_settings_holder .progress_bar p a {
+  color: #2e7d3a;
+  text-decoration: none;
+}
+.header_settings_holder .progress_bar p a:hover {
+  color: #43b554;
+}
+.header_settings_holder .continue_later_setting a {
+  color: #2e7d3a;
+}
+.header_settings_holder .continue_later_setting a:hover {
+  color: #43b554;
+}
+.header_settings_holder .tawk_chat a {
+  color: #2e7d3a;
+}
+.header_settings_holder .tawk_chat a:hover {
+  color: #43b554;
+}
+
+/* Spremenljivke */
+.spremenljivka {
+  margin: 20px 10px 20px 10px;
+  padding: 20px 2px 50px 12px !important;
+  border-bottom: 1px #e2f2e2 solid;
+}
+.spremenljivka .naslov {
+  padding: 5px 0 15px 5px;
+  font-size: 18px;
+  font-weight: 600;
+}
+.spremenljivka .naslov .spremenljivka_info {
+  font-size: 14px;
+  font-weight: 400;
+  padding-top: 7px;
+}
+.spremenljivka .sequence_number {
+  background-color: #e2f2e2;
+  color: #66bb6a;
+}
+.spremenljivka .sequence_number:hover {
+  background-color: #bee2c0;
+}
+.spremenljivka .sequence_number.active {
+  background-color: #66bb6a;
+  color: #ffffff;
+}
+.spremenljivka .counter {
+  font-size: 18px;
+}
+.spremenljivka #dynamic_count {
+  color: #2e7d3a;
+}
+.spremenljivka .arrow {
+  color: #2e7d3a;
+}
+.spremenljivka .arrow:hover {
+  color: #43b554;
+}
+
+.spremenljivka.limited {
+  outline: 1px #F15A24 solid;
+}
+
+.required, .required_require, .required_limit {
+  outline: 1px #F15A24 solid;
+}
+
+div.variabla,
+td.variabla,
+td.question,
+td.differential,
+.variabla_sum label {
+  font-size: 14px;
+}
+
+div.variable_holder {
+  padding: 10px 0 0 0;
+}
+div.variable_holder thead,
+div.variable_holder tr.table-header {
+  font-weight: normal;
+  font-size: 14px;
+}
+div.variable_holder thead td,
+div.variable_holder tr.table-header td {
+  padding: 10px 5px;
+}
+
+table.grid_table thead tr td {
+  border-bottom: 2px #66bb6a solid;
+}
+table.grid_table thead tr.middle_row td {
+  border-top: 2px #66bb6a solid;
+}
+table.grid_table tbody tr.table-header td {
+  border-bottom: 2px #66bb6a solid;
+  border-top: 2px #66bb6a solid;
+  background-color: #ffffff;
+}
+table.grid_table tbody tr:nth-child(2n+1) {
+  background-color: #ffffff;
+}
+table.grid_table tbody tr:nth-child(2n) {
+  background-color: #e2f2e2;
+}
+table.grid_table td {
+  padding: 10px 10px;
+}
+
+span.reminder {
+  left: 3px;
+}
+
+/* Textboxi, textarea, select */
+input, textarea, select {
+  font-family: Montserrat, Arial, Sans-Serif !important;
+}
+
+input[type=text], textarea, select {
+  padding: 10px 15px;
+  border-radius: 3px;
+  border: 1px solid #d1d1d1;
+  border-radius: 3px;
+  background-color: #fff;
+}
+
+/* ranking */
+.dropzone {
+  border-top: 1px #e2f2e2 solid;
+  margin-top: 12px;
+  padding-top: 17px;
+}
+
+table.ranking_table ul {
+  margin-top: 19px;
+}
+
+.ranking,
+.ranking_long,
+.handle,
+.handle_long,
+.ime,
+.izbran,
+.frame_ranking,
+.frame_ranking_hover,
+.frame_dropping,
+.frame_dropping_hover,
+.frame_moving {
+  font-size: 13px;
+  padding: 7px 10px 9px;
+  border: 2px solid #2e7d3a;
+  background-color: #ffffff;
+}
+
+.ranking:hover {
+  background-color: #f5fafe;
+}
+
+div.variable_holder .frame_ranking_hover {
+  border: 2px #2e7d3a solid;
+  background-color: #e2f2e2;
+}
+
+div.variable_holder .frame_ranking,
+div.variable_holder .frame_moving,
+div.variable_holder .frame_dropping,
+div.variable_holder .frame_dropping_hover {
+  text-indent: -35px;
+  border: 2px #66bb6a solid;
+  background-color: #e2f2e2;
+}
+
+table.ranking_table b {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* Photo upload button */
+button.record_foto {
+  border: 2px solid #2e7d3a;
+}
+button.record_foto::before {
+  color: #2e7d3a;
+}
+button.record_foto:hover, button.record_foto:focus {
+  border-color: #43b554;
+}
+button.record_foto:hover::before, button.record_foto:focus::before {
+  color: #43b554;
+}
+
+/* Koledar */
+.ui-datepicker {
+  font-size: 14px;
+}
+
+button.ui-datepicker-trigger {
+  color: #2e7d3a;
+}
+button.ui-datepicker-trigger:hover, button.ui-datepicker-trigger:focus {
+  color: #43b554;
+}
+
+/* Slider */
+.grupa .spremenljivka .ui-slider-pips .ui-slider-pip {
+  color: #505050;
+}
+.grupa .spremenljivka .slider.ui-widget-content {
+  /*background-color: $color_light !important;*/
+  background-image: none !important;
+  border: 0;
+}
+.grupa .spremenljivka .ui-slider-horizontal {
+  height: 8px;
+}
+.grupa .spremenljivka .ui-slider-handle {
+  cursor: pointer;
+  height: 10px !important;
+  width: 18px !important;
+  margin-top: 1px;
+  border: 0;
+  border-radius: 15px 15px !important;
+  background-color: #2e7d3a !important;
+  background-image: none !important;
+}
+.grupa .spremenljivka .ui-slider-handle:active {
+  background-color: #2e7d3a !important;
+}
+.grupa .spremenljivka .sliderText {
+  padding-top: 2px;
+  color: #505050;
+  background-color: #66bb6a;
+  border: 0;
+}
+.grupa .spremenljivka .sliderText::after {
+  border-color: #66bb6a transparent;
+}
+
+/* Warning levo od vprasanja */
+.validation_alert {
+  position: absolute;
+  z-index: 51;
+  top: 20px;
+  left: -150px;
+  width: 130px;
+  min-height: 29px;
+  margin: 0;
+  text-align: center;
+  font-size: 11px;
+  line-height: 14px;
+  background-color: #e2f2e2;
+  border: 2px solid red;
+  padding: 4px 7px;
+  border-radius: 4px;
+  box-shadow: none;
+}
+
+/* Gumbi na dnu */
+div.buttons {
+  padding: 20px 20px 35px;
+  margin: 0 10px;
+}
+div.buttons input {
+  cursor: pointer;
+  margin: 8px 10px;
+  /*padding: 7px 11px;*/
+  padding: 10px 20px;
+  text-align: center;
+  font-size: 12px;
+  letter-spacing: 1px;
+  font-weight: 600;
+  color: #FFFFFF;
+  border-radius: 20px;
+  border: 0;
+}
+div.buttons input.next {
+  background-color: #2e7d3a;
+  border: 1px solid #2e7d3a;
+}
+div.buttons input.next:hover, div.buttons input.next:focus {
+  background-color: #43b554;
+  border: 1px solid #43b554;
+}
+div.buttons input.prev {
+  color: #2e7d3a;
+  background-color: #fff;
+  border: 1px solid #2e7d3a;
+}
+div.buttons input.prev:hover, div.buttons input.prev:focus {
+  color: #fff;
+  background-color: #2e7d3a;
+}
+
+/* Footer */
+#footer_survey {
+  padding: 40px;
+  background-color: #ffffff;
+  border-top: 1px #e2f2e2 solid;
+}
+#footer_survey p, #footer_survey a, #footer_survey a:visited {
+  color: #505050;
+  font-size: 14px;
+  line-height: 25px;
+  font-weight: 400;
+  text-decoration: none;
+}
+#footer_survey a:hover, #footer_survey a:active {
+  text-decoration: none;
+}
+
+/* awesome radio in checkboxi */
+input[type=checkbox] + span.enka-checkbox-radio,
+input[type=radio] + span.enka-checkbox-radio,
+.custom_radio_picture.obarvan > label > span.enka-custom-radio:before,
+.visual-radio-scale.checked .enka-vizualna-skala {
+  color: #66bb6a;
+  font-size: 20px;
+  vertical-align: -1px;
+}
+
+input[type=checkbox]:focus + span.enka-checkbox-radio:before,
+input[type=radio]:focus + span.enka-checkbox-radio:before,
+input[type=radio]:focus + span.enka-custom-radio:before,
+input[type=radio]:focus + span.enka-vizualna-skala::before {
+  color: #327035;
+}
+
+input[type=text]:focus,
+input[type=number]:focus,
+input[type=email]:focus,
+input[type=password]:focus,
+textarea:focus {
+  border-color: #66bb6a;
+}
+
+/* Ranking drag drop */
+.drag_and_drop {
+  top: -9px;
+  left: -12px;
+}
+
+.drag_and_drop_right {
+  top: -9px !important;
+  left: -12px !important;
+}
+
+.frame_dropping_titles {
+  width: 240px;
+  padding: 5px;
+  margin: 0px auto 0px auto;
+  height: 15px;
+  text-align: center;
+  background-color: #FFFFFF;
+  border-top: 2px solid #b9c5d9;
+  border-left: 2px solid #b9c5d9;
+  border-right: 2px solid #b9c5d9;
+  font-size: 13px;
+}
+
+.drag_and_drop_box {
+  top: -9px;
+  left: -12px;
+}
+.drag_and_drop_box img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.drag_and_drop_box_right {
+  top: 19px !important;
+  left: -12px !important;
+}
+
+.drag_and_drop_box_right_after_refresh {
+  /*top: 44px!important;*/
+  left: -12px !important;
+}
+
+.drag_and_drop_box_right_over {
+  left: -12px !important;
+}
+
+.frame_dropping_titles_box {
+  width: 240px;
+  padding: 5px;
+  margin: 0px auto 0px auto;
+  height: 15px;
+  text-align: center;
+  background-color: #FFFFFF;
+  font-size: 13px;
+}
+
+.frame_dropping {
+  padding: 7px 10px 9px;
+}
+
+.frame_dropping_box {
+  padding: 7px 10px 9px;
+}
+
+/*# sourceMappingURL=1kaGreen.css.map */

@@ -1,0 +1,907 @@
+@charset "UTF-8";
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 21-Okt-2018
+    Author     : peter hrvatin
+*/
+/*
+	Osnovni elementi
+*/
+body {
+  zoom: 1;
+  margin: 0;
+  padding: 0;
+  font-size: 16px;
+  color: #333;
+  background: #eff2f7;
+}
+body #survey_top {
+  display: none;
+}
+body .center {
+  position: absolute;
+  left: 50%;
+  width: 230px;
+  margin-left: -115px;
+  /*margin-top: 10px;*/
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+/*
+	Header ankete
+*/
+.header_settings_holder {
+  right: 15px;
+  top: 5px;
+  height: 20px;
+}
+.header_settings_holder .progress_bar {
+  display: none;
+}
+/* Warning bar (preview, cookie) */
+#cookie_alert, #test_alert {
+  font-family: Open Sans, Arial, Sans-Serif;
+  height: 26px;
+  line-height: 25px;
+  color: #ffffff;
+  font-size: 12px;
+  background-color: #ffa608;
+  border-bottom: 1px solid #ffa608;
+}
+
+#cookie_alert {
+  height: auto !important;
+  font-size: 15px;
+  padding: 5px 5px;
+}
+
+#cookie_alert a, #test_alert a {
+  text-decoration: none;
+  font-weight: bold;
+  color: #ffffff;
+}
+
+#cookie_alert a:hover, #test_alert a:hover {
+  text-decoration: underline;
+}
+
+#cookie_alert span, #test_alert span {
+  color: #ffffff;
+}
+
+#cookie_alert span a, #test_alert span a {
+  color: #ffffff;
+  font-weight: normal;
+}
+
+/*********************************************/
+/*
+	Footer ankete
+*/
+#footer_survey {
+  padding-top: 20px;
+  padding-bottom: 40px;
+  font-size: 14px;
+  font-weight: normal;
+  text-decoration: none;
+  color: gray;
+}
+#footer_survey a {
+  color: gray;
+}
+#footer_survey a:hover {
+  text-decoration: none;
+}
+#footer_survey p.footer_mobile {
+  display: block;
+  margin-bottom: 10px;
+}
+
+/*
+	Vsebina ankete
+*/
+iframe {
+  max-width: 100%;
+}
+
+.variable_holder .text_prevAnswers .text_prevAnswers_list .text_prevAnswers_popup,
+#popup {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 80%;
+  height: auto !important;
+  margin: 40px 5%;
+}
+.variable_holder .text_prevAnswers .text_prevAnswers_list .text_prevAnswers_popup .prevAnswers_button,
+#popup .prevAnswers_button {
+  float: right;
+  margin-top: 15px;
+  margin-bottom: 0;
+}
+
+#outercontainer.hide_mobile_img p img {
+  display: none;
+}
+#outercontainer #container {
+  width: 100%;
+  min-width: 240px;
+  margin: 0 0 10px -2px;
+  background: white;
+  border: 1px white solid;
+}
+#outercontainer #container #logo {
+  display: none;
+}
+#outercontainer #container h1 {
+  padding: 25px 5px 25px 5px;
+  margin: 0 0 10px 0;
+  font-size: 24px;
+  font-weight: 600;
+  text-align: center;
+  line-height: 30px;
+}
+#outercontainer #container p img {
+  max-width: 90%;
+  height: auto;
+  margin-left: 10px;
+}
+#outercontainer #container p img.always_show {
+  display: inline !important;
+}
+#outercontainer #container p img.always_hide {
+  display: none !important;
+}
+#outercontainer #container .grupa {
+  min-height: 100px;
+  padding-top: 0px;
+  background-color: white;
+  /* POSAMEZNO VPRASANJE */
+}
+#outercontainer #container .grupa .spremenljivka {
+  margin: 10px 10px;
+  padding: 10px 10px 0 10px !important;
+  /* TIP RADIO, DROPDOWN IN CHECKBOX */
+  /* END TIP RADIO, DROPDOWN IN CHECKBOX */
+  /* TIP TEXT, NUMBER */
+  /* END TIP TEXT, NUMBER */
+  /* TIP DATUM */
+  /* END TIP DATUM */
+  /* TIP TABELA */
+  /* END TIP TABELA */
+  /* TIP VSOTA */
+  /* END TIP VSOTA */
+  /* TIP RANKING */
+  /* END TIP RANKING */
+  /* TIP LOKACIJA */
+  /* END TIP LOKACIJA */
+  /* TIP NAGOVOR */
+  /* END TIP NAGOVOR */
+  /* TIP SN */
+  /* END TIP SN */
+  /* DRAG AND DROP ZA MOBILNIKE */
+  /* KONEC DRAG AND DROP ZA MOBILNIKE */
+  /* SLIDER ZA MOBILNIKE */
+  /* KONEC SLIDER ZA MOBILNIKE */
+  /* Fotografiranje za mobilnike - 21_7 */
+  /* Skrije navadni upload gumb in prikaze lepsi gumb, za foto upload*/
+  /* skrije div, ki se uporablja samo za desktop*/
+  /* potrebno samo zaradi mobile safari, ker ima vgrajen flash (testirano na iPhone)*/
+  /* Konec Fotografiranje za mobilnike - 21_7 */
+}
+#outercontainer #container .grupa .spremenljivka.required, #outercontainer #container .grupa .spremenljivka.required_require, #outercontainer #container .grupa .spremenljivka.required_limit {
+  border: 1px red solid !important;
+  outline: 0 !important;
+  border-radius: 4px;
+}
+#outercontainer #container .grupa .spremenljivka:after {
+  margin-top: 20px;
+}
+#outercontainer #container .grupa .spremenljivka .counter {
+  padding-top: 9px;
+  font-weight: normal;
+  max-width: 50%;
+}
+#outercontainer #container .grupa .spremenljivka .naslov {
+  margin: 0;
+  padding: 5px 0 20px 0;
+  font-size: 18px;
+  color: #333;
+  font-weight: 500;
+  line-height: 25px;
+}
+#outercontainer #container .grupa .spremenljivka .naslov .reminder {
+  margin-top: 5px;
+}
+#outercontainer #container .grupa .spremenljivka .spremenljivka_info {
+  margin-top: 5px;
+  font-size: 13px;
+  color: #999;
+  line-height: 14px;
+}
+#outercontainer #container .grupa .spremenljivka h3 {
+  font-size: 18px;
+  color: #333;
+  font-weight: 700;
+  line-height: 25px;
+}
+#outercontainer #container .grupa .spremenljivka h3 p {
+  padding: 0 10px;
+  color: #333333;
+}
+#outercontainer #container .grupa .spremenljivka span.reminder {
+  left: -1px;
+}
+#outercontainer #container .grupa .spremenljivka table thead,
+#outercontainer #container .grupa .spremenljivka table tr.table-header {
+  font-weight: normal;
+}
+#outercontainer #container .grupa .spremenljivka .variable_holder {
+  /* Tole porusi na mobitelu, ce so v vecih stolpcih */
+  /*position: relative;*/
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+#outercontainer #container .grupa .spremenljivka .variable_holder .variabla {
+  font-weight: normal;
+}
+#outercontainer #container .grupa .spremenljivka .variable_holder .question_comment textarea {
+  box-sizing: border-box;
+  width: 100%;
+}
+#outercontainer #container .grupa .spremenljivka div.variable_holder.clr {
+  background: white;
+  overflow: auto;
+  margin-bottom: 10px;
+}
+#outercontainer #container .grupa .spremenljivka input[type=checkbox] + span.enka-checkbox-radio, #outercontainer #container .grupa .spremenljivka input[type=radio] + span.enka-checkbox-radio {
+  font-size: 18px;
+}
+#outercontainer #container .grupa .spremenljivka.tip_1 .variable_holder div div, #outercontainer #container .grupa .spremenljivka.tip_2 .variable_holder div div, #outercontainer #container .grupa .spremenljivka.tip_3 .variable_holder div div {
+  padding-top: 5px;
+}
+#outercontainer #container .grupa .spremenljivka.tip_1 .variable_holder .variabla, #outercontainer #container .grupa .spremenljivka.tip_2 .variable_holder .variabla, #outercontainer #container .grupa .spremenljivka.tip_3 .variable_holder .variabla {
+  padding: 1px 0;
+}
+#outercontainer #container .grupa .spremenljivka.tip_1 .variable_holder .variabla input[type=radio], #outercontainer #container .grupa .spremenljivka.tip_2 .variable_holder .variabla input[type=radio], #outercontainer #container .grupa .spremenljivka.tip_3 .variable_holder .variabla input[type=radio] {
+  position: relative;
+  top: -3px;
+}
+#outercontainer #container .grupa .spremenljivka.tip_1 .variable_holder .variabla select, #outercontainer #container .grupa .spremenljivka.tip_2 .variable_holder .variabla select, #outercontainer #container .grupa .spremenljivka.tip_3 .variable_holder .variabla select {
+  width: 100%;
+  margin-bottom: 5px;
+  padding: 10px;
+}
+#outercontainer #container .grupa .spremenljivka.tip_1 .variable_holder .variabla select option, #outercontainer #container .grupa .spremenljivka.tip_2 .variable_holder .variabla select option, #outercontainer #container .grupa .spremenljivka.tip_3 .variable_holder .variabla select option {
+  padding: 5px 5px;
+}
+#outercontainer #container .grupa .spremenljivka.tip_1 .variable_holder .variabla select[size="2"], #outercontainer #container .grupa .spremenljivka.tip_2 .variable_holder .variabla select[size="2"], #outercontainer #container .grupa .spremenljivka.tip_3 .variable_holder .variabla select[size="2"] {
+  height: auto !important;
+  min-height: 36px;
+  padding: 0;
+}
+#outercontainer #container .grupa .spremenljivka.tip_1 .variable_holder .variabla select[size="2"] option, #outercontainer #container .grupa .spremenljivka.tip_2 .variable_holder .variabla select[size="2"] option, #outercontainer #container .grupa .spremenljivka.tip_3 .variable_holder .variabla select[size="2"] option {
+  padding: 5px 5px;
+}
+#outercontainer #container .grupa .spremenljivka.tip_1 .variable_holder .variabla select[size="2"] option:hover, #outercontainer #container .grupa .spremenljivka.tip_2 .variable_holder .variabla select[size="2"] option:hover, #outercontainer #container .grupa .spremenljivka.tip_3 .variable_holder .variabla select[size="2"] option:hover {
+  background-color: #efefef;
+}
+#outercontainer #container .grupa .spremenljivka.tip_1 .variable_holder .variabla input[type=text], #outercontainer #container .grupa .spremenljivka.tip_2 .variable_holder .variabla input[type=text], #outercontainer #container .grupa .spremenljivka.tip_3 .variable_holder .variabla input[type=text] {
+  max-width: 150px !important;
+}
+#outercontainer #container .grupa .spremenljivka.tip_1 .variable_holder .variabla label, #outercontainer #container .grupa .spremenljivka.tip_2 .variable_holder .variabla label, #outercontainer #container .grupa .spremenljivka.tip_3 .variable_holder .variabla label {
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  padding: 7px 9px;
+  color: #333333;
+  border: 1px #fff solid;
+  border-radius: 3px;
+}
+#outercontainer #container .grupa .spremenljivka.tip_1 .variable_holder .variabla label img, #outercontainer #container .grupa .spremenljivka.tip_2 .variable_holder .variabla label img, #outercontainer #container .grupa .spremenljivka.tip_3 .variable_holder .variabla label img {
+  width: 85% !important;
+  vertical-align: middle;
+  border: 1px #fff solid;
+}
+#outercontainer #container .grupa .spremenljivka.tip_1 .variable_holder .variabla label img:hover, #outercontainer #container .grupa .spremenljivka.tip_2 .variable_holder .variabla label img:hover, #outercontainer #container .grupa .spremenljivka.tip_3 .variable_holder .variabla label img:hover {
+  border: 1px #efefef solid;
+}
+#outercontainer #container .grupa .spremenljivka.tip_1 .variable_holder .variabla:hover label, #outercontainer #container .grupa .spremenljivka.tip_1 .variable_holder .variabla.checked label, #outercontainer #container .grupa .spremenljivka.tip_2 .variable_holder .variabla:hover label, #outercontainer #container .grupa .spremenljivka.tip_2 .variable_holder .variabla.checked label, #outercontainer #container .grupa .spremenljivka.tip_3 .variable_holder .variabla:hover label, #outercontainer #container .grupa .spremenljivka.tip_3 .variable_holder .variabla.checked label {
+  border: 1px #E2E2E2 solid;
+  background-color: #efefef;
+}
+#outercontainer #container .grupa .spremenljivka.tip_1 .variable_holder .variabla:hover label img, #outercontainer #container .grupa .spremenljivka.tip_1 .variable_holder .variabla.checked label img, #outercontainer #container .grupa .spremenljivka.tip_2 .variable_holder .variabla:hover label img, #outercontainer #container .grupa .spremenljivka.tip_2 .variable_holder .variabla.checked label img, #outercontainer #container .grupa .spremenljivka.tip_3 .variable_holder .variabla:hover label img, #outercontainer #container .grupa .spremenljivka.tip_3 .variable_holder .variabla.checked label img {
+  border: 1px #efefef solid;
+}
+#outercontainer #container .grupa .spremenljivka.tip_1 .variable_holder .variabla table, #outercontainer #container .grupa .spremenljivka.tip_2 .variable_holder .variabla table, #outercontainer #container .grupa .spremenljivka.tip_3 .variable_holder .variabla table {
+  /*margin-bottom: 10px;*/
+}
+#outercontainer #container .grupa .spremenljivka.tip_1 .variable_holder .variabla table.width_30, #outercontainer #container .grupa .spremenljivka.tip_2 .variable_holder .variabla table.width_30, #outercontainer #container .grupa .spremenljivka.tip_3 .variable_holder .variabla table.width_30 {
+  width: 100% !important;
+  border: 1px #fff solid;
+  border-radius: 3px;
+}
+#outercontainer #container .grupa .spremenljivka.tip_1 .variable_holder .variabla table.width_30 tr, #outercontainer #container .grupa .spremenljivka.tip_2 .variable_holder .variabla table.width_30 tr, #outercontainer #container .grupa .spremenljivka.tip_3 .variable_holder .variabla table.width_30 tr {
+  line-height: 12px;
+}
+#outercontainer #container .grupa .spremenljivka.tip_1 .variable_holder .variabla table.width_30 tr td:first-child, #outercontainer #container .grupa .spremenljivka.tip_2 .variable_holder .variabla table.width_30 tr td:first-child, #outercontainer #container .grupa .spremenljivka.tip_3 .variable_holder .variabla table.width_30 tr td:first-child {
+  width: 80% !important;
+}
+#outercontainer #container .grupa .spremenljivka.tip_1 .variable_holder .variabla table.width_30 tr td label, #outercontainer #container .grupa .spremenljivka.tip_2 .variable_holder .variabla table.width_30 tr td label, #outercontainer #container .grupa .spremenljivka.tip_3 .variable_holder .variabla table.width_30 tr td label {
+  background-color: #fff !important;
+  border: 1px #fff solid !important;
+}
+#outercontainer #container .grupa .spremenljivka.tip_1 .variable_holder .variabla table.width_30:hover, #outercontainer #container .grupa .spremenljivka.tip_2 .variable_holder .variabla table.width_30:hover, #outercontainer #container .grupa .spremenljivka.tip_3 .variable_holder .variabla table.width_30:hover {
+  border: 1px #E2E2E2 solid;
+  background-color: #efefef;
+}
+#outercontainer #container .grupa .spremenljivka.tip_1 .variable_holder .variabla table.width_30:hover tr, #outercontainer #container .grupa .spremenljivka.tip_2 .variable_holder .variabla table.width_30:hover tr, #outercontainer #container .grupa .spremenljivka.tip_3 .variable_holder .variabla table.width_30:hover tr {
+  border: 0;
+  background-color: #efefef;
+}
+#outercontainer #container .grupa .spremenljivka.tip_1 .variable_holder .variabla table.width_30:hover tr td, #outercontainer #container .grupa .spremenljivka.tip_2 .variable_holder .variabla table.width_30:hover tr td, #outercontainer #container .grupa .spremenljivka.tip_3 .variable_holder .variabla table.width_30:hover tr td {
+  border: 0;
+  background-color: #efefef;
+}
+#outercontainer #container .grupa .spremenljivka.tip_1 .variable_holder .variabla table.width_30:hover tr td label, #outercontainer #container .grupa .spremenljivka.tip_2 .variable_holder .variabla table.width_30:hover tr td label, #outercontainer #container .grupa .spremenljivka.tip_3 .variable_holder .variabla table.width_30:hover tr td label {
+  border: 1px #efefef solid !important;
+  background-color: #efefef !important;
+}
+#outercontainer #container .grupa .spremenljivka.tip_1 .variable_holder .variabla.checked table.width_30, #outercontainer #container .grupa .spremenljivka.tip_2 .variable_holder .variabla.checked table.width_30, #outercontainer #container .grupa .spremenljivka.tip_3 .variable_holder .variabla.checked table.width_30 {
+  border: 1px #E2E2E2 solid;
+  background-color: #efefef;
+}
+#outercontainer #container .grupa .spremenljivka.tip_1 .variable_holder .variabla.checked table.width_30 tr, #outercontainer #container .grupa .spremenljivka.tip_2 .variable_holder .variabla.checked table.width_30 tr, #outercontainer #container .grupa .spremenljivka.tip_3 .variable_holder .variabla.checked table.width_30 tr {
+  border: 0;
+  background-color: #efefef;
+}
+#outercontainer #container .grupa .spremenljivka.tip_1 .variable_holder .variabla.checked table.width_30 tr td, #outercontainer #container .grupa .spremenljivka.tip_2 .variable_holder .variabla.checked table.width_30 tr td, #outercontainer #container .grupa .spremenljivka.tip_3 .variable_holder .variabla.checked table.width_30 tr td {
+  border: 0;
+  background-color: #efefef;
+}
+#outercontainer #container .grupa .spremenljivka.tip_1 .variable_holder .variabla.checked table.width_30 tr td label, #outercontainer #container .grupa .spremenljivka.tip_2 .variable_holder .variabla.checked table.width_30 tr td label, #outercontainer #container .grupa .spremenljivka.tip_3 .variable_holder .variabla.checked table.width_30 tr td label {
+  border: 1px #efefef solid !important;
+  background-color: #efefef !important;
+}
+#outercontainer #container .grupa .spremenljivka.tip_1 .variable_holder .variabla.custom_radio_picture label,
+#outercontainer #container .grupa .spremenljivka.tip_1 .variable_holder .variabla.visual-radio-scale label, #outercontainer #container .grupa .spremenljivka.tip_2 .variable_holder .variabla.custom_radio_picture label,
+#outercontainer #container .grupa .spremenljivka.tip_2 .variable_holder .variabla.visual-radio-scale label, #outercontainer #container .grupa .spremenljivka.tip_3 .variable_holder .variabla.custom_radio_picture label,
+#outercontainer #container .grupa .spremenljivka.tip_3 .variable_holder .variabla.visual-radio-scale label {
+  padding: 7px 12px;
+  text-align: center;
+}
+#outercontainer #container .grupa .spremenljivka.tip_1 .variable_holder .variabla.custom_radio_picture label span.enka-custom-radio::before,
+#outercontainer #container .grupa .spremenljivka.tip_1 .variable_holder .variabla.custom_radio_picture label .visual-radio-scale,
+#outercontainer #container .grupa .spremenljivka.tip_1 .variable_holder .variabla.custom_radio_picture label .enka-vizualna-skala,
+#outercontainer #container .grupa .spremenljivka.tip_1 .variable_holder .variabla.visual-radio-scale label span.enka-custom-radio::before,
+#outercontainer #container .grupa .spremenljivka.tip_1 .variable_holder .variabla.visual-radio-scale label .visual-radio-scale,
+#outercontainer #container .grupa .spremenljivka.tip_1 .variable_holder .variabla.visual-radio-scale label .enka-vizualna-skala, #outercontainer #container .grupa .spremenljivka.tip_2 .variable_holder .variabla.custom_radio_picture label span.enka-custom-radio::before,
+#outercontainer #container .grupa .spremenljivka.tip_2 .variable_holder .variabla.custom_radio_picture label .visual-radio-scale,
+#outercontainer #container .grupa .spremenljivka.tip_2 .variable_holder .variabla.custom_radio_picture label .enka-vizualna-skala,
+#outercontainer #container .grupa .spremenljivka.tip_2 .variable_holder .variabla.visual-radio-scale label span.enka-custom-radio::before,
+#outercontainer #container .grupa .spremenljivka.tip_2 .variable_holder .variabla.visual-radio-scale label .visual-radio-scale,
+#outercontainer #container .grupa .spremenljivka.tip_2 .variable_holder .variabla.visual-radio-scale label .enka-vizualna-skala, #outercontainer #container .grupa .spremenljivka.tip_3 .variable_holder .variabla.custom_radio_picture label span.enka-custom-radio::before,
+#outercontainer #container .grupa .spremenljivka.tip_3 .variable_holder .variabla.custom_radio_picture label .visual-radio-scale,
+#outercontainer #container .grupa .spremenljivka.tip_3 .variable_holder .variabla.custom_radio_picture label .enka-vizualna-skala,
+#outercontainer #container .grupa .spremenljivka.tip_3 .variable_holder .variabla.visual-radio-scale label span.enka-custom-radio::before,
+#outercontainer #container .grupa .spremenljivka.tip_3 .variable_holder .variabla.visual-radio-scale label .visual-radio-scale,
+#outercontainer #container .grupa .spremenljivka.tip_3 .variable_holder .variabla.visual-radio-scale label .enka-vizualna-skala {
+  letter-spacing: 0px;
+}
+#outercontainer #container .grupa .spremenljivka.tip_1 .variable_holder .variabla.custom_radio_picture:hover label, #outercontainer #container .grupa .spremenljivka.tip_1 .variable_holder .variabla.custom_radio_picture.checked label,
+#outercontainer #container .grupa .spremenljivka.tip_1 .variable_holder .variabla.visual-radio-scale:hover label,
+#outercontainer #container .grupa .spremenljivka.tip_1 .variable_holder .variabla.visual-radio-scale.checked label, #outercontainer #container .grupa .spremenljivka.tip_2 .variable_holder .variabla.custom_radio_picture:hover label, #outercontainer #container .grupa .spremenljivka.tip_2 .variable_holder .variabla.custom_radio_picture.checked label,
+#outercontainer #container .grupa .spremenljivka.tip_2 .variable_holder .variabla.visual-radio-scale:hover label,
+#outercontainer #container .grupa .spremenljivka.tip_2 .variable_holder .variabla.visual-radio-scale.checked label, #outercontainer #container .grupa .spremenljivka.tip_3 .variable_holder .variabla.custom_radio_picture:hover label, #outercontainer #container .grupa .spremenljivka.tip_3 .variable_holder .variabla.custom_radio_picture.checked label,
+#outercontainer #container .grupa .spremenljivka.tip_3 .variable_holder .variabla.visual-radio-scale:hover label,
+#outercontainer #container .grupa .spremenljivka.tip_3 .variable_holder .variabla.visual-radio-scale.checked label {
+  background-color: #fff;
+  border: 1px #fff solid;
+}
+#outercontainer #container .grupa .spremenljivka.tip_1 .variable_holder .hotspot, #outercontainer #container .grupa .spremenljivka.tip_2 .variable_holder .hotspot, #outercontainer #container .grupa .spremenljivka.tip_3 .variable_holder .hotspot {
+  width: 100% !important;
+}
+#outercontainer #container .grupa .spremenljivka.tip_4 label, #outercontainer #container .grupa .spremenljivka.tip_21 label, #outercontainer #container .grupa .spremenljivka.tip_7 label {
+  padding: 0 !important;
+  line-height: 24px;
+}
+#outercontainer #container .grupa .spremenljivka.tip_4 input[type=text],
+#outercontainer #container .grupa .spremenljivka.tip_4 input[type=email], #outercontainer #container .grupa .spremenljivka.tip_21 input[type=text],
+#outercontainer #container .grupa .spremenljivka.tip_21 input[type=email], #outercontainer #container .grupa .spremenljivka.tip_7 input[type=text],
+#outercontainer #container .grupa .spremenljivka.tip_7 input[type=email] {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 10px;
+}
+#outercontainer #container .grupa .spremenljivka.tip_4 textarea, #outercontainer #container .grupa .spremenljivka.tip_21 textarea, #outercontainer #container .grupa .spremenljivka.tip_7 textarea {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100% !important;
+  padding: 10px;
+}
+#outercontainer #container .grupa .spremenljivka.tip_4 .text_vrednost tbody tr td.variabla, #outercontainer #container .grupa .spremenljivka.tip_21 .text_vrednost tbody tr td.variabla, #outercontainer #container .grupa .spremenljivka.tip_7 .text_vrednost tbody tr td.variabla {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 5px;
+}
+#outercontainer #container .grupa .spremenljivka.tip_4 .text_vrednost tbody tr td.variabla input, #outercontainer #container .grupa .spremenljivka.tip_21 .text_vrednost tbody tr td.variabla input, #outercontainer #container .grupa .spremenljivka.tip_7 .text_vrednost tbody tr td.variabla input {
+  width: 100%;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+#outercontainer #container .grupa .spremenljivka.tip_4 .text_vrednost tbody tr td.variabla textarea, #outercontainer #container .grupa .spremenljivka.tip_21 .text_vrednost tbody tr td.variabla textarea, #outercontainer #container .grupa .spremenljivka.tip_7 .text_vrednost tbody tr td.variabla textarea {
+  width: 100%;
+  max-height: 100px;
+}
+#outercontainer #container .grupa .spremenljivka.tip_4.tip_7 label.limit, #outercontainer #container .grupa .spremenljivka.tip_21.tip_7 label.limit, #outercontainer #container .grupa .spremenljivka.tip_7.tip_7 label.limit {
+  display: block;
+  margin-bottom: 20px;
+}
+#outercontainer #container .grupa .spremenljivka.tip_4 .upload_foto_result, #outercontainer #container .grupa .spremenljivka.tip_21 .upload_foto_result, #outercontainer #container .grupa .spremenljivka.tip_7 .upload_foto_result {
+  width: 100%;
+  height: auto;
+  margin: 20px 0 0 0 !important;
+  padding: 0 !important;
+}
+#outercontainer #container .grupa .spremenljivka.tip_8 input[type=text],
+#outercontainer #container .grupa .spremenljivka.tip_8 input[type=email] {
+  box-sizing: border-box;
+  width: 80%;
+  padding: 10px;
+}
+#outercontainer #container .grupa .spremenljivka.tip_8 .ui-datepicker {
+  font-size: 13px;
+}
+#outercontainer #container .grupa .spremenljivka.tip_6, #outercontainer #container .grupa .spremenljivka.tip_16, #outercontainer #container .grupa .spremenljivka.tip_19, #outercontainer #container .grupa .spremenljivka.tip_20, #outercontainer #container .grupa .spremenljivka.tip_24 {
+  /* Mobilno rzpiranje tabel */
+  /* Ce nimamo mobilno prilagojenih tabel */
+}
+#outercontainer #container .grupa .spremenljivka.tip_6 .grid_mobile .grid_mobile_question, #outercontainer #container .grupa .spremenljivka.tip_16 .grid_mobile .grid_mobile_question, #outercontainer #container .grupa .spremenljivka.tip_19 .grid_mobile .grid_mobile_question, #outercontainer #container .grupa .spremenljivka.tip_20 .grid_mobile .grid_mobile_question, #outercontainer #container .grupa .spremenljivka.tip_24 .grid_mobile .grid_mobile_question {
+  margin: 10px 0 15px;
+  /*line-height: 24px;*/
+}
+#outercontainer #container .grupa .spremenljivka.tip_6 .grid_mobile .grid_mobile_question .grid_mobile_title, #outercontainer #container .grupa .spremenljivka.tip_16 .grid_mobile .grid_mobile_question .grid_mobile_title, #outercontainer #container .grupa .spremenljivka.tip_19 .grid_mobile .grid_mobile_question .grid_mobile_title, #outercontainer #container .grupa .spremenljivka.tip_20 .grid_mobile .grid_mobile_question .grid_mobile_title, #outercontainer #container .grupa .spremenljivka.tip_24 .grid_mobile .grid_mobile_question .grid_mobile_title {
+  padding: 7px 9px;
+  font-weight: 500;
+}
+#outercontainer #container .grupa .spremenljivka.tip_6 .grid_mobile .grid_mobile_question .grid_mobile_variables, #outercontainer #container .grupa .spremenljivka.tip_16 .grid_mobile .grid_mobile_question .grid_mobile_variables, #outercontainer #container .grupa .spremenljivka.tip_19 .grid_mobile .grid_mobile_question .grid_mobile_variables, #outercontainer #container .grupa .spremenljivka.tip_20 .grid_mobile .grid_mobile_question .grid_mobile_variables, #outercontainer #container .grupa .spremenljivka.tip_24 .grid_mobile .grid_mobile_question .grid_mobile_variables {
+  width: 100%;
+  box-sizing: border-box;
+}
+#outercontainer #container .grupa .spremenljivka.tip_6 .grid_mobile .grid_mobile_question .grid_mobile_variables .grid_mobile_variable, #outercontainer #container .grupa .spremenljivka.tip_16 .grid_mobile .grid_mobile_question .grid_mobile_variables .grid_mobile_variable, #outercontainer #container .grupa .spremenljivka.tip_19 .grid_mobile .grid_mobile_question .grid_mobile_variables .grid_mobile_variable, #outercontainer #container .grupa .spremenljivka.tip_20 .grid_mobile .grid_mobile_question .grid_mobile_variables .grid_mobile_variable, #outercontainer #container .grupa .spremenljivka.tip_24 .grid_mobile .grid_mobile_question .grid_mobile_variables .grid_mobile_variable {
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 7px 9px;
+  margin: 2px 0;
+  color: #333333;
+  border: 1px #fff solid;
+  border-radius: 3px;
+}
+#outercontainer #container .grupa .spremenljivka.tip_6 .grid_mobile .grid_mobile_question .grid_mobile_variables .grid_mobile_variable label, #outercontainer #container .grupa .spremenljivka.tip_16 .grid_mobile .grid_mobile_question .grid_mobile_variables .grid_mobile_variable label, #outercontainer #container .grupa .spremenljivka.tip_19 .grid_mobile .grid_mobile_question .grid_mobile_variables .grid_mobile_variable label, #outercontainer #container .grupa .spremenljivka.tip_20 .grid_mobile .grid_mobile_question .grid_mobile_variables .grid_mobile_variable label, #outercontainer #container .grupa .spremenljivka.tip_24 .grid_mobile .grid_mobile_question .grid_mobile_variables .grid_mobile_variable label {
+  vertical-align: baseline;
+}
+#outercontainer #container .grupa .spremenljivka.tip_6 .grid_mobile .grid_mobile_question .grid_mobile_double_subtitle, #outercontainer #container .grupa .spremenljivka.tip_16 .grid_mobile .grid_mobile_question .grid_mobile_double_subtitle, #outercontainer #container .grupa .spremenljivka.tip_19 .grid_mobile .grid_mobile_question .grid_mobile_double_subtitle, #outercontainer #container .grupa .spremenljivka.tip_20 .grid_mobile .grid_mobile_question .grid_mobile_double_subtitle, #outercontainer #container .grupa .spremenljivka.tip_24 .grid_mobile .grid_mobile_question .grid_mobile_double_subtitle {
+  padding: 5px 8px;
+}
+#outercontainer #container .grupa .spremenljivka.tip_6 .grid_mobile.checkbox .grid_mobile_variable:hover, #outercontainer #container .grupa .spremenljivka.tip_6 .grid_mobile.checkbox .grid_mobile_variable.checked,
+#outercontainer #container .grupa .spremenljivka.tip_6 .grid_mobile.radio .grid_mobile_variable:hover,
+#outercontainer #container .grupa .spremenljivka.tip_6 .grid_mobile.radio .grid_mobile_variable.checked, #outercontainer #container .grupa .spremenljivka.tip_16 .grid_mobile.checkbox .grid_mobile_variable:hover, #outercontainer #container .grupa .spremenljivka.tip_16 .grid_mobile.checkbox .grid_mobile_variable.checked,
+#outercontainer #container .grupa .spremenljivka.tip_16 .grid_mobile.radio .grid_mobile_variable:hover,
+#outercontainer #container .grupa .spremenljivka.tip_16 .grid_mobile.radio .grid_mobile_variable.checked, #outercontainer #container .grupa .spremenljivka.tip_19 .grid_mobile.checkbox .grid_mobile_variable:hover, #outercontainer #container .grupa .spremenljivka.tip_19 .grid_mobile.checkbox .grid_mobile_variable.checked,
+#outercontainer #container .grupa .spremenljivka.tip_19 .grid_mobile.radio .grid_mobile_variable:hover,
+#outercontainer #container .grupa .spremenljivka.tip_19 .grid_mobile.radio .grid_mobile_variable.checked, #outercontainer #container .grupa .spremenljivka.tip_20 .grid_mobile.checkbox .grid_mobile_variable:hover, #outercontainer #container .grupa .spremenljivka.tip_20 .grid_mobile.checkbox .grid_mobile_variable.checked,
+#outercontainer #container .grupa .spremenljivka.tip_20 .grid_mobile.radio .grid_mobile_variable:hover,
+#outercontainer #container .grupa .spremenljivka.tip_20 .grid_mobile.radio .grid_mobile_variable.checked, #outercontainer #container .grupa .spremenljivka.tip_24 .grid_mobile.checkbox .grid_mobile_variable:hover, #outercontainer #container .grupa .spremenljivka.tip_24 .grid_mobile.checkbox .grid_mobile_variable.checked,
+#outercontainer #container .grupa .spremenljivka.tip_24 .grid_mobile.radio .grid_mobile_variable:hover,
+#outercontainer #container .grupa .spremenljivka.tip_24 .grid_mobile.radio .grid_mobile_variable.checked {
+  background-color: #efefef;
+  border: 1px #E2E2E2 solid;
+}
+#outercontainer #container .grupa .spremenljivka.tip_6 .grid_mobile.radio.visual_scale .grid_mobile_variables .grid_mobile_variable,
+#outercontainer #container .grupa .spremenljivka.tip_6 .grid_mobile.radio.smiley_scale .grid_mobile_variables .grid_mobile_variable, #outercontainer #container .grupa .spremenljivka.tip_16 .grid_mobile.radio.visual_scale .grid_mobile_variables .grid_mobile_variable,
+#outercontainer #container .grupa .spremenljivka.tip_16 .grid_mobile.radio.smiley_scale .grid_mobile_variables .grid_mobile_variable, #outercontainer #container .grupa .spremenljivka.tip_19 .grid_mobile.radio.visual_scale .grid_mobile_variables .grid_mobile_variable,
+#outercontainer #container .grupa .spremenljivka.tip_19 .grid_mobile.radio.smiley_scale .grid_mobile_variables .grid_mobile_variable, #outercontainer #container .grupa .spremenljivka.tip_20 .grid_mobile.radio.visual_scale .grid_mobile_variables .grid_mobile_variable,
+#outercontainer #container .grupa .spremenljivka.tip_20 .grid_mobile.radio.smiley_scale .grid_mobile_variables .grid_mobile_variable, #outercontainer #container .grupa .spremenljivka.tip_24 .grid_mobile.radio.visual_scale .grid_mobile_variables .grid_mobile_variable,
+#outercontainer #container .grupa .spremenljivka.tip_24 .grid_mobile.radio.smiley_scale .grid_mobile_variables .grid_mobile_variable {
+  display: inline-block;
+  border: 0;
+}
+#outercontainer #container .grupa .spremenljivka.tip_6 .grid_mobile.radio.visual_scale .grid_mobile_variables .grid_mobile_variable:hover, #outercontainer #container .grupa .spremenljivka.tip_6 .grid_mobile.radio.visual_scale .grid_mobile_variables .grid_mobile_variable.checked,
+#outercontainer #container .grupa .spremenljivka.tip_6 .grid_mobile.radio.smiley_scale .grid_mobile_variables .grid_mobile_variable:hover,
+#outercontainer #container .grupa .spremenljivka.tip_6 .grid_mobile.radio.smiley_scale .grid_mobile_variables .grid_mobile_variable.checked, #outercontainer #container .grupa .spremenljivka.tip_16 .grid_mobile.radio.visual_scale .grid_mobile_variables .grid_mobile_variable:hover, #outercontainer #container .grupa .spremenljivka.tip_16 .grid_mobile.radio.visual_scale .grid_mobile_variables .grid_mobile_variable.checked,
+#outercontainer #container .grupa .spremenljivka.tip_16 .grid_mobile.radio.smiley_scale .grid_mobile_variables .grid_mobile_variable:hover,
+#outercontainer #container .grupa .spremenljivka.tip_16 .grid_mobile.radio.smiley_scale .grid_mobile_variables .grid_mobile_variable.checked, #outercontainer #container .grupa .spremenljivka.tip_19 .grid_mobile.radio.visual_scale .grid_mobile_variables .grid_mobile_variable:hover, #outercontainer #container .grupa .spremenljivka.tip_19 .grid_mobile.radio.visual_scale .grid_mobile_variables .grid_mobile_variable.checked,
+#outercontainer #container .grupa .spremenljivka.tip_19 .grid_mobile.radio.smiley_scale .grid_mobile_variables .grid_mobile_variable:hover,
+#outercontainer #container .grupa .spremenljivka.tip_19 .grid_mobile.radio.smiley_scale .grid_mobile_variables .grid_mobile_variable.checked, #outercontainer #container .grupa .spremenljivka.tip_20 .grid_mobile.radio.visual_scale .grid_mobile_variables .grid_mobile_variable:hover, #outercontainer #container .grupa .spremenljivka.tip_20 .grid_mobile.radio.visual_scale .grid_mobile_variables .grid_mobile_variable.checked,
+#outercontainer #container .grupa .spremenljivka.tip_20 .grid_mobile.radio.smiley_scale .grid_mobile_variables .grid_mobile_variable:hover,
+#outercontainer #container .grupa .spremenljivka.tip_20 .grid_mobile.radio.smiley_scale .grid_mobile_variables .grid_mobile_variable.checked, #outercontainer #container .grupa .spremenljivka.tip_24 .grid_mobile.radio.visual_scale .grid_mobile_variables .grid_mobile_variable:hover, #outercontainer #container .grupa .spremenljivka.tip_24 .grid_mobile.radio.visual_scale .grid_mobile_variables .grid_mobile_variable.checked,
+#outercontainer #container .grupa .spremenljivka.tip_24 .grid_mobile.radio.smiley_scale .grid_mobile_variables .grid_mobile_variable:hover,
+#outercontainer #container .grupa .spremenljivka.tip_24 .grid_mobile.radio.smiley_scale .grid_mobile_variables .grid_mobile_variable.checked {
+  background-color: #fff;
+  border: 0;
+}
+#outercontainer #container .grupa .spremenljivka.tip_6 .grid_mobile.radio.visual_scale .grid_mobile_variables .grid_mobile_variable .visual-radio-table,
+#outercontainer #container .grupa .spremenljivka.tip_6 .grid_mobile.radio.visual_scale .grid_mobile_variables .grid_mobile_variable .custom-radio-table,
+#outercontainer #container .grupa .spremenljivka.tip_6 .grid_mobile.radio.smiley_scale .grid_mobile_variables .grid_mobile_variable .visual-radio-table,
+#outercontainer #container .grupa .spremenljivka.tip_6 .grid_mobile.radio.smiley_scale .grid_mobile_variables .grid_mobile_variable .custom-radio-table, #outercontainer #container .grupa .spremenljivka.tip_16 .grid_mobile.radio.visual_scale .grid_mobile_variables .grid_mobile_variable .visual-radio-table,
+#outercontainer #container .grupa .spremenljivka.tip_16 .grid_mobile.radio.visual_scale .grid_mobile_variables .grid_mobile_variable .custom-radio-table,
+#outercontainer #container .grupa .spremenljivka.tip_16 .grid_mobile.radio.smiley_scale .grid_mobile_variables .grid_mobile_variable .visual-radio-table,
+#outercontainer #container .grupa .spremenljivka.tip_16 .grid_mobile.radio.smiley_scale .grid_mobile_variables .grid_mobile_variable .custom-radio-table, #outercontainer #container .grupa .spremenljivka.tip_19 .grid_mobile.radio.visual_scale .grid_mobile_variables .grid_mobile_variable .visual-radio-table,
+#outercontainer #container .grupa .spremenljivka.tip_19 .grid_mobile.radio.visual_scale .grid_mobile_variables .grid_mobile_variable .custom-radio-table,
+#outercontainer #container .grupa .spremenljivka.tip_19 .grid_mobile.radio.smiley_scale .grid_mobile_variables .grid_mobile_variable .visual-radio-table,
+#outercontainer #container .grupa .spremenljivka.tip_19 .grid_mobile.radio.smiley_scale .grid_mobile_variables .grid_mobile_variable .custom-radio-table, #outercontainer #container .grupa .spremenljivka.tip_20 .grid_mobile.radio.visual_scale .grid_mobile_variables .grid_mobile_variable .visual-radio-table,
+#outercontainer #container .grupa .spremenljivka.tip_20 .grid_mobile.radio.visual_scale .grid_mobile_variables .grid_mobile_variable .custom-radio-table,
+#outercontainer #container .grupa .spremenljivka.tip_20 .grid_mobile.radio.smiley_scale .grid_mobile_variables .grid_mobile_variable .visual-radio-table,
+#outercontainer #container .grupa .spremenljivka.tip_20 .grid_mobile.radio.smiley_scale .grid_mobile_variables .grid_mobile_variable .custom-radio-table, #outercontainer #container .grupa .spremenljivka.tip_24 .grid_mobile.radio.visual_scale .grid_mobile_variables .grid_mobile_variable .visual-radio-table,
+#outercontainer #container .grupa .spremenljivka.tip_24 .grid_mobile.radio.visual_scale .grid_mobile_variables .grid_mobile_variable .custom-radio-table,
+#outercontainer #container .grupa .spremenljivka.tip_24 .grid_mobile.radio.smiley_scale .grid_mobile_variables .grid_mobile_variable .visual-radio-table,
+#outercontainer #container .grupa .spremenljivka.tip_24 .grid_mobile.radio.smiley_scale .grid_mobile_variables .grid_mobile_variable .custom-radio-table {
+  display: inline-block !important;
+}
+#outercontainer #container .grupa .spremenljivka.tip_6 .grid_mobile.text .grid_mobile_variable input[type=text],
+#outercontainer #container .grupa .spremenljivka.tip_6 .grid_mobile.text .grid_mobile_variable input[type=email],
+#outercontainer #container .grupa .spremenljivka.tip_6 .grid_mobile.number .grid_mobile_variable input[type=text],
+#outercontainer #container .grupa .spremenljivka.tip_6 .grid_mobile.number .grid_mobile_variable input[type=email], #outercontainer #container .grupa .spremenljivka.tip_16 .grid_mobile.text .grid_mobile_variable input[type=text],
+#outercontainer #container .grupa .spremenljivka.tip_16 .grid_mobile.text .grid_mobile_variable input[type=email],
+#outercontainer #container .grupa .spremenljivka.tip_16 .grid_mobile.number .grid_mobile_variable input[type=text],
+#outercontainer #container .grupa .spremenljivka.tip_16 .grid_mobile.number .grid_mobile_variable input[type=email], #outercontainer #container .grupa .spremenljivka.tip_19 .grid_mobile.text .grid_mobile_variable input[type=text],
+#outercontainer #container .grupa .spremenljivka.tip_19 .grid_mobile.text .grid_mobile_variable input[type=email],
+#outercontainer #container .grupa .spremenljivka.tip_19 .grid_mobile.number .grid_mobile_variable input[type=text],
+#outercontainer #container .grupa .spremenljivka.tip_19 .grid_mobile.number .grid_mobile_variable input[type=email], #outercontainer #container .grupa .spremenljivka.tip_20 .grid_mobile.text .grid_mobile_variable input[type=text],
+#outercontainer #container .grupa .spremenljivka.tip_20 .grid_mobile.text .grid_mobile_variable input[type=email],
+#outercontainer #container .grupa .spremenljivka.tip_20 .grid_mobile.number .grid_mobile_variable input[type=text],
+#outercontainer #container .grupa .spremenljivka.tip_20 .grid_mobile.number .grid_mobile_variable input[type=email], #outercontainer #container .grupa .spremenljivka.tip_24 .grid_mobile.text .grid_mobile_variable input[type=text],
+#outercontainer #container .grupa .spremenljivka.tip_24 .grid_mobile.text .grid_mobile_variable input[type=email],
+#outercontainer #container .grupa .spremenljivka.tip_24 .grid_mobile.number .grid_mobile_variable input[type=text],
+#outercontainer #container .grupa .spremenljivka.tip_24 .grid_mobile.number .grid_mobile_variable input[type=email] {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 10px;
+}
+#outercontainer #container .grupa .spremenljivka.tip_6 .grid_mobile.text .grid_mobile_variable textarea,
+#outercontainer #container .grupa .spremenljivka.tip_6 .grid_mobile.number .grid_mobile_variable textarea, #outercontainer #container .grupa .spremenljivka.tip_16 .grid_mobile.text .grid_mobile_variable textarea,
+#outercontainer #container .grupa .spremenljivka.tip_16 .grid_mobile.number .grid_mobile_variable textarea, #outercontainer #container .grupa .spremenljivka.tip_19 .grid_mobile.text .grid_mobile_variable textarea,
+#outercontainer #container .grupa .spremenljivka.tip_19 .grid_mobile.number .grid_mobile_variable textarea, #outercontainer #container .grupa .spremenljivka.tip_20 .grid_mobile.text .grid_mobile_variable textarea,
+#outercontainer #container .grupa .spremenljivka.tip_20 .grid_mobile.number .grid_mobile_variable textarea, #outercontainer #container .grupa .spremenljivka.tip_24 .grid_mobile.text .grid_mobile_variable textarea,
+#outercontainer #container .grupa .spremenljivka.tip_24 .grid_mobile.number .grid_mobile_variable textarea {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100% !important;
+  padding: 10px;
+}
+#outercontainer #container .grupa .spremenljivka.tip_6 .grid_mobile.text .grid_mobile_variable .category > div,
+#outercontainer #container .grupa .spremenljivka.tip_6 .grid_mobile.number .grid_mobile_variable .category > div, #outercontainer #container .grupa .spremenljivka.tip_16 .grid_mobile.text .grid_mobile_variable .category > div,
+#outercontainer #container .grupa .spremenljivka.tip_16 .grid_mobile.number .grid_mobile_variable .category > div, #outercontainer #container .grupa .spremenljivka.tip_19 .grid_mobile.text .grid_mobile_variable .category > div,
+#outercontainer #container .grupa .spremenljivka.tip_19 .grid_mobile.number .grid_mobile_variable .category > div, #outercontainer #container .grupa .spremenljivka.tip_20 .grid_mobile.text .grid_mobile_variable .category > div,
+#outercontainer #container .grupa .spremenljivka.tip_20 .grid_mobile.number .grid_mobile_variable .category > div, #outercontainer #container .grupa .spremenljivka.tip_24 .grid_mobile.text .grid_mobile_variable .category > div,
+#outercontainer #container .grupa .spremenljivka.tip_24 .grid_mobile.number .grid_mobile_variable .category > div {
+  max-height: 60px;
+}
+#outercontainer #container .grupa .spremenljivka.tip_6 .grid_mobile.mobile_expanding .grid_mobile_title, #outercontainer #container .grupa .spremenljivka.tip_16 .grid_mobile.mobile_expanding .grid_mobile_title, #outercontainer #container .grupa .spremenljivka.tip_19 .grid_mobile.mobile_expanding .grid_mobile_title, #outercontainer #container .grupa .spremenljivka.tip_20 .grid_mobile.mobile_expanding .grid_mobile_title, #outercontainer #container .grupa .spremenljivka.tip_24 .grid_mobile.mobile_expanding .grid_mobile_title {
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+}
+#outercontainer #container .grupa .spremenljivka.tip_6 .grid_mobile.mobile_expanding .grid_mobile_title .faicon.mobile_expanding_arrow, #outercontainer #container .grupa .spremenljivka.tip_16 .grid_mobile.mobile_expanding .grid_mobile_title .faicon.mobile_expanding_arrow, #outercontainer #container .grupa .spremenljivka.tip_19 .grid_mobile.mobile_expanding .grid_mobile_title .faicon.mobile_expanding_arrow, #outercontainer #container .grupa .spremenljivka.tip_20 .grid_mobile.mobile_expanding .grid_mobile_title .faicon.mobile_expanding_arrow, #outercontainer #container .grupa .spremenljivka.tip_24 .grid_mobile.mobile_expanding .grid_mobile_title .faicon.mobile_expanding_arrow {
+  font-family: "Font Awesome 5 Free";
+  font-weight: 700;
+  font-size: 18px;
+  padding-left: 10px;
+}
+#outercontainer #container .grupa .spremenljivka.tip_6 .grid_mobile.mobile_expanding .grid_mobile_title .faicon.mobile_expanding_arrow.arrow_down::before, #outercontainer #container .grupa .spremenljivka.tip_16 .grid_mobile.mobile_expanding .grid_mobile_title .faicon.mobile_expanding_arrow.arrow_down::before, #outercontainer #container .grupa .spremenljivka.tip_19 .grid_mobile.mobile_expanding .grid_mobile_title .faicon.mobile_expanding_arrow.arrow_down::before, #outercontainer #container .grupa .spremenljivka.tip_20 .grid_mobile.mobile_expanding .grid_mobile_title .faicon.mobile_expanding_arrow.arrow_down::before, #outercontainer #container .grupa .spremenljivka.tip_24 .grid_mobile.mobile_expanding .grid_mobile_title .faicon.mobile_expanding_arrow.arrow_down::before {
+  content: "";
+}
+#outercontainer #container .grupa .spremenljivka.tip_6 .grid_mobile.mobile_expanding .grid_mobile_title .faicon.mobile_expanding_arrow.arrow_up::before, #outercontainer #container .grupa .spremenljivka.tip_16 .grid_mobile.mobile_expanding .grid_mobile_title .faicon.mobile_expanding_arrow.arrow_up::before, #outercontainer #container .grupa .spremenljivka.tip_19 .grid_mobile.mobile_expanding .grid_mobile_title .faicon.mobile_expanding_arrow.arrow_up::before, #outercontainer #container .grupa .spremenljivka.tip_20 .grid_mobile.mobile_expanding .grid_mobile_title .faicon.mobile_expanding_arrow.arrow_up::before, #outercontainer #container .grupa .spremenljivka.tip_24 .grid_mobile.mobile_expanding .grid_mobile_title .faicon.mobile_expanding_arrow.arrow_up::before {
+  content: "";
+}
+#outercontainer #container .grupa .spremenljivka.tip_6 .grid_mobile.mobile_expanding .grid_mobile_result, #outercontainer #container .grupa .spremenljivka.tip_16 .grid_mobile.mobile_expanding .grid_mobile_result, #outercontainer #container .grupa .spremenljivka.tip_19 .grid_mobile.mobile_expanding .grid_mobile_result, #outercontainer #container .grupa .spremenljivka.tip_20 .grid_mobile.mobile_expanding .grid_mobile_result, #outercontainer #container .grupa .spremenljivka.tip_24 .grid_mobile.mobile_expanding .grid_mobile_result {
+  display: none;
+  margin: 0px 30px 0 10px;
+  font-size: 13px;
+  color: #999;
+  line-height: 20px;
+  font-weight: 500;
+}
+#outercontainer #container .grupa .spremenljivka.tip_6 table.grid_table, #outercontainer #container .grupa .spremenljivka.tip_16 table.grid_table, #outercontainer #container .grupa .spremenljivka.tip_19 table.grid_table, #outercontainer #container .grupa .spremenljivka.tip_20 table.grid_table, #outercontainer #container .grupa .spremenljivka.tip_24 table.grid_table {
+  width: auto;
+  position: relative;
+}
+#outercontainer #container .grupa .spremenljivka.tip_6 table.grid_table td.question, #outercontainer #container .grupa .spremenljivka.tip_16 table.grid_table td.question, #outercontainer #container .grupa .spremenljivka.tip_19 table.grid_table td.question, #outercontainer #container .grupa .spremenljivka.tip_20 table.grid_table td.question, #outercontainer #container .grupa .spremenljivka.tip_24 table.grid_table td.question {
+  min-width: 150px;
+  padding: 10px;
+}
+#outercontainer #container .grupa .spremenljivka.tip_6 table.grid_table td.category, #outercontainer #container .grupa .spremenljivka.tip_16 table.grid_table td.category, #outercontainer #container .grupa .spremenljivka.tip_19 table.grid_table td.category, #outercontainer #container .grupa .spremenljivka.tip_20 table.grid_table td.category, #outercontainer #container .grupa .spremenljivka.tip_24 table.grid_table td.category {
+  min-width: 100px;
+}
+#outercontainer #container .grupa .spremenljivka.tip_6 .grid_light input,
+#outercontainer #container .grupa .spremenljivka.tip_6 .grid_dark input,
+#outercontainer #container .grupa .spremenljivka.tip_6 .grid_light textarea,
+#outercontainer #container .grupa .spremenljivka.tip_6 .grid_dark textarea,
+#outercontainer #container .grupa .spremenljivka.tip_6 .grid_dark label,
+#outercontainer #container .grupa .spremenljivka.tip_6 .grid_light label, #outercontainer #container .grupa .spremenljivka.tip_16 .grid_light input,
+#outercontainer #container .grupa .spremenljivka.tip_16 .grid_dark input,
+#outercontainer #container .grupa .spremenljivka.tip_16 .grid_light textarea,
+#outercontainer #container .grupa .spremenljivka.tip_16 .grid_dark textarea,
+#outercontainer #container .grupa .spremenljivka.tip_16 .grid_dark label,
+#outercontainer #container .grupa .spremenljivka.tip_16 .grid_light label, #outercontainer #container .grupa .spremenljivka.tip_19 .grid_light input,
+#outercontainer #container .grupa .spremenljivka.tip_19 .grid_dark input,
+#outercontainer #container .grupa .spremenljivka.tip_19 .grid_light textarea,
+#outercontainer #container .grupa .spremenljivka.tip_19 .grid_dark textarea,
+#outercontainer #container .grupa .spremenljivka.tip_19 .grid_dark label,
+#outercontainer #container .grupa .spremenljivka.tip_19 .grid_light label, #outercontainer #container .grupa .spremenljivka.tip_20 .grid_light input,
+#outercontainer #container .grupa .spremenljivka.tip_20 .grid_dark input,
+#outercontainer #container .grupa .spremenljivka.tip_20 .grid_light textarea,
+#outercontainer #container .grupa .spremenljivka.tip_20 .grid_dark textarea,
+#outercontainer #container .grupa .spremenljivka.tip_20 .grid_dark label,
+#outercontainer #container .grupa .spremenljivka.tip_20 .grid_light label, #outercontainer #container .grupa .spremenljivka.tip_24 .grid_light input,
+#outercontainer #container .grupa .spremenljivka.tip_24 .grid_dark input,
+#outercontainer #container .grupa .spremenljivka.tip_24 .grid_light textarea,
+#outercontainer #container .grupa .spremenljivka.tip_24 .grid_dark textarea,
+#outercontainer #container .grupa .spremenljivka.tip_24 .grid_dark label,
+#outercontainer #container .grupa .spremenljivka.tip_24 .grid_light label {
+  max-width: 50px;
+}
+#outercontainer #container .grupa .spremenljivka.tip_6 td.grid_light,
+#outercontainer #container .grupa .spremenljivka.tip_6 td.grid_dark, #outercontainer #container .grupa .spremenljivka.tip_16 td.grid_light,
+#outercontainer #container .grupa .spremenljivka.tip_16 td.grid_dark, #outercontainer #container .grupa .spremenljivka.tip_19 td.grid_light,
+#outercontainer #container .grupa .spremenljivka.tip_19 td.grid_dark, #outercontainer #container .grupa .spremenljivka.tip_20 td.grid_light,
+#outercontainer #container .grupa .spremenljivka.tip_20 td.grid_dark, #outercontainer #container .grupa .spremenljivka.tip_24 td.grid_light,
+#outercontainer #container .grupa .spremenljivka.tip_24 td.grid_dark {
+  max-width: 100px;
+}
+#outercontainer #container .grupa .spremenljivka.tip_6 .grid_dark label,
+#outercontainer #container .grupa .spremenljivka.tip_6 .grid_light label, #outercontainer #container .grupa .spremenljivka.tip_16 .grid_dark label,
+#outercontainer #container .grupa .spremenljivka.tip_16 .grid_light label, #outercontainer #container .grupa .spremenljivka.tip_19 .grid_dark label,
+#outercontainer #container .grupa .spremenljivka.tip_19 .grid_light label, #outercontainer #container .grupa .spremenljivka.tip_20 .grid_dark label,
+#outercontainer #container .grupa .spremenljivka.tip_20 .grid_light label, #outercontainer #container .grupa .spremenljivka.tip_24 .grid_dark label,
+#outercontainer #container .grupa .spremenljivka.tip_24 .grid_light label {
+  display: inline !important;
+}
+#outercontainer #container .grupa .spremenljivka.tip_6 .grid_dark, #outercontainer #container .grupa .spremenljivka.tip_16 .grid_dark, #outercontainer #container .grupa .spremenljivka.tip_19 .grid_dark, #outercontainer #container .grupa .spremenljivka.tip_20 .grid_dark, #outercontainer #container .grupa .spremenljivka.tip_24 .grid_dark {
+  color: #999;
+}
+#outercontainer #container .grupa .spremenljivka.tip_6 .dynamic_mg_vrednost, #outercontainer #container .grupa .spremenljivka.tip_16 .dynamic_mg_vrednost, #outercontainer #container .grupa .spremenljivka.tip_19 .dynamic_mg_vrednost, #outercontainer #container .grupa .spremenljivka.tip_20 .dynamic_mg_vrednost, #outercontainer #container .grupa .spremenljivka.tip_24 .dynamic_mg_vrednost {
+  margin-left: 5px;
+}
+#outercontainer #container .grupa .spremenljivka.tip_18 input[type=text] {
+  box-sizing: border-box;
+  width: 98%;
+  padding: 10px;
+}
+#outercontainer #container .grupa .spremenljivka.tip_18 .vsota_besedilo {
+  width: 98%;
+  text-align: left;
+  line-height: 25px;
+}
+#outercontainer #container .grupa .spremenljivka.tip_18 .variabla_vsota {
+  width: 98%;
+}
+#outercontainer #container .grupa .spremenljivka.tip_18 .variabla_sum {
+  width: 98%;
+}
+#outercontainer #container .grupa .spremenljivka.tip_18 .variabla_sum:nth-last-child(2) {
+  margin-bottom: 10px;
+}
+#outercontainer #container .grupa .spremenljivka.tip_18 .variabla_sum.sum {
+  border-top: 1px solid #505050;
+}
+#outercontainer #container .grupa .spremenljivka.tip_17 input[type=text] {
+  box-sizing: border-box;
+  width: 98%;
+  padding: 10px;
+}
+#outercontainer #container .grupa .spremenljivka.tip_17 select {
+  width: 70px;
+}
+#outercontainer #container .grupa .spremenljivka.tip_17 label {
+  padding-bottom: 20px;
+  line-height: 25px;
+}
+#outercontainer #container .grupa .spremenljivka.tip_17 .ranking {
+  color: black;
+  width: 90px;
+  margin: 15px 0 0 5px;
+}
+#outercontainer #container .grupa .spremenljivka.tip_17 img .frame_ranking_in {
+  margin: -25px 0 0 -30px;
+  width: 100px;
+}
+#outercontainer #container .grupa .spremenljivka.tip_26 {
+  /* Iznici .variable_holder div div padding v google maps, ker vse popaci*/
+}
+#outercontainer #container .grupa .spremenljivka.tip_26 .map_spremenljivka div div {
+  padding-top: 0px;
+}
+#outercontainer #container .grupa .spremenljivka.tip_5:after {
+  margin-top: 10px;
+}
+#outercontainer #container .grupa .spremenljivka.tip_9 .sn_name input[type=text] {
+  box-sizing: border-box;
+  width: 90%;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  padding: 10px;
+}
+#outercontainer #container .grupa .spremenljivka .textfield {
+  max-width: 100px;
+}
+#outercontainer #container .grupa .spremenljivka td img {
+  margin-left: -5px;
+  padding-right: 19px !important;
+  margin-top: 84px !important;
+}
+#outercontainer #container .grupa .spremenljivka td b {
+  color: #999;
+}
+#outercontainer #container .grupa .spremenljivka #arrow_right, #outercontainer #container .grupa .spremenljivka #arrow_left, #outercontainer #container .grupa .spremenljivka #arrow_up, #outercontainer #container .grupa .spremenljivka #arrow_down {
+  background-repeat: no-repeat;
+}
+#outercontainer #container .grupa .spremenljivka abbr.mouseover {
+  border-bottom: 1px solid #000;
+  background: #E2E2E2;
+}
+#outercontainer #container .grupa .spremenljivka .frame_dropping_mobile {
+  width: 100px;
+  margin: 0px auto 10px auto;
+  height: 15px;
+  background-color: #eff2f7;
+  border: 1px solid #b9c5d9;
+}
+#outercontainer #container .grupa .spremenljivka .frame_dropping_box_mobile {
+  width: 100px;
+  padding: 5px;
+  margin: 10px auto 0px auto;
+  height: 15px;
+  text-indent: -25px;
+  border-left: 4px solid #b9c5d9;
+  border-right: 4px solid #b9c5d9;
+  border-bottom: 4px solid #b9c5d9;
+}
+#outercontainer #container .grupa .spremenljivka .frame_dropping_titles_mobile {
+  width: 100px;
+  margin: 0px auto 0px auto;
+  height: 15px;
+  text-align: center;
+  background-color: #FFFFFF;
+  border-top: 1px solid #b9c5d9;
+  border-left: 1px solid #b9c5d9;
+  border-right: 1px solid #b9c5d9;
+}
+#outercontainer #container .grupa .spremenljivka .frame_dropping_titles_box_mobile {
+  width: 100px;
+  margin: 0px auto 0px auto;
+  height: 15px;
+  text-align: center;
+  background-color: #FFFFFF;
+}
+#outercontainer #container .grupa .spremenljivka .drag_and_drop_box_right {
+  top: 15px !important;
+  padding-left: 10px !important;
+}
+#outercontainer #container .grupa .spremenljivka .drag_and_drop_box_right_after_refresh {
+  padding-left: 10px !important;
+}
+#outercontainer #container .grupa .spremenljivka .drag_and_drop_box_right_over {
+  padding-left: 10px !important;
+}
+#outercontainer #container .grupa .spremenljivka .frame_dropping_wider_mobile {
+  width: 110px !important;
+}
+#outercontainer #container .grupa .spremenljivka td.middle_mobile img {
+  width: 20px;
+  margin-left: 0px !important;
+}
+#outercontainer #container .grupa .spremenljivka td.middle_mobile {
+  width: 50px !important;
+  position: absolute;
+  top: 10%;
+  left: 50%;
+  margin-left: -20px;
+}
+#outercontainer #container .grupa .spremenljivka .ranking_mobile, #outercontainer #container .grupa .spremenljivka .ranking_long_mobile {
+  width: 100px;
+  /*padding: 5px;*/
+  margin: 0 auto 10px auto;
+  border: 1px solid #000000;
+  /*height: 25px;*/
+  height: 50px;
+  text-align: center;
+  overflow: hidden;
+  background-color: #ffffff;
+}
+#outercontainer #container .grupa .spremenljivka .drag_and_drop {
+  top: -6px;
+  left: -1px;
+}
+#outercontainer #container .grupa .spremenljivka .drag_and_drop_right {
+  top: -6px !important;
+  left: -1px !important;
+}
+#outercontainer #container .grupa .spremenljivka .slider_mobile {
+  display: inline-block;
+  width: 95%;
+  margin: 10px 10px 0 10px;
+  background-color: #efefef;
+  background-image: none !important;
+}
+#outercontainer #container .grupa .spremenljivka .slider_mobile .ui-slider-handle {
+  background-image: none !important;
+}
+#outercontainer #container .grupa .spremenljivka .slider_grid_mobile {
+  display: inline-block;
+  width: 95%;
+  margin: 10px 10px 0 10px;
+  background-color: #efefef !important;
+  background-image: none !important;
+}
+#outercontainer #container .grupa .spremenljivka .slider_minmaxlabel_mobile {
+  width: 100%;
+}
+#outercontainer #container .grupa .spremenljivka .slider_grid_minmaxlabel_mobile {
+  width: 100%;
+}
+#outercontainer #container .grupa .spremenljivka .ui-slider-label-mobile {
+  position: absolute !important;
+  top: 5px !important;
+  text-align: center !important;
+  /*left: 50% !important;*/
+  /*right: 0% !important;*/
+  margin-left: -1em !important;
+  /*width: 2em !important;*/
+}
+#outercontainer #container .grupa .spremenljivka .ui-slider-label-mobile-first {
+  position: absolute !important;
+  top: 5px !important;
+  text-align: left;
+}
+#outercontainer #container .grupa .spremenljivka .ui-slider-label-mobile-last {
+  position: absolute !important;
+  top: 5px !important;
+  text-align: right;
+  right: 0% !important;
+}
+#outercontainer #container .grupa .spremenljivka .upload_foto_file {
+  display: none;
+}
+#outercontainer #container .grupa .spremenljivka .fotoparent {
+  display: none !important;
+}
+#outercontainer #container .grupa .spremenljivka .custom-foto-upload {
+  background-image: url("../../main/survey/skins/Default/webcam_record.png");
+  background-size: 56px 56px;
+  background-repeat: no-repeat;
+  background-position: center;
+  height: 56px;
+  width: 56px;
+  padding: 4px 4px 4px 4px;
+  display: inline-block;
+  cursor: pointer;
+}
+#outercontainer #container .buttons {
+  display: flex;
+  justify-content: space-evenly;
+  margin-top: 40px;
+  margin-bottom: 20px;
+  padding-top: 30px;
+  border-top: 1px #ddeffd solid;
+}
+#outercontainer #container .buttons input {
+  margin: 0;
+  padding: 10px 15px;
+}
+#outercontainer #container #continue_later {
+  margin: 10px 10px;
+  padding: 10px 10px 0 10px !important;
+}
+#outercontainer #container #continue_later input[type=email] {
+  width: 100%;
+}
+
+/*# sourceMappingURL=main_mobile.css.map */

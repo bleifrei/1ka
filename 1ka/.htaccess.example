@@ -1,0 +1,24 @@
+RewriteEngine On
+
+
+################ FRONTEND SIMPLE konfiguracija ################
+RewriteRule ^index.php\b(.*)	frontend/simple/index.php?%{QUERY_STRING}
+RewriteRule ^api/api.php\b(.*)	frontend/api/api.php?%{QUERY_STRING}
+################ END FRONTEND SIMPLE ################
+
+
+## Rewriti za razne module, delovanje anket...
+RewriteRule ^sa$                				index_sa_anketa.php
+RewriteRule ^koda/(.*)          				main/survey/sa_koda.php?%{QUERY_STRING}
+RewriteRule ^a/(.*)                     		main/survey/index.php?anketa=$1&%{QUERY_STRING}
+RewriteRule ^podatki/(.*?[^/])/(.*[^/])?        admin/survey/public.php?anketa=$1&urlhash=$2&%{QUERY_STRING}
+RewriteRule ^admin/survey/minify/([a-z]=.*)  	admin/survey/minify/index.php?$1  [L,NE]
+
+
+## API
+RewriteRule ^api/(.*)/survey/([0-9]+)$ admin/survey/api/api.php?action=$1&ank_id=$2 [QSA,NC,L]
+RewriteRule ^api/(.*)$ admin/survey/api/api.php?action=$1 [QSA,NC,L]
+
+
+
+## LEPI URL-JI ZA POSAMEZNE ANKETE

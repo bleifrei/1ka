@@ -1,0 +1,239 @@
+/* 1KA new default theme */
+
+body {
+	margin: 0;
+	padding: 0;
+	color: #333;
+	font-size: 75%;
+	font-family: Arial, Verdana, Sans-Serif;
+	font-family: Open Sans, Arial, Sans-Serif !important;
+	background:url(Classic/resna-3-top.png) center top no-repeat;
+}
+body.preview, body.testdata{
+	margin-top: 26px;
+}
+
+#outercontainer {
+	width: 100%;
+	margin: 0 auto;
+	padding-top:120px;
+}
+#container {
+	position:relative;
+	width: 100%;
+	width: 980px;
+	margin: 0px auto 10px;
+}
+
+/* Warning bar (preview, cookie) */
+#cookie_alert, #test_alert {   
+    height: 26px;
+	
+	line-height: 25px;
+	color: #ffffff;
+	
+	background-color: #fe9c5c;
+    border-bottom: 1px solid #fe9c5c;
+}
+#cookie_alert a, #test_alert a {
+	text-decoration: none;
+	font-weight: bold;
+	color: #ffffff;
+}
+#cookie_alert a:hover, #test_alert a:hover {
+	text-decoration: underline;
+}
+#cookie_alert span, #test_alert span {
+    color: #ffffff;
+}
+#cookie_alert span a, #test_alert span a {
+	color: #ffffff;
+	font-weight: normal;
+}
+
+
+/* Header - logo, naslov, progressbar */
+h1 {
+ margin: 0px auto 50px;
+	padding: 130px 0 0 0;
+	font-size: 22px;
+	color: #000;
+	text-align: center;
+}
+h1.evalvacija{
+	margin-bottom: 0;
+}
+
+#logo {
+	width:100%;
+}
+#logo.english{
+}
+#logo a{
+	text-align:center;
+	margin:-80px auto 0 auto;
+	width:80px;
+	height:62px;
+	background:#fff url(1ka/logo_full.png) no-repeat 20px 10px;
+}
+#logo.english a{
+	width:80px;
+	height:62px;
+	background:#fff url(1ka/logo_full_ang.png) no-repeat 20px 10px;
+}
+
+#progress_bar {
+	right: 20px;
+	left: auto;
+	top: 30px;
+}
+#progress_bar span {
+	float: left !important;	/* ie6,7 doesnt support inline-block */
+	display: block;
+	width: 20px;
+	font-size: 11px;
+	color: #000;
+}
+#progress_bar div {
+	height: 10px;
+	width: 130px;
+	padding: 2px;
+	margin: 0 5px;
+	border: 1px #cccccc solid;
+	background-color: #ffffff;
+}
+#progress_bar div span {
+	height: 10px;
+	background-color: #ccc;
+}
+
+#progress_bar p a {
+	color: #0C377A;
+	text-decoration: none;
+}
+#progress_bar p a:hover {
+	color: #fa4913;
+}
+
+
+/* Spremenljivke */
+.spremenljivka {
+  margin: 20px 10px 20px 10px;
+  padding: 20px 2px 20px 12px !important;	
+	border-top: 1px #B9C5D9 solid;
+}
+.spremenljivka.limited{
+	outline: 1px #F15A24 solid;
+}
+.required, .required_require, .required_limit {
+	outline: 1px #F15A24 solid;
+}
+
+.spremenljivka .naslov{
+	padding-left: 5px;
+	font-size: 13px;
+	font-weight:bold;
+	color: #000;
+}
+.spremenljivka .naslov .spremenljivka_info{
+	font-size: 70%;
+}
+
+div.variabla, 
+td.variabla,
+td.question,
+td.differential{
+	font-size: 13px;
+}
+
+div.variable_holder {
+	padding: 0 30px;
+}
+
+div.variable_holder thead {
+	font-weight: 600;
+}
+table.grid_table tbody tr:nth-child(2n+1) {
+	background-color: #eff2f7;
+}
+
+div.variable_holder .frame_ranking{
+	border: 1px #B9C5D9 solid;
+	background-color: #eff2f7;
+}
+div.variable_holder .frame_ranking_hover {
+	border: 1px #8A9FBF solid;
+	background-color: #e2e4e7;
+}
+
+span.reminder {
+	left: 3px;
+}
+
+
+/* Gumbi na dnu */
+div.buttons {
+	padding: 30px 20px 35px;
+	margin: 0 10px;
+	border-top: 1px #B9C5D9 solid;
+}
+div.buttons input {
+	cursor: pointer;
+	margin: 8px 10px;
+	padding: 6px 8px;
+	text-align: center;
+	font-size: 13px;
+  color: #FFFFFF;
+	border-radius: 4px;
+	border: 0; 
+}
+div.buttons input.next {
+	background-color: #fff;
+	border: 1px solid #949391;
+	color:#000;
+}
+div.buttons input.next:hover {
+	background-color: #f7f7f7;
+	border: 1px solid #222;
+	color:#000;
+}
+div.buttons input.prev {
+	background-color: #fff;
+	border: 1px solid #949391;
+	color:#000;
+}
+div.buttons input.prev:hover {
+	background-color: #f7f7f7;
+	border: 1px solid #222;
+	color:#000;
+}
+
+/* Footer */
+#footer_survey {
+	padding: 20px;
+	background-color: #ebebea;
+	border-top: 1px #b1b1b1 solid;
+}
+#footer_survey a, #footer_survey a:visited {
+	color: #000;
+	text-decoration: none;
+}
+#footer_survey a:hover, #footer_survey a:active {
+	text-decoration: underline;
+}
+
+
+/* #Tablet (Portrait) */
+@media only screen and (min-width: 768px) and (max-width: 959px) {
+#container { width:760px;}
+}
+
+/*  #Mobile (Portrait) */
+@media only screen and (max-width: 767px) {
+#container { width:280px;}
+}
+
+/* #Mobile (Landscape) */
+@media only screen and (min-width: 480px) and (max-width: 767px) {
+#container { width:480px;}
+}

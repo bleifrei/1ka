@@ -1,0 +1,53 @@
+/* for IE up to version 6 only */
+html {
+	font-size: x-small; 			/* for winIE5 */
+	voice-family: "\"}\"",inherit; 	/* stop winIE5 */
+	font-size: small; 				/* for winIE6 */ 
+}
+body {
+	text-align: center; 			/* for winIE5 - center align */
+	voice-family: "\"}\"",inherit; 	/* stop winIE5 */
+	text-align: left; 				/* for winIE6 */
+
+	position: relative;				/* IE warning */
+	margin-top: 30px;
+}
+
+div.slogan {
+	margin-top:200px;
+}
+
+li.highlightTabRed a {
+	margin-left:15px!important;
+	padding:5px 3px 3px 3px;
+}
+
+div.linenavigation {
+	height:10px;
+}
+
+div.tabnavigation1,ul.tabnavigation1  {
+	height:17px;
+}
+
+div.Slo {
+	height:100px!important;
+}
+
+ul.tabnavigation1 li.nonhighlight {
+	border-top: 1px solid;
+}
+
+ul.tabnavigation1 a{
+	margin-top:5px;
+}
+
+#h_sl_avtor, #h_sl_spreminjal {width: 10px;}
+
+#surveyInfo_forma {
+	margin: -500px 0 0 -660px;
+}
+
+.vprasanje {
+	z-index: 100;
+}

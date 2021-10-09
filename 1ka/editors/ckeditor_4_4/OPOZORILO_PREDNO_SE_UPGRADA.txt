@@ -1,0 +1,10 @@
+V KOLIKOR SE CKEDITOR NADGRAJUJE:
+    - plugins/images vsebuje popravke, da se lahko uploada slike -> custom upload skripta se nahaja v mapi uploader (če popravki niso rizični se ta plugin ne nadgrajuje)
+    - ker default opcija ne omogoča radio buttnov vertikalno je v ckeditor.js spremenjena 485 vrstica:
+        Prvotno:
+           new CKEDITOR.ui.dialog.hbox(b,f,e,d)
+        Spremenjeno:
+            if(a.labelLayout=='vertical')new CKEDITOR.ui.dialog.vbox(b,f,e,d);else new CKEDITOR.ui.dialog.hbox(b,f,e,d);
+        v custom pluginu se uporabo: labelLayout=='vertical', omenjena možnost se uporabi v pluginu abbr - glossary
+
+     - datoteko config.js se ne prepisuje, saj so notri vse custom nastavitve

@@ -1,0 +1,1 @@
+awk -F"|" "{ arr[$%1]++ } END { {OFS=\"\"} {ORS=\"\"} for( no in arr) { print \"$frequency[\'%1\'][\'\", no, \"\'] = \" ,arr[no],\";\n\" }}" %2 >> %3

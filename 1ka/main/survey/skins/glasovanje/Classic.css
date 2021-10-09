@@ -1,0 +1,58 @@
+/*p, #arhiv {
+	font-size: 12px;
+}*/
+
+.glas_settings_title p{
+	padding: 5px 0 !important;
+	
+	/*font-size: 14px;
+	font-weight: bold;*/
+}
+
+#graph{
+	width: 340px; 
+	height: 10px; 
+	background-color: #dddddd; 
+	border: 1px #aaaaaa solid;
+}
+
+#graph .graph_fill{
+	height: 10px; 
+	background-color: #0c377a;
+}
+
+.spol{
+	margin: 20px 0 0 0;
+	font-weight: bold;
+}
+.spol table tr td{
+	vertical-align: bottom;
+}
+.spol_buttons{
+	width: 330px;
+	margin: 15px 10px;
+	
+	text-align: center;
+}
+.spol_buttons input{
+	cursor: pointer;
+	width: 75px;
+	padding: 2px;
+	margin: 0 4px 0 4px;
+	
+	background-color: #eff2f7;
+    border: 1px solid #dfe2e7;
+    color: #0c377a;
+	border-radius: 3px;
+}
+.spol_buttons input:hover,
+.spol_buttons input.active{
+	color: white;
+	background-color: #0c377a;
+    border: 1px solid #0c377a;
+}
+
+#arhiv a:link{text-decoration: none; color: #0000bb;}
+#arhiv a:visited{text-decoration: none; color: #0000bb;}
+#arhiv a:active{text-decoration: none; color: #0000bb;}
+#arhiv a:hover{text-decoration: none; color: #6666ff;}

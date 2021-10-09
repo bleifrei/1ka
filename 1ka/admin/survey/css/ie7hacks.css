@@ -1,0 +1,50 @@
+body{
+	position: relative;				/* IE warning */
+	margin-top: 30px;
+}
+
+div.nova_vrednost {
+	width:600px;
+}
+
+.highlightTabRed span {
+	padding: 3px 0px 3px 2px;
+}
+
+.if_remove,.spr_edit {visibility: visible !important; }
+
+#surveyInfo_forma {
+	margin: -500px 0 0 -660px;
+}
+
+.vprasanje {
+	z-index: 100;
+}
+
+.lib_tabnavigation ul {margin-left: 0;}	
+.lib_tab {min-width:0px; max-width: 250px;}
+
+.tabnavigation li {
+	zoom: 1;
+	display: inline;
+}
+
+.mainNavDiv{
+	margin-right: 5px; /*distance between each tab*/
+}
+
+li .mainNavDiv_napredno{
+	margin-right: 5px; /*distance between each tab*/
+}
+
+.tabnavigation ul li ul{
+	top: 84px;
+}
+.tabnavigation ul li.highlightUL ul{
+	top: 85px;
+}
+
+.tabnavigation1 ul li {
+	margin-left: 5px;
+	padding: 0 5px 0 5px;
+}

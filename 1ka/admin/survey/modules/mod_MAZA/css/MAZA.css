@@ -1,0 +1,109 @@
+/**
+*Uroš Podkrižnik 12.10.2017
+*
+*za modul MAZA - mobilna aplikacija za anketirance (projekt ARRS 2017) mobilno zbiranje podatkov
+*/
+#MAZA{
+	margin: 60px 35px;
+	min-height: 500px;
+    padding: 5px 1% 0 13px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*KOPIJA OD NOTIFICATIONS*/
+#MAZA .sent_list,
+#MAZA .recieved_list{
+	display: inline;
+	float: left;
+	
+	width: 470px;
+	min-height: 200px;
+	margin-right: 60px;
+}
+#MAZA .sent_list ul,
+#MAZA .recieved_list ul{
+	padding-left: 0;
+}
+#MAZA .sent_list ul li,
+#MAZA .recieved_list ul li{
+	list-style-type: none;
+	
+	margin: 5px 0;
+	padding: 5px 8px;
+	
+	background-color: #eff2f7;
+	border: 1px #eff2f7 solid;
+}
+#MAZA .sent_list ul li.unread,
+#MAZA .recieved_list ul li.unread{
+	background-color: #d8dfea;
+}
+
+#MAZA .recieved_list ul li:hover,
+#MAZA .recieved_list ul li.active{
+	cursor: pointer;
+	
+	background-color: #d8dfea;
+	border: 1px #6d87ad solid;
+}
+
+#MAZA #message{
+	display: inline;
+	float: left;
+	
+	margin-top: 30px;
+	padding: 20px;
+	
+	width: 415px;
+	
+	background-color: #eff2f7;
+}
+
+#MAZA .send_form{
+	display: inline;
+	float: left;
+	
+	margin-top: 30px;
+	padding: 20px;
+	
+	width: 415px;
+	
+	background-color: #eff2f7;
+}
+#MAZA .send_form input[type="text"],
+#MAZA .send_form textarea{
+	width: 400px;
+	padding: 3px 5px;
+	
+	border: 1px solid #c6c6c6 !important;
+    color: #333 !important;
+}

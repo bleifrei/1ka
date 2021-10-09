@@ -1,0 +1,442 @@
+/* 1KA new default theme */
+
+body {
+	margin: 0;
+	padding: 0;
+	
+    color: #455a64;
+    font-size: 100%;
+	font-family: Arial, Verdana, Sans-Serif;
+	font-family: Open Sans, Arial, Sans-Serif !important;
+	
+	background: #ffffff;
+}
+body.preview, body.testdata{
+	margin-top: 26px;
+}
+
+#outercontainer {
+	width: 100%;
+	margin: 0 auto;
+	
+	background: #ffffff url('1ka/header_new2.png') top left repeat-x;
+}
+#container {
+	position: relative;
+	
+	width: 100%;
+	max-width: 980px;
+	margin: 0px auto 10px;
+}
+
+
+/* Warning bar (preview, cookie) */
+#cookie_alert, #test_alert {   
+    height: 26px;
+	
+	font-size: 13px;
+	line-height: 25px;
+	color: #ffffff;
+	
+	background-color: #fe9c5c;
+    border-bottom: 1px solid #fe9c5c;
+}
+#cookie_alert a, #test_alert a {
+	text-decoration: none;
+	font-weight: bold;
+	color: #ffffff;
+}
+#cookie_alert a:hover, #test_alert a:hover {
+	text-decoration: underline;
+}
+#cookie_alert span, #test_alert span {
+    color: #ffffff;
+}
+#cookie_alert span a, #test_alert span a {
+	color: #ffffff;
+	font-weight: normal;
+}
+
+
+/* Header - logo, naslov, progressbar */
+h1 {
+    /*margin: 0px auto 70px;*/
+    margin: 0px auto 30px;
+	/*padding: 36px 0 20px 0;*/
+	padding: 110px 0 40px 0;
+	
+	font-size: 26px;
+	color: #0c377a;
+    text-align: center;
+	
+	border-bottom: 1px solid #dfe2e7;
+}
+h1.evalvacija{
+	margin-bottom: 0;
+}
+
+#logo {
+	right: auto;
+	left: 20px;
+	/*top: 28px;*/
+	top: 13px;
+	
+	background: url("../../../public/img/logo/1ka_slo.svg") no-repeat scroll 0 0 transparent;
+	background-repeat: no-repeat;
+}
+#logo.english{
+	background: url("../../../public/img/logo/1ka_eng.svg") no-repeat scroll 0 0 transparent;
+}
+#logo a{
+	width: 80px;
+	height: 46px;
+}
+
+#progress_bar {
+	right: 20px;
+	left: auto;
+	top: 30px;
+}
+#progress_bar span {
+	float: left !important;	/* ie6,7 doesnt support inline-block */
+	display: block;
+	width: 20px;
+	
+	font-size: 11px;
+	color: #6D87AF;
+}
+#progress_bar div {
+	height: 10px;
+	width: 130px;
+	padding: 2px;
+	margin: 0 5px;
+	
+	border: 1px #cccccc solid;
+	background-color: #ffffff;
+}
+#progress_bar div span {
+	height: 10px;
+	background-color: #0C377A;
+}
+#progress_bar p a {
+	color: #0C377A;
+	text-decoration: none;
+}
+#progress_bar p a:hover {
+	color: #fa4913;
+}
+
+
+/* Spremenljivke */
+.spremenljivka {
+    margin: 20px 10px 20px 10px;
+    padding: 10px 2px 35px 12px !important;
+	
+	border-bottom: 1px #dfe2e7 solid;
+}
+.spremenljivka.limited{
+	outline: 1px #F15A24 solid;
+}
+.required, .required_require, .required_limit {
+	outline: 1px #F15A24 solid;
+}
+
+.spremenljivka .naslov{
+	padding-left: 5px;
+	font-size: 16px;
+	font-weight: 600;
+}
+.spremenljivka .naslov .spremenljivka_info{
+	font-size: 70%;
+	color: #a0aec1;
+}
+
+.spremenljivka .counter{
+	font-size: 16px;
+}
+
+div.variabla, 
+td.variabla,
+td.question,
+td.differential{
+	font-size: 14px;
+}
+
+div.variable_holder {
+	padding: 10px 0 0 0;
+}
+
+div.variable_holder thead {
+	font-weight: normal;
+	font-size: 14px;
+}
+div.variable_holder thead td{
+	padding: 10px 5px;
+}
+table.grid_table tbody tr:nth-child(2n+1) {
+	background-color: #EFF2F7;
+}
+table.grid_table td {
+    padding: 7px 10px;
+}
+
+/* ranking */
+.dropzone{
+	border-top: 1px #dfe2e7 solid;
+	margin-top: 12px;
+	padding-top: 17px;
+}
+table.ranking_table ul{
+	margin-top: 19px;	
+}
+.ranking, 
+.ranking_long, 
+.handle, 
+.handle_long, 
+.ime, 
+.izbran,
+.frame_ranking,
+.frame_ranking_hover,
+.frame_dropping,
+.frame_dropping_hover,
+.frame_moving{
+    font-size: 13px;
+	padding: 7px 10px 9px;
+	
+	border: 2px solid #0c377a;
+    background-color: #ffffff;
+	border-radius: 2px 2px !important;
+}
+div.variable_holder .frame_ranking_hover{
+	border: 2px #0c377a solid;
+	background-color: #eff2f7;
+	border-radius: 2px 2px !important;
+}
+div.variable_holder .frame_ranking,
+div.variable_holder .frame_moving,
+div.variable_holder .frame_dropping,
+div.variable_holder .frame_dropping_hover{
+	text-indent: -35px;
+	
+	border: 2px #a0aec1 solid;
+	background-color: #eff2f7;
+	border-radius: 2px 2px !important;
+}
+table.ranking_table b{
+	font-size: 13px;
+	font-weight: 600;
+}
+
+.frame_dropping {
+   padding: 7px 10px 9px;
+}
+.frame_dropping_box {
+    padding: 7px 10px 9px;
+}
+
+
+
+span.reminder {
+	left: 3px;
+}
+
+/* Textboxi, textarea, select */
+input[type="text"], textarea, select{
+	padding: 5px 7px;
+	border-radius: 3px;
+	border: 1px #9fa2a7 solid;
+	background-color: #fff;
+}
+
+/* Koledar */
+.ui-datepicker{
+	font-size: 14px;
+}
+
+/* Slider */
+.grupa .spremenljivka .ui-slider-pips .ui-slider-pip{
+	color: #455a64;	
+}
+.grupa .spremenljivka .slider.ui-widget-content{
+	background-color: #a0aec1 !important;
+	background-image: none !important;
+	border: 0;
+}
+.grupa .spremenljivka .ui-slider-horizontal{
+	height: 13px;
+}
+.grupa .spremenljivka .ui-slider-handle {
+	cursor: pointer;
+	
+	height: 10px !important;
+    width: 18px !important;
+	margin-top: 3px;
+	
+	border: 0;
+    border-radius: 15px 15px !important;
+	background-color: #0c377a !important;
+	background-image: none !important;
+}
+.grupa .spremenljivka .ui-slider-handle:active{
+	background-color: #0c377a !important;
+}
+.grupa .spremenljivka .sliderText{
+	padding-top: 2px;
+	
+	color: white;
+	
+	background-color: #a0aec1;
+	border: 0;
+}
+.grupa .spremenljivka .sliderText::after{
+	border-color: #a0aec1 transparent;
+}
+
+/* Warning levo od vprasanja */
+.validation_alert {
+    position: absolute;
+	z-index: 51;
+	
+    top: 20px;
+    left: -150px;
+    width: 130px;
+    min-height: 29px;
+    margin: 0;
+	
+    text-align: center;
+    font-size: 11px;
+    line-height: 14px;
+	
+    background-color: #eff2f7;
+	
+    border: 2px solid red;
+    padding: 4px 7px;
+    border-radius: 4px;
+    box-shadow: none;
+}
+
+
+/* Gumbi na dnu */
+div.buttons {
+	padding: 30px 20px 35px;
+	margin: 0 10px;
+}
+div.buttons input {
+	cursor: pointer;
+	
+	margin: 8px 10px;
+    /*padding: 7px 11px;*/
+	padding: 10px 15px;
+	
+	text-align: center;
+	/*font-size: 15px;*/
+	font-size: 15px;
+    font-weight: bold;
+    color: #FFFFFF;
+	
+	border-radius: 4px;
+	border: 0; 
+}
+div.buttons input.next {
+	background-color: #0c377a;
+	border: 1px solid #0c377a;
+}
+div.buttons input.next:hover {
+	background-color: #fe8333;
+	border: 1px solid #fe8333;
+}
+div.buttons input.prev {
+	color: #0c377a;
+	background-color: #eff2f7;
+	border: 1px solid #dfe2e7;
+}
+div.buttons input.prev:hover {
+	color: #eff2f7;
+	background-color: #0c377a;
+}
+
+
+/* Footer */
+#footer_survey {
+	padding: 30px;
+	
+	background-color: #ffffff;
+	border-top: 5px #eff2f7 solid;
+}
+#footer_survey p,
+#footer_survey a, 
+#footer_survey a:visited {
+	color: #455a64;
+	font-size: 12px;
+	font-weight: 600;
+	text-decoration: none;
+}
+#footer_survey a:hover, #footer_survey a:active {
+	text-decoration: none;
+}
+
+
+/* awesome radio in checkboxi */
+input[type="checkbox"] + span.enka-checkbox-radio,
+input[type="radio"] + span.enka-checkbox-radio,
+.custom_radio_picture.obarvan > label > span.enka-custom-radio:before{
+	color: #3D5F95;
+}
+
+.drag_and_drop {
+	top: -9px;
+    left: -12px;	
+}
+
+.drag_and_drop_right{
+	top: -9px!important;
+    left: -12px!important;	
+}
+
+.frame_dropping_titles {
+    width: 240px;
+    padding: 5px;
+    margin: 0px auto 0px auto;
+    height: 15px;
+    text-align: center;
+    background-color: #FFFFFF;
+    border-top: 2px solid #b9c5d9;
+    border-left: 2px solid #b9c5d9;
+    border-right: 2px solid #b9c5d9;
+	font-size: 13px;
+}
+
+.drag_and_drop_box {
+	top: -9px;
+    left: -12px;	
+}
+
+.drag_and_drop_box_right{
+	top: 19px!important;
+    left: -12px!important;	
+}
+
+.drag_and_drop_box_right_after_refresh{
+	/*top: 44px!important;*/
+    left: -12px!important;
+}
+
+.drag_and_drop_box_right_over{
+    left: -12px!important;	
+}
+
+.drag_and_drop_box img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.frame_dropping_titles_box {
+    width: 240px;
+    padding: 5px;
+    margin: 0px auto 0px auto;
+    height: 15px;
+    text-align: center;
+    background-color: #FFFFFF;
+	font-size: 13px;
+}

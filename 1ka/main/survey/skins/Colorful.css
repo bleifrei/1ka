@@ -1,0 +1,127 @@
+/* 1KA default theme */
+
+body {
+    color: #333;
+    font-size: 75%;
+    background: none repeat scroll 0 0 #4E4E4E;
+    font-family: Arial,Verdana,Sans-Serif;
+    margin-top: 0;
+}
+
+textarea, input, select {
+	margin: 0 4px;
+}
+
+#outercontainer {
+	width: 100%;
+	max-width: 980px;
+	margin: 0 auto;
+}
+
+#container {
+	position: relative;
+/*	background: url("1KA/logo_transparent.png") no-repeat scroll right top #596ED5; */
+	background-color: #596ED5; 
+border: 1px solid black;
+    border-radius: 10px 10px 10px 10px;
+    margin: 10px auto;
+}
+
+/*#logo {
+	background: url("Default/logo_transparent.png") no-repeat scroll 100% 0 transparent;
+	top: 14px;
+	right: 10px;
+}
+#logo a {
+	width: 103px;
+	height: 60px;
+}*/
+#logo {
+    top: 20px;
+    margin-right: 10px;
+    background: url("../../../public/img/logo/1ka_slo.svg") no-repeat scroll 100% 0 transparent;
+    background-position: 20px 4px;
+    background-repeat: no-repeat;
+}
+#logo.english{
+    top: 24px;
+    background: url("../../../public/img/logo/1ka_eng.svg") no-repeat scroll 100% 0 transparent;
+}
+#logo a{
+    width: 80px;
+    height: 46px;
+}
+
+h1 {
+	color: white;
+	font-size: 170%;
+    font-weight: 100;
+    margin: 30pt 0 20pt;
+    text-align: center;
+}
+
+#admin_options {
+	left: 20px;
+	position: fixed;
+}
+#preview {
+	border: 3px solid #596ED5;
+	border-radius: 5px 5px 5px 5px;
+	background-color: #f6f6f6;
+}
+
+#progress_bar {
+	right: auto;
+	left: 20px;
+	top: 33px;
+}
+#progress_bar span {
+	color: #000;
+}
+#progress_bar div {
+	border: 1px solid #000;
+}
+#progress_bar div span {
+	background-color: #fff;
+}
+
+div.grupa {
+	background-color: white;
+    border-bottom: 1px solid #999999;
+    border-top: 1px solid #999999;
+    margin: 10px auto ;
+    padding: 0 2px;
+}
+
+div.spremenljivka {
+	background-color: white;
+    border-bottom: 1px solid #999999;
+    margin: 20px 10px;
+    padding: 0 2px 20px 12px;
+}
+div.variable_holder {
+    margin: 0;
+    padding: 0 30px;
+}
+
+span.reminder {
+	left: 4px;
+}
+
+div.buttons {
+	padding: 25px 20px;
+}
+div.buttons input {
+	padding: 0 10px;
+}
+
+#footer_survey {
+	padding: 25px 20px;
+}
+#footer_survey a, #footer_survey a:visited {
+	color: #333;
+	text-decoration: none;
+}
+#footer_survey a:hover, #footer_survey a:active {
+	text-decoration: underline;
+}

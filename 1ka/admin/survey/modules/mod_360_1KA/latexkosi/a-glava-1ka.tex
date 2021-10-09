@@ -1,0 +1,105 @@
+\documentclass[11pt,a4paper]{report}
+\usepackage[cm]{fullpage}
+\setlength{\headheight}{12pt}
+\usepackage{arev}
+\usepackage[T1]{fontenc}
+\usepackage{times}
+%\usepackage[nofligs]{verdana}
+\usepackage[fontsize=11pt]{scrextend}
+\usepackage{amsmath}
+\usepackage[cp1250]{inputenc}
+\usepackage[utf8]{inputenc}
+
+\usepackage{subcaption}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\definecolor{firebrick3}{HTML}{cd2626}
+\definecolor{dodgerblue3}{HTML}{1874cd}
+\definecolor{BrickRed}{HTML}{B6321C}
+\definecolor{OrangeRed}{HTML}{F58137}
+\definecolor{PineGreen}{HTML}{008B72}
+\definecolor{Orange}{HTML}{F58137}
+\definecolor{Green}{HTML}{00A64F}
+\definecolor{Atlantis}{HTML}{8CBA2E}
+\definecolor{Blue Stone}{HTML}{006666}
+\definecolor{Black}{HTML}{000000}
+\definecolor{Red}{HTML}{FF0006}
+\definecolor{Gray}{HTML}{AAAAAA}
+\usepackage{times}
+\usepackage{float}
+\usepackage{multirow}
+\usepackage{wrapfig}
+
+
+
+\usepackage{setspace}
+
+\renewcommand\thesection{\Alph{section}}
+\renewcommand\thesubsection{\thechapter.\arabic{subsection}}
+\usepackage{chngcntr}
+\counterwithout*{subsection}{section}
+\counterwithin*{subsection}{chapter}
+\usepackage{titlesec}
+\titleformat{\chapter}[hang]{\LARGE\bfseries}{\thechapter{. }}{12pt}{\LARGE\bfseries}
+\titlespacing*{\chapter}{0pt}{-13pt}{10pt}
+\usepackage{longtable}
+\usepackage{setspace}
+\usepackage{array,calc}
+\newcolumntype{A}[1]{>{\begin{minipage}{#1}\vspace{\tabcolsep}}l<{\vspace{\tabcolsep}\end{minipage}}}
+\newenvironment{Complement}[1][0.75cm]{\hspace{#1}\begin{minipage}{\linewidth-#1}\hspace{-#1}\ignorespaces}{\end{minipage}}
+
+
+
+\usepackage{fancyhdr}
+\pagestyle{fancyplain}
+\renewcommand{\chaptermark}[1]{\markboth{#1}{}}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+\fancyhead[L]{ \includegraphics[width=2cm]{../latexkosi/logo/CDI_glava.png} }
+\fancyfoot[L]{}
+\fancyfoot[R]{\small{Stran \thepage}}
+\headsep 25pt
+\fancypagestyle{plain}{
+	\renewcommand{\headrulewidth}{0.4pt}
+	\renewcommand{\footrulewidth}{0.4pt}
+}
+
+
+\usepackage{hyperref}
+\hypersetup{
+	colorlinks=true,
+	linkcolor=black,
+	urlcolor=blue,
+	pdfstartview={XYZ null null 1},
+	pdftitle={naslov!}
+}
+\urlstyle{same}
+
+\setlength{\parindent}{0cm}
+\LTcapwidth=\textwidth %to keep longtable captions in one row
+
+%začetek za dodatek po letih
+\makeatletter
+\@addtoreset{chapter}{part}
+\makeatother
+\usepackage{alphalph}
+\makeatletter
+\newalphalph{\alphmult}[mult]{\@Alph}{26}
+\makeatother
+\renewcommand{\thesection}{\alphmult{\value{section}}}
+%konec za dodatek po letih
+
+
+\begin{document}
+	\begin{titlepage}
+		\begin{center}
+                     \vspace*{-8.5\baselineskip}  % Da bo slika na vrhu
+		\includegraphics[width=18cm]{../latexkosi/logo/CDI1.png}~\\[4cm]
+		\includegraphics[width=17.5cm]{../latexkosi/logo/CDI_naslovnica.png}~\\[4cm]
+		%\textsc{ \LARGE  \textbf{ \color{Red} Center za družboslovno informatiko \\[2cm] analiza 360 stopinj}}\\[6.5cm]
+		%\includegraphics[width=14.5cm]{../latexkosi/logo/slika.jpg}~\\[6cm]
+		{\large Ljubljana, \today}
+		\end{center}
+	\end{titlepage}
+\tableofcontents

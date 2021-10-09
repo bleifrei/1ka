@@ -1,0 +1,42 @@
+%
+% slovene.sty  - prilagoditev zvrsti ARTICLE, BOOK in REPORT slovenscini
+%
+\@ifundefined{slovensko}{\def\slovensko{}}{\endinput}
+\typeout{Document Style Option 'Sloven2e' ver 0.1. / 11-Nov-95 / V.B.}
+
+% naslovi
+
+\def\abstractname{Povzetek}
+\def\appendixname{Dodatek}
+\def\bibname{Literatura}
+\def\ccname{cc}
+\def\chaptername{Poglavje}
+\def\contentsname{Kazalo}
+\def\enclname{Priloge}
+\def\figurename{Slika\ }
+\def\headpagename{Stran}
+\def\headtoname{Komu}
+\def\indexname{Stvarno kazalo}
+\def\listfigurename{Slike}
+\def\listtablename{Tabele}
+\def\partname{Del}
+\def\prefacename{Predgovor}
+\def\seename{glej}
+\def\alsoseename{glej tudi}
+\def\refname{Viri}
+\def\tablename{Tabela\ }
+
+% tekoci datum
+
+\def\today{\number\day. \ifcase\month\or
+ januar\or februar\or marec\or april\or maj\or junij\or
+ julij\or avgust\or september\or oktober\or november\or december\fi
+ \space\number\year}
+
+
+% slovenski narekovaji
+
+\def\lqlq{\leavevmode\hbox{,\kern-.1em,}}
+\def\rqrq{\leavevmode\hbox{`\kern-.1em`}}
+
+\endinput

@@ -1,0 +1,54 @@
+version: "3"
+
+services:
+
+    www:
+        container_name: www_1ka_latest
+        restart: always
+        build:
+            context: .
+            dockerfile: Dockerfile
+        depends_on:
+            - mysql
+        ports:
+            - "80:80"
+        volumes:
+            - ../../../:/var/www/html/
+            - ./www/config/php-7.4.ini:/usr/local/etc/php/php.ini
+            - ./www/config/php-local.ini:/usr/local/etc/php/conf.d/local.ini
+            - ./www/config/1ka.test:/etc/apache2/sites-available/1ka.test
+            - ./www/log/:/var/log/apache2/
+        networks:
+            - default
+
+    mysql:
+        container_name: mysql_1ka_latest
+        image: mysql:5.7
+        ports: 
+            - "6032:3306"
+        volumes:
+            - ./sql/database:/var/lib/mysql
+            - ./sql/log:/var/log/mysql
+            - ./sql/config:/etc/mysql
+        networks:
+            - default
+        environment:
+            - MYSQL_USER=root
+            - MYSQL_ROOT_PASSWORD=1234
+            - MYSQL_PASSWORD=1234
+            - MYSQL_DATABASE=1ka
+            
+    phpmyadmin:
+        container_name: phpmyadmin_1ka_latest
+        image: phpmyadmin/phpmyadmin  
+        depends_on:
+            - mysql
+        ports:
+            - "8080:80"    
+        environment:
+            - PMA_HOST=mysql
+            - PMA_PORT=3306
+        networks:
+            - default
+            
+            

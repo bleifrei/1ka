@@ -1,0 +1,45 @@
+.glas_settings_title p{
+	padding: 5px 0 !important;
+	
+	/*font-size: 14px;
+	font-weight: bold;*/
+}
+
+#graph{
+	width: 340px; 
+	height: 2px; 
+	background-color: #BBBBBB; 
+	border: 1px #888888 solid;
+}
+
+#graph .graph_fill{
+	height: 2px; 
+	background-color: #ff0000;
+}
+
+.spol{
+	margin: 20px 0 0 0;
+	font-weight: bold;
+}
+.spol table tr td{
+	vertical-align: bottom;
+}
+.spol_buttons{
+	width: 330px;
+	margin: 10px;
+	
+	text-align: center;
+}
+.spol_buttons input{
+	width: 60px;
+	margin: 0 2px 0 2px;
+}
+.spol_buttons input.active{
+	font-weight: bold;
+	color: #bb0000;
+}
+
+#arhiv a:link{text-decoration: none; color: #bb0000;}
+#arhiv a:visited{text-decoration: none; color: #bb0000;}
+#arhiv a:active{text-decoration: none; color: #bb0000;}
+#arhiv a:hover{text-decoration: none; color: #ff5555;}

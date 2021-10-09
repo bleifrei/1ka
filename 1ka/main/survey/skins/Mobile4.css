@@ -1,0 +1,219 @@
+body{
+	padding: 0px;
+	
+	font-family: 'Bree Serif', serif !important;
+	font-size: 13px;
+	color: #455a64;
+	
+	background-color: white;
+}
+
+span, label{
+	color: #455a64;
+}
+
+
+/* GLAVNI ELEMENTI */
+#container{
+	margin-top: 0px;
+}
+
+#container h1{
+	padding: 18px 5px 22px 5px;
+	margin-bottom: 10px;
+	
+	font-size: 23px;
+	font-weight: normal;
+	color: #FF3B3F;
+	line-height: 30px;
+	
+	background-color: #CAEBF2;
+	border-bottom: 8px #FF3B3F solid;
+}
+
+
+/* INPUT ELEMENTI */
+.grupa .spremenljivka input[type=text]{
+	padding: 5px 7px;
+	
+	border: 1px #a0aec1 solid;
+	border-radius: 3px;
+	-moz-border-radius: 3px 3px 3px 3px;
+	-webkit-border-radius: 3px;
+}
+
+input[type="checkbox"] + span.enka-checkbox-radio,
+input[type="radio"] + span.enka-checkbox-radio,
+.custom_radio_picture.obarvan > label > span.enka-custom-radio:before {
+	color: #FF3B3F;
+}
+
+
+.grupa{
+	min-height: 100px;
+	padding-top: 0px;
+}
+.grupa .spremenljivka{
+	margin: 0 10px;
+	
+	background-color: white;
+	border: 0;
+	border-bottom: 1px #a0aec1 solid;
+}
+.grupa .spremenljivka:last-of-type{
+	border-bottom: 0;
+}
+.grupa .spremenljivka .naslov{
+	margin: 0;
+	padding: 5px 0 10px 0;
+	
+	font-size: 15px;
+	font-weight: normal;
+	color: #455a64;
+}
+.grupa .spremenljivka .naslov .spremenljivka_info{
+	font-size: 11px;
+	color: #a0aec1;
+}
+
+.variable_holder{
+	border: 0;
+}
+.variable_holder .variabla{
+	font-weight: normal;	
+	color: #455a64;
+}
+table thead {
+    font-weight: normal;
+}
+
+.grupa .spremenljivka .sequence_number{
+	padding: 2px 7px 5px 7px;
+	
+	background-color: #a0aec1;
+	color: white;
+	
+	border: 0;
+	border-radius: 3px;
+	-moz-border-radius: 3px 3px 3px 3px;
+	-webkit-border-radius: 3px;
+}
+.grupa .spremenljivka .sequence_number.active{
+	background-color: #dbe8f9;
+	color: #a0aec1;
+}
+
+.grupa .spremenljivka .slider_mobile{
+	background-color: #a0aec1;
+	border: 0;
+}
+.grupa .spremenljivka .ui-slider-horizontal{
+	height: 7px;
+}
+.grupa .spremenljivka .ui-slider-handle {
+	cursor: pointer;
+	
+	height: 10px !important;
+    width: 18px !important;
+	margin-top: 3px;
+	
+	border: 0;
+    border-radius: 15px 15px !important;
+	background-color: #FF3B3F;
+}
+.grupa .spremenljivka .ui-slider-handle:active{
+	background-color: #FF3B3F;
+}
+.grupa .spremenljivka .sliderText{
+	padding-top: 0;
+	
+	color: white;
+	
+	background-color: #a0aec1;
+	border: 0;
+}
+.grupa .spremenljivka .sliderText::after{
+	border-color: #a0aec1 transparent;
+}
+.grupa .spremenljivka span.reminder {
+    left: 0;
+}
+
+
+/* GUMBI NAPREJ/NAZAJ */
+.buttons{
+	margin-top: 20px;
+	margin-bottom: 10px;
+}
+.buttons .prev,
+.buttons .next{
+	cursor: pointer;
+	
+	padding: 5px 10px;
+	margin-left: 5px;
+	margin-right: 5px;
+	
+	font-size: 14px;
+	color: white;
+	
+	border: 0;
+	border-radius: 3px;
+	-moz-border-radius: 3px 3px 3px 3px;
+	-webkit-border-radius: 3px;
+}
+.buttons .prev{
+	background-color: #a0aec1;
+}
+.buttons .next{
+	background-color: #FF3B3F;
+}
+
+
+/* FOOTER */
+#footer_survey{
+	font-size: 12px;	
+	font-weight: normal;
+	text-decoration: none;
+	color: #455a64;
+	
+	border-top: 3px #FF3B3F solid;	
+}
+#footer_survey a{
+	font-weight: normal;
+	text-decoration: none;
+	color: #455a64;
+}
+
+
+/* LOGO */
+#container #logo{
+	display: none !important;
+}
+#footer_survey #logo {
+	display: block;
+	position: relative;
+	
+	width: 80px;
+	height: 46px;
+	
+	margin: 10px auto 20px auto;
+	left: 0;
+	right: 0;
+	
+	background: url("../../../public/img/logo/1ka_slo.svg") no-repeat scroll 0 0 transparent;
+	background-repeat: no-repeat;
+}
+#footer_survey #logo.english{
+	background: url("../../../public/img/logo/1ka_eng.svg") no-repeat scroll 0 0 transparent;
+}
+#footer_survey #logo a {
+	display: block;
+	width: 80px;
+	height: 46px;
+	text-indent: -9999px;
+	overflow: hidden;
+}
+/* Desni del samo za skine Otroci3 in Otroci4 */
+#footer_survey #logo #logo_right{
+	display: none;
+}

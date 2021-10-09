@@ -1,0 +1,62 @@
+
+/* PRIKAZ REZULTATOV */
+#quiz_results{
+	/*border-top: 1px solid #b9c5d9;*/
+    margin: 20px 10px 0 10px;
+    padding: 10px 2px 0px 12px !important;
+}
+
+#quiz_results h2{
+    margin: 20px auto 0px;
+    padding: 0;
+	
+    text-align: center;
+	color: #0c377a;
+    font-size: 17px;
+}
+
+#quiz_results .spremenljivka .variabla{
+	/*height: 18px;*/
+	line-height: 18px;
+}
+#quiz_results .spremenljivka .variabla.red{
+	color: #ff0000;
+	font-weight: 600;
+}
+#quiz_results .spremenljivka .variabla.green{
+	color: #66c24a;
+	font-weight: 600;
+}
+#quiz_results .spremenljivka .variabla.bold{
+	color: #66c24a;
+	font-weight: 600;
+}
+
+#quiz_results .spremenljivka .variabla .true,
+#quiz_results .spremenljivka .variabla .true2,
+#quiz_results .spremenljivka .variabla .false{
+	display: inline-block;
+	width: 18px;
+	height: 14px;
+	
+	vertical-align: middle;
+	line-height: normal;  	
+	margin: -4px 0 0 15px;
+	
+	background-repeat: no-repeat;
+}
+#quiz_results .spremenljivka .variabla .true{
+	background-image: url("true.png");
+}
+#quiz_results .spremenljivka .variabla .true2{
+	background-image: url("true2.png");
+}
+#quiz_results .spremenljivka .variabla .false{
+	background-image: url("false.png");
+}
+
+
+/* PRIKAZ GRAFA */
+#quiz_results_chart_holder{
+	height: 200px;	
+}

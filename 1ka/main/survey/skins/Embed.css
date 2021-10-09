@@ -1,0 +1,64 @@
+/* 1KA default theme */
+
+body {
+    color: #333;
+    font-size: 75%;
+    font-family: Arial, sans-serif;
+}
+
+#outercontainer {
+	width: 100%;
+	margin: 0;
+}
+
+#container {
+	position: relative;
+}
+
+h1 {
+	font-size: 130%;
+}
+#logo {
+	display: none;
+}
+
+
+#progress_bar {
+	right: auto;
+	left: 20px;
+	top: 10px;
+}
+#progress_bar div {
+	border: 1px solid #777;
+}
+#progress_bar div span {
+	background-color: #c2e1e7;
+}
+
+div.grupa {
+	border-top: 1px solid #ccc;
+}
+
+div.spremenljivka {
+	padding: 25px 20px;
+	border-bottom: 1px solid #999;
+}
+
+div.buttons {
+	padding: 15px 10px;
+	border-bottom: 1px solid #ccc;
+}
+div.buttons input {
+	padding: 0 10px;
+}
+
+#footer_survey {
+	padding: 15px 10px;
+}
+#footer_survey a, #footer_survey a:visited {
+	color: #333;
+	text-decoration: none;
+}
+#footer_survey a:hover, #footer_survey a:active {
+	text-decoration: underline;
+}

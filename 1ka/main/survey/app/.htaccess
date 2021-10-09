@@ -1,0 +1,3 @@
+# Ne dovolimo direktnega dostopa do tega direktorija
+
+deny from al

@@ -1,0 +1,15 @@
+# Potrebno je na računalniku nastaviti še preusmeritev
+#  Windows: C:\Windows\System32\drivers\etc\hosts
+#  Vnos: 127.0.0.1  1ka.test
+
+<VirtualHost *:80>
+    DocumentRoot "/var/www/html/"
+    ServerName 1ka.test
+
+    <Directory "/var/www/html/">
+	Options Indexes FollowSymLinks MultiViews
+        AllowOverride All
+        Order allow,deny
+        allow from all
+    </Directory>
+</VirtualHost>

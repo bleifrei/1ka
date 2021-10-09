@@ -1,0 +1,374 @@
+{
+    "survey": {
+        "id": 7863 ,
+        "name": "Izvoz vprašalnika Test 1",
+        "author_username": "nejc.berzelak@fdv.uni-lj.si",
+        "questionnaire": {
+            "pages": [
+                {
+                    "id": -1,
+                    "type": "intro",
+                    "visible": true,
+                    "text": "Besedilo uvodne strani."
+                },
+                {
+                    "id": 56741,
+                    "type": "normal",
+                    "questions": [
+                        {
+                            "id": 871300,
+                            "type": "single_answer",
+                            "input": "radio",
+                            "name": "Q1",
+                            "text": "Besedilo vprašanja 1",
+                            "note": "Opomba k vprašanju 1",
+                            "nr_check": "ask",
+                            "items": [
+                                {
+                                    "id": 871300,
+                                    "name": "Q1"
+                                }
+                            ],
+                            "answers": [
+                                {
+                                    "id": 480982,
+                                    "value": 10,
+                                    "text": "Vprašanje 1 odgovor 1",
+                                    "sort": "list",
+                                    "missing_value": false,
+                                    "text_field": false
+                                },
+                                {
+                                    "id": 480983,
+                                    "value": 20,
+                                    "text": "Vprašanje 1 odgovor 2",
+                                    "sort": "random",
+                                    "missing_value": false,
+                                    "text_field": false
+                                },
+                                {
+                                    "id": 480985,
+                                    "value": 30,
+                                    "text": "Vprašanje 1 odgovor 3 + tekst",
+                                    "sort": "random",
+                                    "missing_value": false,
+                                    "text_field": true
+                                },
+                                {
+                                    "id": 480986,
+                                    "value": -99,
+                                    "text": "Vprašanje 1 odgovor Ne vem (m.v.)",
+                                    "sort": "list",
+                                    "missing_value": true,
+                                    "text_field": false
+                                },
+                                {
+                                    "id": 480987,
+                                    "value": -98,
+                                    "text": "Vprašanje 1 odgovor Ne želim odgovoriti (m.v.)",
+                                    "sort": "list",
+                                    "missing_value": true,
+                                    "text_field": false
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "id": 56742,
+                    "type": "normal",
+                    "questions": [
+                        {
+                            "id": 871301,
+                            "type": "grid",
+                            "input": "radio",
+                            "layout": "standard_table",
+                            "name": "QX",
+                            "text": "Besedilo vprašanja X",
+                            "note": "Opomba k vprašanju X",
+                            "nr_check": "require",
+                            "items": [
+                                {
+                                    "id": 480988,
+                                    "name": "QXI",
+                                    "text": "Vprašanje X item I",
+                                    "sort": "random",
+                                    "text_field": false
+                                },
+                                {
+                                    "id": 480989,
+                                    "name": "QXII",
+                                    "text": "Vprašanje X item II",
+                                    "sort": "random",
+                                    "text_field": false
+                                },
+                                {
+                                    "id": 480991,
+                                    "name": "QXIII",
+                                    "text": "Vprašanje X item III + tekst",
+                                    "sort": "list",
+                                    "text_field": true
+                                }
+                            ],
+                            "answers": [
+                                {
+                                    "id": 1,
+                                    "value": 1,
+                                    "text": "Vprašanje X odgovor 1",
+                                    "missing_value": false
+                                },
+                                {
+                                    "id": 2,
+                                    "value": 2,
+                                    "text": "Vprašanje X odgovor 2",
+                                    "missing_value": false
+                                },
+                                {
+                                    "id": 3,
+                                    "value": 3,
+                                    "text": "Vprašanje X odgovor 3",
+                                    "missing_value": false
+                                },
+                                {
+                                    "id": 4,
+                                    "value": -99,
+                                    "text": "Vprašanje X odgovor Ne vem (m.v.)",
+                                    "missing_value": true
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "id": 56743,
+                    "type": "normal",
+                    "questions": [        
+                        {
+                            "id": 871302,
+                            "type": "multi_answer",
+                            "input": "checkbox",
+                            "name": "Q3",
+                            "text": "Besedilo vprašanja 3",
+                            "note": "Opomba k vprašanju 3",
+                            "nr_check": "none",
+                            "items": [
+                                {
+                                    "id": 480992,
+                                    "name": "Q3a",
+                                    "text": "Vprašanje 3 item 1",
+                                    "position": 1,
+                                    "sort": "list",
+                                    "text_field": false
+                                },
+                                {
+                                    "id": 480993,
+                                    "name": "Q3b",
+                                    "text": "Vprašanje 3 item 2",
+                                    "position": 2,
+                                    "sort": "list",
+                                    "text_field": false
+                                },
+                                {
+                                    "id": 480998,
+                                    "name": "Q3c",
+                                    "text": "Vprašanje 3 item 3 + tekst",
+                                    "position": 5,
+                                    "sort": "list",
+                                    "text_field": false
+                                }
+                            ],
+                            "answers": [
+                                {
+                                    "id": 480996,
+                                    "value": -99,
+                                    "text": "Vprašanje 3 odgovor Ne vem (m.v.)",
+                                    "position": 3,
+                                    "sort": "list",
+                                    "missing_value": true,
+                                    "text_field": false
+                                },
+                                {
+                                    "id": 480997,
+                                    "value": -98,
+                                    "text": "Vprašanje 3 odgovor Ne želim odgovoriti (m.v.)",
+                                    "position": 4,
+                                    "sort": "list",
+                                    "missing_value": true,
+                                    "text_field": false
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "id": 56744,
+                    "type": "normal",
+                    "questions": [
+                        {
+                            "id": 871303,
+                            "type": "open",
+                            "input": "numeric",
+                            "name": "Q4",
+                            "text": "Besedilo vprašanja 4",
+                            "item_text_layout": "right",
+                            "nr_check": "none",
+                            "items": [
+                                {
+                                    "id": 480999,
+                                    "name": "Q4a",
+                                    "text": "enota polja"
+                                }
+                            ],
+                            "answers": [
+                                {
+                                    "id": 481000,
+                                    "value": -97,
+                                    "text": "Vprašanje 4 odgovor Se ne nanaša (m.v.)",
+                                    "missing_value": true
+                                }
+                            ]
+                        },
+                        {
+                            "id": 871304,
+                            "type": "open",
+                            "input": "numeric",
+                            "name": "Q5",
+                            "text": "Besedilo vprašanja 5",
+                            "note": "Opomba k vprašanju 5",
+                            "item_text_layout": "left",
+                            "nr_check": "none",
+                            "items": [
+                                {
+                                    "id": 481001,
+                                    "name": "Q5a",
+                                    "text": "enota polja 1"
+                                },
+                                {
+                                    "id": 481002,
+                                    "name": "Q5b",
+                                    "text": "enota polja 2"
+                                }
+                            ]
+                        },
+                        {
+                            "id": 871305,
+                            "type": "open",
+                            "input": "text",
+                            "name": "Q6",
+                            "text": "Besedilo vprašanja 6",
+                            "note": "Opomba k vprašanju 6",
+                            "item_text_layout": "bottom",
+                            "nr_check": "none",
+                            "items": [
+                                {
+                                    "id": 481003,
+                                    "name": "Q6a",
+                                    "text": "opis polja 1"                                
+                                },
+                                {
+                                    "id": 481004,
+                                    "name": "Q6b",
+                                    "text": "opis polja 2"                                
+                                },
+                                {
+                                    "id": 481005,
+                                    "name": "Q6c",
+                                    "text": "opis polja 3"
+                                },
+                                {
+                                    "id": 481006,
+                                    "name": "Q6d",
+                                    "text": "opis polja 4"                                
+                                }
+                            ],
+                            "answers": [
+                                {
+                                    "id": 481007,
+                                    "value": -99,
+                                    "text": "Vprašanje 6 odgovor Ne vem (m.v.)",
+                                    "missing_value": true
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "id": 56745,
+                    "type": "normal",
+                    "questions": [
+                        {
+                            "id": 871306,
+                            "type": "grid",
+                            "input": "checkbox",
+                            "layout": "standard_table",
+                            "name": "Q7",
+                            "text": "Besedilo vprašanja 7",
+                            "nr_check": "none",
+                            "items": [
+                                {
+                                    "id": 481008,
+                                    "name": "Q7a",
+                                    "text": "Vprašanje 7 item 1",
+                                    "sort": "random",
+                                    "text_field": false
+                                },
+                                {
+                                    "id": 481009,
+                                    "name": "Q7b",
+                                    "text": "Vprašanje 7 item 2",
+                                    "sort": "list",
+                                    "text_field": false
+                                },
+                                {
+                                    "id": 481011,
+                                    "name": "Q7c",
+                                    "text": "Vprašanje 7 item 3 + tekst",
+                                    "sort": "random",
+                                    "text_field": true
+                                }
+                            ],
+                            "col_items": [
+                                {
+                                    "id": 1,
+                                    "name": "1",
+                                    "text": "Vprašanje 7 Stolpec 1"
+                                },
+                                {
+                                    "id": 2,
+                                    "name": "2",
+                                    "text": "Vprašanje 7 Stolpec 2"
+                                },
+                                {
+                                    "id": 3,
+                                    "name": "3",
+                                    "text": "Vprašanje 7 Stolpec 3"
+                                }
+                            ],
+                            "answers": [
+                                {
+                                    "id": 4,
+                                    "value": -99,
+                                    "text": "Vprašanje 7 odgovor Ne vem (m.v.)",
+                                    "missing_value": true
+                                }
+                            ]
+                        },
+                        {
+                            "id": 871307,
+                            "type": "caption",
+                            "name": "label1",
+                            "text": "Besedilo napisa 1",
+                            "note": "Opomba k napisu 1"
+                        }
+                    ]
+                },
+                {
+                    "id": -2,
+                    "type": "end",
+                    "text": "Besedilo zaključne strani.",
+                    "end_action": "close"
+                }
+            ]
+        }
+    }
+}

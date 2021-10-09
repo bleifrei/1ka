@@ -1,0 +1,26 @@
+<?php
+
+/**
+ * Splošne nastavitve spletne strani
+ */
+$site_domain = '';   							// Domena spletne strani (primer: 1ka.si)
+$site_url = ''; 								// Url, kjer se nahaja domena (primer: http://1ka.si/)
+$site_root = $_SERVER['DOCUMENT_ROOT'] .'/';
+$site_path = ''; 								// Pot do direktorija na strežniku (primer: /var/www/1ka/)
+$site_frontend = 'simple';						// Lahko izberamo med dvema: drupal ali simple
+
+$cookie_domain = ''; 							// (primer: 1ka.si)
+
+/**
+ * Za generiranje salt stringa se uporabi utils/create_salt.php, ki ga kopirate v spremenljivko $pass_salt
+ * Uporabite enojne narekovaje ''
+ */
+$pass_salt = '';
+
+/**
+ * Nastavitve podatkovne baze
+ */
+$mysql_server = 'localhost';
+$mysql_username = '';
+$mysql_password = '';
+$mysql_database_name = '';

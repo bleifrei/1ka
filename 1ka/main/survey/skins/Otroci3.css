@@ -1,0 +1,309 @@
+/*
+	Tema Otroci 3
+*/
+/*$font_family: Open Sans, Arial, Sans-Serif;*/
+/* Barve */
+body {
+  margin: 0;
+  padding: 0;
+  color: #333;
+  font-size: 75%;
+  font-family: Montserrat, Arial, Sans-Serif !important;
+  background: #b0e8ff url(Otroci/otroci-3-footer.png) left bottom repeat-x;
+}
+
+body.preview, body.testdata {
+  margin-top: 26px;
+}
+
+#outercontainer {
+  width: 100%;
+  padding-top: 130px;
+  margin: 0 auto;
+  min-height: 600px;
+  background: url(Otroci/otroci-3-top.png) center top no-repeat;
+}
+
+#container {
+  position: relative;
+  width: 100%;
+  width: 980px;
+  margin: 0px auto 10px;
+  background: #fff;
+  -webkit-box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5);
+  -moz-box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5);
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5);
+  border: 5px solid rgba(255, 255, 255, 0.5);
+}
+
+/* Warning bar (preview, cookie) */
+#cookie_alert, #test_alert {
+  height: 26px;
+  line-height: 25px;
+  color: #ffffff;
+  background-color: #ffa608;
+  border-bottom: 1px solid #ffa608;
+}
+#cookie_alert a, #test_alert a {
+  text-decoration: none;
+  font-weight: bold;
+  color: #ffffff;
+}
+#cookie_alert a:hover, #test_alert a:hover {
+  text-decoration: underline;
+}
+#cookie_alert span, #test_alert span {
+  color: #ffffff;
+}
+#cookie_alert span a, #test_alert span a {
+  color: #ffffff;
+  font-weight: normal;
+}
+
+/* Header - logo, naslov, progressbar */
+h1 {
+  margin: 0px auto 50px;
+  padding: 40px 0 0 0;
+  font-size: 24px;
+  color: #333;
+  text-align: center;
+}
+
+h1.evalvacija {
+  margin-bottom: 0;
+}
+
+#logo {
+  position: absolute;
+  top: -120px;
+  left: -40px;
+  width: 650px;
+  height: 230px;
+  background: url(Otroci/otroci-3-levo.png) left bottom no-repeat;
+}
+#logo #logo_right {
+  display: inline;
+  position: absolute;
+  top: 102px;
+  right: -475px;
+  width: 158px;
+  height: 311px;
+  background: url(Otroci/otroci-3-desno.png) right bottom no-repeat;
+}
+
+.header_settings_holder {
+  top: 0px;
+  right: -105px;
+  width: auto;
+  height: 110px;
+  padding-right: 150px;
+  padding-bottom: 25px;
+}
+.header_settings_holder .progress_bar span {
+  float: left !important;
+  /* ie6,7 doesnt support inline-block */
+  display: block;
+  width: 20px;
+  font-size: 11px;
+  color: #333;
+}
+.header_settings_holder .progress_bar div {
+  height: 10px;
+  width: 130px;
+  padding: 2px;
+  margin: 0 5px;
+  border: 1px #cccccc solid;
+  background-color: #ffffff;
+}
+.header_settings_holder .progress_bar div span {
+  height: 10px;
+  background-color: #f26b16;
+}
+.header_settings_holder .progress_bar p a {
+  color: #ef6c00;
+  text-decoration: none;
+}
+.header_settings_holder .progress_bar p a:hover {
+  color: #ff943d;
+}
+
+/* Spremenljivke */
+.spremenljivka {
+  margin: 20px 10px 20px 10px;
+  padding: 20px 2px 20px 12px !important;
+  border-top: 1px #B9C5D9 solid;
+}
+.spremenljivka .naslov {
+  padding-left: 5px;
+  padding-bottom: 15px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+.spremenljivka .naslov .spremenljivka_info {
+  font-size: 70%;
+}
+
+.spremenljivka.limited {
+  outline: 1px #F15A24 solid;
+}
+
+.required, .required_require, .required_limit {
+  outline: 1px #F15A24 solid;
+}
+
+div.variabla,
+td.variabla,
+td.question,
+td.differential {
+  font-size: 13px;
+}
+
+div.variable_holder {
+  padding: 0 30px;
+}
+div.variable_holder thead,
+div.variable_holder tr.table-header {
+  font-weight: 600;
+}
+div.variable_holder .frame_ranking {
+  border: 1px #B9C5D9 solid;
+  background-color: #f7f7f7;
+}
+div.variable_holder .frame_ranking_hover {
+  border: 1px #8A9FBF solid;
+  background-color: #e2e4e7;
+}
+
+table.grid_table tbody tr:nth-child(2n+1) {
+  background-color: #f7f7f7;
+}
+
+span.reminder {
+  left: 3px;
+}
+
+/* Textboxi, textarea, select */
+input, textarea, select {
+  font-family: Montserrat, Arial, Sans-Serif !important;
+}
+
+input[type=text], textarea, select {
+  padding: 10px 15px;
+  border-radius: 3px;
+  border: 1px solid #B9C5D9;
+  border-radius: 3px;
+  background-color: #fff;
+}
+
+button.ui-datepicker-trigger {
+  color: #ef6c00;
+}
+button.ui-datepicker-trigger:hover, button.ui-datepicker-trigger:focus {
+  color: #ff943d;
+}
+
+input[type=checkbox]:focus + span.enka-checkbox-radio:before,
+input[type=radio]:focus + span.enka-checkbox-radio:before,
+input[type=radio]:focus + span.enka-custom-radio:before,
+input[type=radio]:focus + span.enka-vizualna-skala::before {
+  color: #777;
+}
+
+/* Photo upload button */
+button.record_foto {
+  border: 2px solid #ef6c00;
+}
+button.record_foto::before {
+  color: #ef6c00;
+}
+button.record_foto:hover, button.record_foto:focus {
+  border-color: #ff943d;
+}
+button.record_foto:hover::before, button.record_foto:focus::before {
+  color: #ff943d;
+}
+
+/* Gumbi na dnu */
+div.buttons {
+  padding: 30px 20px 35px;
+  margin: 0 10px;
+  border-top: 1px #B9C5D9 solid;
+}
+div.buttons input {
+  cursor: pointer;
+  margin: 8px 10px;
+  padding: 10px 20px;
+  text-align: center;
+  font-size: 12px;
+  letter-spacing: 1px;
+  font-weight: 600;
+  color: #FFFFFF;
+  border-radius: 20px;
+  border: 0;
+}
+div.buttons input.next {
+  background-color: #ef6c00;
+  border: 1px solid #ef6c00;
+  color: #fff;
+}
+div.buttons input.next:hover, div.buttons input.next:focus {
+  background-color: #ff943d;
+  border: 1px solid #ff943d;
+  color: #fff;
+}
+div.buttons input.prev {
+  background-color: #fff;
+  border: 1px solid #ef6c00;
+  color: #ef6c00;
+}
+div.buttons input.prev:hover, div.buttons input.prev:focus {
+  background-color: #ef6c00;
+  border: 1px solid #ef6c00;
+  color: #fff;
+}
+
+/* Footer */
+#footer_survey {
+  padding: 20px;
+}
+#footer_survey a, #footer_survey a:visited {
+  color: #333;
+  text-decoration: none;
+}
+#footer_survey a:hover, #footer_survey a:active {
+  text-decoration: underline;
+}
+
+/* #Tablet (Portrait) */
+@media only screen and (min-width: 768px) and (max-width: 959px) {
+  #container {
+    width: 760px;
+  }
+
+  #logo {
+    width: 550px;
+  }
+}
+/*  #Mobile (Portrait) */
+@media only screen and (max-width: 767px) {
+  #container {
+    width: 280px;
+  }
+
+  #logo {
+    width: 350px;
+  }
+}
+/* #Mobile (Landscape) */
+@media only screen and (min-width: 480px) and (max-width: 767px) {
+  #container {
+    width: 480px;
+  }
+
+  #logo {
+    width: 450px;
+  }
+}
+
+/*# sourceMappingURL=Otroci3.css.map */

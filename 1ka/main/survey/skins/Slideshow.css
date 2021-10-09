@@ -1,0 +1,111 @@
+* {
+
+	font-family: Verdana,Arial,Helvetica,sans-serif;
+}
+
+body {
+	font-size: 10pt;
+	padding: 0px !important;
+	margin: 0px !important;
+	background: white;
+	color: #333;	
+}
+
+p {
+	padding: 0px !important;
+	margin: 0px !important;
+}
+
+#container {
+	width: auto;
+	background: #FFFFFF;
+	padding: 0px !important;
+	margin: 0px !important;
+	border: none !important;
+}
+
+#container h1 {
+	display:none;
+}
+
+.spremenljivka {
+	/*border: 1px solid #999;*/
+	margin: 10px 0px 10px 0px !important;
+	padding: 10px 0px 10px 0px !important;
+	background: none !important;
+}
+
+.variabla{
+	padding: 0px;
+}
+
+div.comment {
+	margin-top: 20px;
+	padding-top: 10px;
+}
+
+.embed_out{
+	display: none !important;
+}
+
+/*Dodano iz 1ka skina */
+
+#logo {
+    margin-right: 10px;
+    top: 20px;
+    background: url("../../../public/img/logo/1ka_slo.svg") no-repeat scroll 100% 0 transparent;
+    background-position: 20px 4px;
+    background-repeat: no-repeat;
+}
+#logo.english{
+    top: 24px;
+    background: url("../../../public/img/logo/1ka_eng.svg") no-repeat scroll 100% 0 transparent;
+}
+#logo a{
+    width: 80px;
+    height: 46px;
+}
+
+/*Do tukaj*/
+
+
+#progress_bar{
+	display: none !important;
+}
+
+#pdfExport {
+	display: none !important;
+}
+
+#printView {
+	display: none !important;
+}
+
+
+.grupa {
+	margin: 0px !important; 
+	padding: 0px !important;
+}
+
+.grupa p {
+	margin:0px !important;
+}
+
+.fdv_di_img {
+    display: inline-block;
+    font-family: monospace;
+    font-family: Verdana,Arial,Helvetica,sans-serif;
+    font-size: 9pt;
+    font-size: 0.85em;
+    text-align: justify;
+ }
+
+.pointer {
+	cursor: pointer !important;
+}
+
+.next, .prev, .pause {
+	margin: 0px 20px !important;
+}
+
+#footer_survey {display: none}

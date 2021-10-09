@@ -1,0 +1,922 @@
+@charset "UTF-8";
+.block {
+  display: block; }
+  .block.right {
+    float: right; }
+  .block.left {
+    float: left; }
+  .block.click {
+    cursor: pointer; }
+
+.left {
+  text-align: left; }
+
+.right {
+  text-align: right; }
+
+.center {
+  text-align: center; }
+
+.justify {
+  text-align: justify; }
+
+.rdeca {
+  color: #ff0000 !important; }
+
+.oranzna {
+  color: #ffa608 !important; }
+
+.modra {
+  color: #1e88e5 !important; }
+
+.svetlo_modra {
+  color: #f0f7fd !important; }
+
+.click {
+  cursor: pointer; }
+  .click:hover {
+    opacity: 0.8; }
+
+#hierarhija-container .badget {
+  background-color: #1e88e5;
+  color: #fff;
+  display: inline-block;
+  padding-left: 6px;
+  padding-right: 6px;
+  text-align: center;
+  border-radius: 50%; }
+  #hierarhija-container .badget.badget-margin {
+    margin-top: 1px;
+    margin-bottom: 1px;
+    margin-right: 4px; }
+
+#hierarhija-container {
+  /*****   button groups   *****/
+  /* moder */
+  /* moder outline */
+  /* rdeč */
+  /* rdeč outline */
+  /***** END button groups *****/ }
+  #hierarhija-container .btn {
+    padding: .2rem .6rem;
+    font-size: .8rem;
+    font-weight: 400;
+    line-height: 1.5;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    user-select: none;
+    border: 1px solid transparent;
+    border-radius: .25rem;
+    cursor: pointer;
+    display: inline-block;
+    background-color: #f0f7fd;
+    border-radius: 20px;
+    border: 1px #f0f7fd solid; }
+  #hierarhija-container .btn-moder {
+    color: #ffffff;
+    background-color: #1e88e5;
+    background-image: none;
+    border-color: #1e88e5; }
+    #hierarhija-container .btn-moder:hover {
+      background-color: #ffa608;
+      border-color: #ffa608; }
+  #hierarhija-container .btn-moder-outline {
+    color: #1e88e5;
+    background-color: #ffffff;
+    background-image: none;
+    border-color: #24467C; }
+    #hierarhija-container .btn-moder-outline:hover {
+      color: #fff;
+      background-color: #1e88e5;
+      border-color: #24467C; }
+  #hierarhija-container .btn-rdec {
+    color: #fff;
+    background-color: #fa4913;
+    border-color: #E13000;
+    background-image: none; }
+    #hierarhija-container .btn-rdec:hover {
+      color: #fa4913;
+      background-color: #ffffff;
+      border-color: #fa4913; }
+  #hierarhija-container .btn-rdec-outline {
+    color: #fa4913;
+    background-color: #ffffff;
+    background-image: none;
+    border-color: #fa4913; }
+    #hierarhija-container .btn-rdec-outline:hover {
+      color: #fff;
+      background-color: #fa4913;
+      border-color: #fa4913; }
+  #hierarhija-container .link {
+    color: #1e88e5;
+    cursor: pointer; }
+    #hierarhija-container .link:hover {
+      color: #ffa608; }
+
+.icon {
+  font-family: "Font Awesome 5 Free";
+  display: inline-block;
+  /* x briši*/ }
+  .icon.copy-all {
+    width: 18px;
+    height: 20px; }
+    .icon.copy-all:before {
+      font-size: 24px;
+      content: "\F477";
+      font-weight: 600; }
+  .icon.user-red:before {
+    content: '\F007';
+    font-weight: 600;
+    color: #ffa608;
+    font-size: 17px; }
+  .icon.brisi-x {
+    font-size: 15px;
+    color: #1e88e5;
+    display: inline-block;
+    cursor: pointer;
+    float: right;
+    font-weight: 400;
+    padding: 0px 4px; }
+    .icon.brisi-x:before {
+      font-weight: 400;
+      content: "\F2ED"; }
+    .icon.brisi-x:hover {
+      color: #ffa608; }
+
+.hierarhija-plus,
+.hierarhija-minus,
+.hierarhija-ikona {
+  display: inline-block;
+  float: left;
+  cursor: pointer; }
+  .hierarhija-plus:before,
+  .hierarhija-minus:before,
+  .hierarhija-ikona:before {
+    color: #1e88e5;
+    font-size: 21px !important; }
+  .hierarhija-plus:hover,
+  .hierarhija-minus:hover,
+  .hierarhija-ikona:hover {
+    color: #ffa608; }
+
+.hierarhija-minus {
+  display: inline-block;
+  float: left;
+  cursor: pointer;
+  background-image: url("/admin/survey/img_new/sprites.png");
+  background-position: 0px -58px;
+  width: 15px;
+  height: 14px; }
+
+/*urejanje ikone datatables*/
+.ikona {
+  font-family: "Font Awesome 5 Free";
+  display: inline-block;
+  font-size: 16px;
+  color: #1e88e5;
+  cursor: pointer;
+  padding: 0 2px; }
+  .ikona:hover {
+    color: #ffa608; }
+  .ikona.ikona-kopiraj::before {
+    content: "\F0C5"; }
+  .ikona.ikona-brisi:before {
+    content: "\F2ED"; }
+  .ikona.ikona-uporabniki:before {
+    content: "\F304";
+    font-weight: 600; }
+
+#hierarhija-container #hierarhija-nastavitve-top {
+  padding: 10px 0 0px 25px; }
+  #hierarhija-container #hierarhija-nastavitve-top #analizaSubNav, #hierarhija-container #hierarhija-nastavitve-top #analiza_right_options_holder {
+    display: none; }
+
+#hierarhija-container #hierarhija-specificni-ucitelj {
+  width: 100%;
+  text-align: center;
+  font-weight: bold;
+  color: #061d31;
+  font-size: 14px; }
+
+#hierarhija-container #analize-nastavitve {
+  margin: 5px 3px 20px;
+  display: block;
+  clear: both;
+  float: left;
+  width: 100%; }
+  #hierarhija-container #analize-nastavitve > label {
+    padding: 3px 20px 3px 0; }
+  #hierarhija-container #analize-nastavitve .filtri {
+    display: inline-block;
+    float: left; }
+  #hierarhija-container #analize-nastavitve .filtri-ucitelji {
+    display: none; }
+  #hierarhija-container #analize-nastavitve .izvoz {
+    display: inline-block;
+    float: left;
+    width: 50%;
+    text-align: center; }
+    #hierarhija-container #analize-nastavitve .izvoz .link-ikona {
+      padding: 0 10px;
+      color: #666;
+      cursor: pointer; }
+      #hierarhija-container #analize-nastavitve .izvoz .link-ikona.pdf:hover {
+        color: red; }
+      #hierarhija-container #analize-nastavitve .izvoz .link-ikona.word:hover {
+        color: #1e88e5; }
+
+#hierarhija-container #ucitelji, #hierarhija-container #predmeti-in-ucitelji {
+  display: none;
+  float: left;
+  padding: 8px 20px 20px; }
+  #hierarhija-container #ucitelji > label, #hierarhija-container #predmeti-in-ucitelji > label {
+    margin-right: 12px; }
+
+#hierarhija-container #filter_po_ucitelju_chzn {
+  margin-left: 10px; }
+
+#hierarhija-container .custom_report_include {
+  display: none; }
+
+#hierarhija-container #div_means_dropdowns {
+  display: block;
+  float: left; }
+
+#hierarhija-container .ucitelj {
+  display: block;
+  float: left;
+  padding: 10px 0 10px 25%; }
+  #hierarhija-container .ucitelj .ikone {
+    padding: 0 15px; }
+    #hierarhija-container .ucitelj .ikone .hover_export_icon {
+      padding: 0 4px; }
+
+#hierarhija-container #div_means_show_filter .znak, #hierarhija-container #div_means_show_filter .vprasanja {
+  display: block;
+  float: left;
+  padding: 10px;
+  color: #1e88e5;
+  padding: 10px;
+  cursor: pointer; }
+  #hierarhija-container #div_means_show_filter .znak.minus, #hierarhija-container #div_means_show_filter .vprasanja.minus {
+    display: none; }
+
+#hierarhija-container #div_means_show_filter #div_means_dropdowns #meansRightDropdowns {
+  display: none; }
+
+#hierarhija-container #div_means_show_filter .prikazi-graf {
+  display: block;
+  float: left;
+  padding: 10px; }
+
+.clear {
+  clear: both; }
+
+/* JsTree */
+/*righ click */
+.vakata-context {
+  z-index: 10052 !important; }
+
+#admin_hierarhija_jstree {
+  padding-bottom: 20px; }
+
+/* SUPERADMIN HIERARHIJA */
+.hierarhija-levi-meni {
+  float: left;
+  display: block;
+  padding: 10px 8px;
+  margin: 20px 10px 0 0;
+  width: 155px;
+  min-height: 250px;
+  background-color: #f0f7fd; }
+  .hierarhija-levi-meni > div {
+    font-weight: bold;
+    padding-bottom: 10px; }
+    .hierarhija-levi-meni > div.h-tabela {
+      padding: 2px;
+      background: #fff;
+      min-height: 240px;
+      border: 1px solid #e2e2e2;
+      max-height: 340px;
+      overflow: auto; }
+    .hierarhija-levi-meni > div > table {
+      font-weight: normal;
+      width: 100%;
+      cursor: pointer; }
+      .hierarhija-levi-meni > div > table td.h-ime-shranjeno {
+        padding-bottom: 5px;
+        border-bottom: 1px solid #e2e2e2;
+        display: block;
+        float: left;
+        width: 121px; }
+        .hierarhija-levi-meni > div > table td.h-ime-shranjeno .h-ime-prikaz {
+          display: block;
+          width: 130px;
+          word-wrap: break-word; }
+          .hierarhija-levi-meni > div > table td.h-ime-shranjeno .h-ime-prikaz.h-urejanje {
+            width: 112px; }
+        .hierarhija-levi-meni > div > table td.h-ime-shranjeno.editable-hierarhija {
+          width: 107px; }
+
+td.h-ime-shranjeno:hover {
+  color: #0c377a !important; }
+
+.hierarhija_fieldset {
+  padding-bottom: 1em;
+  float: left;
+  display: block; }
+
+.h-sa-div-inline {
+  display: inline-block;
+  float: left;
+  min-width: 12em;
+  padding-right: 2em; }
+
+.h-sa-div-inline label {
+  clear: both;
+  display: block; }
+
+.h-sa-div-inline.nivo select {
+  width: 10em; }
+
+.h-sa-div-inline.submit {
+  padding-top: 1.5em;
+  padding-left: 1em; }
+
+.h-sa-list {
+  padding-top: 1em; }
+
+.h-sa-nivo-primer select {
+  margin: 5px; }
+
+.izgradnja_hierarhije {
+  width: auto;
+  display: block; }
+  .izgradnja_hierarhije .izberi-uporabnika {
+    float: left;
+    display: inline-block;
+    margin: 0 5px 0 14px; }
+
+.h-form-field {
+  padding: 1.3em 0; }
+
+.h-form-field label {
+  width: 22em;
+  padding: 0 1em;
+  display: block;
+  float: left;
+  text-align: right; }
+
+.h-form-options {
+  display: block;
+  float: left;
+  min-width: 25em; }
+
+.h-form-options textarea {
+  height: 6em;
+  width: 40em; }
+
+.h-required {
+  border: 1px solid red !important; }
+
+.h-email-user {
+  min-width: 0;
+  margin-right: 10px; }
+
+.h-opozorilo {
+  float: left;
+  color: red;
+  font-style: italic;
+  display: none; }
+
+.hierarhija-filter {
+  min-width: 75px;
+  display: block;
+  float: left; }
+
+.upload-file {
+  border: solid #166dba 1px;
+  background: #fff;
+  font-size: 11px;
+  display: block !important;
+  width: 100%;
+  max-width: 360px;
+  -webkit-transition: all 0.2s ease-in-out;
+  -moz-transition: all 0.2s ease-in-out;
+  -o-transition: all 0.2s ease-in-out;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 0 0 2px #fff; }
+  .upload-file:hover {
+    border: solid #ff0000 1px; }
+  .upload-file .NFI-button {
+    height: 22px;
+    line-height: 22px;
+    background: #1e88e5;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.2);
+    color: #fff;
+    width: 30%;
+    font-weight: 700; }
+  .upload-file .NFI-button:hover {
+    background: #ff0000; }
+  .upload-file .NFI-filename {
+    width: 66%;
+    height: 20px;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: block !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
+    border: none !important; }
+
+/* MENI HIERARHIJA UČITELJ IN SUPERADMIN */
+.hierarhija-navigacija.ucitelj {
+  padding-bottom: 20px; }
+
+.hierarhija-navigacija ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid #d5e9fa;
+  background-color: #f0f7fd;
+  font-weight: bold; }
+
+.hierarhija-navigacija li {
+  float: left; }
+  .hierarhija-navigacija li a {
+    display: block;
+    color: #1e88e5;
+    text-align: center;
+    padding: 10px 12px;
+    font-weight: 500;
+    text-decoration: none; }
+    .hierarhija-navigacija li aa:hover:not(.active) {
+      color: #166dba;
+      background-color: #ddd; }
+    .hierarhija-navigacija li a.active {
+      color: white;
+      background-color: #ffa608; }
+
+.hierarhija-desni-link {
+  float: right !important;
+  display: inline-block; }
+
+.hierarhija-desni-link a {
+  display: inline-block !important; }
+
+/* end meni hierarhija - superadmin */
+.hierarhija-status-ucitelji {
+  padding-top: 20px; }
+
+.hierarhija-status-ucitelji,
+.hierarhija-status-admin,
+.hierarhija-tabela {
+  border-spacing: 0; }
+  .hierarhija-status-ucitelji th,
+  .hierarhija-status-admin th,
+  .hierarhija-tabela th {
+    padding: 8px 10px;
+    text-align: left;
+    border: 1px solid #ddd; }
+  .hierarhija-status-ucitelji td,
+  .hierarhija-status-admin td,
+  .hierarhija-tabela td {
+    padding: 8px 10px;
+    text-align: left;
+    border: 1px solid #ddd; }
+
+.hierarhija-nov-nivo, .hierarhija-urejanje {
+  cursor: pointer;
+  display: block;
+  float: left;
+  margin: 0 10px; }
+
+.hierarhija-elementi {
+  float: left;
+  margin: 0 10px;
+  display: inline-block; }
+
+.hierarhija-inline {
+  float: left;
+  display: inline-block;
+  margin-right: 2px; }
+
+.sifranti-brisanje {
+  display: block;
+  float: left;
+  clear: both; }
+
+.sifranti-brisanje > .brisi-x {
+  float: left;
+  padding: 4px 0px;
+  margin: -2px 5px; }
+
+.sifranti-razmik {
+  padding: 10px 5px; }
+
+.sifranti-razmik > ul {
+  padding: 0; }
+
+/* ON - OFF gumb */
+.onoffswitch {
+  position: relative;
+  width: 56px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none; }
+
+.onoffswitch-checkbox {
+  display: none; }
+
+.onoffswitch-label {
+  display: block;
+  overflow: hidden;
+  cursor: pointer;
+  border-radius: 18px;
+  border: 3px solid #6cb1ee; }
+
+.onoffswitch-inner {
+  display: block;
+  width: 200%;
+  margin-left: -100%;
+  transition: margin 0.3s ease-in 0s; }
+
+.onoffswitch-inner:before, .onoffswitch-inner:after {
+  display: block;
+  float: left;
+  width: 50%;
+  height: 15px;
+  padding: 0;
+  line-height: 15px;
+  font-size: 14px;
+  color: white;
+  font-family: Trebuchet, Arial, sans-serif;
+  font-weight: bold;
+  box-sizing: border-box; }
+
+.onoffswitch-inner:before {
+  content: "Da";
+  padding-left: 10px;
+  background-color: #6cb1ee;
+  border: 3px solid #6cb1ee;
+  color: #fff; }
+
+.onoffswitch-inner:after {
+  content: "Ne";
+  padding-right: 10px;
+  background-color: #6cb1ee;
+  border: 3px solid #6cb1ee;
+  color: #FFF;
+  text-align: right; }
+
+.onoffswitch-switch {
+  display: block;
+  width: 14px;
+  margin: 0.5px;
+  background: #fff;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 37px;
+  border: 2px solid #6cb1ee;
+  border-radius: 18px;
+  transition: all 0.3s ease-in 0s; }
+
+.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-inner {
+  margin-left: 0; }
+
+.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-switch {
+  right: 0; }
+
+.editable-hierarhija {
+  border: 1px dashed #0c377a !important; }
+
+#div_odprto_vprasanje > table {
+  margin: 35px 0 !important; }
+
+/* end ON - OFF */
+/*****   TOOGLE RADIO BUTTON   *****/
+.wrapper {
+  /*margin: 100px 0;*/ }
+
+.toggle_radio {
+  position: relative;
+  background: rgba(12, 92, 196, 0.6);
+  margin: 4px auto;
+  overflow: hidden;
+  padding: 0 !important;
+  -webkit-border-radius: 50px;
+  -moz-border-radius: 50px;
+  border-radius: 50px;
+  position: relative;
+  height: 26px;
+  width: 354px; }
+
+.toggle_radio > * {
+  float: left; }
+
+.toggle_radio input[type=radio] {
+  display: none;
+  /*position: fixed;*/ }
+
+.toggle_radio label {
+  color: rgba(255, 255, 255, 0.9);
+  z-index: 0;
+  display: block;
+  width: 170px;
+  height: 20px;
+  margin: 3px 3px;
+  -webkit-border-radius: 50px;
+  -moz-border-radius: 50px;
+  border-radius: 50px;
+  cursor: pointer;
+  z-index: 1;
+  text-align: center;
+  margin-top: -7px; }
+
+.toggle_option_slider {
+  width: 172px;
+  height: 20px;
+  position: absolute;
+  top: 3px;
+  -webkit-border-radius: 50px;
+  -moz-border-radius: 50px;
+  border-radius: 50px;
+  background: #ffe6d6 !important; }
+
+#seznam_toggle:checked ~ .toggle_option_slider {
+  background: rgba(255, 255, 255, 0.3);
+  left: 3px; }
+
+#tabela_toggle:checked ~ .toggle_option_slider {
+  background: rgba(255, 255, 255, 0.3);
+  left: 179px; }
+
+/***** END TOOGLE RADIO BUTTON *****/
+/*****   Hierarhija prikaz v tabeli in izbira opcij   *****/
+.prikaz-sifrantov {
+  width: 100%;
+  clear: both; }
+
+.prikaz-sifrantov .gumb {
+  padding: 20px 0; }
+
+.prikaz-sifrantov .tabela, .prikaz-sifrantov .gumb {
+  display: inline-block;
+  float: left; }
+
+.table-prikaz-izbranih-sifrantov {
+  border-spacing: 0;
+  padding: 0 35px 25px; }
+
+table.tabela-obroba {
+  border-spacing: 0; }
+
+.tabela-obroba th {
+  color: gray;
+  background-color: #eff2f7; }
+
+.tabela-obroba th, .tabela-obroba td {
+  padding: 8px 10px;
+  border: 1px solid #ddd; }
+
+.error-display {
+  color: #ff0000;
+  font-style: italic; }
+
+.error-email {
+  display: block;
+  float: left;
+  color: #ff0000; }
+
+.vpis-sifrantov {
+  display: block;
+  float: left; }
+  .vpis-sifrantov .error-email {
+    display: block;
+    float: left;
+    color: #ff0000;
+    padding-top: 50px;
+    padding-left: 12px; }
+  .vpis-sifrantov .tabela-vpis-sifrantov {
+    float: left; }
+    .vpis-sifrantov .tabela-vpis-sifrantov #gumb td {
+      text-align: right;
+      border: none; }
+      .vpis-sifrantov .tabela-vpis-sifrantov #gumb td button {
+        margin: 10px 10px 0; }
+
+.table-prikaz-izbranih-sifrantov th {
+  padding: 0 15px; }
+
+.table-prikaz-izbranih-sifrantov td {
+  padding: 8px 10px;
+  border: 1px solid #ddd; }
+
+.table-prikaz-izbranih-sifrantov span {
+  float: right;
+  cursor: pointer; }
+
+.inline-element-hierarhije {
+  width: 30%;
+  display: inline-block;
+  float: left;
+  padding: 0 15px; }
+
+.inline-element-hierarhije .gumb {
+  padding-top: 20px; }
+
+.custom-datatables, .custom-datatables th, .custom-datatables td {
+  border: 1px solid #ddd !important; }
+
+#vpis-sifrantov-admin-tabela_wrapper #vpis-sifrantov-admin-tabela_filter,
+#hierarhija-status-admin_wrapper #hierarhija-status-admin_filter {
+  padding: 10px 0 20px !important; }
+
+#vpis-sifrantov-admin-tabela > tbody > tr {
+  vertical-align: top; }
+
+.h-uporabnik {
+  display: inline-block;
+  float: right;
+  padding: 4px 0 0 16px;
+  cursor: pointer; }
+
+.h-select2 {
+  min-width: 100px;
+  display: inline-block;
+  float: left; }
+
+.h-uporabnik-prikazi {
+  clear: both;
+  display: block;
+  padding-top: 10px;
+  font-size: 11px; }
+
+.h-uporabnik-prikazi ul {
+  list-style: inherit !important;
+  padding-left: 23px !important; }
+  .h-uporabnik-prikazi ul > li {
+    padding: 4px 0px; }
+
+/***** END Hierarhija prikaz v tabeli in izbira opcij *****/
+/*****   DataTables pot do slik   *****/
+/*table.dataTable thead th {
+  background-color: #eff2f7 !important;
+}*/
+table.dataTable thead .sorting_asc {
+  background: url("/admin/survey/modules/mod_hierarhija/img/sort_asc.png") no-repeat top right; }
+
+table.dataTable thead .sorting_desc {
+  background: url("/admin/survey/modules/mod_hierarhija/img/sort_desc.png") no-repeat top right; }
+
+table.dataTable thead .sorting {
+  background: url("/admin/survey/modules/mod_hierarhija/img/sort_both.png") no-repeat top right; }
+
+table.dataTable thead .sorting_asc_disabled {
+  background: url("/admin/survey/modules/mod_hierarhija/img/sort_asc_disabled.png") no-repeat top right; }
+
+table.dataTable thead .sorting_desc_disabled {
+  background: url("/admin/survey/modules/mod_hierarhija/img/sort_desc_disabled.png") no-repeat top right; }
+
+tr.aktivno-urejanje {
+  background: #ffe6d6 !important; }
+
+/***** END DataTables pot do slik *****/
+div.qtip-content {
+  font-size: 9px; }
+
+/*.qtip-wrapper, .qtip-contentWrapper {
+  border: 0 !important;
+}
+.qtip-borderTop, .qtip-borderBottom {
+  display: none !important;
+}
+.qtip-title {
+  color: #0c377a !important;
+  background-color: #d8dfea !important;
+}
+.qtip-content {
+  padding: 12px 9px !important;
+  background-color: #f7f7f7 !important;
+  border: 1px #d8dfea solid;
+}*/
+/* Okvirčke */
+.okvircek {
+  width: 522px;
+  border: 1px dashed #b9c5d9;
+  padding: 3px 25px 18px; }
+  .okvircek .oznaci {
+    padding: 0px 10px; }
+
+/* ikoe pri uporabnikih in datatables */
+.uporabniki-ikona-tabela {
+  display: block;
+  float: right;
+  cursor: pointer; }
+
+.zamenjava-uporabnika-v-strukturi #st_zamenjav_uporabnikov {
+  padding-bottom: 20px;
+  padding-top: 20px;
+  color: #ffa608; }
+
+.zamenjava-uporabnika-v-strukturi #find-email.error, .zamenjava-uporabnika-v-strukturi #replace-email.error {
+  border: 1px solid #ffa608 !important; }
+
+.zamenjava-uporabnika-v-strukturi .error-label {
+  float: right;
+  color: #ffa608;
+  display: none; }
+
+#skrij-datatables {
+  width: 100%;
+  height: 365px;
+  z-index: 1;
+  top: 427px;
+  position: absolute;
+  background: white;
+  display: none; }
+
+/*.link {
+  cursor: pointer;
+  color: $modra;
+
+  &:hover {
+    color: $oranzna;
+  }
+}*/
+.stevilo-evalvirancev {
+  color: #1e88e5;
+  display: inline-block;
+  margin-left: 3px;
+  text-align: center;
+  float: right; }
+
+.help-text {
+  color: grey;
+  display: block;
+  width: 56%;
+  padding: 10px 0; }
+
+#primer-sifrantov.pregled {
+  padding: 22px; }
+
+#primer-sifrantov td {
+  padding-top: 6px;
+  padding-right: 13px; }
+
+#primer-sifrantov thead {
+  font-size: 14px;
+  color: #1e88e5; }
+
+/*****   Sweet alert 1ka barvna modifikacija   *****/
+/* error */
+.sweet-alert .sa-icon.sa-error {
+  border-color: #ff0000 !important; }
+
+.sweet-alert .sa-icon.sa-error .sa-line {
+  background-color: #ff0000 !important; }
+
+/* warning - klicaj */
+.sweet-alert .sa-icon.sa-warning {
+  border-color: #ffe6d6 !important; }
+
+.sweet-alert .sa-icon.sa-warning .sa-line {
+  background-color: #ffe6d6 !important; }
+
+.sweet-alert button {
+  color: #1e88e5 !important;
+  background-color: #fff !important;
+  background-image: none !important;
+  border: 1px solid #1e88e5 !important; }
+
+.sweet-alert button:hover {
+  color: #fff !important;
+  background-color: #1e88e5 !important;
+  border-color: #1e88e5 !important; }
+
+/***** END Sweet alert 1ka barvna modifikacija *****/
+#hierarhija-container .status-gumbi {
+  padding: 13px 0;
+  display: block;
+  float: right; }
+
+#hierarhija-container .kosarica {
+  padding-bottom: 22px; }
+  #hierarhija-container .kosarica .ui-state-highlight {
+    padding: 19px;
+    width: 44%; }
+  #hierarhija-container .kosarica #seznamKod {
+    padding: 0 15px 10px; }
+    #hierarhija-container .kosarica #seznamKod > .koda {
+      padding: 10px;
+      background: #d5e9fa;
+      border-color: #f0f7fd;
+      width: 45%;
+      margin: 10px 0;
+      cursor: move; }
+      #hierarhija-container .kosarica #seznamKod > .koda .izbrisi {
+        cursor: pointer; }
+

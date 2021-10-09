@@ -1,0 +1,165 @@
+﻿<!-- 
+  - Zaenkrat je specifikacija v XML formatu, ampak to je samo za prikaz,
+    kaj bi radi imeli. O končnem formatu izvoza se bomo še zmenili.
+  - Kjerkoli se beleži čas dogodka (timestamp), naj se kolikor natančno JavaScript omogoča. 
+    Če lahko v milisekundah, naj bodo milisekunde. Tako kot je zdaj, ko se beležijo
+    sekunde, je premalo natančno in je težko dogodke razvrstit po času. 
+  - Format timestampa naj bo standarden (recimo YYYY-MM-DD hh:mm:ss.sss)
+  - Stvari označene z (?) niso tako bistvene ali pa jih je treba še bolj definirat, 
+    zato te zaenkrat pustimo. Razen, če je kaj čisto trivialnega za naredit. -->
+
+<respondent id="" recnum="">
+  <page id="">
+    <!-- Timestamp, ko se je stran naložila-->
+    <load_time></load_time>
+
+    <!-- (?) Ali se je stran naložila zaradi refresha -->
+    <refresh>True | False</refresh>
+
+    <!-- Jezik ankete, ki je uporabljen na tej strani. V principu lahko 
+         vmes spremeni jezik in je kul, da vemo, če se to zgodi. -->   
+    <language></language>
+
+    <!-- A se da prebrati nek ID sessiona? Recimo, vidim da:
+           - je v anketi brez kukijev nek dolg parameter v URL (6a515eaaa86e2cfdd207b56fb25352d2) 
+           - je v anketi s kukiji podoben parameter v contentu kukija (194ca1f075ca168711b93f3168d4f868)
+          Če bi nam to pomagalo kasneje pri definiranju sessionov, bi bilo zelo fajn
+          shranit tak parameter. -->
+    <session_id></session_id>
+
+    <!-- uas, screen_resolution, window_size, screen_orientation, 
+         device_orientation so zaenkrat predvideni, da se zabeležijo samo
+         ob nalaganju strani. Kasneje morda dodamo tudi sproti ob vsaki
+         spremembi, zato že zdaj shranimo tudi čas, ko se ta podatek
+         zabeleži. -->
+
+    <!-- Celoten user-agent string -->
+    <uas></uas>
+
+    <!-- Ločljivost zaslona. -->
+    <screen_resolution>
+      <time></time>
+      <res>h_res, v_res</res>
+    </screen_resolution>
+
+    <!-- Velikost okna brskalnika. -->
+    <window_size>
+      <time></time>
+      <size>h_size, v_size</size>
+    </window_size>
+
+    <!-- (?) Orientacija zaslona.
+         Vprašanje je, ali to sploh rabimo eksplicitno zabeležit ob prihodu na stran. 
+         To lahko namreč raberemo iz h_res in v_res zgoraj. Drugo je, če bi to
+         kasneje naredili, da se zabeleži real-time ob vsaki spremembi. -->
+    <screen_orientation>
+      <time></time>
+      <orient>portrait | landscape</orient>
+    </screen_orientation>
+
+    <!-- (?) TABLICA/TELEFON: Orientacija naprave. -->
+    <device_orientation>
+      <time></time>
+      <orient>x_coord, y_coord, z_coord</orient>
+    </device_orientation>
+
+    <!-- (?) Zaporedje prikaza randomiziranih vprašanj na strani.
+         Zapišejo se IDji vprašanj v takšnem zaporedju kot so prikazana na strani. -->
+    <rand_q_order>q_id_3, q_id_1, q_id_2</rand_q_order>
+
+    <!-- Zaporedje prikaza randomiziranih odgovorov na strani.
+         Vnos se naredi za vsako vprašanje z randomizacijo odgovorov posebej.
+         Pri randomiziranih vrsticah v gridih so navedeni IDji spremenljivk (vrstic). -->
+    <rand_resp_order q_id="">val_3, val_1, val_2, val_5, val_4</rand_resp_order>
+    <rand_resp_order q_id="">var_id_3, var_id_4, var_id_2, var_id_1</rand_resp_order>
+
+    <!-- Izbor odgovora (zaprt tip vprašanja). Shrani se ob vsakem izboru 
+         odgovora, da lahko tako sledimo vse spremembe odgovorov.
+           q_id: id vprašanja
+           var_id: id spremenljivke  
+         Če lahko question id dobimo iz id spremenljivke, lahko q_id izpustimo.  
+         -->
+    <response q_id ="" var_id="">
+      <!-- Timestamp, ko je izbral določen odgovor -->
+      <time></time>
+
+      <!-- Vrednost odgovora kot je določena v 1KA. Za checkbox je 1: označil, 0: odznačil -->
+      <value></value>
+
+    </response>
+
+    <!-- Vnos odgovora (odprt tip vprašanja). Shrani se ob vsakem izboru / kliku
+         na vnosno polje. 
+         Če lahko question id dobimo iz id spremenljivke, lahko q_id izpustimo.
+         -->
+    <response q_id ="" var_id="">
+      <!-- Timestamp vstopa v vnosno polje -->
+      <focus_in_time></focus_in_time>
+
+      <!-- Timestamp izstopa iz vnosnega polja -->
+      <focus_out_time></focus_out_time>
+
+      <!-- Vnesen tekst ob izstopu iz polja -->
+      <text></text>
+    </response>
+
+    <!-- Lost in got fokus za okno browserja oziroma za tab. Shrani se vsakič, ko 
+         anketiranec zapusti oziroma pride nazaj v browser/tab z anketo-->
+    <lost_focus_time></lost_focus_time>
+    <got_focus_time></got_focus_time>
+
+    <!-- Prikaz sporočil (alertov) anketirancu. Zabeleži se ob vsakem
+         prikazu sporočila. -->
+    <message>
+      <time></time>
+      
+      <!-- Za kateri tip alerta gre (neodgovor, neveljaven številski vnos, validacija...) -->
+      <type>nonresponse | num range | validation</type>
+
+      <!-- Kaj je sprožilo to obvestilo (npr. katero vprašanje
+           ali katera validacija. -->
+      <trigger_type>question | variable | validation</trigger_type>
+      <trigger>q_id | var_id | validaton_id</trigger>
+
+      <!-- A lahko skensla obvestilo. V bistvu soft alert = True, hard alert = False -->    
+      <ignorable>True | False</ignorable>
+
+      <!-- (?) Besedilo prikazanega obvestila -->
+      <text>Message text</text>
+      
+      <!-- (?) Kateri gumb je kliknil - relevantno samo za soft alerte -->
+      <action>ok | cancel</action>
+    </message>
+
+    <!-- Klik kjerkoli na strani. Zabeleži se vsak klik event, s katerimkoli 
+         gumbom miške. Če je to problem, lahko zaenkrat samo leve klike, 
+         toliko da testiramo. -->
+    <click>
+      <time></time>
+
+      <!-- (?) Za kakšen klik gre. S tem se bomo ubadali kasneje, ko bomo
+           videli, kako ta reč deluje in kako je na mobilnih napravah. Če je pa to
+           dokaj trivialno zabeležit, se lahko tudi kar doda. -->
+      <type>single | double | right | middle | tap</type>
+
+      <!-- Koordinate klika na strani. -->
+      <location>X, Y</location>
+      
+      <!-- Kaj je tam, kjer je kliknil. Zanekrat se mi zdi najlažje, da vrne 
+           div_class in div_id po potrebi pa kasneje spremenimo v kaj bolj 
+           user-friendly. -->
+      <div_class></div_class>
+      <div_id></div_id>
+    </click>
+    
+    <!-- Timestamp, ko je stran postana -->
+    <post_time></post_time>
+
+
+  </page>
+</respondent>
+
+
+
+
+

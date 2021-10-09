@@ -1,0 +1,65 @@
+/*
+	CSS za priakz texta iz desne proti levi (npr. hebrejscina)
+*/
+#outercontainer #container {
+  /* Vsota */
+  /* Gumbi na dnu */
+}
+#outercontainer #container .spremenljivka .naslov {
+  direction: rtl !important;
+}
+#outercontainer #container .spremenljivka span.reminder {
+  right: -20px;
+}
+#outercontainer #container .spremenljivka .variable_holder {
+  /* Grid tabele */
+  /* Mobile tabele */
+}
+#outercontainer #container .spremenljivka .variable_holder .variabla {
+  direction: rtl !important;
+  text-align: right !important;
+  line-height: 25px;
+}
+#outercontainer #container .spremenljivka .variable_holder .variabla .enka-checkbox-radio {
+  float: right;
+  padding-left: 10px;
+}
+#outercontainer #container .spremenljivka .variable_holder .variabla input {
+  margin-left: 10px;
+}
+#outercontainer #container .spremenljivka .variable_holder table {
+  direction: rtl !important;
+}
+#outercontainer #container .spremenljivka .variable_holder table td.question,
+#outercontainer #container .spremenljivka .variable_holder table td.differential {
+  text-align: right !important;
+}
+#outercontainer #container .spremenljivka .variable_holder .grid_mobile {
+  direction: rtl !important;
+}
+#outercontainer #container .spremenljivka .variable_holder .dynamic_mg_vrednost {
+  direction: rtl !important;
+}
+#outercontainer #container .spremenljivka .comment {
+  direction: rtl !important;
+}
+#outercontainer #container .spremenljivka.tip_18 .variable_holder {
+  direction: rtl !important;
+}
+#outercontainer #container .spremenljivka.tip_18 .variable_holder .variabla_sum {
+  text-align: left;
+}
+#outercontainer #container .spremenljivka.tip_18 .variable_holder .variabla_sum.sum {
+  float: right;
+}
+#outercontainer #container .buttons {
+  display: flex;
+  justify-content: center;
+  flex-direction: row-reverse;
+}
+#outercontainer #container .buttons input {
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+/*# sourceMappingURL=main_rtl.css.map */

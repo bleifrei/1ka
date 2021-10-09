@@ -1,0 +1,19 @@
+body{
+	position: relative;				/* IE warning */
+	margin-top: 30px;
+}
+
+#surveyInfo_forma {
+	margin: -500px 0 0 -660px;
+}
+
+.vprasanje {
+	z-index: 100;
+}
+
+
+#buttonCreate {
+	border-radius: 0px;
+	-moz-border-radius: 0px;
+	-webkit-border-radius: 0px;
+}

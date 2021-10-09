@@ -1,0 +1,105 @@
+/* 1KA modern theme */
+
+body {
+    color: #333;
+    font-size: 75%;
+	font-family: Arial, Verdana, Sans-Serif;
+	background: #f9f9f9 url('Modern/background.jpg') top left repeat-x;
+}
+
+#outercontainer {
+	width: 100%;
+	max-width: 980px;
+	margin: 0 auto;
+}
+
+#container {
+	position: relative;
+	margin-top: 30px;
+	background: none repeat scroll 0 0 #F4F4F4;
+    border: 1px solid #CCCCCC;
+    margin: 30px auto 10px;
+}
+
+h1 {
+	color: #0C377A;
+    margin: 70px auto 50px;
+    text-align: center;
+}
+
+#admin_options {
+	left: 20px;
+	position: fixed;
+}
+#preview {
+	border: 3px solid red;
+	border-radius: 5px 5px 5px 5px;
+	background-color: #f6f6f6;
+}
+
+#logo {
+	right: auto;
+	left: 20px;
+	top: 20px;
+    /*Dodano iz 1ka*/
+    background: url("../../../public/img/logo/1ka_slo.svg") no-repeat scroll 100% 0 transparent;
+    background-position: 20px 4px;
+    background-repeat: no-repeat;
+    /*konec*/
+}
+#logo.english{
+    top: 24px;
+    background: url("../../../public/img/logo/1ka_eng.svg") no-repeat scroll 100% 0 transparent;
+}
+#logo a{
+    width: 80px;
+    height: 46px;
+}
+
+#progress_bar {
+	right: 20px;
+	left: auto;
+	top: 20px;
+}
+#progress_bar div {
+	border: 1px solid #777;
+}
+#progress_bar div span {
+	background-color: #333;
+}
+
+
+.spremenljivka {
+    background-color: #E9E9E9;
+    margin: 10px;
+    padding: 0 2px 10px 12px;
+}
+div.variable_holder {
+	padding: 0 30px;
+}
+table.grid_table tbody tr:nth-child(2n+1) {
+	background-color: #eee;
+}
+
+span.reminder {
+	left: 3px;
+}
+
+div.buttons {
+	padding: 10px 20px 35px;
+}
+div.buttons input {
+	padding: 0 5px;
+	font-size: 90%;
+}
+
+#footer_survey {
+	padding: 25px 20px;
+}
+#footer_survey a, #footer_survey a:visited {
+	color: #333;
+	text-decoration: none;
+}
+#footer_survey a:hover, #footer_survey a:active {
+	text-decoration: underline;
+}

@@ -1,0 +1,912 @@
+/* 
+    Created on : 28.3.2020
+    Author     : Peter Hrvatin
+*/
+/* BARVE */
+/* FONTI */
+@import url("https://fonts.googleapis.com/css?family=Montserrat:300,400,400i,600,700&amp;subset=latin-ext");
+.thin {
+  font-weight: 300;
+}
+
+.semibold {
+  font-weight: 600;
+}
+
+.bold {
+  font-weight: 700;
+}
+
+.italic {
+  font-style: italic;
+}
+
+.underline {
+  text-decoration: underline;
+}
+
+/* OSNOVNA STRUKTURA STRANI */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Montserrat", sans-serif;
+  color: #535050;
+}
+body #content {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+h1 {
+  margin: 20px 0 30px 0;
+  font-weight: 600;
+  font-size: 26px;
+}
+
+p {
+  font-size: 16px;
+  line-height: 160%;
+}
+
+a {
+  color: #1e88e5;
+  text-decoration: none;
+}
+a:hover {
+  color: #4ca0ea;
+}
+
+.red {
+  color: red;
+}
+
+.spaceLeft {
+  margin-left: 20px;
+}
+
+input[type=submit],
+button,
+input[type=button],
+.button {
+  cursor: pointer;
+  width: 170px;
+  padding: 16px;
+  font-size: 16px;
+  line-height: 17px;
+  text-align: center;
+  text-transform: uppercase;
+  color: white;
+  background-color: #1e88e5;
+  border: 0;
+  outline: 0;
+  transition: 0.2s;
+}
+input[type=submit]:hover,
+button:hover,
+input[type=button]:hover,
+.button:hover {
+  background-color: #4ca0ea;
+}
+
+input[type=text],
+input[type=password],
+input[type=email] {
+  box-sizing: border-box;
+  height: 55px;
+  padding: 8px 18px;
+  font-size: 17px;
+  color: #333;
+  background-color: white;
+  border: 1px solid #cccccc;
+}
+input[type=text].red,
+input[type=password].red,
+input[type=email].red {
+  border-color: red;
+}
+
+textarea {
+  box-sizing: border-box;
+  padding: 8px 12px;
+  font-size: 15px;
+  color: #333;
+  background-color: white;
+  border: 1px solid #cccccc;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 80px;
+  box-sizing: border-box;
+  padding: 0 20px;
+}
+header .logo {
+  height: 60px;
+}
+header .logo a img {
+  max-width: 300px;
+  max-height: 60px;
+  height: 60px;
+}
+header nav {
+  display: flex;
+  align-self: flex-end;
+  font-size: 17px;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+header nav span.menu_item {
+  margin-left: 40px;
+  border-bottom: 3px transparent solid;
+}
+header nav span.menu_item a {
+  color: #333;
+  text-decoration: none;
+  line-height: 30px;
+  transition: 0.2s;
+}
+header nav span.menu_item a:hover {
+  color: #1e88e5;
+}
+header nav span.menu_item.active {
+  border-bottom: 3px #1e88e5 solid;
+}
+
+#main {
+  background-color: #f7f7f7;
+}
+#main .main_content {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 30px 20px 60px 20px;
+}
+
+footer .footer_content {
+  display: flex;
+  justify-content: space-between;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 70px 20px;
+}
+footer .footer_content .col {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  width: 33%;
+}
+footer .footer_content .col span, footer .footer_content .col div.follow {
+  padding: 8px 0;
+  color: #333;
+  font-weight: 300;
+}
+footer .footer_content .col span.follow, footer .footer_content .col div.follow.follow {
+  display: flex;
+  align-items: center;
+}
+footer .footer_content .col span a, footer .footer_content .col div.follow a {
+  color: #333;
+}
+footer .footer_content .col span a:hover, footer .footer_content .col div.follow a:hover {
+  color: #1e88e5;
+}
+footer .footer_content .col span a:hover .icon.twitter, footer .footer_content .col div.follow a:hover .icon.twitter {
+  background-image: url("../../../public/img/social/twitter_blue.svg");
+}
+footer .footer_content .col span a:hover .icon.fb, footer .footer_content .col div.follow a:hover .icon.fb {
+  background-image: url("../../../public/img/social/fb_blue.svg");
+}
+footer .footer_content .col span a .icon, footer .footer_content .col div.follow a .icon {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  margin-left: 10px;
+  background-size: 24px 24px;
+}
+footer .footer_content .col span a .icon.twitter, footer .footer_content .col div.follow a .icon.twitter {
+  background-image: url("../../../public/img/social/twitter.svg");
+}
+footer .footer_content .col span a .icon.fb, footer .footer_content .col div.follow a .icon.fb {
+  background-image: url("../../../public/img/social/fb.svg");
+}
+footer .footer_content .col .logo_holder {
+  display: flex;
+  flex-direction: column;
+  margin: 20px 0;
+}
+footer .footer_content .col .logo_holder img {
+  max-width: 200px;
+  max-height: 80px;
+  margin-bottom: 40px;
+}
+
+body.landing_page #main,
+body.register #main,
+body.login #main,
+body.login_noEmail #main {
+  height: auto;
+  min-height: 940px;
+  background-image: url("../img/landing_page_image.jpg");
+  background-position: top;
+}
+body.landing_page #main .app_title,
+body.register #main .app_title,
+body.login #main .app_title,
+body.login_noEmail #main .app_title {
+  width: 600px;
+  margin: 50px auto;
+  text-align: center;
+  color: white;
+  font-size: 40px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+body.landing_page #main .app_subtitle,
+body.register #main .app_subtitle,
+body.login #main .app_subtitle,
+body.login_noEmail #main .app_subtitle {
+  width: 600px;
+  margin: 30px auto;
+  text-align: center;
+  color: white;
+  font-size: 22px;
+  font-weight: 600;
+  text-shadow: 2px 2px 2px #333;
+}
+body.landing_page #main .landing_page_window,
+body.register #main .landing_page_window,
+body.login #main .landing_page_window,
+body.login_noEmail #main .landing_page_window {
+  z-index: 999;
+  width: 600px;
+  margin: 20px auto;
+  background-color: white;
+}
+body.landing_page #main .landing_page_window .tabs,
+body.register #main .landing_page_window .tabs,
+body.login #main .landing_page_window .tabs,
+body.login_noEmail #main .landing_page_window .tabs {
+  display: flex;
+  width: 100%;
+}
+body.landing_page #main .landing_page_window .tabs .tab,
+body.register #main .landing_page_window .tabs .tab,
+body.login #main .landing_page_window .tabs .tab,
+body.login_noEmail #main .landing_page_window .tabs .tab {
+  cursor: pointer;
+  width: 50%;
+  box-sizing: border-box;
+  padding: 20px 0;
+  font-size: 18px;
+  text-align: center;
+  text-transform: uppercase;
+  color: #333;
+  background-color: #e6e6e6;
+  transition: 0.2s;
+}
+body.landing_page #main .landing_page_window .tabs .tab:hover,
+body.register #main .landing_page_window .tabs .tab:hover,
+body.login #main .landing_page_window .tabs .tab:hover,
+body.login_noEmail #main .landing_page_window .tabs .tab:hover {
+  background-color: #d9d9d9;
+}
+body.landing_page #main .landing_page_window .tabs .tab.active,
+body.register #main .landing_page_window .tabs .tab.active,
+body.login #main .landing_page_window .tabs .tab.active,
+body.login_noEmail #main .landing_page_window .tabs .tab.active {
+  background-color: white;
+}
+body.landing_page #main .landing_page_window .tabs .tab.active:hover,
+body.register #main .landing_page_window .tabs .tab.active:hover,
+body.login #main .landing_page_window .tabs .tab.active:hover,
+body.login_noEmail #main .landing_page_window .tabs .tab.active:hover {
+  background-color: white;
+}
+body.landing_page #main .landing_page_window .tabs .tab.full_width,
+body.register #main .landing_page_window .tabs .tab.full_width,
+body.login #main .landing_page_window .tabs .tab.full_width,
+body.login_noEmail #main .landing_page_window .tabs .tab.full_width {
+  cursor: default;
+  width: 100%;
+  background-color: white;
+}
+body.landing_page #main .landing_page_window .tabs .tab.full_width:hover,
+body.register #main .landing_page_window .tabs .tab.full_width:hover,
+body.login #main .landing_page_window .tabs .tab.full_width:hover,
+body.login_noEmail #main .landing_page_window .tabs .tab.full_width:hover {
+  background-color: white;
+}
+body.landing_page #main .landing_page_window #login_holder,
+body.register #main .landing_page_window #login_holder,
+body.login #main .landing_page_window #login_holder,
+body.login_noEmail #main .landing_page_window #login_holder {
+  display: none;
+}
+body.landing_page #main .landing_page_window #login_holder.active,
+body.register #main .landing_page_window #login_holder.active,
+body.login #main .landing_page_window #login_holder.active,
+body.login_noEmail #main .landing_page_window #login_holder.active {
+  display: block;
+}
+body.landing_page #main .landing_page_window #login_holder .login_form,
+body.register #main .landing_page_window #login_holder .login_form,
+body.login #main .landing_page_window #login_holder .login_form,
+body.login_noEmail #main .landing_page_window #login_holder .login_form {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  padding: 20px;
+}
+body.landing_page #main .landing_page_window #login_holder .login_form .lostpass,
+body.register #main .landing_page_window #login_holder .login_form .lostpass,
+body.login #main .landing_page_window #login_holder .login_form .lostpass,
+body.login_noEmail #main .landing_page_window #login_holder .login_form .lostpass {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+}
+body.landing_page #main .landing_page_window #login_holder .login_form .lostpass a,
+body.register #main .landing_page_window #login_holder .login_form .lostpass a,
+body.login #main .landing_page_window #login_holder .login_form .lostpass a,
+body.login_noEmail #main .landing_page_window #login_holder .login_form .lostpass a {
+  color: #1e88e5;
+  font-weight: 600;
+  text-decoration: none;
+}
+body.landing_page #main .landing_page_window #login_holder .login_form .lostpass a:hover,
+body.register #main .landing_page_window #login_holder .login_form .lostpass a:hover,
+body.login #main .landing_page_window #login_holder .login_form .lostpass a:hover,
+body.login_noEmail #main .landing_page_window #login_holder .login_form .lostpass a:hover {
+  color: #4ca0ea;
+}
+body.landing_page #main .landing_page_window #registration_holder,
+body.register #main .landing_page_window #registration_holder,
+body.login #main .landing_page_window #registration_holder,
+body.login_noEmail #main .landing_page_window #registration_holder {
+  display: none;
+}
+body.landing_page #main .landing_page_window #registration_holder.active,
+body.register #main .landing_page_window #registration_holder.active,
+body.login #main .landing_page_window #registration_holder.active,
+body.login_noEmail #main .landing_page_window #registration_holder.active {
+  display: block;
+}
+body.landing_page #main .landing_page_window #registration_holder .register_form,
+body.register #main .landing_page_window #registration_holder .register_form,
+body.login #main .landing_page_window #registration_holder .register_form,
+body.login_noEmail #main .landing_page_window #registration_holder .register_form {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+body.landing_page #main .landing_page_window input[type=submit],
+body.register #main .landing_page_window input[type=submit],
+body.login #main .landing_page_window input[type=submit],
+body.login_noEmail #main .landing_page_window input[type=submit] {
+  align-self: flex-end;
+  margin-top: 30px;
+}
+body.landing_page #main .landing_page_window label,
+body.register #main .landing_page_window label,
+body.login #main .landing_page_window label,
+body.login_noEmail #main .landing_page_window label {
+  margin: 15px 0 5px 0;
+  font-size: 17px;
+  font-weight: 600;
+}
+body.landing_page #main .landing_page_window .subtitle,
+body.register #main .landing_page_window .subtitle,
+body.login #main .landing_page_window .subtitle,
+body.login_noEmail #main .landing_page_window .subtitle {
+  padding: 15px 0;
+}
+body.landing_page #main .landing_page_window .agreement,
+body.register #main .landing_page_window .agreement,
+body.login #main .landing_page_window .agreement,
+body.login_noEmail #main .landing_page_window .agreement {
+  cursor: pointer;
+  display: flex;
+  align-items: baseline;
+  margin: 15px 0 5px 0;
+}
+body.landing_page #main .landing_page_window .agreement input,
+body.register #main .landing_page_window .agreement input,
+body.login #main .landing_page_window .agreement input,
+body.login_noEmail #main .landing_page_window .agreement input {
+  margin-right: 10px;
+}
+body.landing_page #main .landing_page_window .checkbox_text_holder,
+body.register #main .landing_page_window .checkbox_text_holder,
+body.login #main .landing_page_window .checkbox_text_holder,
+body.login_noEmail #main .landing_page_window .checkbox_text_holder {
+  cursor: pointer;
+}
+body.landing_page #main .landing_page_window .checkbox_text_holder strong,
+body.register #main .landing_page_window .checkbox_text_holder strong,
+body.login #main .landing_page_window .checkbox_text_holder strong,
+body.login_noEmail #main .landing_page_window .checkbox_text_holder strong {
+  font-weight: 600;
+}
+body.landing_page #main .landing_page_window .error_holder,
+body.register #main .landing_page_window .error_holder,
+body.login #main .landing_page_window .error_holder,
+body.login_noEmail #main .landing_page_window .error_holder {
+  display: block;
+  box-sizing: border-box;
+  margin-top: 30px;
+  padding: 10px;
+  font-size: 16px;
+  line-height: 24px;
+  background-color: #ffdede;
+}
+body.landing_page #main .landing_page_window .g-recaptcha,
+body.register #main .landing_page_window .g-recaptcha,
+body.login #main .landing_page_window .g-recaptcha,
+body.login_noEmail #main .landing_page_window .g-recaptcha {
+  width: 304px;
+  margin-top: 20px;
+}
+
+/*body.register{
+
+    #registration_holder{
+        display: block !important;
+    }
+
+    #login_holder{
+        display: none !important;
+    }
+}*/
+/************GDPR OBRAZEC***************/
+body.gdpr {
+  line-height: 26px;
+}
+body.gdpr div.form_row {
+  clear: both;
+  display: block;
+  padding: 8px 0 8px 10px;
+  vertical-align: center;
+}
+body.gdpr p.red {
+  color: red;
+}
+body.gdpr input[type=text] {
+  width: 320px;
+}
+body.gdpr label {
+  cursor: pointer;
+}
+body.gdpr textarea {
+  width: 500px;
+  height: 100px;
+  margin-left: 10px;
+}
+body.gdpr textarea.red {
+  border: 1px red solid;
+}
+body.gdpr div.label {
+  display: inline-block;
+  width: 150px;
+}
+
+/******************************/
+/************REGISTRACIJSKI OBRAZEC***************/
+body.register .register_holder .subtitle {
+  padding: 0;
+  margin: 0;
+  line-height: 20px;
+  font-size: 18px;
+}
+body.register .register_holder p {
+  font-size: 16px;
+  color: #333;
+  margin: 10px 0;
+}
+body.register .register_holder .right p {
+  margin-bottom: 20px;
+  color: #333;
+}
+body.register .register_holder ul {
+  list-style-type: disc;
+  font-size: 16px;
+  color: #333;
+}
+body.register .register_holder ul li {
+  list-style-type: disc;
+  margin-left: 30px;
+  padding-left: 5px;
+  font-size: 16px;
+  color: #333;
+}
+body.register .register_holder p span.label.edit {
+  float: left;
+  width: 100px;
+  margin-left: 20px;
+}
+body.register .register_holder div.form_row {
+  clear: both;
+  display: block;
+  padding: 8px 0 8px 10px;
+  margin: 15px 0 5px 0;
+  vertical-align: center;
+}
+body.register .register_holder div.form_row.red label,
+body.register .register_holder div.form_row.red input {
+  color: red;
+}
+body.register .register_holder div.form_row.red input {
+  border-color: red;
+}
+body.register .register_holder .form_row span.label {
+  clear: left;
+  float: left;
+  margin: 0;
+  width: 160px;
+  color: #333;
+  font-weight: 600;
+  line-height: 50px;
+}
+body.register .register_holder input[type=text],
+body.register .register_holder input[type=password] {
+  padding: 6px 15px;
+  width: 300px;
+  color: #333;
+  font-size: 14px;
+  border: 1px #e6e6e6 solid;
+}
+body.register .register_holder .form_row.agreement label {
+  font-weight: 500;
+  /*font-size: 14px;*/
+  color: #333;
+}
+body.register .register_holder .form_row.agreement span.red {
+  font-weight: 400;
+  line-height: 30px;
+}
+body.register .register_holder input[type=checkbox] {
+  float: left;
+  margin-top: 2px;
+}
+body.register .register_holder .checkbox_text_holder {
+  margin-left: 30px;
+}
+body.register .register_holder .checkbox_explain_text_holder {
+  display: none;
+  margin: 15px 0 0 20px;
+}
+body.register .register_holder input[type=submit] {
+  margin-top: 30px;
+}
+body.register .register_holder .confirm_text {
+  margin-bottom: 20px;
+  font-size: 16px;
+  color: #333;
+}
+body.register .register_holder .g-recaptcha {
+  float: left;
+  margin: 15px 10px 20px;
+}
+body.register .register_holder label {
+  cursor: pointer;
+}
+body.register .register_holder .red.italic {
+  padding-left: 10px;
+}
+body.register .register_holder .agreement .red.italic {
+  padding-left: 0px;
+}
+
+/******************************/
+/************LOGIN OBRAZEC***************/
+body.login .main_content .login_holder p {
+  font-size: 16px;
+  color: #333;
+}
+body.login .main_content .form_row span.label {
+  clear: left;
+  float: left;
+  margin: 0;
+  width: 100px;
+  color: #333;
+  font-weight: 600;
+  line-height: 50px;
+}
+body.login .main_content p span.label.edit {
+  float: left;
+  width: 100px;
+  margin-left: 20px;
+}
+body.login .main_content div.form_row {
+  clear: both;
+  display: block;
+  padding: 8px 0 8px 10px;
+  margin: 15px 0 5px 0;
+  vertical-align: center;
+}
+body.login .main_content div.form_row.red label,
+body.login .main_content div.form_row.red input {
+  color: red;
+}
+body.login .main_content div.form_row.red input {
+  border-color: red;
+}
+body.login .main_content label {
+  cursor: pointer;
+}
+body.login .main_content input[type=submit] {
+  margin-top: 30px;
+}
+
+/******************************/
+/************RESET GESLA***************/
+body.reset_password_activate {
+  line-height: 26px;
+}
+body.reset_password_activate div.form_row {
+  clear: both;
+  display: block;
+  padding: 8px 0 8px 10px;
+  vertical-align: center;
+}
+body.reset_password_activate p.red {
+  color: red;
+}
+body.reset_password_activate input[type=text] {
+  width: 320px;
+}
+body.reset_password_activate label {
+  cursor: pointer;
+}
+body.reset_password_activate div.label {
+  display: inline-block;
+  width: 250px;
+}
+
+/******************************/
+body.landing_page #content.aai #main,
+body.register #content.aai #main,
+body.login #content.aai #main,
+body.login_noEmail #content.aai #main {
+  min-height: auto;
+  background-image: url("../img/landing_page_image_aai.png");
+}
+body.landing_page #content.aai #main .landing_page_window,
+body.register #content.aai #main .landing_page_window,
+body.login #content.aai #main .landing_page_window,
+body.login_noEmail #content.aai #main .landing_page_window {
+  width: 500px;
+  padding: 50px;
+  margin-top: 70px;
+  text-align: center;
+  box-shadow: 1px 1px 4px 1px #999;
+}
+body.landing_page #content.aai #main .landing_page_window .app_title,
+body.register #content.aai #main .landing_page_window .app_title,
+body.login #content.aai #main .landing_page_window .app_title,
+body.login_noEmail #content.aai #main .landing_page_window .app_title {
+  width: 500px;
+  margin: 0;
+  color: #333;
+}
+body.landing_page #content.aai #main .landing_page_window .arnes_logo,
+body.register #content.aai #main .landing_page_window .arnes_logo,
+body.login #content.aai #main .landing_page_window .arnes_logo,
+body.login_noEmail #content.aai #main .landing_page_window .arnes_logo {
+  margin: 30px 0;
+}
+body.landing_page #content.aai #main .landing_page_window .arnes_logo img,
+body.register #content.aai #main .landing_page_window .arnes_logo img,
+body.login #content.aai #main .landing_page_window .arnes_logo img,
+body.login_noEmail #content.aai #main .landing_page_window .arnes_logo img {
+  width: 200px;
+  height: auto;
+}
+body.landing_page #content.aai #main .landing_page_window .tab,
+body.register #content.aai #main .landing_page_window .tab,
+body.login #content.aai #main .landing_page_window .tab,
+body.login_noEmail #content.aai #main .landing_page_window .tab {
+  font-size: 16px;
+  text-transform: none;
+  line-height: 24px;
+}
+body.landing_page #content.aai #main .landing_page_window input[type=button],
+body.register #content.aai #main .landing_page_window input[type=button],
+body.login #content.aai #main .landing_page_window input[type=button],
+body.login_noEmail #content.aai #main .landing_page_window input[type=button] {
+  width: auto;
+  padding: 18px 30px;
+  margin: 30px 0 10px 0;
+  font-weight: 600;
+  text-transform: none;
+  background-color: #e35205;
+  border-radius: 5px;
+}
+body.landing_page #content.aai #main .landing_page_window input[type=button]:hover,
+body.register #content.aai #main .landing_page_window input[type=button]:hover,
+body.login #content.aai #main .landing_page_window input[type=button]:hover,
+body.login_noEmail #content.aai #main .landing_page_window input[type=button]:hover {
+  background-color: #fa6c21;
+}
+body.landing_page #content.aai #main .app_subtitle,
+body.register #content.aai #main .app_subtitle,
+body.login #content.aai #main .app_subtitle,
+body.login_noEmail #content.aai #main .app_subtitle {
+  width: 500px;
+  margin: 10px auto;
+  color: #333;
+  font-size: 20px;
+  font-weight: 600;
+  text-shadow: none;
+}
+
+/* Mobile prilagoditve */
+@media screen and (max-width: 700px) {
+  header nav {
+    flex-direction: column-reverse;
+    align-self: auto;
+    justify-content: space-evenly;
+    height: 100%;
+    text-align: right;
+    font-size: 14px;
+  }
+  header nav span.menu_item {
+    line-height: 18px;
+  }
+  header nav span.menu_item.active {
+    border-bottom: 2px #1e88e5 solid;
+  }
+  header nav span.menu_item a {
+    line-height: 18px;
+  }
+
+  body #main .main_content {
+    padding: 10px 20px 40px 20px;
+  }
+  body #main .main_content h1 {
+    padding: 10px 10px;
+    font-size: 22px;
+    text-align: center;
+  }
+  body #main .main_content .form_row {
+    margin: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+  body #main .main_content .label {
+    line-height: 30px;
+  }
+  body #main .main_content input[type=text],
+body #main .main_content input[type=email],
+body #main .main_content input[type=password] {
+    width: 100%;
+  }
+  body #main .main_content input[type=submit],
+body #main .main_content input[type=button] {
+    display: block;
+    width: 100%;
+    margin: 20px auto !important;
+  }
+  body #main .main_content .have_account {
+    display: block;
+    margin: 30px 0 0 0;
+  }
+  body #main .main_content .red.italic {
+    padding-left: 0 !important;
+  }
+  body #main .main_content .form_row.agreement {
+    margin-top: 10px !important;
+  }
+  body #main .main_content textarea#gdpr-note {
+    margin: 0;
+    width: 100%;
+  }
+
+  body.landing_page,
+body.login,
+body.register,
+body.login_noEmail {
+    /* AAI */
+  }
+  body.landing_page #main,
+body.login #main,
+body.register #main,
+body.login_noEmail #main {
+    min-height: auto;
+    /*background-image: none;*/
+  }
+  body.landing_page #main .main_content,
+body.login #main .main_content,
+body.register #main .main_content,
+body.login_noEmail #main .main_content {
+    padding: 30px 20px 30px 20px;
+  }
+  body.landing_page #main .main_content .app_title,
+body.login #main .main_content .app_title,
+body.register #main .main_content .app_title,
+body.login_noEmail #main .main_content .app_title {
+    width: 95%;
+    margin: 10px auto 40px auto;
+    font-size: 32px;
+    /*color: $color_text;*/
+  }
+  body.landing_page #main .main_content .landing_page_window,
+body.login #main .main_content .landing_page_window,
+body.register #main .main_content .landing_page_window,
+body.login_noEmail #main .main_content .landing_page_window {
+    width: 100%;
+  }
+  body.landing_page #main .main_content .landing_page_window .tab,
+body.login #main .main_content .landing_page_window .tab,
+body.register #main .main_content .landing_page_window .tab,
+body.login_noEmail #main .main_content .landing_page_window .tab {
+    font-size: 16px;
+  }
+  body.landing_page #main .main_content .landing_page_window .lostpass,
+body.login #main .main_content .landing_page_window .lostpass,
+body.register #main .main_content .landing_page_window .lostpass,
+body.login_noEmail #main .main_content .landing_page_window .lostpass {
+    font-size: 14px;
+  }
+  body.landing_page #main .main_content .landing_page_window input[type=submit],
+body.landing_page #main .main_content .landing_page_window input[type=button],
+body.login #main .main_content .landing_page_window input[type=submit],
+body.login #main .main_content .landing_page_window input[type=button],
+body.register #main .main_content .landing_page_window input[type=submit],
+body.register #main .main_content .landing_page_window input[type=button],
+body.login_noEmail #main .main_content .landing_page_window input[type=submit],
+body.login_noEmail #main .main_content .landing_page_window input[type=button] {
+    margin: 30px auto !important;
+  }
+  body.landing_page #main .main_content .app_subtitle,
+body.login #main .main_content .app_subtitle,
+body.register #main .main_content .app_subtitle,
+body.login_noEmail #main .main_content .app_subtitle {
+    width: 100%;
+    box-sizing: border-box;
+  }
+  body.landing_page #content.aai #main .main_content .landing_page_window,
+body.login #content.aai #main .main_content .landing_page_window,
+body.register #content.aai #main .main_content .landing_page_window,
+body.login_noEmail #content.aai #main .main_content .landing_page_window {
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: 20px;
+  }
+  body.landing_page #content.aai #main .main_content .app_title,
+body.login #content.aai #main .main_content .app_title,
+body.register #content.aai #main .main_content .app_title,
+body.login_noEmail #content.aai #main .main_content .app_title {
+    width: 100%;
+    box-sizing: border-box;
+  }
+  body.landing_page #content.aai #main .main_content .app_subtitle,
+body.login #content.aai #main .main_content .app_subtitle,
+body.register #content.aai #main .main_content .app_subtitle,
+body.login_noEmail #content.aai #main .main_content .app_subtitle {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  footer {
+    padding: 0 20px;
+  }
+  footer .footer_content {
+    flex-direction: column;
+    padding: 20px 0;
+    text-align: center;
+  }
+  footer .footer_content .col {
+    width: 100%;
+  }
+  footer .footer_content .col .follow {
+    justify-content: center;
+  }
+  footer .footer_content .logo_holder img {
+    margin: 20px auto 30px auto;
+  }
+}
+
+/*# sourceMappingURL=style.css.map */

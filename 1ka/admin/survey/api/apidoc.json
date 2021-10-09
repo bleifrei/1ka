@@ -1,0 +1,9 @@
+{
+  "name": "1KA API",
+  "version": "1.0.0",
+  "title": "1KA API",
+  "template": {
+  	"withCompare": true,
+  	"withGenerator": true
+  }
+}

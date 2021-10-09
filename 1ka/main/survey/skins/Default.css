@@ -1,0 +1,92 @@
+/* 1KA default theme */
+
+body {
+    color: #333;
+    font-size: 75%;
+    font-family: Arial, sans-serif;
+}
+
+#outercontainer {
+	width: 100%;
+	max-width: 980px;
+	margin: 0 auto;
+}
+
+#container {
+	position: relative;
+	margin-top: 30px;
+}
+
+h1 {
+	padding: 70px 0 50px 0;
+	font-size: 170%;
+    color: #0C377A;
+}
+
+#admin_options {
+	left: 20px;
+	position: fixed;
+}
+#preview {
+	border: 3px solid red;
+	border-radius: 5px 5px 5px 5px;
+	background-color: #f6f6f6;
+}
+
+/*Dodano iz 1ka skina */
+
+#logo {
+    margin-right: 10px;
+    background: url("../../../public/img/logo/1ka_slo.svg") no-repeat scroll 100% 0 transparent;
+    background-position: 20px 4px;
+    background-repeat: no-repeat;
+}
+#logo.english{
+    top: 24px;
+    background: url("../../../public/img/logo/1ka_eng.svg") no-repeat scroll 100% 0 transparent;
+}
+#logo a{
+     width: 80px;
+     height: 46px;
+ }
+
+/*Do tukaj*/
+
+#progress_bar {
+	right: auto;
+	left: 20px;
+	border-top: 1px solid #777;
+	border-bottom: 1px solid #777;
+	padding: 3px 6px;
+}
+#progress_bar div {
+	border: 1px solid #777;
+}
+#progress_bar div span {
+	background-color: #c2e1e7;
+}
+
+div.grupa {
+	border-top: 1px solid #ccc;
+}
+
+div.spremenljivka {
+	padding: 25px 20px;
+	border-bottom: 1px solid #999;
+}
+
+div.buttons {
+	padding: 25px 20px;
+	border-bottom: 1px solid #ccc;
+}
+div.buttons input {
+	padding: 0 10px;
+}
+
+#footer_survey {
+	padding: 25px 20px;
+}
+#footer_survey a, #footer_survey a:visited {
+	color: #333;
+}
+
