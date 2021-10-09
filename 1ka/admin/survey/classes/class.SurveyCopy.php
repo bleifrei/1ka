@@ -1119,7 +1119,7 @@ class SurveyCopy {
 							$dest_value = "''";
 							
 						// ce je polje NULL, ga moramo rocno nastavit na NULL
-			    		} elseif ($row_src[$dest_field] === NULL) {
+			    		} elseif (isset($row_src[$dest_field]) && ($row_src[$dest_field] === NULL)) {
 							$dest_value = "NULL";
 							
 			    		} else {
