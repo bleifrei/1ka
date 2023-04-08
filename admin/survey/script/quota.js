@@ -19,40 +19,44 @@ function quota_editing(condition, new_spremenljivka, vrednost) {
 
 function quota_editing_close(condition, vrednost) {
 
-    document.getElementById('quota').style.display = "none";
-    if (condition < 0) $('#branching_' + (-condition)).delay('3000').removeClass('spr_editing', 500);
+    $('#quota').fadeOut('slow');
 
     // kalkulacija v pogojih
     if (condition >= 0) {
-        $('#fade').fadeOut('slow');
+
+        // Ce imamo spodaj odprt popup za if, ga pustimo odprtega
+        if($('#div_condition_editing').is(':hidden')){
+            $('#fade').fadeOut('slow');
+        }
+
         $('#div_condition_editing').load(
             'ajax.php?t=quota&a=quota_editing_close', {
                 anketa: srv_meta_anketa_id,
                 condition: condition,
                 vrednost: vrednost
-            }, function () {
-                centerDiv2Page('#div_condition_editing');
-            });
+            }
+        ); 
+    } 
+    // kalkulacija kot tip vprasanja
+    else {
 
-        // kalkulacija kot tip vprasanja
-    } else {
+        $('#branching_' + (-condition)).delay('3000').removeClass('spr_editing', 500);
 
         // ce smo v vnosih, refreshamo stran, da se izpise nova kalkulacija..
         if (__vnosi == 1) {
-
-            window.location.reload();
-
-            // obicajno zapiranje kalkulacije v urejanju
-        } else {
+            window.location.reload();            
+        } 
+        // obicajno zapiranje kalkulacije v urejanju
+        else {
 
             $('#fade').fadeOut('slow');
+
             $('#branching_' + (-condition)).load(
                 'ajax.php?t=quota&a=quota_editing_close', {
                     anketa: srv_meta_anketa_id,
                     condition: condition
-                }, function () {
-                    centerDiv2Page('#div_condition_editing');
-                });
+                }
+            );
         }
     }
 }
@@ -92,7 +96,6 @@ function quota_operator_edit(quota, operator) {
             noupdate: __vnosi + __analiza,
             anketa: srv_meta_anketa_id
         }, function () {
-            centerDiv2Page('#div_condition_editing');
             $('#quota_editing_inner').scroll();
         });
 }
@@ -163,7 +166,6 @@ function quota_bracket_edit_new(quota, vrednost, who, what) {
             noupdate: __vnosi + __analiza,
             anketa: srv_meta_anketa_id
         }, function () {
-            centerDiv2Page('#div_condition_editing');
             $('#quota_editing_inner').scroll();
         });
 }

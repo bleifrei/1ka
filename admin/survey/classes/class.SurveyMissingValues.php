@@ -44,14 +44,19 @@ class SurveyMissingValues
 	 * @param mixed $anketa
 	 */
 	function __construct ($anketa = 0) {
+
 		if (self::$anketa == null) {
-			if (isset ($_GET['anketa']) && (int)$_GET['anketa'] > 0) {
-				self::$anketa = $_GET['anketa'];
-			} elseif (isset ($_POST['anketa']) && (int)$_POST['anketa'] > 0) {
-				self::$anketa = $_POST['anketa'];
-			} elseif ((int)$anketa > 0) {
+
+            if ((int)$anketa > 0) {
 				self::$anketa = (int)$anketa;
 			}
+			elseif (isset ($_GET['anketa']) && (int)$_GET['anketa'] > 0) {
+				self::$anketa = $_GET['anketa'];
+			} 
+            elseif (isset ($_POST['anketa']) && (int)$_POST['anketa'] > 0) {
+				self::$anketa = $_POST['anketa'];
+			}
+            
 	
 			# polovimo nastavitve ankete če obstaja
 			if (self::$anketa != null && (int)self::$anketa > 0) {

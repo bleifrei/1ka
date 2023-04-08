@@ -50,9 +50,7 @@ class SurveyKakovost{
 
 			# polovimo vrsto tabel (aktivne / neaktivne)
 			SurveyInfo :: getInstance()->SurveyInit($this->anketa);
-			if (SurveyInfo::getInstance()->getSurveyColumn('db_table') == 1) {
-				$this->db_table = '_active';
-			}
+			$this->db_table = SurveyInfo::getInstance()->getSurveyArchiveDBString();
 			
 			SurveyAnalysisHelper::getInstance()->Init($this->anketa);
 
@@ -377,7 +375,7 @@ class SurveyKakovost{
 		
 		// Testiranje - izpis errorjev
 		if($admin_type == 0){
-			echo '<div style="display:none;">';
+			echo '<div>';
 			echo 'Rscript '.$script;
 			//echo '<br />'.$out.'<br />';
 			var_dump($output);
@@ -392,7 +390,7 @@ class SurveyKakovost{
 		
 		$result_folder = $site_path . RESULTS_FOLDER.'/';
 		
-		if (($handle = fopen($result_folder."usability_".$this->anketa.".csv", "r")) !== FALSE) {		
+		if (($handle = fopen($result_folder."rt_".$this->anketa.".csv", "r")) !== FALSE) {		
 			
 			// Loop po vrsticah
 			$cnt = 0;
@@ -753,8 +751,8 @@ class SurveyKakovost{
 		}
 		
 		// Pobrisemo CSV datoteko z rezultati
-		if (file_exists($result_folder.'/usability_'.$this->anketa.'.csv')) {
-			unlink($result_folder.'/usability_'.$this->anketa.'.csv');
+		if (file_exists($result_folder.'/rt_'.$this->anketa.'.csv')) {
+			unlink($result_folder.'/rt_'.$this->anketa.'.csv');
 		}
 	}
 

@@ -32,7 +32,5 @@ javascript:(function() {
     if (uris.length)
         window.open('%BUILDER_URL%#' + uris.join(','));
     else
-        alert('No js/css files found with URLs within "' 
-            + home.split('/')[2]
-            + '".\n(This tool is limited to URLs with the same domain.)');
+        genericAlertPopup('alert_no_jscss_found',home.split('/')[2]);
 })();

@@ -106,9 +106,7 @@ if ($_GET['a'] == 'ankete') {
 		if (mysqli_num_rows($sql) > 0) {
 			
 			$row = mysqli_fetch_array($sql);
-			
-			if ($row['db_table'] == 1) $db_table = '_active'; else $db_table = '';
-			
+						
 			echo $row['id'].delimiter;
 			echo $row['insert_uid'].delimiter;
 			echo $row['a_first'].delimiter;
@@ -232,7 +230,24 @@ if ($_GET['a'] == 'ankete') {
 			
 			while ($row = mysqli_fetch_array($sql)) {
 				
-				if ($row['db_table'] == 1) $db_table = '_active'; else $db_table = '';
+				switch($row['db_table']){
+
+                    // Arhivska 1
+                    case '0':
+                        $db_table = '_archive1';
+                        break;
+        
+                    // Arhivska 2
+                    case '2':
+                        $db_table = '_archive2';
+                        break;
+                    
+                    // Aktivna anketa
+                    case '1':
+                    default:
+                        $db_table = '_active';
+                        break;
+                }
 							
 				echo $row['id'].delimiter;
 				echo $row['uid'].delimiter;

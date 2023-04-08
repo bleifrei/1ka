@@ -105,10 +105,10 @@ function append_prepare_add_recipients() {
 					$('#fullscreen').html('').fadeIn('slow');
 					$("#fullscreen").load('ajax.php?t=invitations&a=get_profile_name', {anketa:srv_meta_anketa_id, recipients_list:recipients_list, fields:fields, noNavi:'true', doAdd:doAdd, pid:pid});
 				} else {
-					alert(lang['srv_invitation_note1']);
+					genericAlertPopup('srv_invitation_note1');
 				}
 			} else {
-				alert(lang['srv_invitation_note2']);
+				genericAlertPopup('srv_invitation_note2');
 			}
 	
 		} else if (type == 0) {
@@ -158,10 +158,10 @@ function append_add_recipients(profile_id) {
 			$elm.next().find('a').addClass('active');
 			$elm.removeClass('inv_ff_left_on').addClass('inv_ff_right_on').next().next().addClass('inv_ff_left_on');
 		} else {
-			alert(lang['srv_invitation_note1']);
+			genericAlertPopup('srv_invitation_note1');
 		}
 	} else {
-		alert(lang['srv_invitation_note2']);
+		genericAlertPopup('srv_invitation_note2');
 	}
 
 }
@@ -187,7 +187,6 @@ function merge_getItems () {
 		$('ul#merge').append('<li class="'+cl+'"><input type="radio" id="'+id+'_radio"'+ch+' name="merge" value="'+id+'" onclick="merge_labels();"><label style="display: inline;" for="'+id+'_radio">'+label+'</label></li>');
 		
 	});
-	
 }
 
 function merge_labels() {
@@ -202,5 +201,21 @@ function merge_labels() {
 		}
 	
 	});
-	
+}
+
+// Sortiranje box-ov pri dodajanju respondentov
+function initAppendMergeConnectedSortable(){
+
+    // Na mobitelu ne inicializiramo sorrtiranja, ker potem gumbi niso klikabilni (na nekaterih androidih ne deluje ok)
+    if($(window).width() < 850)
+        return false;
+
+    $('ul.connectedSortable').sortable({
+        update: function(){ 
+            append_refreshFieldsList(); 
+        }, 
+        forcePlaceholderSize: 'true',
+        tolerance: 'pointer',
+        placeholder: 'inv_field_placeholder'
+    });
 }

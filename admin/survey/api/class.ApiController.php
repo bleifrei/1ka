@@ -121,11 +121,10 @@ class ApiController{
 				
 				// TUKAJ PRIDE DODATEN POGOJ CE GRE ZA PRIJAVO PREKO GOOGLA, FB... - V TEM PRIMERU NIMAMO PASSWORDA
 				if(!isset($this->data['Login']['password']) && isset($this->data['Login']['special_login'])){
-                    global $APP_special_login_key;
 
 					// DODATI FUNKCIJO checkSpecialLogin v SurveyMobile, kjer se pogleda samo če obstaja mail in nastavi ustrezno user id
 					if($this->data['Login']['special_login'] == 'nekajzavsakslucajv4x7in6' || 
-                                                $this->data['Login']['special_login'] == $APP_special_login_key){
+                                                $this->data['Login']['special_login'] == AppSettings::getInstance()->getSetting('maza-APP_special_login_key')){
 						$user_id = $sm->googleLogin($this->data['Login']['username']);
 					}
 				}

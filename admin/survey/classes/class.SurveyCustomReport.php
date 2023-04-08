@@ -29,9 +29,8 @@ class SurveyCustomReport {
 			
 			// polovimo vrsto tabel (aktivne / neaktivne)
 			SurveyInfo :: getInstance()->SurveyInit($this->ank_id);
-			if (SurveyInfo::getInstance()->getSurveyColumn('db_table') == 1) {
-				$this->db_table = '_active';
-			}
+			
+            $this->db_table = SurveyInfo::getInstance()->getSurveyArchiveDBString();
 			
 			// Inicializiramo in polovimo nastavitve missing profila
 			SurveyStatusProfiles::Init($this->ank_id);
@@ -1990,10 +1989,11 @@ class SurveyCustomReport {
 			$row = mysqli_fetch_array($sql);		
 			$titleString = $row['value'];
 		}	
-        //echo '<h2>'.$lang['srv_publc_creport_title_for'] .$titleString.'</h2>';
+
         echo '<h2>'.$titleString.'</h2>';
 
         echo '<input type="hidden" name="anketa_id" id="srv_meta_anketa_id" value="' . $anketa . '" />';
+        echo '<input type="hidden" name="anketa_hash" id="srv_meta_anketa_hash" value="' . SurveyInfo::getInstance()->getSurveyHash() . '" />';
         echo '<div id="analiza_data">';
 
         # ponastavimo nastavitve- filter

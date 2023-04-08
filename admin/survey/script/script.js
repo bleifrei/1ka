@@ -24,11 +24,13 @@ var __tabele = 0;        // pove ce smo v analizi v krostabulacijah(1)
 // poklice se v onload.js
 function load_meta_variables () {
 	srv_meta_anketa_id = $("#srv_meta_anketa_id").val();
+	srv_meta_anketa_hash = $("#srv_meta_anketa_hash").val();
 	srv_meta_podstran = $("#srv_meta_podstran").val();
 	srv_meta_akcija = $("#srv_meta_akcija").val();
 	srv_meta_grupa = $("#srv_meta_grupa").val();
 	srv_meta_branching = $("#srv_meta_branching").val();
 	srv_meta_full_screen_edit = ($("#srv_meta_full_screen_edit").val() == 1 ? true : false);
+    
 	loaded = true;
 };
 
@@ -138,8 +140,11 @@ function onload_init () {
 	});
 
 
-	$('#test_user_alert span').blink(
-			{fadeIn: 100, fadeOut: 200,pauseShow:500});	
+	$('#test_user_alert span').blink({
+        fadeIn: 100, 
+        fadeOut: 200,
+        pauseShow:500
+    });	
 	
 	// Search na vrhu po pritisku na enter skoci na drupal search
 	$('#searchSurvey').keypress(function (e) {
@@ -930,7 +935,7 @@ function insert_grupa_before(grupa) {
 
 function grupa_recount(prevent_recount) {
 	if (prevent_recount) {
-		$.post('ajax.php?a=outputLanguageNote', {anketa: srv_meta_anketa_id, note: 'srv_grupa_recount_alert_have_branching'}, function(response) { alert(response);   return false;});
+		$.post('ajax.php?a=outputLanguageNote', {anketa: srv_meta_anketa_id, note: 'srv_grupa_recount_alert_have_branching'}, function(response) { genericAlertPopup('alert_parameter_response',response);   return false;});
 	} else {
 		$.redirect('ajax.php?a=grupa_recount', {anketa: srv_meta_anketa_id, grupa: srv_meta_grupa});
 	}
@@ -1623,6 +1628,19 @@ function create_editor_hotspot (id, focus) {
 	editor_init = true;
 }
 
+function create_editor_notification(id) {
+
+	CKEDITOR.replace( id, {toolbar: 'Notification'});	// prikazi editor s Notification configuration
+
+	CKEDITOR.config.removePlugins = 'elementspath';	//odstrani spodnji tag, kjer po default-u so oznake html (body, p, ipd.)
+
+	CKEDITOR.instances[id].on('focus', function () {
+		this.execCommand('selectAll');
+	});
+
+    editor_init = true;
+}
+
 // odstrani editor za ne-spremenljivka (treba preden se odstrani html)
 function remove_editor (id) {
 	//odstranimo CKEDITOR v kolikor je inicializiran -> če preverjanja potem javi error in ostala javascript datoteka ne deluje
@@ -1789,7 +1807,7 @@ function grupa_sortable (preventMove) {
         stop: function () {
 	        if (preventMove == true) {
 	        	$(this).sortable('cancel');
-	        	$.post('ajax.php?a=outputLanguageNote', {anketa: srv_meta_anketa_id, note: 'srv_grupa_move_alert_have_branching'}, function(response) { alert(response);   return false;});
+	        	$.post('ajax.php?a=outputLanguageNote', {anketa: srv_meta_anketa_id, note: 'srv_grupa_move_alert_have_branching'}, function(response) { genericAlertPopup('alert_parameter_response',response);   return false;});
 	        } else
 	        	$.post('ajax.php?a=vrstnired_grupa', {serialize: $('#grupe').sortable('serialize')});
         }
@@ -1826,7 +1844,7 @@ function spremenljivka_sortable (preventMove) {
 			// {duration: 1});¸
             if (preventMove == true) {
             	$(this).sortable('cancel');
-            	$.post('ajax.php?a=outputLanguageNote', {anketa: srv_meta_anketa_id, note: 'srv_spremenljivka_move_alert_have_branching'}, function(response) { alert(response);   return false;});
+            	$.post('ajax.php?a=outputLanguageNote', {anketa: srv_meta_anketa_id, note: 'srv_spremenljivka_move_alert_have_branching'}, function(response) { genericAlertPopup('alert_parameter_response',response);   return false;});
             } else {
             	var moved = ui.item.attr('id');
             	var topage = $("#"+moved).parent().attr('id');
@@ -3426,7 +3444,7 @@ function newAnketaTemplate() {
 	}
 	
 	if(ank_id == '' || ank_id < 1){
-		alert(lang['srv_newSurvey_survey_template_error']);
+		genericAlertPopup('srv_newSurvey_survey_template_error');
 	}
 	else{
 		$.redirect('ajax.php?t=library&a=anketa_copy_new', {ank_id:ank_id, naslov:naslov, akronim:akronim, folder:folder});
@@ -4010,6 +4028,40 @@ function dostopPassiveShowAll(show_hide) {
 	}
 }
 
+function dostopNoteToggle () {
+
+    if($('#addusers_note_checkbox').is(':checked')){
+        $('#addusers_note').show();
+    }
+    else{
+        $('#addusers_note').hide();
+    }
+}
+
+// Ajax klic za dodajanje dostopa in posiljanje obvestila
+function dostopAddAccess () {
+
+    var addusers = $('#addusers').val();
+    
+    var addusers_note = '';
+    if($('#addusers_note_checkbox').is(':checked')){
+        addusers_note = $('#addusers_note').val();
+    }
+    
+    // Popup z rezultatom (uspesno ali neuspesno dodajanje dostopa)
+    $('#fade').fadeTo('slow', 1);
+    $('#popup_note').html('').fadeIn('slow');
+    $("#popup_note").load('ajax.php?a=add_survey_dostop_popup', {addusers:addusers, addusers_note:addusers_note, anketa:srv_meta_anketa_id}, function(){
+
+        // Refresh vsebine v ozadju
+        $("#globalSetingsList").load('ajax.php?a=refresh_dostop_settings', {anketa:srv_meta_anketa_id});
+    });
+}
+function dostopAddAccessPopupClose(){   
+    $('#popup_note').fadeOut('slow').html('');
+    $('#fade').fadeOut('slow');
+}
+
 function comments_admin_toggle (type) {
 	if ( $('#comments_admin'+type).attr('admin_on') == 'true' ) {
 		comments_admin_off(type);
@@ -4315,7 +4367,7 @@ function surveyBaseSettingRadio(what,foreceReload) {
 			//} else if (data.action == 1) {
 			}
 		} else {
-			alert(data.msg);
+			genericAlertPopup('alert_parameter_datamsg',data.msg);
 		}
 	});
 }
@@ -4327,7 +4379,7 @@ function surveyBaseSettingText(what,refresh) {
 	} else if ($('[name='+what+']').length) {
 		value = $('[name='+what+']').val();
 	} else {
-		alert('Error while saving!');
+		genericAlertPopup('alert_save_error');
 		return false;
 	}
 
@@ -4340,7 +4392,7 @@ function surveyBaseSettingText(what,refresh) {
 				// todo show save window
 			}
 		} else {
-			alert(data.msg);
+			genericAlertPopup('alert_parameter_datamsg',data.msg);
 		}
 	});
 }
@@ -4417,7 +4469,7 @@ function data_restore(anketa) {
 
 function deleteSurveyDataFile(note) {
 	if (confirm(note)) {
-		$.post('ajax.php?a=deleteSurveyDataFile', {anketa:srv_meta_anketa_id}, function (result) {alert(result)});
+		$.post('ajax.php?a=deleteSurveyDataFile', {anketa:srv_meta_anketa_id}, function (result) {genericAlertPopup('alert_parameter_response',response)});
 	}
 }
 function userGlobalSettingChange(what) {
@@ -4430,7 +4482,7 @@ function userGlobalSettingChange(what) {
 		var state = $(what).is(':checked') ? value : '0';
 		$.post('ajax.php?t=globalUserSettings', {name:name, value:state}, function (data) {});
 	} else {
-		alert("TODO:userGlobalSettingChange ("+type+")");
+		genericAlertPopup('alert_userGlobalSettingChange',type);
 	}
 }
 function changeSurveyLock(what) {
@@ -5139,9 +5191,6 @@ function evoli_tm_settings_add_oddelek(tm_id) {
 }
 
 
-// Zakaj je to tukaj?? - ne sme biti tako, ker drugače povozi funkcijo z istim imenom v main/survey (ce se kdaj klice iz tam - recimo pri komentarjih)
-//function checkBranching(){}
-
 // Popravimo crte med vprasanji ce imamo blok s horizontalnim izrisom vprasanj
 function blockHorizontalLine(spr_id){
 	
@@ -5187,11 +5236,11 @@ function save1kaRacunSettings(){
     }
     // Gesla nista enaka
     else if(geslo1 != geslo2){
-        alert(lang['cms_error_password_incorrect']);
+        genericAlertPopup('cms_error_password_incorrect');
     }
     // Geslo ni dovolj kompleksno
     else if(!complexPassword(geslo1)){
-        alert(lang['password_err_complex']);
+        genericAlertPopup('password_err_complex');
     }
     // Pri popravljanju gesla ga opozorimo, da bo odjavljen
     else{
@@ -5474,4 +5523,42 @@ function consultingPopupClose(){
 function removeUploadFromData(usr_id, spr_id, code){
     
     $("#fullscreen").load('ajax.php?t=postprocess&a=edit_data_question_upload_delete', {anketa: srv_meta_anketa_id, usr_id: usr_id, spr_id: spr_id, code: code});
+}
+
+// Kopiranje URLja za anketo
+function CopyToClipboard(copyText){
+	var temp_copy = $('<input>').val(copyText).appendTo('body').select()
+	document.execCommand('copy')
+  }
+
+// Popup - opozorilo na vsa vprašanja
+function popupAlertAll(alert_type){
+
+    $('#fade').fadeTo('slow', 1);
+    $('#popup_note').html('').fadeIn('slow');
+    $("#popup_note").load('ajax.php?a=alert_all_popup', {alert_type:alert_type, anketa:srv_meta_anketa_id});
+}
+
+function AlertAllPopupClose(){   
+    $('#popup_note').fadeOut('slow').html('');
+    $('#fade').fadeOut('slow');
+}
+
+//Generičen alert popup
+function genericAlertPopup(name, optional_parameter){
+
+	if (optional_parameter === undefined) {
+		optional_parameter = "";
+	}
+
+    $('#fade').fadeTo('slow', 1);
+	$('#popup_note').addClass('popup_orange');
+    $('#popup_note').html('').fadeIn('slow');
+    $("#popup_note").load('ajax.php?a=genericAlertPopup', {name:name, optional_parameter:optional_parameter});
+}
+
+function genericAlertPopupClose(){   
+    $('#popup_note').fadeOut('slow').html('');
+    $('#fade').fadeOut('slow');
+	$('#popup_note').removeClass('popup_orange');
 }

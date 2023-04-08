@@ -153,8 +153,7 @@ class SurveyAdmin
 
         SurveyInfo::getInstance()->SurveyInit($this->anketa);
 
-        if (SurveyInfo::getInstance()->getSurveyColumn('db_table') == 1)
-            $this->db_table = '_active';
+        $this->db_table = SurveyInfo::getInstance()->getSurveyArchiveDBString();
 
         $this->survey_type = $this->getSurvey_type($this->anketa);
 
@@ -212,6 +211,7 @@ class SurveyAdmin
                 echo '<form name="meta" action="" style="display:none">';
 
                 echo '<input type="hidden" name="anketa" id="srv_meta_anketa_id" value="' . $this->anketa . '" />';
+                echo '<input type="hidden" name="anketa_hash" id="srv_meta_anketa_hash" value="' . SurveyInfo::getInstance()->getSurveyHash() . '" />';
                 echo '<input type="hidden" name="srv_site_url" id="srv_site_url" value="' . $site_url . '" />';
                 echo '<input type="hidden" name="grupa"  id="srv_meta_grupa"  value="' . $this->grupa . '" />';
                 echo '<input type="hidden" name="branching" id="srv_meta_branching" value="' . $this->branching . '" />';
@@ -221,8 +221,7 @@ class SurveyAdmin
                 echo '<input type="hidden" name="editing_mode" id="editing_mode" value="1" />';
 
                 // Ce imamo vklopljene komercialne pakete
-                global $app_settings;
-                if($app_settings['commercial_packages']){
+                if(AppSettings::getInstance()->getSetting('app_settings-commercial_packages') === true){
                     $userAccess = UserAccess::getInstance($global_user_id);
 
                     // Ce gre za staro anketo nimamo omejitev
@@ -265,7 +264,6 @@ class SurveyAdmin
         global $lang;
         global $admin_type;
         global $site_domain;
-        global $aai_instalacija;
 
 
         echo '<div id="main_holder">';
@@ -320,7 +318,21 @@ class SurveyAdmin
         }
         // ZNOTRAJ ANKETE
         else{
-            echo '<div id="anketa">';  
+            echo '<div id="anketa">';
+
+            // breadcrumbs
+            echo '<div class="breadcrumbs">';
+
+            if ((isset($_GET['a']) && $this->first_action == 'NAVI_STATUS')? $breadcrumbs_a = '_' . $_GET['a'] : $breadcrumbs_a = '');
+            if ((isset($_GET['m']) && $this->first_action == 'NAVI_ANALYSIS' && $_GET['m'] == 'charts')? $breadcrumbs_m = '_' . $_GET['m'] : $breadcrumbs_m = '');
+            
+            echo $lang['navigation_'.$this->first_action] . ' > ' . $lang['navigation_'.$this->second_action.$breadcrumbs_a.$breadcrumbs_m];
+            if (isset($this->third_action)) {
+                echo ' > '.$lang['navigation_'.$this->third_action];
+            }
+            //echo '<br>'.$this->first_action .' > '.$this->second_action. ' > '.$this->third_action;
+            echo '</div>';
+
 
             echo '<div id="anketa_edit" class="page_'.$_GET['a'].' subpage_'.$_GET['m'].' '.($this->survey_type == '1' ? 'forma' : '').' '.($this->survey_type == '0' ? 'glasovanje' : '').'">';
             $this->displayAnketa();
@@ -497,8 +509,7 @@ class SurveyAdmin
         // Gumb za nadgraditev paketa v mojih anketah (ce imamo vklopljene pakete in nimamo 3ka paketa)
         if($this->anketa == 0){
   
-            global $app_settings;
-            if($app_settings['commercial_packages'] == true){
+            if(AppSettings::getInstance()->getSetting('app_settings-commercial_packages') === true){
 
                 // Preverimo trenuten paket uporabnika
                 $userAccess = UserAccess::getInstance($global_user_id);
@@ -670,8 +681,12 @@ class SurveyAdmin
 		}
 		
 		// GDPR popup za prejemanje obvestil - force ce ga se ni izpolnil - SAMO NA www.1ka.si, test.1ka.si in virtualkah
-		if (($site_url == 'https://www.1ka.si/' || $site_url == 'http://test.1ka.si/' || $site_url == 'https://1ka.arnes.si/' || ($cookie_domain == '.1ka.si' && $virtual_domain == true)) 
-				&& User::getInstance()->getSetting($setting='gdpr_agree') == '-1') {		
+		if ( ($site_url == 'http://test.1ka.si/' 
+                || isWWW()
+                || isAAI()
+                || ($cookie_domain == '.1ka.si' && isVirtual())) 
+			&& User::getInstance()->getSetting($setting='gdpr_agree') == '-1'
+        ) {		
 			
 			// Avtomatsko prikazemo po loadu
 			echo '<script>$(document).ready(function(){showGDPRMessage();})</script>';
@@ -697,9 +712,7 @@ class SurveyAdmin
     // Priakz footerja
     private function displayFooter(){
         global $lang;
-        global $app_settings;
         global $site_frontend;
-        global $aai_instalacija;
         global $mysql_database_name;
 
 
@@ -710,14 +723,14 @@ class SurveyAdmin
         echo '<div class="footer_left">';
         
         // Custom footer
-        if(isset($app_settings['footer_custom']) && $app_settings['footer_custom'] == 1){
-            echo $app_settings['footer_text'];
+        if(AppSettings::getInstance()->getSetting('app_settings-footer_custom') !== false){
+            echo AppSettings::getInstance()->getSetting('app_settings-footer_text');
         }
         // Default footer
         else{
             echo $lang['srv_footer_links'];
 
-            if(isset($aai_instalacija) && $aai_instalacija == true){
+            if(isAAI()){
                 echo ' | <a href="https://www.1ka.si/d/sl/pomoc/pogosta-vprasanja/pogosta-vprasanja-o-arnes-aai-prijavi-uporabi-orodja-1ka" target="_blank">'.$lang['aa4'].'</a>';
             }
 
@@ -761,7 +774,7 @@ class SurveyAdmin
         if (Common::checkModule('gorenje')){
             echo '<a href="https://helpdesk.gorenje.com/SubmitSR.jsp" target="_blank"><span class="faicon inline_comment"></span> '.$lang['srv_footer_reportabug'].'</a>';
         }
-        elseif(isset($aai_instalacija) && $aai_instalacija == true){
+        elseif(isAAI()){
             echo '<a href="https://www.1ka.si/help1KA" target="_blank"><span class="faicon inline_comment"></span> '.$lang['srv_footer_reportabug'].'</a>';
         }
         else{
@@ -864,9 +877,8 @@ class SurveyAdmin
 
 
             // Gumb za nadgraditev paketa (ce imamo vklopljene pakete in nimamo 3ka paketa)
-            global $app_settings;
             global $global_user_id;
-            if($app_settings['commercial_packages'] == true){
+            if(AppSettings::getInstance()->getSetting('app_settings-commercial_packages') === true){
 
                 // Preverimo trenuten paket uporabnika
                 $userAccess = UserAccess::getInstance($global_user_id);
@@ -915,10 +927,12 @@ class SurveyAdmin
 
         # vse tri nivoje akcij pohendlamo tukaj, da bo lažje ob kakih spremnjanjih
 
-        # prvi in drugi nivo
+        # prvi in drugi nivo (tretji samo za mobilno navigacijo)
         $navigationArray = CrossRoad::MainNavigation($this->anketa, true);
         $this->first_action = $navigationArray['first_action'];
         $this->second_action = $navigationArray['second_action'];
+        $this->third_action = $navigationArray['third_action'];
+
         
         $css_status = 'off';
         $css_urejanje = 'off';
@@ -1958,7 +1972,8 @@ class SurveyAdmin
 			|| $this->first_action == 'langStatistic'
 			|| $this->first_action == 'usable_resp'
 			|| $this->first_action == 'speeder_index'
-			|| $this->first_action == 'reminder_tracking') {
+			|| $this->first_action == 'reminder_tracking'
+            || $this->first_action == 'status_advanced') {
 
             echo '<ul class="secondNavigation">';
 
@@ -1991,114 +2006,13 @@ class SurveyAdmin
             echo '<li class="space"></li>';
             //}
 
-            # usable respondents
+            # Gumb za novo stran napredni statusi
             echo '<li>';
-            echo '<a class="no-img' . ($_GET['a'] == A_USABLE_RESP ? ' active' : '') . '"'
-                . ' href="index.php?anketa=' . $this->anketa . '&amp;a=' . A_USABLE_RESP . '" title="' . $lang['srv_usable_respondents'] . '">';
-            echo $lang['srv_usable_respondents'] . '</a>';
+            echo '<a class="no-img' . ($_GET['a'] == A_STATUS_ADVANCED ? ' active' : '') . '"'
+                . ' href="index.php?anketa=' . $this->anketa . '&amp;a=' . A_STATUS_ADVANCED . '" title="' . $lang['srv_status_advanced'] . '">';
+            echo $lang['srv_status_advanced'] . ' >></a>';
             echo '</li>';
             echo '<li class="space"></li>';
-
-            # kakovost resp - V DELU - ZAENKRAT SAMO ADMINI
-			if ($admin_type === '0') {
-				echo '<li>';
-				echo '<a class="no-img' . ($_GET['a'] == A_KAKOVOST_RESP ? ' active' : '') . '"'
-					. ' href="index.php?anketa=' . $this->anketa . '&amp;a=' . A_KAKOVOST_RESP . '" title="' . $lang['srv_kakovost'] . '">';
-				echo $lang['srv_kakovost'] . '</a>';
-				echo '</li>';
-				echo '<li class="space"></li>';
-			}
-
-			# speeder index - V DELU - ZAENKRAT SAMO ADMINI
-			if ($admin_type === '0') {
-				echo '<li>';
-				echo '<a class="no-img' . ($_GET['a'] == A_SPEEDER_INDEX ? ' active' : '') . '"'
-					. ' href="index.php?anketa=' . $this->anketa . '&amp;a=' . A_SPEEDER_INDEX . '" title="' . $lang['srv_speeder_index'] . '">';
-				echo $lang['srv_speeder_index'] . '</a>';
-				echo '</li>';
-				echo '<li class="space"></li>';
-			}
-
-            # text analysis
-            if ($admin_type === '0' || $admin_type === '1') {
-                echo '<li>';
-                echo '<a class="no-img' . ($_GET['a'] == A_TEXT_ANALYSIS ? ' active' : '') . '"'
-                    . ' href="index.php?anketa=' . $this->anketa . '&amp;a=' . A_TEXT_ANALYSIS . '" title="' . $lang['srv_text_analysis'] . '">';
-                echo $lang['srv_text_analysis'] . '</a>';
-                echo '</li>';
-                echo '<li class="space"></li>';
-            }
-
-			# IP analiza lokacij - gorenje ima to ugasnjeno, volitve imajo tudi ugasnjeno
-            if (!Common::checkModule('gorenje') && !SurveyInfo::getInstance()->checkSurveyModule('voting')) {
-                echo '<li>';
-                echo '<a class="no-img' . ($_GET['a'] == A_GEOIP_LOCATION ? ' active' : '') . '"'
-                    . ' href="index.php?anketa=' . $this->anketa . '&amp;a=' . A_GEOIP_LOCATION . '" title="' . $lang['srv_geoip_location'] . '">';
-                echo $lang['srv_geoip_location'] . '</a>';
-                echo '</li>';
-                echo '<li class="space"></li>';
-            }
-
-            # Analize urejanja - V DELU - ZAENKRAT SAMO ADMINI
-            if ($admin_type === '0') {
-                echo '<li>';
-                echo '<a class="no-img' . ($_GET['a'] == A_EDITS_ANALYSIS ? ' active' : '') . '"'
-                    . ' href="index.php?anketa=' . $this->anketa . '&amp;a=' . A_EDITS_ANALYSIS . '" title="' . $lang['srv_edits_analysis'] . '">';
-                echo $lang['srv_edits_analysis'] . '</a>';
-                echo '</li>';
-                echo '<li class="space"></li>';
-            }
-
-			# reminder tracking - pokazi, ce je admin in so vklopljeni napredni parapodatki
-            $survey_track_reminders = SurveySetting::getInstance()->getSurveyMiscSetting('survey_track_reminders');
-            if ($survey_track_reminders == '') $survey_track_reminders = 0;    
-            if (($admin_type === '0' || $admin_type === '1') && SurveyInfo::getInstance()->checkSurveyModule('advanced_paradata')) {    
-                echo '<li>';
-				echo '<a class="no-img' . ($_GET['a'] == A_REMINDER_TRACKING ? ' active' : '') . '"'
-                    . ' href="index.php?anketa=' . $this->anketa . '&amp;a=' . A_REMINDER_TRACKING . '&m='. A_REMINDER_TRACKING_RECNUM .'" title="' . $lang['srv_reminder_tracking'] . '">';
-                echo $lang['srv_reminder_tracking'] . '</a>';
-                echo '</li>';
-                echo '<li class="space"></li>';
-            }
-
-            # ul evalvacija
-            if (Common::checkModule('evalvacija') == '1') {
-                echo '<li>';
-                echo '<a class="no-img' . ($_GET['a'] == A_UL_EVALVATION ? ' active' : '') . '"'
-                    . ' href="index.php?anketa=' . $this->anketa . '&amp;a=' . A_UL_EVALVATION . '" title="UL evalvacije">';
-                echo 'UL evalvacije</a>';
-                echo '</li>';
-                echo '<li class="space"></li>';
-            }
-
-            # AAPOR
-            #aapor naj bo viden samo če so vabila
-            if (SurveyInfo::getSurveyColumn('user_base') == 1 || SurveyInfo::getInstance()->checkSurveyModule('email')) {
-                echo '<li>';
-                echo '<a class="no-img' . ($_GET['a'] == 'AAPOR' ? ' active' : '') . '"'
-                    . ' href="index.php?anketa=' . $this->anketa . '&amp;a=AAPOR&m=aapor1" title="' . $lang['srv_aapor'] . '">';
-                echo $lang['srv_aapor'] . '</a>';
-                echo '</li>';
-                echo '<li class="space"></li>';
-            }
-
-            # langStatistic
-            #langStatistic naj bo viden samo če imamo različne jezike in nimamo volitev
-            if (!Common::checkModule('gorenje') && !SurveyInfo::getInstance()->checkSurveyModule('voting')) {
-                
-                $qry_string = "SELECT language FROM srv_user WHERE ank_id = '" . $this->anketa . "' AND preview = '0' AND deleted='0' group by language";
-                $qry = (sisplet_query($qry_string));
-                $cntLang = mysqli_num_rows($qry);
-
-                if ($cntLang > 1) {
-                    echo '<li>';
-                    echo '<a class="no-img' . ($_GET['a'] == 'langStatistic' ? ' active' : '') . '"'
-                        . ' href="index.php?anketa=' . $this->anketa . '&amp;a=langStatistic" title="' . $lang['srv_languages_statistics'] . '">';
-                    echo $lang['srv_languages_statistics'] . '</a>';
-                    echo '</li>';
-                    echo '<li class="space"></li>';
-                }
-            }
 
             echo '</ul>';
         }
@@ -2210,6 +2124,9 @@ class SurveyAdmin
         }
         elseif($_GET['a'] == 'nonresponse_graph'){
             $podstran = 'para_analysis_graph';
+        }
+        elseif($_GET['a'] == 'status_advanced'){
+            $podstran = 'status_advanced';
         }
 
         // Izrisemo ustrezen meni, ce je prisoten
@@ -2438,6 +2355,8 @@ class SurveyAdmin
     }
 
     private function displayAnketaTabStatus(){
+        global $lang;
+        global $admin_type;
         
         // Osnovni statusi
         if ($_GET['a'] == A_REPORTI) { 
@@ -2534,7 +2453,114 @@ class SurveyAdmin
             echo '	<div id="surveyStatistic">';
             $ss->DisplayLangStatistic();
             echo '	</div>';
-        } 
+        }
+        //prikaze napredne statuse
+        elseif ($_GET['a'] == A_STATUS_ADVANCED) { 
+            echo '<div class="status_advanced">';
+            
+                // Uporabni respondenti   
+                echo '<a class="status_advanced_link' . ($_GET['a'] == A_USABLE_RESP ? ' active' : '') . '"'
+                . ' href="index.php?anketa=' . $this->anketa . '&amp;a=' . A_USABLE_RESP . '" title="' . $lang['srv_usable_respondents'] . '">';
+                echo '<div class="status_advanced_box" name="status_advanced_box1" id="status_advanced_box1" >';
+                echo $lang['srv_usable_respondents'];
+                echo '</div> </a>';
+                    
+                // Kakovost respondentov - v delu, zaenkrat samo admini
+                if ($admin_type === '0') {
+                    echo '<a class="status_advanced_link' . ($_GET['a'] == A_KAKOVOST_RESP ? ' active' : '') . '"'
+                    . ' href="index.php?anketa=' . $this->anketa . '&amp;a=' . A_KAKOVOST_RESP . '" title="' . $lang['srv_kakovost'] . '">';
+                    echo '<div class="status_advanced_box" name="status_advanced_box2" id="status_advanced_box2" >';
+                    echo $lang['srv_kakovost'];
+                    echo '</div> </a>';
+
+                }
+                
+                // Index hitrosti - v delu, zaenkrat samo admini
+                if ($admin_type === '0') {
+                    echo '<a class="status_advanced_link' . ($_GET['a'] == A_SPEEDER_INDEX ? ' active' : '') . '"'
+                    . ' href="index.php?anketa=' . $this->anketa . '&amp;a=' . A_SPEEDER_INDEX . '" title="' . $lang['srv_speeder_index'] . '">';
+                    echo '<div class="status_advanced_box" name="status_advanced_box3" id="status_advanced_box3" >';
+                    echo $lang['srv_speeder_index'];
+                    echo '</div> </a>';
+
+                }
+                
+                // Analiza besedil
+                if ($admin_type === '0' || $admin_type === '1') {
+                    echo '<a class="status_advanced_link' . ($_GET['a'] == A_TEXT_ANALYSIS ? ' active' : '') . '"'
+                    . ' href="index.php?anketa=' . $this->anketa . '&amp;a=' . A_TEXT_ANALYSIS . '" title="' . $lang['srv_text_analysis'] . '">';
+                    echo '<div class="status_advanced_box" name="status_advanced_box4" id="status_advanced_box4" >';
+                    echo $lang['srv_text_analysis'];
+                    echo '</div> </a>';
+                }
+                
+                // IP lokacija - gorenje ima to ugasnjeno, volitve imajo tudi ugasnjeno
+                if (!Common::checkModule('gorenje') && !SurveyInfo::getInstance()->checkSurveyModule('voting')) {
+                    echo '<a class="status_advanced_link' . ($_GET['a'] == A_GEOIP_LOCATION ? ' active' : '') . '"'
+                    . ' href="index.php?anketa=' . $this->anketa . '&amp;a=' . A_GEOIP_LOCATION . '" title="' . $lang['srv_geoip_location'] . '">';
+                    echo '<div class="status_advanced_box" name="status_advanced_box5" id="status_advanced_box5" >';
+                    echo $lang['srv_geoip_location'];
+                    echo '</div> </a>';
+                }
+                
+                // Analize urejanja - v delu, zaenkrat samo admini
+                if ($admin_type === '0') {
+                    echo '<a class="status_advanced_link' . ($_GET['a'] == A_EDITS_ANALYSIS ? ' active' : '') . '"'
+                    . ' href="index.php?anketa=' . $this->anketa . '&amp;a=' . A_EDITS_ANALYSIS . '" title="' . $lang['srv_edits_analysis'] . '">';
+                    echo '<div class="status_advanced_box" name="status_advanced_box6" id="status_advanced_box6" >';
+                    echo $lang['srv_edits_analysis'];
+                    echo '</div> </a>';
+                }
+                
+                // reminder tracking - pokazi, ce je admin in so vklopljeni napredni parapodatki
+                $survey_track_reminders = SurveySetting::getInstance()->getSurveyMiscSetting('survey_track_reminders');
+                if ($survey_track_reminders == '') $survey_track_reminders = 0;    
+                if (($admin_type === '0' || $admin_type === '1') && SurveyInfo::getInstance()->checkSurveyModule('advanced_paradata')) {    
+                    echo '<a class="status_advanced_link' . ($_GET['a'] == A_REMINDER_TRACKING ? ' active' : '') . '"'
+                    . ' href="index.php?anketa=' . $this->anketa . '&amp;a=' . A_REMINDER_TRACKING . '&m='. A_REMINDER_TRACKING_RECNUM .'" title="' . $lang['srv_reminder_tracking'] . '">';
+                    echo '<div class="status_advanced_box" name="status_advanced_box7" id="status_advanced_box7" >';
+                    echo $lang['srv_reminder_tracking'];
+                    echo '</div> </a>';
+                }
+
+                // ul evalvacija
+                if (Common::checkModule('evalvacija') == '1') {
+                    echo '<a class="status_advanced_link' . ($_GET['a'] == A_UL_EVALVATION ? ' active' : '') . '"'
+                        . ' href="index.php?anketa=' . $this->anketa . '&amp;a=' . A_UL_EVALVATION . '" title="UL evalvacije">';
+                    echo '<div class="status_advanced_box" name="status_advanced_box8" id="status_advanced_box8" >';
+                    echo 'UL evalvacije';
+                    echo '</div> </a>';
+                }
+
+                // AAPOR
+                // aapor naj bo viden samo če so vabila
+                if (SurveyInfo::getSurveyColumn('user_base') == 1 || SurveyInfo::getInstance()->checkSurveyModule('email')) {
+                    echo '<a class="status_advanced_link' . ($_GET['a'] == 'AAPOR' ? ' active' : '') . '"'
+                        . ' href="index.php?anketa=' . $this->anketa . '&amp;a=AAPOR&m=aapor1" title="' . $lang['srv_aapor'] . '">';
+                    echo '<div class="status_advanced_box" name="status_advanced_box9" id="status_advanced_box9" >';
+                    echo $lang['srv_aapor'];
+                    echo '</div> </a>';
+                }
+
+                // langStatistic
+                // langStatistic naj bo viden samo če imamo različne jezike in nimamo volitev
+                if (!Common::checkModule('gorenje') && !SurveyInfo::getInstance()->checkSurveyModule('voting')) {
+
+                    $qry_string = "SELECT language FROM srv_user WHERE ank_id = '" . $this->anketa . "' AND preview = '0' AND deleted='0' group by language";
+                    $qry = (sisplet_query($qry_string));
+                    $cntLang = mysqli_num_rows($qry);
+
+                    if ($cntLang > 1) {
+                        echo '<a class="status_advanced_link' . ($_GET['a'] == 'langStatistic' ? ' active' : '') . '"'
+                            . ' href="index.php?anketa=' . $this->anketa . '&amp;a=langStatistic" title="' . $lang['srv_languages_statistics'] . '">';
+                        echo '<div class="status_advanced_box" name="status_advanced_box10" id="status_advanced_box10" >';
+                        echo $lang['srv_languages_statistics'];
+                        echo '</div> </a>';
+                    }
+                }
+            
+            echo '</div>';
+        }
     }
 
     private function displayAnketaTabUrejanje(){
@@ -3317,7 +3343,8 @@ class SurveyAdmin
 			echo '<a href="index.php?anketa=' . $this->anketa . '&amp;a='.A_KVIZ.'" title="' . $lang['srv_vrsta_survey_type_6'] . '" '.(!$userAccess->checkUserAccess($what='kviz') ? 'class="user_access_locked"' : '').'><span>' . $lang['srv_vrsta_survey_type_6'] . '</span></a></li> ';
 
             # Volitve
-            if ($admin_type == 0) {
+            global $mysql_database_name;
+            if ($admin_type == 0 || $mysql_database_name == 'test1kasi') {
                 echo '<li ' . ($get == A_VOTING ? ' class="highlightLineTab"' : ' class="nonhighlight"') . '>';
                 echo '<a href="index.php?anketa=' . $this->anketa . '&amp;a='.A_VOTING.'" title="' . $lang['srv_vrsta_survey_type_18'] . '" '.(!$userAccess->checkUserAccess($what='voting') ? 'class="user_access_locked"' : '').'><span>' . $lang['srv_vrsta_survey_type_18'] . '</span></a></li> ';
             }
@@ -3766,7 +3793,6 @@ class SurveyAdmin
     {
         global $site_url;
 
-        //return '&lt;iframe id="1ka" src="'.$site_url.'main/survey/index.php?anketa='.$this->anketa.'" scrolling="auto" frameborder="0" width="100%"&gt;&lt;/iframe&gt;&lt;script type="text/javascript"&gt;function r(){var a=window.location.hash.replace("#","");if(a.length==0)return;document.getElementById("1ka").style.height=a+"px";window.location.hash=""};window.setInterval(\\\'r()\\\',100);&lt;/script&gt;';
         $iframe = '<iframe id="1ka" src="' . SurveyInfo::getSurveyLink() . '" height="400px" width="100%" scrolling="auto" frameborder="0"></iframe>';
         $javascript = '<script type="text/javascript">function r(){var a=window.location.hash.replace("#","");if(a.length==0)return;document.getElementById("1ka").style.height=a+"px";window.location.hash=""};window.setInterval("r()",100);</script>';
 
@@ -4162,8 +4188,7 @@ class SurveyAdmin
 
 
         // Javascript s katerim povozimo urlje za izvoze, ki niso na voljo v paketu
-        global $app_settings;
-        if($app_settings['commercial_packages'] == true){
+        if(AppSettings::getInstance()->getSetting('app_settings-commercial_packages') === true){
             echo '<script> userAccessExport(); </script>';
         }
     }
@@ -4383,7 +4408,7 @@ class SurveyAdmin
             } else {
                 echo '
 				<script language="javascript">
-				alert(\'' . $lang['srv_filealert'] . '\');
+				genericAlertPopup(\'srv_filealert\');
 				</script>
 				';
 
@@ -4429,8 +4454,7 @@ class SurveyAdmin
      * @return unknown_type
      *
      */
-    function anketa_delete_from_db($anketa)
-    {
+    function anketa_delete_from_db($anketa){
         global $site_path, $global_user_id;
 
         if (!$anketa) return;
@@ -4442,23 +4466,27 @@ class SurveyAdmin
         unset($_SESSION['query']);
         unset($_SESSION['result']);
 
-        // pošiljanje obvestil ob izbrisu ankete
-        //SurveyAlert::getInstance()->Init($anketa, $global_user_id);
-        //SurveyAlert::getInstance()->sendMailDelete();
 
         $sql = sisplet_query("SELECT id FROM srv_grupa WHERE ank_id = '$anketa'");
         while ($row = mysqli_fetch_array($sql)) {
+
             $sql1 = sisplet_query("SELECT id FROM srv_spremenljivka WHERE gru_id='$row[id]'");
             while ($row1 = mysqli_fetch_array($sql1)) {
                 $sql2 = sisplet_query("DELETE FROM srv_vrednost WHERE spr_id = '$row1[id]'");
             }
+
             $sql2 = sisplet_query("DELETE FROM srv_spremenljivka WHERE gru_id = '$row[id]'");
 
-            # tabela srv_user_grupa
-            $sql2 = sisplet_query("DELETE FROM srv_user_grupa WHERE gru_id = '$row[id]'");
+            # tabela srv_user_grupa_archive1
+            $sql2 = sisplet_query("DELETE FROM srv_user_grupa_archive1 WHERE gru_id = '$row[id]'");
+
+            # tabela srv_user_grupa_archive2
+            $sql2 = sisplet_query("DELETE FROM srv_user_grupa_archive2 WHERE gru_id = '$row[id]'");
+
             # tabela srv_user_grupa_active
             $sql2 = sisplet_query("DELETE FROM srv_user_grupa" . $this->db_table . " WHERE gru_id = '$row[id]'");
         }
+
         $sql2 = sisplet_query("DELETE FROM srv_grupa WHERE ank_id = '$anketa'");
         $sql2 = sisplet_query("DELETE FROM srv_alert WHERE ank_id = '$anketa'");
         $sql2 = sisplet_query("DELETE FROM srv_dostop WHERE ank_id = '$anketa'");
@@ -4471,6 +4499,7 @@ class SurveyAdmin
         $sql2 = sisplet_query("DELETE FROM srv_variable_profiles WHERE sid = '$anketa'");
         $sql2 = sisplet_query("DELETE FROM srv_glasovanje WHERE ank_id = '$anketa'");
         $sql2 = sisplet_query("DELETE FROM srv_survey_misc WHERE sid = '$anketa'");
+        
         # Pobrisemo srv_condition_vre
         $sql2 = sisplet_query("DELETE FROM srv_condition_vre WHERE cond_id IN (SELECT id FROM srv_condition WHERE if_id IN (SELECT element_if FROM srv_branching WHERE ank_id = '$anketa' AND element_if > 0))");
         #Pobrisemo srv_condition_grid
@@ -4572,11 +4601,15 @@ class SurveyAdmin
 			$mobile_skin = 'Mobile'.$skin;
 		}
 
-        $sql = sisplet_query("INSERT INTO srv_anketa (id, naslov, akronim, db_table, starts, expire, dostop, insert_uid, insert_time, edit_uid, edit_time, cookie, text, url, intro_opomba, show_intro, show_concl, survey_type, lang_admin, lang_resp, active, skin, mobile_skin) " .
-            "VALUES ('', '$naslov', '$akronim', '1', $starts, $expire, '0', '$global_user_id', NOW(), '$global_user_id', NOW(), '$SurveyCookie', '$text', '$url', '$intro_opomba', '$showIntro', '$showConcl', '$survey_type', '$lang_admin', '$lang_resp', '$autoActiveSurvey', '$skin', '$mobile_skin')");
+        // Nastavimo se hash
+        $hash = Common::generateSurveyHash();
+
+        $sql = sisplet_query("INSERT INTO srv_anketa (id, hash, naslov, akronim, db_table, starts, expire, dostop, insert_uid, insert_time, edit_uid, edit_time, cookie, text, url, intro_opomba, show_intro, show_concl, survey_type, lang_admin, lang_resp, active, skin, mobile_skin) " .
+            "VALUES ('', '".$hash."', '$naslov', '$akronim', '1', $starts, $expire, '0', '$global_user_id', NOW(), '$global_user_id', NOW(), '$SurveyCookie', '$text', '$url', '$intro_opomba', '$showIntro', '$showConcl', '$survey_type', '$lang_admin', '$lang_resp', '$autoActiveSurvey', '$skin', '$mobile_skin')");
         if (!$sql) {
             $error = mysqli_error($GLOBALS['connect_db']);
         }
+
         $anketa = mysqli_insert_id($GLOBALS['connect_db']);
 
 
@@ -4585,21 +4618,18 @@ class SurveyAdmin
 
 			// Updatamo srv_activity, ce je anketa aktivna - drugace se ne zabelezi ok ko se deaktivira
 			if ($autoActiveSurvey == 1) {
-				$activity_insert_string = "INSERT INTO srv_activity (sid, starts, expire, uid) VALUES('" . $anketa . "', $starts, $expire, '" . $global_user_id . "' );";
-				$sql_insert = sisplet_query($activity_insert_string);
+				$sql_insert = sisplet_query("INSERT INTO srv_activity (sid, starts, expire, uid) VALUES ('".$anketa."', $starts, $expire, '".$global_user_id."')");
 			}
 
 			// vnesemo tudi 1. grupo aka page
-			$sql = sisplet_query("INSERT INTO srv_grupa (id, ank_id, naslov, vrstni_red) VALUES ('', '$anketa', '$lang[srv_stran] 1', '1')");
+			$sql = sisplet_query("INSERT INTO srv_grupa (ank_id, naslov, vrstni_red) VALUES ('$anketa', '$lang[srv_stran] 1', '1')");
+            
+            $grupa = mysqli_insert_id($GLOBALS['connect_db']);
 
 			//ce se nimamo vprasanja v glasovanju ga ustvarimo
 			if ($survey_type == 0) {
-				$sqlGrupe = sisplet_query("SELECT id, naslov FROM srv_grupa g WHERE g.ank_id='$anketa' ORDER BY g.vrstni_red");
-				$rowGrupe = mysqli_fetch_assoc($sqlGrupe);
 
-				$grupa = $rowGrupe['id'];
-
-				$b = new Branching($this->anketa);
+				$b = new Branching($anketa);
 				$spr_id = $b->nova_spremenljivka($grupa, 1, 1);
 
 				//napolnimo bazo srv_glasovanje
@@ -4617,10 +4647,11 @@ class SurveyAdmin
 				$sql1 = sisplet_query("INSERT INTO srv_vrednost (spr_id, variable, vrstni_red) VALUES $values");
 
 				//popravljanje default nastavitev - stat=0, show_intro=0
-				$sqlSpr = sisplet_query("UPDATE srv_spremenljivka SET stat = '0' WHERE id = '$spr_id'");
-				$sqlAnk = sisplet_query("UPDATE srv_anketa SET show_intro = '0', show_concl = '0', progressbar = '0', countType = '0', akronim = ' ' WHERE id = '$anketa'");
-				// vsilimo refresh podatkov
-				SurveyInfo:: getInstance()->resetSurveyData();
+				$sqlSpr = sisplet_query("UPDATE srv_spremenljivka SET stat = '0', skala='0' WHERE id = '$spr_id'");
+				$sqlAnk = sisplet_query("UPDATE srv_anketa SET show_intro = '0', show_concl = '0', progressbar = '0', countType = '0' WHERE id = '$anketa'");
+				
+                // vsilimo refresh podatkov
+				SurveyInfo::getInstance()->resetSurveyData();
 			}
 
 			//popravljanje default nastavitev pri formi - show_intro=0, show_concl=0, trajanje->neomejeno
@@ -4664,12 +4695,6 @@ class SurveyAdmin
 			
 			// Nastavimo obvescanje pri poteku ankete (default ob kreiranju ankete)
 			SurveyAlert::setDefaultAlertBeforeExpire();
-			
-			// uporabniku dodamo anketo se v knjiznico "moje ankete"
-			// torej uporabniku ne bomo avtomatsko dodali ankete v knjiznico "moje ankete"
-			//$sqlk = sisplet_query("SELECT * FROM srv_library_folder WHERE uid='$uid' AND tip='1' AND parent='0'");
-			//$rowk = mysqli_fetch_array($sqlk);
-			//sisplet_query("INSERT INTO srv_library_anketa (ank_id, uid, folder) VALUES ('$anketa', '$uid', '$rowk[id]')");
 
 			return $anketa;
 		}
@@ -6875,34 +6900,6 @@ class SurveyAdmin
             }
 
             echo '</span>';
-        }
-
-
-        # Objava na FB, twitter, .... share pac
-        if ($row['active'] == 1 && false) {
-            # NE PRIKAZUJEMO IKONIC
-            $sqlu = sisplet_query("SELECT email FROM users WHERE id='" . $this->uid() . "'");
-            $rowu = mysqli_fetch_array($sqlu);
-            if ($rowu['email'] == '') {
-                $sqlm = sisplet_query("SELECT value FROM misc WHERE what = 'AlertFrom'");
-                $rowm = mysqli_fetch_array($sqlm);
-                $rowu['email'] = $rowm['value'];
-            }
-            ?><span style="display: inline-block; margin-left:25px;">
-            <span class="anketa_img_icons" style="margin-top: 3px;">
-			<a href="mailto:<?= $rowu['email'] ?>?body=<?= urlencode(SurveyInfo::getSurveyLink()) ?>?subject=<?= $row['naslov'] ?>"
-               target="_blank" title="<?= $lang['srv_add_to_mail'] ?>"><span class="sprites email"></span></a>
-			</span>
-			<span class="anketa_img_icons">
-			<a href="http://www.facebook.com/share.php?u=<?= urlencode(SurveyInfo::getSurveyLink()) ?>" target="_blank"
-               title="<?= $lang['srv_add_to_fb'] ?>"><span class="sprites facebook"></span></a>
-			</span>
-			<span class="anketa_img_icons">
-			<a href="http://twitter.com/share?url=<?= urlencode(SurveyInfo::getSurveyLink()) ?>?text=<?= $row['naslov'] ?>"
-               target="_blank" title="<?= $lang['srv_add_to_tw'] ?>"><span class="sprites twitter"></span></a>
-			</span>
-            </span>
-            <?php
         }
     }
 

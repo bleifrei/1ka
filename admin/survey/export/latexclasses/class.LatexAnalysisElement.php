@@ -925,6 +925,12 @@ class LatexAnalysisElement{
 		//$text = str_replace('_','\_ ',$text);	
 		$text = str_replace('_','\_',$text);	
 		$text = str_replace('~','\textasciitilde{} ',$text);
+		
+		//$text = str_replace('&lt;','\textless ',$text);
+		$text = str_replace('&lt;','\textless',$text);
+		//$text = str_replace('&gt;','\textgreater ',$text);
+		$text = str_replace('&gt;','\textgreater',$text);
+		$text = str_replace('&nbsp;',' ',$text);
 		if(strpos($text, '&amp;')){	//ce je prisotno v besedilu &amp;'
 			$text = str_replace('&amp;','\& ',$text);
 		}else{
@@ -941,11 +947,11 @@ class LatexAnalysisElement{
 			$text = str_replace('&','\&',$text);
 		}
 		
-		//$text = str_replace('&lt;','\textless ',$text);
+		/* //$text = str_replace('&lt;','\textless ',$text);
 		$text = str_replace('&lt;','\textless',$text);
 		//$text = str_replace('&gt;','\textgreater ',$text);
 		$text = str_replace('&gt;','\textgreater',$text);
-		$text = str_replace('&nbsp;',' ',$text);
+		$text = str_replace('&nbsp;',' ',$text); */
 		//ureditev posebnih karakterjev za Latex - konec
 
 		//ureditev grskih crk

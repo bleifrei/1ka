@@ -416,13 +416,9 @@ class DragDropController extends Controller
             $length = strlen($value);    //dolzina teksta kategorije odgovora
             $style = '';
             if (get('mobile') == 0 || get('mobile') == 2) {// ce respondent uporablja PC ali tablico
-                //if($display_drag_and_drop_new_look != 1){
-					$class = 'ranking';
-/* 				}else if($display_drag_and_drop_new_look == 1){
-					$class = 'drag_and_drop_box';
-				} */
-				
-            } else if (get('mobile') == 1) {
+				$class = 'ranking';				
+            } 
+            else if (get('mobile') == 1) {
                 $class = 'ranking_mobile';
             }
             $c = '';
@@ -490,32 +486,12 @@ class DragDropController extends Controller
 
 
                 $(document).ready(function () {
-					//if(<?=$display_drag_and_drop_new_look?> == 0){
-						GridDraggable(<?=$row['tip']?>, <?=$spremenljivka?>, <?=$vre_id?>, <?=$ajax?>, srv_meta_anketa_id, '<?=self::$site_url?>', usr_id, <?=$other?>, <?=get('mobile')?>, <?=$display_drag_and_drop_new_look?>, <?=$quick_view?>, <?=$preview_spremenljivka?>); //poklici funkcijo za ureditev draggable in droppable
-/* 					}
-					else if(<?=$display_drag_and_drop_new_look?> == 1){
-						//GridDraggableBox(<?=$row['tip']?>, <?=$spremenljivka?>, <?=$vre_id?>, <?=$ajax?>, srv_meta_anketa_id, '<?=self::$site_url?>', <?=$usr_id?>, <?=$other?>, <?=get('mobile')?>); //poklici funkcijo za ureditev draggable in droppable						
-						GridDraggableBox(<?=$row['tip']?>, <?=$spremenljivka?>, <?=$vre_id?>, <?=$ajax?>, srv_meta_anketa_id, '<?=self::$site_url?>', usr_id, <?=$other?>, <?=get('mobile')?>); //poklici funkcijo za ureditev draggable in droppable						
-					} */
+					GridDraggable(<?=$row['tip']?>, <?=$spremenljivka?>, <?=$vre_id?>, <?=$ajax?>, srv_meta_anketa_id, '<?=self::$site_url?>', usr_id, <?=$other?>, <?=get('mobile')?>, <?=$display_drag_and_drop_new_look?>, <?=$quick_view?>, <?=$preview_spremenljivka?>); //poklici funkcijo za ureditev draggable in droppable
                 });
             </script>
             <?
-            //echo	'<div id="vrednost_if_'.$id.'" class="variabla">';
-            //echo	'</div>';	//vrednost_if_ID
-            //div ki vsebuje vrednost
-            //if($length > 30)
-            //	if($length > 90){
-            //		$niz = substr($value, 0, 90);
-            //echo	'<div title="'.strip_tags($value).'" id="'.$class.'_'.$id.'" class="'.$class.'_long '.$c.'">'.$niz.'...</div>'."\n";
-            //		echo	'<div title="'.strip_tags($value).'" id="'.$class.'_'.$vre_id.'" class="'.$class.'_long '.$c.'">'.$niz.'...</div>'."\n";
-            //	}
-            //	else
-            //echo	'<div title="'.strip_tags($value).'" id="'.$class.'_'.$id.'" class="'.$class.'_long '.$c.'">'.$value.'</div>'."\n";
-            //		echo	'<div title="'.strip_tags($value).'" id="'.$class.'_'.$vre_id.'" class="'.$class.'_long '.$c.'">'.$value.'</div>'."\n";
-            //else{
-            //echo	'<div id="'.$class.'_'.$id.'" class="'.$class.' '.$c.'">'.$value.'</div>'."\n";
+
             echo '<div id="spremenljivka_' . $spremenljivka . '_vrednost_' . $vre_id . '" class="' . $class . ' ' . $c . '">' . $value . '</div>' . "\n"; //'#spremenljivka_'+spremenljivka+'_vrednost_'+id
-            //}
         }
 
         echo '</li>' . "\n";

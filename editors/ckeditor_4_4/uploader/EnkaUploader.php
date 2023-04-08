@@ -62,9 +62,20 @@ if (!isset ($_POST['posted']) && (isset ($_GET['image']) && $_GET['image'] == 1)
                 }else {
                      $nakljucno = time();
                      $final = $nakljucno .$ime;
+
+                     // Preverimo protokol in ga ustrezno replacamo
+                     $upload_protocol = (strpos($site_url, 'https://') !== FALSE) ? 'https://' : 'http://';
+                     $file_url = str_replace($upload_protocol, "", $site_url).'uploadi/editor/doc/'.$final;
+
                     if (move_uploaded_file($_FILES['editorDatoteka']['tmp_name'], $site_path .'uploadi/editor/doc/' .$final)) {
 ?>
-                    <body bgcolor="#ebebeb" onload="parent.document.getElementById(parent.urlsrc).value='<?=str_replace("http://", "", $site_url)?>uploadi/editor/doc/<?=$final?>'; window.location.href='<?= $site_url ?>editors/ckeditor_4_4/uploader/EnkaUploader.php'; ">
+                    <body bgcolor="#ebebeb" onload="
+                        parent.document.getElementById(parent.urlsrc).value='<?=$file_url?>'; 
+                        if(parent.document.getElementById('cke_75_select')){
+                            parent.document.getElementById('cke_75_select').value = '<?=$upload_protocol?>';
+                        }
+                        window.location.href='<?= $site_url ?>editors/ckeditor_4_4/uploader/EnkaUploader.php'; 
+                    ">
                     <strong style="font-family: Arial; font-size: 12px; font-weight: bold;"><?=$lang['upload_done']?></strong>
 <?php
                     }else {

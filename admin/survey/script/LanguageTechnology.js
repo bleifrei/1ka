@@ -150,7 +150,7 @@ function runLanguageTechnology() {
                 }
                 if (response['error'] != undefined) {
                     if (response['error']['hasError'] == true) {
-                        alert(response['error']['msg']);
+                        genericAlertPopup('alert_parameter_response',response['error']['msg']);
                         // cleanUpAndReturn();
                         return false;
                     }
@@ -165,9 +165,9 @@ function runLanguageTechnology() {
             },
             error: function(x, t, m) {
                 if(t==="timeout") {
-                    alert("got timeout");
+                    genericAlertPopup('alert_timeout');
                 } else {
-                    alert('Prišlo je do neznane napake.');
+                    genericAlertPopup('alert_unknown_error');
                 }
             },
             complete: function() {
@@ -493,7 +493,7 @@ function changeWordType(spremenljivka, wordIndex, word, wordType) {
                 
                 if (response['error'] != undefined) {
                     if (response['error']['hasError'] == true) {
-                        alert(response['error']['msg']);
+                        genericAlertPopup('alert_parameter_response',response['error']['msg']);
                         
                         // cleanUpAndReturn();
                         return false;
@@ -518,9 +518,9 @@ function changeWordType(spremenljivka, wordIndex, word, wordType) {
             },
             error: function(x, t, m) {
                 if(t==="timeout") {
-                    alert("got timeout");
+                    genericAlertPopup('alert_timeout');
                 } else {
-                    alert('Prišlo je do neznane napake.');
+                    genericAlertPopup('alert_unknown_error');
                 }
             },
             complete: function() {
@@ -627,7 +627,7 @@ function displaySynsetHypernymHyponym(spremenljivka, wordIndex, wordType) {
                 
                 if (response['error'] != undefined) {
                     if (response['error']['hasError'] == true) {
-                        alert(response['error']['msg']);
+                        genericAlertPopup('alert_parameter_response',response['error']['msg']);
                         return false;
                     }
                 }
@@ -635,9 +635,9 @@ function displaySynsetHypernymHyponym(spremenljivka, wordIndex, wordType) {
             },
             error: function(x, t, m) {
                 if(t==="timeout") {
-                    alert("got timeout");
+                    genericAlertPopup('alert_timeout');
                 } else {
-                    alert('Prišlo je do neznane napake.');
+                    genericAlertPopup('alert_unknown_error');
                 }
             },
             complete: function() {
@@ -945,12 +945,12 @@ return this.each(function () {
                         if (args.length == 3) {
                             plugin.data[args[0]][args[1]][args[2]] = d;
                         } else {
-                            alert ('To many arguments! Plugin: dataHolder');
+                            genericAlertPopup('alert_too_many_arguments');
                         }
                     }
                 }
             } else {
-                alert ('Missing arguments! Plugin: dataHolder');
+                genericAlertPopup('alert_missing_arguments');
             }
         };
   
@@ -993,7 +993,7 @@ return this.each(function () {
             res = false;
            
             if (args.length == 0) {
-                alert ('Missing arguments! Plugin: dataHolder');
+                genericAlertPopup('alert_missing_arguments');
                 return res;
             }
             
@@ -1009,7 +1009,7 @@ return this.each(function () {
                                 if (args.length == 3 && plugin.data[args[0]][args[1]][args[2]] == d) {
                                     res = true;
                                 } else {
-                                    alert ('To many arguments! Plugin: dataHolder');  
+                                    genericAlertPopup('alert_too_many_arguments'); 
                                 }
                             }
                         }
@@ -1050,7 +1050,7 @@ return this.each(function () {
                     if (args.length == 3) {
                         res = $.isEmptyObject(plugin.data[args[0]][args[1]][args[2]]) == false || plugin.data[args[0]][args[1]][args[2]] == d;
                     } else {
-                        alert ('To many arguments! Plugin: dataHolder');    
+                        genericAlertPopup('alert_too_many_arguments');   
                     }
                 }
             }
@@ -1396,16 +1396,16 @@ function lt_export_excel() {
         data: request,
         success: function (response) {
             if (response['error'] == true) {
-                alert(response['msg']);
+                genericAlertPopup('alert_parameter_response',response['msg']);
                 return false;
             }
             window.open(response['url']);
         },
         error: function(x, t, m) {
             if(t==="timeout") {
-                alert("got timeout");
+                genericAlertPopup('alert_timeout');
             } else {
-                alert('Prišlo je do neznane napake.');
+                genericAlertPopup('alert_unknown_error');
             }
         },
         complete: function() {

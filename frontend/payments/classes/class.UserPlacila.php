@@ -105,7 +105,7 @@ class UserPlacila{
 
     // Izpisemo podatke o placilih
     public function displayPlacila(){
-        global $lang, $global_user_id, $app_settings;
+        global $lang, $global_user_id;
 
         // Tabela vseh placil
         $this->displayPlacilaTable();
@@ -116,13 +116,13 @@ class UserPlacila{
         echo '</div>';*/
         
         // Izracun zasluzka in provizij po mesecih - samo Goran
-        if($app_settings['app_name'] == 'www.1ka.si' && $global_user_id == '112696')
+        if(AppSettings::getInstance()->getSetting('app_settings-app_name') == 'www.1ka.si' && $global_user_id == '112696')
             $this->displayPlacilaPovzetek();
     }
 
     // Izpisemo seznam vseh placil
     public function displayPlacilaTable(){
-        global $lang, $global_user_id, $app_settings;
+        global $lang, $global_user_id;
 
         // Admini vidijo vsa placila
         $data = $this->getPlacila();
@@ -194,7 +194,7 @@ class UserPlacila{
             // Edit / delete
             echo '<td>';
             // Na www.1ka.si lahko placilo ureja samo Goran
-            if($app_settings['app_name'] != 'www.1ka.si' || $global_user_id == '112696'){
+            if(AppSettings::getInstance()->getSetting('app_settings-app_name') != 'www.1ka.si' || $global_user_id == '112696'){
                 
                 // Uredi
                 echo '<a href="#" onClick="displayPlaciloPopup(\''.$data_row['id'].'\')" title="'.$lang['srv_placila_edit'].'"><i class="fa fa-pencil-alt link-sv-moder"></i></a> <span class="no-print"> | </span>';

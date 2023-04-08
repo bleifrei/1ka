@@ -87,8 +87,7 @@ class SurveyExport
 		$this->survey = SurveyInfo::getInstance()->getSurveyRow();
 		
 		# aktivne tabele
-		if (SurveyInfo::getInstance()->getSurveyColumn('db_table') == 1)
-			$this->db_table = '_active';
+        $this->db_table = SurveyInfo::getInstance()->getSurveyArchiveDBString();
 		
 		// Preverimo ce ima user dostop
 		$d = new Dostop();
@@ -112,14 +111,6 @@ class SurveyExport
 		# za profil časov
 		SurveyTimeProfiles :: Init($this->sid, $global_user_id);
 		
-		
-		$result = sisplet_query ("SELECT value FROM misc WHERE what='SurveyExport'");
-		list ($SurveyExport) = mysqli_fetch_row ($result);
-		$adminTypes = array(0=>$lang['forum_admin'],1=>$lang['forum_manager'],2=>$lang['forum_clan'],3=>$lang['forum_registered'] );
-
-		if ($SurveyExport<$admin_type) {
-			die ($lang['srv_export_no_access'].$adminTypes[$admin_type]);
-		}
 		# manjkajoče vrednosti
 		$this->SMV = new SurveyMissingValues($this->sid);
 
@@ -820,7 +811,7 @@ class SurveyExport
 					$_max_text_missing_chars = max($_max_text_missing_chars, strlen($mkey . ': '. $missing));
 					$_max_number_missing_chars = max($_max_number_missing_chars, strlen($mkey));
 				}
-				$maxLengthForSpr = self::create_array_SPSS(max($_max_text_missing_chars,$_max_number_missing_chars));
+				$maxLengthForSpr = $this->create_array_SPSS(max($_max_text_missing_chars,$_max_number_missing_chars));
                 //$resultString .= .NEW_LINE;
 				$resultString = $lang['srv_spss_export_base_instructions'];
 				$resultString .= NEW_LINE.'.'.NEW_LINE.NEW_LINE;
@@ -1361,18 +1352,15 @@ class SurveyExport
 	private function create_array_SPSS($max_missing) {
 		$array_SPSS = array();
 
-		$db_table = ($this->survey['db_table'] == 1) ? '_active' : '';
-
 		# poberemo max dolžine iz srv_data_text max(text1,text2)
-		$str_query = 'SELECT dt.spr_id, MAX(LENGTH(dt.text)) AS length, MAX(LENGTH(dt.text2)) AS length2 FROM srv_data_text'.$db_table.' dt, srv_grupa g, srv_spremenljivka s WHERE dt.spr_id = s.id AND s.gru_id=g.id AND g.ank_id='.$this->sid.' GROUP BY dt.spr_id';
+		$str_query = 'SELECT dt.spr_id, MAX(LENGTH(dt.text)) AS length, MAX(LENGTH(dt.text2)) AS length2 FROM srv_data_text'.$this->db_table.' dt, srv_grupa g, srv_spremenljivka s WHERE dt.spr_id = s.id AND s.gru_id=g.id AND g.ank_id='.$this->sid.' GROUP BY dt.spr_id';
 		$_qry_SPSS = sisplet_query($str_query);
 		while (list($spr_id,$text,$text2) = mysqli_fetch_row($_qry_SPSS)) {
 			$array_SPSS[$spr_id] = max((int)$text,(int)$text2,$max_missing);
 		}
-		$str_query = 'SELECT dt.spr_id, MAX(LENGTH(dt.text)) AS length FROM srv_data_textgrid'.$db_table.' AS dt, srv_grupa g, srv_spremenljivka s  WHERE dt.spr_id = s.id AND s.gru_id=g.id AND g.ank_id='.$this->sid.' GROUP BY dt.spr_id';
+		$str_query = 'SELECT dt.spr_id, MAX(LENGTH(dt.text)) AS length FROM srv_data_textgrid'.$this->db_table.' AS dt, srv_grupa g, srv_spremenljivka s  WHERE dt.spr_id = s.id AND s.gru_id=g.id AND g.ank_id='.$this->sid.' GROUP BY dt.spr_id';
 		$_qry_SPSS = sisplet_query($str_query);
 		while (list($spr_id,$text) = mysqli_fetch_row($_qry_SPSS)) {
-			#$this->_array_SPSS[$spr_id]['text2'] = ((int)$text < $this->MISSING_MAX_LENGTH ? $this->MISSING_MAX_LENGTH :$text);
 			$array_SPSS[$spr_id] = max((int)$text,$array_SPSS[$spr_id],$max_missing);
 		}
 		return $array_SPSS;

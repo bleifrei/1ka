@@ -31,8 +31,7 @@ class VprasanjeInline {
 		
 		SurveyInfo::getInstance()->SurveyInit($this->anketa);
 
-		if (SurveyInfo::getInstance()->getSurveyColumn('db_table') == 1)
-			$this->db_table = '_active';
+		$this->db_table = SurveyInfo::getInstance()->getSurveyArchiveDBString();
 		
 		if (SurveyInfo::getInstance()->getSurveyColumn('expanded') == 1)
 			$this->expanded = 1;

@@ -49,9 +49,8 @@ class SurveyBreak
 				
 			# polovimo vrsto tabel (aktivne / neaktivne)
 			SurveyInfo :: getInstance()->SurveyInit($this->sid);
-			if (SurveyInfo::getInstance()->getSurveyColumn('db_table') == 1) {
-				$this->db_table = '_active';
-			}
+			$this->db_table = SurveyInfo::getInstance()->getSurveyArchiveDBString();
+
 			$this->_CURRENT_STATUS_FILTER = STATUS_FIELD.' ~ /6|5/';
 				
 			#inicializiramo class za datoteke
@@ -1527,8 +1526,7 @@ class SurveyBreak
         echo '</div>';
         
         // Javascript s katerim povozimo urlje za izvoze, ki niso na voljo v paketu
-        global $app_settings;
-        if($app_settings['commercial_packages'] == true){
+        if(AppSettings::getInstance()->getSetting('app_settings-commercial_packages') === true){
             echo '<script> userAccessExport(); </script>';
         }
 	}

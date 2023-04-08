@@ -124,7 +124,7 @@ function doArchiveMeans() {
 			$('#fullscreen').show();
 		});	
 	} else {
-		alert ('Ni podatkov za arhiv! Najprej kreirajte tabele.');
+		genericAlertPopup('alert_no_archive_tables');
 	}
 }
 function submitArchiveMeans() {
@@ -141,7 +141,7 @@ function submitArchiveMeans() {
 			$("#fullscreen").show();
 		});
 	} else {
-		alert ('Ni podatkov za arhiv! Najprej kreirajte tabele.');
+		genericAlertPopup('alert_no_archive_tables');
 	}
 }
 
@@ -157,9 +157,9 @@ function createArchiveMeansBeforeEmail() {
 				});
 			} else {
 				if (parseInt(response) == -1) {
-					alert("Nothing to archive!"+response);
+					genericAlertPopup('alert_no_archive_response',response);
 				} else {
-					alert("Error while creating archive!"+response);
+					genericAlertPopup('alert_archive_error_response',response);
 				}
 				$('#fullscreen').hide();
 				$('#fade').fadeOut('slow');
@@ -167,6 +167,6 @@ function createArchiveMeansBeforeEmail() {
 		});
 
 	} else {
-		alert ('Ni podatkov za arhiv! Najprej kreirajte tabele.');
+		genericAlertPopup('alert_no_archive_tables');
 	}
 };

@@ -68,8 +68,7 @@ class SurveyAdminAjax {
 
 		SurveyInfo::getInstance()->SurveyInit($this->anketa);
 
-		if (SurveyInfo::getInstance()->getSurveyColumn('db_table') == 1)
-			$this->db_table = '_active';
+		$this->db_table = SurveyInfo::getInstance()->getSurveyArchiveDBString();
 
 		$this->survey_type = $this->SurveyAdmin->getSurvey_type($this->anketa);
 
@@ -112,17 +111,6 @@ class SurveyAdminAjax {
 						header('Location: index.php?anketa=' . $this->anketa . '&grupa=' . $this->grupa . '');
 					
 				}
-				/*
-				// meta podatki, ki jih beremo z JS
-				echo '<form name="meta" action="" style="display:none">';
-				echo '<input type="hidden" name="anketa" id="srv_meta_anketa_id" value="' . $this->anketa . '" />';
-				echo '<input type="hidden" name="grupa"  id="srv_meta_grupa"  value="' . $this->grupa . '" />';
-				echo '<input type="hidden" name="branching" id="srv_meta_branching" value="' . $this->branching . '" />';
-				echo '<input type="hidden" name="podstran" id="srv_meta_podstran" value="' . $_GET['m'] . '" />';
-				echo '<input type="hidden" name="akcija" id="srv_meta_akcija" value="' . $_GET['a'] . '" />';
-				echo '<input type="hidden" name="full_screen_edit" id="srv_meta_full_screen_edit" value="' . ($this->full_screen_edit == 1 ? 1 : 0) . '" />';
-				echo '</form>';
-				*/
 			}
 
 			// tole je, ce se inicializira v branhingu z $action=-1 (pa mogoce/najbrz se kje), da se ne prikazujejo 2x te meta podatki in redirecta...
@@ -202,7 +190,7 @@ class SurveyAdminAjax {
 		if (isset ($_POST['branching']))
 			$this->branching = $_POST['branching'];
 		if (isset ($_POST['label']))
-			$label = $_POST['label'];
+			$label = strip_tags($_POST['label']);
 		if (isset ($_POST['cela']))
 			$cela = $_POST['cela'];
 		if (isset ($_POST['decimalna']))
@@ -288,7 +276,7 @@ class SurveyAdminAjax {
 		if (isset ($_POST['timer']))
 			$timer = $_POST['timer'];
 		if (isset ($_POST['intro_opomba']))
-			$intro_opomba = $_POST['intro_opomba'];
+			$intro_opomba = strip_tags($_POST['intro_opomba']);
 		if (isset ($_POST['akronim']))
 			$akronim = $_POST['akronim'];
 		if (isset ($_POST['paramName']))
@@ -404,7 +392,7 @@ class SurveyAdminAjax {
 		elseif ($_GET['a'] == 'edit_anketa_note') {
 			if ($anketa && isset ($_POST['note']) && $_POST['note'] != '' && $_POST['note'] != 'undefined') {
 				Common::updateEditStamp();
-				$sql = sisplet_query("UPDATE srv_anketa SET intro_opomba='" . $_POST['note'] . "' WHERE id='$anketa'");
+				$sql = sisplet_query("UPDATE srv_anketa SET intro_opomba='" . strip_tags($_POST['note']) . "' WHERE id='$anketa'");
 				// vsilimo refresh podatkov
 				SurveyInfo :: getInstance()->resetSurveyData();
 
@@ -506,7 +494,7 @@ class SurveyAdminAjax {
 				$update[] = " akronim='".trim($_POST['akronim'])."'";
 			}
 			if (isset($_POST['intro_opomba']) /*&& trim($_POST['intro_opomba']) != ''*/) {
-				$update[] = " intro_opomba='".trim($_POST['intro_opomba'])."'";
+				$update[] = " intro_opomba='".strip_tags(trim($_POST['intro_opomba']))."'";
 			}
 			if (count($update) > 0 ) {
 				sisplet_query("UPDATE srv_anketa SET ".implode(',',$update)." WHERE id='".$this->anketa."'");
@@ -540,8 +528,8 @@ class SurveyAdminAjax {
 			$show_intro = $_POST['show_intro'];
 			$show_concl = $_POST['show_concl'];
 			$concl_link = $_POST['concl_link'];
-			$intro_opomba = $_POST['intro_opomba'];
-			$concl_opomba = $_POST['concl_opomba'];
+			$intro_opomba = strip_tags($_POST['intro_opomba']);
+			$concl_opomba = strip_tags($_POST['concl_opomba']);
 			if ($_POST['concl_link'] == 1)
 				$concl_link = 0;
 			else
@@ -585,18 +573,19 @@ class SurveyAdminAjax {
 					if (!$sql)
 						echo mysqli_error($GLOBALS['connect_db']);
 				}
-				if (isset ($_POST['SurveyExport'])) {
-					$val = $_POST['SurveyExport'];
-					$sql = sisplet_query("UPDATE misc SET value='$val' WHERE what = 'SurveyExport'");
-					if (!$sql)
-						echo mysqli_error($GLOBALS['connect_db']);
-				}
 				if (isset ($_POST['SurveyForum'])) {
 					$val = $_POST['SurveyForum'];
 					$sql = sisplet_query("UPDATE misc SET value='$val' WHERE what = 'SurveyForum'");
 					if (!$sql)
 						echo mysqli_error($GLOBALS['connect_db']);
 				}
+
+                // Save app settings
+                foreach($_POST as $what => $value){
+                    if(substr($what, 0, 3) == 'as_'){
+                        AppSettings::getInstance()->saveSetting(substr($what, 3), $value);
+                    }
+                }
             } 
             elseif ($_GET['m'] == 'global_user_settings') {
 				if (isset ($_POST['language'])) {
@@ -753,6 +742,14 @@ class SurveyAdminAjax {
                     // naredi link za aktivacijo
                     $code = base64_encode((hash('SHA256', time() .$pass_salt . $email. $rowU['name'])));
 
+                    //Preverimo, koliko alternativnih emailov ima (dovolimo samo 10)
+                    $sql_user_to_be = sisplet_query ("SELECT count(id) AS skupaj FROM users_to_be WHERE user_id='" . $global_user_id . "'");
+                    $row_user_to_be = mysqli_fetch_array($sql_user_to_be);
+                    if($row_user_to_be['skupaj'] > 10){
+                        echo 'error';
+                        return true;
+                    }
+
                     // Vstavimo novega userja v users_to_be kjer caka na aktivacijo
                     $insert_id = sisplet_query ("INSERT INTO users_to_be 
 										(type, email, name, user_id, timecode, code, lang) 
@@ -761,8 +758,7 @@ class SurveyAdminAjax {
 
                     $poslji_email = [];
 
-                    global $app_settings;
-                    $PageName = $app_settings['app_name'];
+                    $PageName = AppSettings::getInstance()->getSetting('app_settings-app_name');
 
                     // Pošljemo email na alternativni email in nato še na primarni email samo obvestilo o dodanem emailu
                     $poslji_email['novi'] = [
@@ -1354,100 +1350,6 @@ class SurveyAdminAjax {
 								$status = 2; // ni poslalo
 							}
 							
-						}
-					}
-				}
-
-				// Dodajanje novih uproabnikov (emailov)
-				if (isset($_POST['addusers']) && $_POST['addusers'] != '') {
-					global $pass_salt, $global_user_id, $site_path, $admin_type;
-					
-					$_POST['addusers'] = mysql_real_unescape_string($_POST['addusers']);
-					$users = explode(NEW_LINE, $_POST['addusers']);
-					$sqlu = sisplet_query("SELECT email, name FROM users WHERE id = '".$global_user_id."'");
-					$rowu = mysqli_fetch_array($sqlu);
-					
-					$MailReply = $rowu['email'];
-					$nameAuthor = $rowu['name'];
-					
-					$aktiven = $_POST['aktiven'];
-					
-					// Loop cez vse vnesesne userje, ki jim dajemo dostop
-					foreach ($users AS $user) {
-						
-						$user = explode(',', $user);
-						$email = trim($user[0]);
-						$name = trim($user[1])!='' ? trim($user[1]) : $email;
-						$surnname = trim($user[2])!='' ? trim($user[2]) : $email;
-
-						// Ce gre za veljaven email dodamo userja
-						if ($email != '' && validEmail($email)) {
-						
-							$id = 0;
-							$sqlu = sisplet_query("SELECT id FROM users WHERE email='$email'");
-	
-							// Ce user, ki ga dodajamo, se ne obstaja, ga ustvarimo - PO NOVEM SAMO CE SMO ADMIN ALI MANAGER
-							if (mysqli_num_rows($sqlu) == 0 && ($admin_type == 0 || $admin_type == 1)) {
-								$s = sisplet_query("INSERT INTO users (name, surname, email, pass, type, when_reg, came_from) VALUES ('$name', '$surnname', '$email', '" .base64_encode((hash(SHA256, '' .$pass_salt))) ."', '3', DATE_FORMAT(NOW(), '%Y-%m-%d'), '1')");
-								$id = mysqli_insert_id($GLOBALS['connect_db']);
-							} 
-							// Drugace pridobimo podatke o userju iz baze
-							else {
-								$rowu = mysqli_fetch_array($sqlu);
-								$id = $rowu['id'];
-							}
-							
-							// Ce je bil ustvarjen oz ga imamo ze v bazi, mu damo dostop in posljemo mail
-							if($id > 0){
-                                $s = sisplet_query("INSERT INTO srv_dostop (ank_id, uid, aktiven) VALUES ('$anketa', '$id', '$aktiven')");
-                                if ( !$s ) echo mysqli_error($GLOBALS['connect_db']);
-
-							    // V kolikor gre za hierarhijo, potem še enkrat preverimo v bazi in dodelimo dostop tudi do hierarhije status 2 - naknadno dodan administrator
-							    if(SurveyInfo::checkSurveyModule('hierarhija', $anketa))
-                                    sisplet_query("INSERT INTO srv_hierarhija_users (user_id, anketa_id, type) VALUES ('".$id."', '".$anketa."', 2)");
-			
-								$naslov = SurveyInfo::getInstance()->getSurveyColumn('naslov');
-
-								$subject = $lang['srv_dostopmail_1'].' '.$naslov.'.';
-                                
-								$content = $lang['srv_dostopmail_2'].' <span style="color:red;">'.$nameAuthor.'</span> (<a style="color:#1e88e5 !important; text-decoration:none !important;" href="mailto:'.$MailReply.'">'.$MailReply.'</a>) '.$lang['srv_dostopmail_3'].' <a style="color:#1e88e5 !important; text-decoration:none !important;" href="'.$site_url.'admin/survey/index.php?anketa='.$anketa.'"><span style="font-weight:bold;">'.$naslov.'.</span></a><br /><br />
-                                '.$lang['srv_dostopmail_4'].' <a style="color:#1e88e5 !important; text-decoration:none !important;" href="'.$site_url.'">'.$site_url.'</a> '.$lang['srv_dostopmail_5'].' (<a style="color:#1e88e5 !important; text-decoration:none !important;" href="mailto:'.$email.'">'.$email.'</a>).';
-                                
-                                // Ce email se ni registriran, dodamo dodatno obvestilo
-                                if(mysqli_num_rows($sqlu) == 0 && ($admin_type == 0 || $admin_type == 1)){
-                                    $content .= '<br /><br />'.$lang['srv_dostopmail_7'];
-                                    $content .= ' <a style="color:#1e88e5 !important; text-decoration:none !important;" href="'.$site_url.'/admin/survey/index.php?a=nastavitve&m=global_user_myProfile">'.$lang['edit_data'].'</a> ';
-                                    $content .= $lang['srv_dostopmail_72'];
-                                }
-                                
-                                // Sporočilo urednika (opcijsko)
-                                if(isset($_POST['addusers_note']) && $_POST['addusers_note'] != ''){
-
-                                    $_POST['addusers_note'] = mysql_real_unescape_string($_POST['addusers_note']);
-
-                                    $content .= '<br /><br /><span style="font-weight:bold;">'.$lang['srv_dostopmail_note'].'</span><br /><br />';
-                                    $content .= '<span style="color:red;">'.$_POST['addusers_note'].'</span>';
-                                }
-
-                                // Podpis
-                                $signature = Common::getEmailSignature();
-                                $content .= $signature;
-
-								try{
-									$MA = new MailAdapter($this->anketa, $type='account');
-									$MA->addRecipients($email);
-									$resultX = $MA->sendMail(stripslashes($content), $subject);
-								}
-								catch (Exception $e)
-								{
-								}
-								
-								if ($resultX) {
-									$status = 1; // poslalo ok
-								} else {
-									$status = 2; // ni poslalo
-								}
-							}
 						}
 					}
 				}
@@ -3236,9 +3138,6 @@ class SurveyAdminAjax {
 
 			if ($value != '') {
 				sisplet_query("INSERT INTO srv_data_text".$this->db_table." (spr_id, vre_id, usr_id, text) VALUES ('$spr_id', '$vre_id', '$usr_id', '$value')");
-
-				/*if ($textfield == 1)
-				sisplet_query("DELETE FROM srv_data_vrednost WHERE spr_id='$spr_id' AND usr_id='$usr_id'");*/
 			}
 
 		}
@@ -3246,40 +3145,11 @@ class SurveyAdminAjax {
 			Common::updateEditStamp();
 
 			sisplet_query("DELETE FROM srv_user WHERE id = '$usr_id'");
-			/* Ker imamo FK bi moralo avtomatsko pobrisati vse ostale vnose ( upam da res :) )
-				sisplet_query("DELETE FROM srv_data_grid".$this->db_table." WHERE usr_id = '$usr_id'");
-				sisplet_query("DELETE FROM srv_data_text".$this->db_table." WHERE usr_id = '$usr_id'");
-				sisplet_query("DELETE FROM srv_data_vrednost".$this->db_table." WHERE usr_id = '$usr_id'");
-				sisplet_query("DELETE FROM srv_data_checkgrid".$this->db_table." WHERE usr_id = '$usr_id'");
-				sisplet_query("DELETE FROM srv_data_imena WHERE usr_id = '$usr_id'");
-				sisplet_query("DELETE FROM srv_data_number WHERE usr_id = '$usr_id'");
-				sisplet_query("DELETE FROM srv_data_rating WHERE usr_id = '$usr_id'");
-				sisplet_query("DELETE FROM srv_data_textgrid".$this->db_table." WHERE usr_id = '$usr_id'");
-				sisplet_query("DELETE FROM srv_user_grupa_active WHERE usr_id = '$usr_id'");
-				sisplet_query("DELETE FROM srv_user_grupa WHERE usr_id = '$usr_id'");
-				*/
 		}
 		elseif ($_GET['a'] == 'delete_all') {
 			Common::updateEditStamp();
 
 			$sql = sisplet_query("DELETE FROM srv_user WHERE ank_id = '$this->anketa'");
-			//$sql = sisplet_query("SELECT * FROM srv_user WHERE ank_id = '$this->anketa'");
-			//while ($row = mysqli_fetch_array($sql)) {
-
-				//sisplet_query("DELETE FROM srv_user WHERE id = '$row[id]'");
-				/* Ker imamo FK bi moralo avtomatsko pobrisati vse ostale vnose ( upam da res :) )
-				sisplet_query("DELETE FROM srv_data_grid".$this->db_table." WHERE usr_id = '$row[id]'");
-				sisplet_query("DELETE FROM srv_data_text".$this->db_table." WHERE usr_id = '$row[id]'");
-				sisplet_query("DELETE FROM srv_data_vrednost".$this->db_table." WHERE usr_id = '$row[id]'");
-				sisplet_query("DELETE FROM srv_data_checkgrid".$this->db_table." WHERE usr_id = '$row[id]'");
-				sisplet_query("DELETE FROM srv_data_imena WHERE usr_id = '$row[id]'");
-				sisplet_query("DELETE FROM srv_data_number WHERE usr_id = '$row[id]'");
-				sisplet_query("DELETE FROM srv_data_rating WHERE usr_id = '$row[id]'");
-				sisplet_query("DELETE FROM srv_data_textgrid".$this->db_table." WHERE usr_id = '$row[id]'");
-				sisplet_query("DELETE FROM srv_user_grupa_active WHERE usr_id = '$row[id]'");
-				sisplet_query("DELETE FROM srv_user_grupa WHERE usr_id = '$row[id]'");
-				*/
-			//}
 			
 			# pobrišemo še DATA datoteke in HTML -dashboard če obstajajo
 			global $site_path;
@@ -3380,8 +3250,10 @@ class SurveyAdminAjax {
 			SurveyAlert::getInstance()->Init($anketa, $global_user_id);
 			SurveyAlert::getInstance()->sendMailActive();
 			
-			$gdpr = new GDPR();
-			
+            # Preverimo, ce gre za phishing
+            $check = new SurveyCheck($anketa);
+            $check->checkPhishing();
+
 			# Aktivacijski pop up za hierarhijo
 			if(SurveyInfo::getInstance()->checkSurveyModule('hierarhija')){
 				// Anketo zaklenemo
@@ -3522,24 +3394,28 @@ class SurveyAdminAjax {
 			if ((int)$_POST['voteCountLimitType'] == 1) {
 				$updateString .= $prefix." vote_limit = '1', vote_count='".(int)$_POST['voteCountValue']."'";
 				$prefix = ',';
-			} elseif ((int)$_POST['voteCountLimitType'] == 2) {
+			} 
+            elseif ((int)$_POST['voteCountLimitType'] == 2) {
 				$updateString .= $prefix." vote_limit = '2', vote_count='".(int)$_POST['voteCountValue']."'";
 				$prefix = ',';
-			} else {
+			} 
+            else {
 				$updateString .= $prefix." vote_limit = '0'";
 				$prefix = ',';
 			}
 			
 			$updateString .=  " WHERE id='$anketa'";
 			$sql = sisplet_query($updateString);
+
 			#updejtamo srv_alert
 			global $global_user_id;
 			SurveyAlert::getInstance()->Init($this->anketa, $global_user_id);
 			SurveyAlert::getInstance()->prepareSendExpireAlerts();
+
 			# vsilimo refresh podatkov
-			SurveyInfo :: getInstance()->resetSurveyData();	
-			 
-		} elseif ($_GET['a'] == 'anketa_getDates') {
+			SurveyInfo :: getInstance()->resetSurveyData();		 
+		} 
+        elseif ($_GET['a'] == 'anketa_getDates') {
 			// prikažemo vmesnik za izbiro datuma
 			// preberemo datume aktivnosti
 			//$sqlDates = sisplet_query("SELECT starts, expire FROM srv_anketa WHERE id='" . $this->anketa . "'");
@@ -5396,7 +5272,8 @@ class SurveyAdminAjax {
 			}
 			echo json_encode($result);
 			exit();
-		} else { // genericna resitev za vse nadaljne
+		} 
+        else { // genericna resitev za vse nadaljne
 			
 			$ajax = 'ajax_' . $_GET['a'];
 			
@@ -5537,9 +5414,9 @@ class SurveyAdminAjax {
 		if (mysqli_num_rows($sql) > 0) $add = false;
 		
 		if (SurveyInfo::getInstance()->checkSurveyModule('uporabnost'))
-			$link = 'main/survey/uporabnost.php?anketa=' . $anketa ;
+			$link = 'main/survey/uporabnost.php?anketa=' . SurveyInfo::getInstance()->getSurveyHash() ;
 		else
-			$link = 'main/survey/index.php?anketa=' . $anketa ;
+			$link = 'main/survey/index.php?anketa=' . SurveyInfo::getInstance()->getSurveyHash();
 		
 
 		// Dodamo nice url
@@ -5682,7 +5559,6 @@ class SurveyAdminAjax {
 	function ajax_alert_custom() {
 		global $lang;
 		global $global_user_id;
-		global $app_settings;
 		
 		$anketa = $this->anketa;
 		$type = $_POST['type'];
@@ -6356,6 +6232,150 @@ class SurveyAdminAjax {
 	}
 
 
+    // Dodeljevanje uredniskega dostopa do ankete
+	private function ajax_add_survey_dostop_popup(){
+		global $lang, $pass_salt, $global_user_id, $site_path, $site_url, $admin_type;
+					
+        $_POST['addusers'] = mysql_real_unescape_string($_POST['addusers']);
+        $users = explode(NEW_LINE, $_POST['addusers']);
+        $sqlu = sisplet_query("SELECT email, name FROM users WHERE id = '".$global_user_id."'");
+        $rowu = mysqli_fetch_array($sqlu);
+        
+        $MailReply = $rowu['email'];
+        $nameAuthor = $rowu['name'];
+                
+
+        // Vsebina popupa
+        echo '<div class="popup_close"><a href="#" onClick="dostopAddAccessPopupClose(); return false;">✕</a></div>';
+			
+        echo '<h2>'.$lang['srv_dostop_addusers'].'</h2>';
+
+        
+        echo '<div class="popup_content">';
+
+        // Loop cez vse vnesesne userje, ki jim dajemo dostop
+        foreach ($users AS $user) {
+            
+            $user = explode(',', $user);
+            $email = trim($user[0]);
+            $name = trim($user[1])!='' ? trim($user[1]) : $email;
+            $surnname = trim($user[2])!='' ? trim($user[2]) : $email;
+
+            if($email != ''){
+
+                echo '<div class="row">';
+
+                // Ce gre za veljaven email dodamo userja
+                if (validEmail($email)) {
+                
+                    $id = 0;
+                    $sqlu = sisplet_query("SELECT id FROM users WHERE email='$email'");
+
+                    $create_new_account = false;
+
+                    // Ce user, ki ga dodajamo, se ne obstaja, ga ustvarimo - PO NOVEM SAMO CE SMO ADMIN
+                    if (mysqli_num_rows($sqlu) == 0 && $admin_type == 0) {
+                        $s = sisplet_query("INSERT INTO users (name, surname, email, pass, type, when_reg, came_from) VALUES ('$name', '$surnname', '$email', '" .base64_encode((hash(SHA256, '' .$pass_salt))) ."', '3', DATE_FORMAT(NOW(), '%Y-%m-%d'), '1')");
+                        $id = mysqli_insert_id($GLOBALS['connect_db']);
+
+                        $create_new_account = true;
+                    } 
+                    // Drugace pridobimo podatke o userju iz baze
+                    else {
+                        $rowu = mysqli_fetch_array($sqlu);
+                        $id = $rowu['id'];
+                    }
+                    
+                    // Ce je bil ustvarjen oz ga imamo ze v bazi, mu damo dostop in posljemo mail
+                    if($id > 0){
+
+                        $sqlDostopExist = sisplet_query("SELECT * FROM srv_dostop WHERE ank_id='".$this->anketa."' AND uid='".$id."' AND aktiven='1'");
+                        if(mysqli_num_rows($sqlDostopExist) == 0){
+
+                            $s = sisplet_query("INSERT INTO srv_dostop (ank_id, uid, aktiven) VALUES ('$this->anketa', '$id', '1')");
+
+                            // V kolikor gre za hierarhijo, potem še enkrat preverimo v bazi in dodelimo dostop tudi do hierarhije status 2 - naknadno dodan administrator
+                            if(SurveyInfo::checkSurveyModule('hierarhija', $this->anketa))
+                                sisplet_query("INSERT INTO srv_hierarhija_users (user_id, anketa_id, type) VALUES ('".$id."', '".$this->anketa."', 2)");
+
+                            $naslov = SurveyInfo::getInstance()->getSurveyColumn('naslov');
+
+                            $subject = $lang['srv_dostopmail_1'].' '.$naslov.'.';
+                            
+                            $content = $lang['srv_dostopmail_2'].' <span style="color:red;">'.$nameAuthor.'</span> (<a style="color:#1e88e5 !important; text-decoration:none !important;" href="mailto:'.$MailReply.'">'.$MailReply.'</a>) '.$lang['srv_dostopmail_3'].' <a style="color:#1e88e5 !important; text-decoration:none !important;" href="'.$site_url.'admin/survey/index.php?anketa='.$this->anketa.'"><span style="font-weight:bold;">'.$naslov.'.</span></a><br /><br />
+                            '.$lang['srv_dostopmail_4'].' <a style="color:#1e88e5 !important; text-decoration:none !important;" href="'.$site_url.'">'.$site_url.'</a> '.$lang['srv_dostopmail_5'].' (<a style="color:#1e88e5 !important; text-decoration:none !important;" href="mailto:'.$email.'">'.$email.'</a>).';
+                            
+                            // Ce email se ni registriran, dodamo dodatno obvestilo
+                            if(mysqli_num_rows($sqlu) == 0 && $admin_type == 0){
+                                $content .= '<br /><br />'.$lang['srv_dostopmail_7'];
+                                $content .= ' <a style="color:#1e88e5 !important; text-decoration:none !important;" href="'.$site_url.'/admin/survey/index.php?a=nastavitve&m=global_user_myProfile">'.$lang['edit_data'].'</a> ';
+                                $content .= $lang['srv_dostopmail_72'];
+                            }
+                            
+                            // Sporočilo urednika (opcijsko)
+                            if(isset($_POST['addusers_note']) && $_POST['addusers_note'] != ''){
+
+                                $_POST['addusers_note'] = mysql_real_unescape_string($_POST['addusers_note']);
+
+                                $content .= '<br /><br /><span style="font-weight:bold;">'.$lang['srv_dostopmail_note'].'</span><br /><br />';
+                                $content .= '<span style="color:red;">'.$_POST['addusers_note'].'</span>';
+                            }
+
+                            // Podpis
+                            $signature = Common::getEmailSignature();
+                            $content .= $signature;
+
+                            try{
+                                $MA = new MailAdapter($this->anketa, $type='account');
+                                $MA->addRecipients($email);
+                                $resultX = $MA->sendMail(stripslashes($content), $subject);
+
+                                if($resultX){
+                                    echo '<span><span class="email bold">'.$email.' - </span>'.($create_new_account ? $lang['srv_dostop_addusers_success_create'] : $lang['srv_dostop_addusers_success']).'</span>';
+                                }
+                                else{
+                                    echo '<span class="red"><span class="email bold">'.$email.' - </span>'.$lang['srv_dostop_addusers_error3'].'</span>';
+                                }
+                            }
+                            catch (Exception $e){
+                                echo '<span class="red"><span class="email bold">'.$email.' - </span>'.$lang['srv_dostop_addusers_error3'].'</span>';
+                            }
+                        }
+                        // Uporabnik ze ima dostop
+                        else{
+                            echo '<span><span class="email bold">'.$email.' - </span>'.$lang['srv_dostop_addusers_error4'].'</span>';
+                        }      
+                    }
+                    // Uporabnika ni v bazi
+                    else{
+                        echo '<span class="red"><span class="email bold">'.$email.' - </span>'.$lang['srv_dostop_addusers_error2'].'</span>';
+                    }
+                }
+                // Mail ni veljaven
+                else{
+                    echo '<span class="red"><span class="email bold">'.$email.' - </span>'.$lang['srv_dostop_addusers_error1'].'</span>';
+                }
+
+                echo '</div>';
+            }
+        }
+
+        echo '</div>';
+
+        echo '<div class="buttons_holder">';
+        echo '<span class="buttonwrapper floatRight" title="'.$lang['srv_zapri'].'"><a class="ovalbutton ovalbutton_gray" href="#" onclick="dostopAddAccessPopupClose(); return false;"><span>'.$lang['srv_zapri'].'</span></a></span>';
+        echo '</div>';
+	}
+
+    private function ajax_refresh_dostop_settings(){
+
+        $_GET['a'] = 'dostop';
+
+        $sas = new SurveyAdminSettings();
+        $sas->anketa_nastavitve_global();    
+    }
+
+
     // Display consulting popup
     function ajax_consulting_popup_open () {
         global $lang;
@@ -6392,6 +6412,290 @@ class SurveyAdminAjax {
         echo '<span class="buttonwrapper floatRight" title="'.$lang['srv_zapri'].'"><a class="ovalbutton ovalbutton_gray" href="#" onclick="smtpAAIPopupClose(); return false;"><span>'.$lang['srv_zapri'].'</span></a></span>';
         echo '</div>';
     }
+
+	// Alert na vsa vprašanja - popup
+	private function ajax_alert_all_popup(){
+	global $lang;
+				
+	$alert_type = $_POST['alert_type'];
+			
+
+	// Vsebina popupa
+	echo '<div class="popup_close"><a href="#" onClick="AlertAllPopupClose(); return false;">✕</a></div>';
+		
+	echo '<h2>'.$lang['srv_'.$alert_type.'_reminder_all'].'</h2>';
+	
+	echo '<div class="popup_content">';
+	echo $lang['srv_reminder_popup_warning'];
+	echo '</div>';
+
+	echo '<div class="buttons_holder">';
+	echo '<span class="buttonwrapper floatRight" style="margin:3px" title="'.$lang['srv_zapri']
+	.'"><a class="ovalbutton ovalbutton_gray" href="#" onclick="AlertAllPopupClose(); return false;"><span>'
+	.$lang['srv_zapri'].'</span></a></span>';
+	echo '<span class="buttonwrapper floatRight" style="margin:3px" title="'.$lang['srv_tip_sample_t6_8_o2']
+	.'"><a class="ovalbutton ovalbutton_gray" href="ajax.php?a=reminder_all&what='.$alert_type.'&anketa='.$this->anketa.'"><span>'
+	.$lang['srv_tip_sample_t6_8_o2'].'</span></a></span>';
+	echo '</div>';
+	}
+
+	// Generičen alert popup
+	private function ajax_genericAlertPopup(){
+	global $lang;
+
+		$name = $_POST['name'];
+		$optional_parameter = $_POST['optional_parameter'];
+		
+
+		// Generičen alert popup - vsebina
+		echo '<h2>'.$lang['srv_warning'].'</h2>';
+		echo '<div class="popup_content">';
+		
+		
+		switch ($name) {
+
+			//branching.js
+			case 'srv_unlock_popup2':
+				echo $lang['srv_unlock_popup2'];
+				break;
+			case 'srv_unlock_popup3':
+				echo $lang['srv_unlock_popup3'];
+				echo $optional_parameter;
+				break;
+
+			//_index.js
+			case 'alert_extensions_match':
+				echo $lang['alert_extensions_match'];
+				break;
+				
+			//bm.js
+			case 'alert_no_jscss_found':
+				echo $lang['alert_no_jscss_found_1'];
+				echo $optional_parameter;
+				echo $lang['alert_no_jscss_found_2'];
+				break;
+
+			//hierarhija_analize.js, break.js, cReport.js, crosstab.js, means.js, script_analiza.js, ttest.js
+			case 'alert_no_archive_tables':
+				echo $lang['alert_no_archive'];
+				echo ' ';
+				echo $lang['alert_create_tables'];
+				break;
+
+			case 'alert_no_archive_response':
+				echo $lang['alert_no_archive'];
+				echo $optional_parameter;
+				break;
+
+			case 'alert_archive_error_response':
+				echo $lang['alert_archive_error'];
+				echo $optional_parameter;
+				break;
+
+			//MAZA.js, VnaprejMarkers.js
+			case 'srv_resevanje_alert_location_not_found_map':
+				echo $lang['srv_resevanje_alert_location_not_found_map'];
+				break;
+
+			//appendMerge.js, invitations.js, telephone.js
+			case 'srv_invitation_note1':
+				echo $lang['srv_invitation_note1'];
+				break;
+
+			case 'srv_invitation_note2':
+				echo $lang['srv_invitation_note2'];
+				break;
+
+			//charts.js
+			case 'srv_chart_num_limit_warning':
+				echo $lang['srv_chart_num_limit_warning'];
+				break;
+
+			//collectData.js
+			case 'srv_collectdata_failed':
+				echo $lang['srv_collectdata_failed'];
+				break;
+
+			//conditionProfiles.js, script_analiza.js, statistika.js, zankaProfiles.js
+			case 'error':
+				echo $lang['error'];
+				echo "!";
+				break;
+
+			case 'alert_missing_action':
+				echo $lang['alert_missing_action'];
+				echo $optional_parameter;
+				break;
+
+			//dataSettingsProfiles.js, missingProfiles.js, timeProfiles.js, zoom.js
+			case 'alert_parameter_action':
+				echo $optional_parameter;
+				break;
+
+			//invitations.js
+			case 'alert_deprecated':
+				echo $lang['alert_deprecated'];
+				break;
+
+			case 'alert_parameter_dataerror':
+				echo $optional_parameter;
+				break;
+
+			case 'alert_parameter_profilename':
+				echo $optional_parameter;
+				break;
+
+			case 'alert_incorrect_filetype':
+				echo $lang['alert_incorrect_filetype'];
+				break;
+
+			case 'alert_choose_file':
+				echo $lang['alert_choose_file'];
+				break;
+
+			//LanguageTechnology.js, LanguageTechnology_old, missingProfiles.js, missingValues.js, script_analiza.js, scripts.js
+			case 'alert_parameter_response':
+				echo $optional_parameter;
+				break;
+
+			case 'alert_timeout':
+				echo $lang['alert_timeout'];
+				break;
+			
+			case 'alert_unknown_error':
+				echo $lang['alert_unknown_error'];
+				break;
+
+			//missingvalues.js
+			case 'srv_missing_value_not_empty':
+				echo $lang['srv_missing_value_not_empty'];
+				break;
+
+			//script_analiza.js
+			case 'alert_delete_error':
+				echo $lang['alert_delete_error'];
+				break;
+
+			case 'srv_data_delete_not_selected':
+				echo $lang['srv_data_delete_not_selected'];
+				break;
+
+			case 'alert_copy_error':
+				echo $lang['alert_copy_error'];
+				break;
+
+			case 'alert_too_many_arguments':
+				echo $lang['alert_too_many_arguments'];
+				break;
+
+			case 'alert_missing_arguments':
+				echo $lang['alert_missing_arguments'];
+				break;
+			
+
+			//script.js, telephone.js, invitations.js
+			case 'srv_newSurvey_survey_template_error':
+				echo $lang['srv_newSurvey_survey_template_error'];
+				break;
+			
+			case 'alert_parameter_datamsg':
+				echo $optional_parameter;
+				break;
+
+			case 'alert_save_error':
+				echo $lang['alert_save_error'];
+				break;
+
+			case 'alert_userGlobalSettingChange':
+				echo $lang['alert_userGlobalSettingChange'];
+				echo ' (';
+				echo $optional_parameter;
+				echo ')';
+				break;
+
+			case 'cms_error_password_incorrect':
+				echo $lang['cms_error_password_incorrect'];
+				break;
+
+			case 'password_err_complex':
+				echo $lang['password_err_complex'];
+				break;
+
+			//slideshow.js
+			case 'alert_checkbox_error':
+				echo $lang['alert_checkbox_error'];
+				break;
+
+			//surveyCondition.js, ds_extras.js
+			case 'alert_error_code':
+				echo $lang['alert_error_code'];
+				echo $optional_parameter;
+				break;
+
+			case 'alert_parameter_dataerrormsg':
+				echo $optional_parameter;
+				break;
+			
+			//surveyList.js
+			case 'alert_parameter_msg':
+				echo $optional_parameter;
+				break;
+
+			//telephone.js
+			case 'alert_invalidPID':
+				echo $lang['alert_invalidPID'];
+				break;
+
+			//timeProfiles.js
+			case 'srv_time_profile_error_interval':
+				echo $lang['srv_time_profile_error_interval'];
+				break;
+
+			//vprasanje.js
+			case 'srv_checkbox_min_limit_error_msg':
+				echo $lang['srv_checkbox_min_limit_error_msg'];
+				break;
+
+			//zankaProfiles
+			case 'srv_loop_multiplication_error':
+				echo $lang['srv_loop_multiplication_error'];
+				break;
+
+			//zoom.js
+			case 'alert_choose_variables':
+				echo $lang['alert_choose_variables'];
+				break;
+
+			//calendar.js
+			case 'alert_parameter_text':
+				echo $optional_parameter;
+				break;
+
+			//SurveyAdmin.php
+			case 'srv_filealert':
+				echo $lang['srv_filealert'];
+				break;
+
+			//SurveyAdminSettings.php
+			case 'srv_anketa_noactive2':
+				echo $lang['srv_anketa_noactive2'];
+				break;
+
+			//class.SurveyCondition.php
+			case 'alert_no_action_set':
+				echo $lang['alert_no_action_set'];
+				break;
+			
+			
+		}	
+		
+		echo '</div>';
+		echo '<div class="buttons_holder">';
+		echo '<div class="buttonwrapper floatRight" style="margin:3px" title="'.'OK'.'"><a class="ovalbutton ovalbutton_gray" href="#" onclick="genericAlertPopupClose(); return false;"><span>'
+		.'OK'.'</span></a></div>';
+		echo '</div>';
+
+	}
 }
 
 ?>

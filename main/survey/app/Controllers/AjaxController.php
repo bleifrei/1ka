@@ -17,6 +17,7 @@ use SurveyAdvancedParadataLog;
 use SurveySetting;
 use MailAdapter;
 use GDPR;
+use AppSettings;
 
 
 class AjaxController extends Controller
@@ -343,30 +344,22 @@ class AjaxController extends Controller
     }
 
     //asinhrono pobiranje podatkov za ureditev missing
-    public function ajax_get_dragdrop1_data()
-    {
+    public function ajax_get_dragdrop1_data(){
+
         Model::user_not_lurker();
+
         $anketa = $_GET['anketa'];
         $spremenljivka = $_GET['spremenljivka'];
+
         $vre_id = array();
-        //echo 'Spremenljivka: '.$spremenljivka;
-        //echo 'Anketa: '.$anketa;
-        //$sql1 = sisplet_query("SELECT id FROM srv_vrednost WHERE spr_id='$spremenljivka' AND other!=0 ");
+
         $sql1 = sisplet_query("SELECT id FROM srv_vrednost WHERE spr_id='$spremenljivka'");
         $num = mysqli_num_rows($sql1);
 
-        /* 		echo '
-                    <script>
-                        console.log('.$num.');
-                    </script>
-                '; */
-
         while ($row1 = mysqli_fetch_array($sql1)) {
-            //$vre_id[$i] = $row1['id'];
             array_push($vre_id, $row1['id']);
         }
-        //echo 'Podatek je: '.$num;
-        //echo $vre_id;
+
         echo json_encode($vre_id);
 
     }
@@ -494,7 +487,6 @@ class AjaxController extends Controller
      *
      */
     public function ajax_captcha(){
-		global $secret_captcha;
 		
         $text = strtoupper($_GET['text']);
         $code = $_GET['code'];
@@ -502,7 +494,7 @@ class AjaxController extends Controller
         $usr_id = $_GET['usr_id'];
 
 		$recaptchaResponse = $_POST['g-recaptcha-response'];
-		$request = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=".$secret_captcha."&response=".$recaptchaResponse);
+		$request = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=".AppSettings::getInstance()->getSetting('google-secret_captcha')."&response=".$recaptchaResponse);
 
 		// zdaj pa zabeleži mail (pred pošiljanjem)    
 		// zdaj pa še v bazi tistih ki so se ročno dodali

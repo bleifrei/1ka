@@ -40,10 +40,12 @@ class MultiGridLatex extends LatexSurveyElement
 	protected $textRVreId = array();	//belezi vre_id navpicnih odgovorov, ki so bili izbrani in morajo biti na desni strani povleci-spusti
 	protected $navpicniOdgovoriVreId = array();		//belezi vre_id navpicnih odgovorov
 	protected $loop_id = null;	// id trenutnega loopa ce jih imamo
+	protected $usr_id = null;
 	
 	protected $path2ImagesMulti;
 	
 	protected $language;
+	protected $prevod;
    
    public function __construct()
     {
@@ -255,15 +257,26 @@ class MultiGridLatex extends LatexSurveyElement
 	//public function export($spremenljivke, $export_format, $questionText, $fillablePdf, $texNewLine, $export_subtype){
 	public function export($spremenljivke=null, $export_format='', $questionText='', $fillablePdf=null, $texNewLine='', $usr_id=null, $db_table=null, $export_subtype='', $preveriSpremenljivko=null, $skipEmptySub=null, $export_data_type='', $skipEmpty=null, $loop_id=null, $language=null){
 		//echo $export_data_type."</br>";
+
+		$this->exportDataType = $export_data_type;
 		global $lang;
 		
 		$this->language = $language;
+		
+		//preverjanje, ali je prevod
+		if($this->language){			
+			$this->prevod = 1;
+		}else{
+			$this->prevod = 0;
+		}
+		//preverjanje, ali je prevod - konec
 		
 		$this->preveriSpremenljivko = $preveriSpremenljivko;
 		$this->skipEmpty =$skipEmpty;
 		$this->skipEmptySub = $skipEmptySub;
 		// Ce je spremenljivka v loopu
 		$this->loop_id = $loop_id;
+		$this->usr_id = $usr_id;
 		
 		// iz baze preberemo vse moznosti - ko nimamo izpisa z odgovori respondenta			
 		//$sqlVrednosti = sisplet_query("SELECT id, naslov, naslov2, variable, other, spr_id FROM srv_vrednost WHERE spr_id='".$spremenljivke['id']."' ORDER BY vrstni_red");
@@ -315,6 +328,18 @@ class MultiGridLatex extends LatexSurveyElement
 
 			$stringTitleRow = $rowVrednost['naslov']; //odgovori na levi strani (za tabela diferencial)
 			$stringTitleRow2 = $rowVrednost['naslov2'];	//odgovori na desni strani (za tabela diferencial)
+
+			
+			//$naslov = $this->srv_language_vrednost($rowVrednost['id']);
+		/* 	echo "prevod: ".$this->prevod." </br>";
+
+			echo "stringTitleRow: ".$stringTitleRow."</br>";
+			echo "stringTitleRow2: ".$stringTitleRow2."</br>"; */
+
+
+
+			$stringTitleRow = Common::getInstance()->dataPiping($stringTitleRow, $usr_id, $loop_id);
+			$stringTitleRow2 = Common::getInstance()->dataPiping($stringTitleRow2, $usr_id, $loop_id);
 
 			array_push($navpicniOdgovori, $this->encodeText($stringTitleRow, $rowVrednost['id']) );	//filanje polja z navpicnimi odgovori (po vrsticah)
 			array_push($navpicniOdgovori2, $this->encodeText($stringTitleRow2, $rowVrednost['id']) );	//filanje polja z navpicnimi odgovori2 (po vrsticah)		
@@ -431,6 +456,8 @@ class MultiGridLatex extends LatexSurveyElement
 					
 					$stringTitleCol = $colVrednost['naslov'];
 					$stringTitleCol = str_replace('<br />','',$stringTitleCol);	//odstranitev odvecnih </br> iz naslova stolpcev
+					$stringTitleCol = Common::getInstance()->dataPiping($stringTitleCol, $usr_id, $loop_id);
+					//echo "test: $stringTitleCol </br>";
 					array_push($vodoravniOdgovori, $this->encodeText($stringTitleCol) );	//filanje polja z vodoravnimi odgovori (po stolpcih)
 				}
 			}
@@ -606,7 +633,7 @@ class MultiGridLatex extends LatexSurveyElement
 				//if($export_subtype=='q_empty'||$export_subtype=='q_comment'||$preveriSpremenljivko){
 				//if($export_data_type==1||$export_subtype=='q_empty'||$export_subtype=='q_comment'||$preveriSpremenljivko){					
 				if($export_data_type==1||$export_subtype=='q_empty'||$export_subtype=='q_comment'||($preveriSpremenljivko&&$export_data_type==1)){
-					$this->exportDataType = $export_data_type;
+					//$this->exportDataType = $export_data_type;
 					
 					$tex .= $this->IzrisTabeleMultiGrid($spremenljivke, $numColSql, $numRowsSql, $vodoravniOdgovori, $navpicniOdgovori, 0, $symbol, $texNewLine, $texNewLineAfterTable, $export_format, 0, $missingOdgovori, $userAnswerData, $export_subtype);
 				}elseif($export_data_type==0||$export_data_type==2){	//ce je Navaden ali Kratek izvoz
@@ -896,12 +923,21 @@ class MultiGridLatex extends LatexSurveyElement
 	#funkcija, ki skrbi za izris Grida radio buttonov ali checkboxov za klasicno postavitev tabele ################################
 	function IzrisTabeleMultiGrid($spremenljivke=null, $steviloStolpcev=null, $steviloVrstic=null, $vodoravniOdgovori=null, $navpicniOdgovori=null, $navpicniOdgovori2=null, $simbolTex=null, $texNewLine='', $texNewLineAfterTable=null, $typeOfDocument=null, $fillablePdf=null, $missingOdgovori=null, $data=null, $export_subtype=''){
 		global $lang;		
-				
+		//$this->exportDataType = ;
 		$spremenljivkaParams = new enkaParameters($spremenljivke['params']);
 		$isCheckBox = 0;
 		$enota = $spremenljivke['enota'];
+	
+		//ce je prevod, naj pobere prevedene razlicice podnaslovov
+		$rowl1 = $this->srv_language_grid(1,$spremenljivke['id']);							
+		if (strip_tags($rowl1['podnaslov']) != '') $spremenljivke['grid_subtitle1'] = $rowl1['podnaslov'];		
+		$rowl2 = $this->srv_language_grid(2,$spremenljivke['id']);							
+		if (strip_tags($rowl2['podnaslov']) != '') $spremenljivke['grid_subtitle2'] = $rowl2['podnaslov'];		
+		//ce je prevod, naj pobere prevedene razlicice podnaslovov - konec
+
 		$podnaslov1 = $spremenljivke['grid_subtitle1'];	//podnaslova @dvojna tabela
 		$podnaslov2 = $spremenljivke['grid_subtitle2'];
+		
 		$trak = ($spremenljivkaParams->get('diferencial_trak') ? $spremenljivkaParams->get('diferencial_trak') : 0);
 		$customColumnLabelOption = ($spremenljivkaParams->get('custom_column_label_option') ? $spremenljivkaParams->get('custom_column_label_option') : 1);	//1 - "vse" labele,  2 - "le koncne"  labele, 3 - "koncne in vmesna"  labele
 		
@@ -1184,8 +1220,9 @@ class MultiGridLatex extends LatexSurveyElement
 									if(!$izpisano){
 										foreach($this->textRArray AS $indeksTextRArray => $textR){
 											if($this->textRArray[$indeksTextRArray][$datum]){
-												$textR = $this->encodeText($textR[$datum]);												
-												$textR = $tableCentering.' '.$textR;												
+												$textR = Common::getInstance()->dataPiping($textR, $this->usr_id, $this->loop_id);	
+												$textR = $this->encodeText($textR[$datum]);																			
+												$textR = $tableCentering.' '.$textR;											
 												//$textRIzpis .= '\fbox{\parbox{0.2\textwidth}{'.$textR.'}} '.$texSmallSkip.' '.$this->texNewLine;	//zacetna varianta
 												$textIzpis .= ' \vspace{0.5\baselineskip} ';
 												$textIzpis .= '\fbox{\parbox{0.2\textwidth}{'.$textR.'}} '.$texSmallSkip.' '.$this->texNewLine;
@@ -1296,7 +1333,7 @@ class MultiGridLatex extends LatexSurveyElement
 			#nad prvo vrstico, ampak se vedno v tabeli - naslovi trakov, podnaslovi dvojne tabele ################################################
 			if(  ($enota == 3) && ($podnaslov1 || $podnaslov2) ){	//ce je dvojna tabela in sta prisotna podnaslova 
 				$tabela .= ' & \multicolumn{'.intval($steviloStolpcev/2).'}{c}{'.$podnaslov1.'} & \multicolumn{'.intval($steviloStolpcev/2).'}{c}{'.$podnaslov2.'} '.$texNewLine;
-				//$tabela .= ' & \multicolumn{'.intval($steviloStolpcev/2).'}{c}{'.$podnaslov1.'} & \multicolumn{'.intval($steviloStolpcev/2).'}{c}{'.$podnaslov2.'} ';
+				//$tabela .= ' & \multicolumn{'.intval($steviloStolpcev/2).'}{c}{'.$podnaslov1.'} & \multicolumn{'.intval($steviloStolpcev/2).'}{c}{'.$podnaslov2.'} ';				
 			}elseif($trak == 1 && $spremenljivke['tip'] == 6 && ($enota == 0 || $enota == 1)){	//ce imamo obliko traku, uredi nadnaslove traka
 				if($spremenljivke['grids']%$trakNumOfTitles == 0){	//ce je stevilo stolpcev deljivo s trenutnim izbranim stevilom nadnaslovov
 					for($i=0; $i<$trakNumOfTitles; $i++){
@@ -1427,10 +1464,10 @@ class MultiGridLatex extends LatexSurveyElement
 			}
 			//ureditev missing-ov za roleta in izberite iz seznama - konec ######################
 						
-			#izris vrstic tabele	
+			#izris vrstic tabele
 			$trakStartingNumberTmp = null;		
 			//$tabela .= $this->LatexVrsticeMultigrid($steviloVrstic, $typeOfDocument, $enota, $simbolTex, $navpicniOdgovori, $trakStartingNumberTmp, $fillablePdf, $steviloStolpcev, $spremenljivke, $trak, $vodoravniOdgovori, $texNewLine, $navpicniOdgovori2, $missingOdgovori, 0, 0, 0, $data, $export_subtype);
-			$tabela .= $this->LatexVrsticeMultigrid($steviloVrstic, $typeOfDocument, $enota, $simbolTex, $navpicniOdgovori, $trakStartingNumberTmp, $fillablePdf, $steviloStolpcev, $spremenljivke, $trak, $vodoravniOdgovori, $texNewLine, $navpicniOdgovori2, $missingOdgovori, 0, 0, 0, $data, $export_subtype, $this->preveriSpremenljivko, $this->userDataPresent);
+			$tabela .= $this->LatexVrsticeMultigrid($steviloVrstic, $typeOfDocument, $enota, $simbolTex, $navpicniOdgovori, $trakStartingNumberTmp, $fillablePdf, $steviloStolpcev, $spremenljivke, $trak, $vodoravniOdgovori, $texNewLine, $navpicniOdgovori2, $missingOdgovori, 0, 0, 0, $data, $export_subtype, $this->preveriSpremenljivko, $this->userDataPresent, null, $this->exportDataType);
 			#izris vrstic tabele - konec
 /*  			if($enota==12||$enota==11){
 				echo "tabela tex: ".$tabela."</br>";

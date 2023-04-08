@@ -14,7 +14,8 @@ echo '  <title>OneClick Survey</title>'."\n\r";
 echo '  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />'."\n\r";
 echo '</head>';
 
-$anketa = $_GET['anketa'];
+$anketa_hash = $_GET['anketa'];
+$anketa = getSurveyIdFromHash($anketa_hash);
 
 $sql = sisplet_query("SELECT uporabnost_link FROM srv_anketa WHERE id = '$anketa'");
 $row = mysqli_fetch_array($sql);
@@ -26,13 +27,13 @@ if (true || ($row['uporabnost_link'] != null && $row['uporabnost_link'] != "")) 
 	echo '
 	<frameset '.($uporabnost_razdeli!=1?'rows':'cols').'="50%,50%">
 	    <frame name="link" src="'.(strlen($row['uporabnost_link'])>7?$row['uporabnost_link']:'').'">
-	    <frame name="survey" src="'.$site_url.'main/survey/index.php?anketa='.$anketa.''.($_GET['preview']=='on'?'&preview=on':'').''.(isset($_GET['sist_link'])?'&sist_link='.$_GET['sist_link']:'').(isset($_GET['code'])?'&code='.$_GET['code']:'').'">
+	    <frame name="survey" src="'.$site_url.'main/survey/index.php?anketa='.$anketa_hash.''.($_GET['preview']=='on'?'&preview=on':'').''.(isset($_GET['sist_link'])?'&sist_link='.$_GET['sist_link']:'').(isset($_GET['code'])?'&code='.$_GET['code']:'').'">
 	</frameset>
 	';	
 } else {
 	echo '
 	<frameset>
-	    <frame name="survey" src="'.$site_url.'main/survey/index.php?anketa='.$anketa.''.($_GET['preview']=='on'?'&preview=on':'').''.(isset($_GET['sist_link'])?'&sist_link='.$_GET['sist_link']:'').(isset($_GET['code'])?'&code='.$_GET['code']:'').'">
+	    <frame name="survey" src="'.$site_url.'main/survey/index.php?anketa='.$anketa_hash.''.($_GET['preview']=='on'?'&preview=on':'').''.(isset($_GET['sist_link'])?'&sist_link='.$_GET['sist_link']:'').(isset($_GET['code'])?'&code='.$_GET['code']:'').'">
 	</frameset>
 	';
 }

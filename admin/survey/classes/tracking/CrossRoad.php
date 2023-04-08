@@ -45,6 +45,7 @@ class CrossRoad {
                 case A_PARA_GRAPH:
                 case 'langStatistic':
                 case 'AAPOR':
+                case A_STATUS_ADVANCED:
                     $first_action = NAVI_STATUS;
                     $second_action = NAVI_STATUS_OSNOVNI;
                     $status = 4;
@@ -126,15 +127,42 @@ class CrossRoad {
                     break;
 
                 case A_NAGOVORI:
+                    $first_action = NAVI_UREJANJE;
+                    $status = 0;
+                    break;
+
                 case A_ARHIVI:
+                    $first_action = ($_GET['m'] == 'data') ? NAVI_RESULTS : NAVI_UREJANJE;  
+                    $second_action = NAVI_ARHIVI;
+
+                    if($_GET['m'] == 'survey')
+                        $third_action = NAVI_UREJANJE_ARHIVI_EXPORT1;
+                    elseif($_GET['m'] == 'survey_data')
+                        $third_action = NAVI_UREJANJE_ARHIVI_EXPORT2;
+                    elseif($_GET['m'] != 'data')
+                        $third_action = NAVI_UREJANJE_ARHIVI;
+
+                    $status = 0;
+                    break;
+
                 case A_TRACKING:
                     $first_action = NAVI_UREJANJE;
+                    $second_action = NAVI_ARHIVI;
+
+                    if($_GET['appendMerge'] == '1')
+                        $third_action = NAVI_UREJANJE_ARHIVI_TRACKING3;
+                    elseif($_GET['m'] == 'tracking_data')
+                        $third_action = NAVI_UREJANJE_ARHIVI_TRACKING2;
+                    else
+                        $third_action = NAVI_UREJANJE_ARHIVI_TRACKING1;
+
                     $status = 0;
                     break;
 
                 # objave, vabila
                 case A_VABILA:
                     $first_action = NAVI_OBJAVA;
+                    $_GET['m'] == 'settings' ? $second_action = NAVI_OBJAVA_SETTINGS : ($_GET['m'] == 'url' ? $second_action = NAVI_OBJAVA_URL : $second_action = '');
                     $status = 5;
                     break;
 
@@ -146,7 +174,7 @@ class CrossRoad {
 
                 case 'invitations':
                     $first_action = NAVI_OBJAVA;
-                    $second_action = 'invitations';
+                    $second_action = ($_GET['m'] == 'view_archive') ? NAVI_ARHIVI : 'invitations';  
                     $status = 5;
                     break;
 
@@ -158,12 +186,69 @@ class CrossRoad {
                     if ($_GET['m'] == M_ANALYSIS_LINKS) {
                         $second_action = NAVI_ANALYSIS_LINKS;
                     }
+                    elseif($_GET['m'] == 'anal_arch'){
+                        $second_action = NAVI_ARHIVI;  
+                    }
+                    
+                    if ($_GET['m'] == 'sumarnik') {
+                        $third_action = NAVI_STATISTIC_ANALYSIS_SUMARNIK;
+                    }
+                    elseif ($_GET['m'] == 'descriptor') {
+                        $third_action = NAVI_STATISTIC_ANALYSIS_DESCRIPTOR;
+                    }
+                    elseif ($_GET['m'] == 'frequency') {
+                        $third_action = NAVI_STATISTIC_ANALYSIS_FREQUENCY;
+                    }
+                    elseif ($_GET['m'] == 'crosstabs') {
+                        $third_action = NAVI_STATISTIC_ANALYSIS_CROSSTABS;
+                    }
+                    elseif ($_GET['m'] == 'multicrosstabs') {
+                        $third_action = NAVI_STATISTIC_ANALYSIS_MULTICROSSTABS;
+                    }
+                    elseif ($_GET['m'] == 'means') {
+                        $third_action = NAVI_STATISTIC_ANALYSIS_MEANS;
+                    }
+                    elseif ($_GET['m'] == 'ttest') {
+                        $third_action = NAVI_STATISTIC_ANALYSIS_TTEST;
+                    }
+                    elseif ($_GET['m'] == 'break') {
+                        $third_action = NAVI_STATISTIC_ANALYSIS_BREAK;
+                    }
+                                        
+
                     $status = 2;
                     break;
 
                 case A_COLLECT_DATA:
                     $first_action = NAVI_RESULTS;
                     $second_action = NAVI_DATA;
+
+                    if ($_GET['m'] == M_COLLECT_DATA_CALCULATION) {
+                        $second_action = NAVI_DATA_CALC;
+                        $third_action = NAVI_DATA_CALC_CALCULATION;
+                    }
+                    elseif($_GET['m'] == M_COLLECT_DATA_CODING){
+                        $second_action = NAVI_DATA_CALC;  
+                        $third_action = NAVI_DATA_CALC_CODING;  
+                    }
+                    elseif($_GET['m'] == M_COLLECT_DATA_CODING_AUTO){
+                        $second_action = NAVI_DATA_CALC;  
+                        $third_action = NAVI_DATA_CALC_CODING_AUTO;  
+                    }
+                    elseif($_GET['m'] == M_COLLECT_DATA_RECODING){
+                        $second_action = NAVI_DATA_CALC;  
+                        $third_action = NAVI_DATA_CALC_RECODING;  
+                    }
+
+                    elseif($_GET['m'] == M_COLLECT_DATA_APPEND){
+                        $second_action = NAVI_DATA_IMPORT;  
+                        $third_action = NAVI_DATA_IMPORT_APPEND;  
+                    }
+                    elseif($_GET['m'] == M_COLLECT_DATA_MERGE){
+                        $second_action = NAVI_DATA_IMPORT;  
+                        $third_action = NAVI_DATA_IMPORT_MERGE;  
+                    }
+
                     $status = 4;
                     break;
 
@@ -171,12 +256,33 @@ class CrossRoad {
                 case A_COLLECT_DATA_EXPORT:
                     $first_action = NAVI_RESULTS;
                     $second_action = NAVI_DATA_EXPORT;
+
+                    if($_GET['m'] == M_EXPORT_EXCEL){
+                        $third_action = NAVI_DATA_EXPORT_EXCEL;  
+                    }
+                    elseif($_GET['m'] == M_EXPORT_EXCEL_XLS){
+                        $third_action = NAVI_DATA_EXPORT_EXCEL_XLS;  
+                    }
+                    elseif($_GET['m'] == M_EXPORT_SAV){
+                        $third_action = NAVI_DATA_EXPORT_SAV;  
+                    }
+                    elseif($_GET['m'] == M_EXPORT_TXT){
+                        $third_action = NAVI_DATA_EXPORT_TXT;  
+                    }
+                    else{
+                        $third_action = NAVI_DATA_EXPORT_SPSS;  
+                    }
+
                     $status = 4;
+
                     if ($_GET['m'] == A_COLLECT_DATA_EXPORT_ALL) {
                         $first_action = NAVI_RESULTS;
                         $second_action = NAVI_ANALYSIS_LINKS;
+                        $third_action = ''; 
+
                         $status = 2;
                     }
+
                     break;
 
                 # dodatne nastavitve
@@ -239,7 +345,7 @@ class CrossRoad {
             //shrani tracking
             TrackingClass::update($anketa, $status);
             //vrni podatke o navigaciji nazaj v SurveyAdmin
-            return array('first_action' => $first_action, 'second_action' => $second_action);   
+            return array('first_action' => $first_action, 'second_action' => $second_action, 'third_action' => $third_action);   
         }
         //nismo vezani na anketo, tracking uporabnika
         else{

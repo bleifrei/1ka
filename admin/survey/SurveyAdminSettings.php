@@ -49,8 +49,9 @@ class SurveyAdminSettings {
 			$this->skin = 0;
 			
 		if ((isset ($_REQUEST['anketa']) && $_REQUEST['anketa'] > 0) || (isset ($anketa) && $anketa > 0)) {
-			$this->anketa = (isset ($_REQUEST['anketa']) && $_REQUEST['anketa'] > 0) ? $_REQUEST['anketa'] : $anketa;
-		} else {
+			$this->anketa = (isset ($anketa) && $anketa > 0) ? $anketa : $_REQUEST['anketa'];
+		} 
+        else {
 			// nekje se uporablja tudi brez IDja ankete!!!
 			//die("SAS: SID missing!");
 		}
@@ -58,8 +59,7 @@ class SurveyAdminSettings {
 		SurveyInfo::getInstance()->SurveyInit($this->anketa);
 		SurveyInfo::getInstance()->resetSurveyData();
 		
-		if (SurveyInfo::getInstance()->getSurveyColumn('db_table') == 1)
-			$this->db_table = '_active';
+		$this->db_table = SurveyInfo::getInstance()->getSurveyArchiveDBString();
 
 		$this->survey_type = $this->getSurvey_type($this->anketa);
 
@@ -279,10 +279,9 @@ class SurveyAdminSettings {
 			echo '<br />';
 			
 			echo '<span class="nastavitveSpan3 bold">'.$lang['srv_opozorilo_vprasanja'].':</span>&nbsp;
-						<a href="ajax.php?a=reminder_all&what=soft&anketa='.$this->anketa.'">'.$lang['srv_soft_reminder_all'].'</a>,
-						<a href="ajax.php?a=reminder_all&what=hard&anketa='.$this->anketa.'">'.$lang['srv_hard_reminder_all'].'</a>,
-						<a href="ajax.php?a=reminder_all&what=no&anketa='.$this->anketa.'">'.$lang['srv_no_reminder_all'].'</a>';
- 			
+						<a href="#" onClick="popupAlertAll(\'soft\')">'.$lang['srv_soft_reminder_all'].'</a>,
+						<a href="#" onClick="popupAlertAll(\'hard\')">'.$lang['srv_hard_reminder_all'].'</a>,
+						<a href="#" onClick="popupAlertAll(\'no\')">'.$lang['srv_no_reminder_all'].'</a>';		
 			echo '<br /><br />';
 			
 			// Napredni parapodatki
@@ -687,7 +686,7 @@ class SurveyAdminSettings {
                     if($vrednosti != 0){
                         foreach($vrednosti as $vrednost){
                             echo '<p>';
-                            echo '<strong>'.$vrednost['naslov'].'</strong><span class="faicon delete_circle icon-orange_link spaceLeft" style="margin-bottom:1px;" onclick="delete_skupina(\'2\', \''.$vrednost['id'].'\', \''.$vrednost['naslov'].'\');"></span>';
+                            echo '<strong>'.$vrednost['naslov'].'</strong><span class="faicon delete_circle icon-orange_link spaceLeft" style="margin-bottom:1px;" onclick="delete_skupina(\'2\', \''.$vrednost['id'].'\');"></span>';
                             echo '</p>';
                         }
                     }
@@ -1150,58 +1149,30 @@ class SurveyAdminSettings {
 				
 				echo '<fieldset><legend>' . $lang['srv_dostop_users'] . '' . Help :: display('srv_dostop_users'). '</legend>'."\n";
 
-				echo '<span id="dostop_active_show_1"><a href="#" onClick="dostopActiveShowAll(\'true\'); return false;">'.$lang['srv_dostop_show_all'].'</a></span>';
-				echo '<span id="dostop_active_show_2" class="displayNone"><a href="#" onClick="dostopActiveShowAll(\'false\'); return false;">'.$lang['srv_dostop_hide_all'].'</a></span>';
-			
+                if($admin_type == 0 || $admin_type == 1){
+				    echo '<span id="dostop_active_show_1"><a href="#" onClick="dostopActiveShowAll(\'true\'); return false;">'.$lang['srv_dostop_show_all'].'</a></span>';
+				    echo '<span id="dostop_active_show_2" class="displayNone"><a href="#" onClick="dostopActiveShowAll(\'false\'); return false;">'.$lang['srv_dostop_hide_all'].'</a></span>';
+                }
+
 				echo '<div id="dostop_users_list">';
 				$this->display_dostop_users(0);
 				echo '</div>';
 				
 				echo '</fieldset>';
 							
-				echo '<br />';
+                echo '<br class="clr" />';
+
+				echo '<span class="floatLeft spaceRight"><div class="buttonwrapper"><a class="ovalbutton ovalbutton_orange btn_savesettings" href="#" onclick="document.settingsanketa_' . $row['id'] . '.submit(); return false;"><span>';
+				echo $lang['edit1337'] . '</span></a></div></span>';
+				echo '<div class="clr"></div>';
+				echo '<br class="clr" />';
+
 				
 				// Dodajanje uproabnikov preko e-maila
 				echo '<fieldset><legend>'.$lang['srv_dostop_addusers'].'</legend>';
 				echo '<div id="addmail">';
-                
-                
-                // Dodajanje dostopa
-                global $app_settings;
-                global $aai_instalacija;
-
-                echo '<p class="bold">';
-
-                // Admini in managerji lahko dodajo dostop komurkoli
-				if($admin_type == 0 || $admin_type == 1){
-                    echo $lang['srv_dostop_adduserstxt_admin'].' '.$app_settings['app_name'].'. ';
-                }
-				// Ostali uporabniki lahko dodajo dostop samo ze registriranim uporabnikom
-				else{
-                    echo $lang['srv_dostop_adduserstxt'].' '.$app_settings['app_name'].'! ';
-                }
-
-                // AAI ima poseben link na help
-                if(isset($aai_instalacija) && $aai_instalacija == true){
-                    echo $lang['srv_dostop_adduserstxt_aai_more'];
-                }
-                
-                echo '</p>';
-
-
-                echo '<input type="hidden" name="aktiven" value="1" >';
-                
-                echo '<p>';
-                echo $lang['srv_dostop_adduserstxt_email'].'<br />';
-                echo '<textarea name="addusers"></textarea>';
-                echo '</p>';
-                
-                echo '<p>';
-                echo $lang['srv_dostop_adduserstxt_note'].'<br />';
-                echo '<textarea name="addusers_note"></textarea>';
-                echo '</p>';
-                
-                echo '<p>'.$lang['srv_dostop_adduserstxt_end'].'</p>';
+                     
+                $this->display_add_survey_dostop();
 
 				echo '</div>';			
 				echo '</fieldset>';	
@@ -1532,16 +1503,6 @@ class SurveyAdminSettings {
 			// Nastavitve za izpis odgovorov respondentov
 			echo '<fieldset class="wide">';	
 			echo '<legend>'.$lang['srv_export_results_settings'].'</legend>';
-			
-/* 			// Tip izvoza (0->navaden-default, 1->dolg, 2->kratek)
-			$export_data_type = SurveySetting::getInstance()->getSurveyMiscSetting('export_data_type');
-			echo '<span class="nastavitveSpan1" >'.$lang['srv_displaydata_type'].':</span>';
-			echo '<select name="export_data_type" id="export_data_type" >';
-			echo '	<option value="0"'.((int)$export_data_type == 0 ? ' selected="selected"' : '').'>' . $lang['srv_displaydata_type0'] . '</option>';
-			echo '	<option value="1"'.((int)$export_data_type == 1 ? ' selected="selected"' : '').'>' . $lang['srv_displaydata_type1'] . '</option>';
-			echo '	<option value="2"'.((int)$export_data_type == 2 ? ' selected="selected"' : '').'>' . $lang['srv_displaydata_type2'] . '</option>';
-			echo '</select>';
-			echo Help :: display('displaydata_pdftype'); */
 
 			// Tip izvoza (1->dolg oz. razsirjen, 2->kratek oz. skrcen)
 			$export_data_type = SurveySetting::getInstance()->getSurveyMiscSetting('export_data_type');
@@ -1602,13 +1563,7 @@ class SurveyAdminSettings {
 			echo '<label for="export_data_skip_empty_sub_0"><input type="radio" name="export_data_skip_empty_sub" id="export_data_skip_empty_sub_0" '.($export_data_skip_empty_sub!=='1'?' checked':'').' value="0">'.$lang['no'].'</label> ';
 			
 			echo '<br />';
-			
-			// Landscape postavitev izvoza (default ne)
-/* 			$export_data_landscape = SurveySetting::getInstance()->getSurveyMiscSetting('export_data_landscape');
-			echo '<span class="nastavitveSpan1" >'.$lang['srv_export_landscape'].':</span>';
-			echo '<label for="export_data_landscape_1"><input type="radio" name="export_data_landscape" id="export_data_landscape_1" '.($export_data_landscape==='1'?' checked':'').' value="1">'.$lang['yes'].'</label> ';
-			echo '<label for="export_data_landscape_0"><input type="radio" name="export_data_landscape" id="export_data_landscape_0" '.($export_data_landscape!=='1'?' checked':'').' value="0">'.$lang['no'].'</label> ';	 */	
-			
+				
 			echo '</fieldset>';
 		}
 		
@@ -1620,11 +1575,10 @@ class SurveyAdminSettings {
 		}
 		
 		
-		if ($_GET['a'] != 'jezik' && $_GET['a'] != 'trajanje' && $_GET['a'] != A_GDPR) {
-			//echo '        <p><a href="index.php?anketa='.$this->anketa.'&a=prestevilci">'.$lang['srv_prestevilci'].'</a></p>';
+		if ($_GET['a'] != 'jezik' && $_GET['a'] != 'trajanje' && $_GET['a'] != A_GDPR && $_GET['a'] != 'dostop') {
 			echo '<br class="clr" />';
+
 			echo '<span class="floatLeft spaceRight"><div class="buttonwrapper"><a class="ovalbutton ovalbutton_orange btn_savesettings" href="#" onclick="document.settingsanketa_' . $row['id'] . '.submit(); return false;"><span>';
-			//echo '<img src="icons/icons/disk.png" alt="" vartical-align="middle" />';
 			echo $lang['edit1337'] . '</span></a></div></span>';
 			echo '<div class="clr"></div>';
 		}
@@ -1769,8 +1723,6 @@ class SurveyAdminSettings {
 			echo '<div id="success_save"></div>';
 			echo '<script type="text/javascript">$(document).ready(function() {show_success_save();});</script>';
 		}
-		
-		
 	}
 
 	/**
@@ -2362,8 +2314,11 @@ class SurveyAdminSettings {
 		echo '<div class="publish_url_holder">';	
 		
 		echo '<p style="margin: 2px 0;"><a href="' . $link . '&preview=on'.$preview_options.'" target="_blank" class="srv_icox spaceRight"><span class="faicon preview"></span> ' . $lang['srv_poglejanketo2'] . '</b></a>';
-		echo '<span class="spaceLeft italic">('.$lang['srv_preview_text'].')</span></p>';
-		echo '<p style="margin: 2px 0;">' . $lang['url'] . ': ' . $link . '&preview=on'.$preview_options.'</p>';	
+		echo '<span class="spaceLeft italic">('.$lang['srv_preview_text'].')</span>';
+		echo '<p style="margin: 2px 0;">' . $lang['url'] . ': ' . $link . '&preview=on'.$preview_options.'';
+		echo '<a href="#" onclick="CopyToClipboard(\''. $link . '&preview=on'.$preview_options.'\');" return false;" title="Kopiraj povezavo" class="srv_ico">'
+			.'&nbsp;&nbsp'
+			. '<span class="faicon copy"></span></a></p>';	
 		
 		echo '</div>';
 		
@@ -2374,6 +2329,9 @@ class SurveyAdminSettings {
 			echo '<p style="margin: 2px 0;"><a href="' . $link . '&preview=on&testdata=on'.$preview_options.'" title="" target="_blank" class="srv_ico spaceRight"><span class="faicon test large"></span> ' . $lang['srv_survey_testdata2'] . '</b></a>';
 			echo '<span class="spaceLeft italic">('.$lang['srv_testdata_text'].')</span></p>';
 			echo '<p style="margin: 2px 0;">'.$lang['url'] . ': ' . $link . '&preview=on&testdata=on'.$preview_options;
+			echo '<a href="#" onclick="CopyToClipboard(\''. $link . '&preview=on&testdata=on'.$preview_options.'\');" return false;" title="Kopiraj povezavo" class="srv_ico">'
+			.'&nbsp;&nbsp'
+			. '<span class="faicon copy"></span></a>';
 			echo ' (<a href="#" id="popup-open" onclick="javascript:testiranje_preview_settings(); return false;">'.$lang['srv_testrianje_how'].'</a>)</p>';	
 			
 			echo '</div>';
@@ -2393,9 +2351,13 @@ class SurveyAdminSettings {
 		$base_lang_resp = $lang['language'];
 		$p->include_base_lang();
 		
-		$link1 = $site_url.'a/'.Common::encryptAnketaID($this->anketa);
-		echo '<b><a href="'.$link1.'" target="_blank">'.$link1.'</a>'.(count($lang_array) > 0 ? ' - '.$base_lang_resp : '').'</b>';	
-        
+		$link1 = $site_url.'a/'.$row['hash'];
+		echo '<b><a href="'.$link1.'" target="_blank">'.$link1.'</a>'.(count($lang_array) > 0 ? ' - '.$base_lang_resp : '').'</b>';
+
+		echo '<a href="#" onclick="CopyToClipboard(\''.$link1.'\');" return false;" title="Kopiraj povezavo" class="srv_ico">'
+			.'&nbsp;&nbsp'
+			. '<span class="faicon copy"></span></a>';
+
         // Zlistamo vse lepe url-je
         $sqll = sisplet_query("SELECT id, link FROM srv_nice_links WHERE ank_id = '$this->anketa' ORDER BY id ASC");
         while ($rowl = mysqli_fetch_assoc($sqll)) {
@@ -2686,7 +2648,6 @@ class SurveyAdminSettings {
 		SurveyInfo::getInstance()->SurveyInit($this->anketa);
 		$row = SurveyInfo::getInstance()->getSurveyRow();
 		
-		//return '&lt;iframe id="1ka" src="'.$site_url.'main/survey/index.php?anketa='.$this->anketa.'" scrolling="auto" frameborder="0" width="100%"&gt;&lt;/iframe&gt;&lt;script type="text/javascript"&gt;function r(){var a=window.location.hash.replace("#","");if(a.length==0)return;document.getElementById("1ka").style.height=a+"px";window.location.hash=""};window.setInterval(\\\'r()\\\',100);&lt;/script&gt;';
 		$iframe = '<iframe id="1ka" src="'.$link.'?e=1" height="500px" width="100%" scrolling="auto" frameborder="0"></iframe>';
 		$javascript = '<script type="text/javascript">function r(){var a=window.location.hash.replace("#","");if(a.length==0)return;document.getElementById("1ka").style.height=a+"px";window.location.hash=""};window.setInterval("r()",100);'
 		.'</script>';
@@ -2722,7 +2683,6 @@ class SurveyAdminSettings {
 		global $lang;
 		global $site_url;
 		global $admin_type;
-		global $app_settings;
 		
 		$anketa = $this->anketa;
 		
@@ -4384,6 +4344,54 @@ class SurveyAdminSettings {
 		}
 	}
 	
+    // Dodajanje uredniskega dostopa do ankete
+    public function display_add_survey_dostop(){
+        global $lang;
+        global $admin_type;
+
+        echo '<p class="bold">';
+
+        // Admini in managerji lahko dodajo dostop komurkoli
+        if($admin_type == 0 || $admin_type == 1){
+            echo $lang['srv_dostop_adduserstxt_admin'].' '.AppSettings::getInstance()->getSetting('app_settings-app_name').'. ';
+        }
+        // Ostali uporabniki lahko dodajo dostop samo ze registriranim uporabnikom
+        else{
+            echo $lang['srv_dostop_adduserstxt'].' '.AppSettings::getInstance()->getSetting('app_settings-app_name').'! ';
+        }
+
+        // AAI ima poseben link na help
+        if(isAAI()){
+            echo $lang['srv_dostop_adduserstxt_aai_more'];
+        }
+        
+        echo '</p>';
+
+        echo '<input type="hidden" name="aktiven" value="1" >';
+        
+        echo '<p>';
+        echo $lang['srv_dostop_adduserstxt_email'].'<br />';
+        echo '<textarea name="addusers" id="addusers" style="height: 90px; margin-top: 5px;"></textarea>';
+        echo '</p>';
+        
+        echo '<p>';
+        echo '<label><input type="checkbox" id="addusers_note_checkbox" style="margin:-2px 0 0 0;" onClick="dostopNoteToggle();"> '.$lang['srv_dostop_adduserstxt_note'].'</label><br />';
+        echo '<textarea name="addusers_note" id="addusers_note" style="height: 90px; margin-top: 5px; display: none;">'.$lang['srv_dostop_adduserstxt_note_text'].'</textarea>';
+        echo '</p>';
+        
+        echo '<br class="clr" />';
+
+        echo '<p>'.$lang['srv_dostop_adduserstxt_end'].'</p>';
+
+        // Gumb za dodajanje in posiljanje
+        echo '<br class="clr" />';
+
+        echo '<span class="floatLeft spaceRight"><div class="buttonwrapper"><a class="ovalbutton ovalbutton_orange btn_savesettings" href="#" onclick="dostopAddAccess(); return false;">';
+        echo $lang['srv_dostop_addusers_button'] . '</a></div></span>';
+        echo '<div class="clr"></div>';
+        echo '<br class="clr" />';
+	}
+
 
 	/**
 	 * @desc Vrne podatke o uporabniku
@@ -4502,10 +4510,7 @@ class SurveyAdminSettings {
 						}
 					}
 						
-					if($forma) 
-						echo '<label for="alert_finish_respondent">'.$lang['srv_alert_anketiranec'].'</label>'; 
-					else 
-						echo '<label for="alert_finish_respondent">'.$lang['srv_alert_respondent'].'</label>';
+					echo '<label for="alert_finish_respondent">'.$lang['srv_alert_respondent'].'</label>';
 						
 					if ($email_ok && $ime_ok) {
 						echo $lang['srv_alert_respondent_note_ok_email_ime'];
@@ -4541,20 +4546,14 @@ class SurveyAdminSettings {
 					// preverimo sistemske nastavitve in spremenljivke ime
 
 				} else { 
-					if($forma) 
-						echo '<label for="alert_finish_respondent">'.$lang['srv_alert_anketiranec'].'</label>'; 
-					else 
-						echo '<label for="alert_finish_respondent">'.$lang['srv_alert_respondent'].'</label>';
+					echo '<label for="alert_finish_respondent">'.$lang['srv_alert_respondent'].'</label>';
 				}
 				break;
 
 			case 'finish_respondent_cms': // respondent prepoznan iz CMS ko je izpolnil anketo
-				//respondent iz cms
-				//pri hitrih nastavitvah forme prikazemo drug text
-				if($forma) 
-					echo '<label for="alert_finish_respondent_cms">'.$lang['srv_alert_anketiranec_cms'].'</label>'; 
-				else 
-					echo '<label for="alert_finish_respondent_cms">'.$lang['srv_alert_respondent_cms'].'</label>';
+				
+                //respondent iz cms
+				echo '<label for="alert_finish_respondent_cms">'.$lang['srv_alert_respondent_cms'].'</label>';
 					
 				if ($isChecked) {
 					// preverimo sistemske nastavitve in spremenljivke
@@ -4808,6 +4807,7 @@ class SurveyAdminSettings {
 	
 	/**
 	 * @desc prikaze dropdown z nastavitvami ankete (globalne, za celo 1ko) -- Prva stran -> Nastavitve -> Sistemske nastavitve
+     * Sistemske nastavitve: mora biti admin da ima dostop
 	 */
 	function anketa_nastavitve_system() {
 		global $lang;
@@ -4816,110 +4816,119 @@ class SurveyAdminSettings {
 		global $admin_type;
 		global $global_user_id;
 
-		/* ** Sistemske nastavitve: mora biti admin da ima dostop *** */
 
-		echo '<div id="anketa_edit">' . "\n\r";
-		if ($admin_type == 0) {
+        // Ni admin - nima pravic
+        if ($admin_type != 0) {
 
-			echo '<form name="settingsanketa" action="ajax.php?a=editanketasettings&m=system" method="post" autocomplete="off">' . "\n\r";
-			echo '          <input type="hidden" name="anketa" value="' . $this->anketa . '" />' . "\n\r";
-			echo '          <input type="hidden" name="grupa" value="' . $this->grupa . '" />' . "\n\r";
-			echo '          <input type="hidden" name="location" value="' . $_GET['a'] . '" />' . "\n\r";
-			echo '          <input type="hidden" name="submited" value="1" />' . "\n\r";
+            echo '<div id="anketa_edit">';
+            echo $lang['srv_settingsSystemNoRights'];
+		    echo '</div>';	
 
-			echo '<fieldset>';
-			echo '<legend>' . $lang['settings'] . '</legend>';
+            return;
+        }
 
-			$result = sisplet_query("SELECT value FROM misc WHERE what='SurveyDostop'");
-			list ($SurveyDostop) = mysqli_fetch_row($result);
-			$result = sisplet_query("SELECT value FROM misc WHERE what='SurveyCookie'");
-			list ($SurveyCookie) = mysqli_fetch_row($result);
-			$result = sisplet_query("SELECT value FROM misc WHERE what='SurveyExport'");
-			list ($SurveyExport) = mysqli_fetch_row($result);
-			$result = sisplet_query("SELECT value FROM misc WHERE what='SurveyForum'");
-			list ($SurveyForum) = mysqli_fetch_row($result);
 
-			echo '<span class="nastavitveSpan1" ><label>' . $lang['SurveyDostop'] . ':</label></span>';
-			?>
-			<select name="SurveyDostop">
-				<option value="0" <?=($SurveyDostop=='0'?"SELECTED":"") ?>><?=$lang['forum_admin']?></option>
-				<option value="1" <?=($SurveyDostop=='1'?"SELECTED":"") ?>><?=$lang['forum_manager']?></option>
-				<option value="2" <?=($SurveyDostop=='2'?"SELECTED":"") ?>><?=$lang['forum_clan']?></option>
-				<option value="3" <?=($SurveyDostop=='3'?"SELECTED":"") ?>><?=$lang['forum_registered']?></option>
-			</select>
-			<br />
-						<?php
-			
-			
-						echo '<span class="nastavitveSpan1" ><label>' . $lang['SurveyCookie'] . ':</label></span>';
-						?>
-			<select name="SurveyCookie">
-				<option value="-1" <?=($SurveyCookie=='-1'?"SELECTED":"") ?>><?=$lang['without']?></option>
-				<option value="0" <?=($SurveyCookie=='0'?"SELECTED":"") ?>><?=$lang['srv_cookie_0']?></option>
-				<option value="1" <?=($SurveyCookie=='1'?"SELECTED":"") ?>><?=$lang['srv_cookie_1']?></option>
-				<option value="2" <?=($SurveyCookie=='2'?"SELECTED":"") ?>><?=$lang['srv_cookie_2']?></option>
-			</select>
-			<br />
-						<?php
-			
-			
-						echo '<span class="nastavitveSpan1" ><label>' . $lang['SurveyExport'] . ':</label></span>';
-						?>
-			<select name="SurveyExport">
-				<option value="0" <?=($SurveyExport=='0'?"SELECTED":"") ?>><?=$lang['forum_admin']?></option>
-				<option value="1" <?=($SurveyExport=='1'?"SELECTED":"") ?>><?=$lang['forum_manager']?></option>
-				<option value="2" <?=($SurveyExport=='2'?"SELECTED":"") ?>><?=$lang['forum_clan']?></option>
-				<option value="3" <?=($SurveyExport=='3'?"SELECTED":"") ?>><?=$lang['forum_registered']?></option>
-			</select>
-			<br />
-						<?php
-			
-						echo '<span class="nastavitveSpan1" ><label>' . $lang['SurveyForum'] . ':</label></span>';
-						?>
-			<select name="SurveyForum">
-			<?
-			echo '<option value="0">'.$lang['without'].'</option>';
-			$sqlf = sisplet_query("SELECT id, naslov FROM forum WHERE parent = '0'");
-			while ($rowf = mysqli_fetch_array($sqlf)) {
-				echo '<option value="'.$rowf['id'].'"'.($SurveyForum==$rowf['id']?' selected':'').'>'.$rowf['naslov'].'</option>';
-			}
-			?>
-			</select>
-			</fieldset>
+		echo '<div id="anketa_edit">';
 
-			<?php		
-			echo '<fieldset>';
-			echo '<legend>' . $lang['srv_edithelp'] . '</legend>';
-			
-			echo '<span class="nastavitveSpan1" ><label>' . $lang['srv_edithelp'] . ' '.Help::display('srv_window_help').': </label></span>';
-			Help :: edit_toggle();
-			
-			echo '</fieldset>';
-			//echo '        <p><input type="submit" value="' . $lang['edit4'] . '" onclick="document.settingsanketa.submit();" /></p>' . "\n\r";
+        echo '<form name="settingsanketa" action="ajax.php?a=editanketasettings&m=system" method="post" autocomplete="off">';
 
-			echo '        </form>';
-			
-			
-			$smv = new SurveyMissingValues();
-			$smv->SystemFilters();
-			
-			
-			// save gumb
-			echo '  <div class="buttonwrapper floatLeft spaceLeft"><a class="ovalbutton ovalbutton_orange btn_savesettings" href="#" onclick="document.settingsanketa.submit();"><span>'.$lang['edit1337'] . '</span></a></div>';
-			
-			echo '<span class="clr"></span>';
-			
-			// div za prikaz uspešnosti shranjevanja
-			if ($_GET['s'] == '1') {
-				echo '<div id="success_save"></div>';
-				echo '<script type="text/javascript">$(document).ready(function() {show_success_save();});</script>';
-			}
+        echo '  <input type="hidden" name="location" value="' . $_GET['a'] . '" />';
+        echo '  <input type="hidden" name="submited" value="1" />';
 
-		} else {
-			echo $lang['srv_settingsSystemNoRights'];
-		}
-		echo '</div>' . "\n\r";
-				
+
+        // SISTEMSKE NASTAVITVE (prej v settings_optional.php)
+        echo '<fieldset><legend>'.$lang['as_basic'].'</legend>';
+        AppSettings::getInstance()->displaySettingsGroup('basic');
+
+        echo '<br />';
+
+        // Kdo lahko ureja ankete
+        echo '<span class="nastavitveSpan6"><label>' . $lang['SurveyDostop'] . ':</label></span>';
+
+        $result = sisplet_query("SELECT value FROM misc WHERE what='SurveyDostop'");
+        list ($SurveyDostop) = mysqli_fetch_row($result);
+
+        echo '<select name="SurveyDostop">';
+        echo '	<option value="0" '.($SurveyDostop=='0'?"SELECTED":"").'>'.$lang['forum_admin'].'</option>';
+        echo '	<option value="1" '.($SurveyDostop=='1'?"SELECTED":"").'>'.$lang['forum_manager'].'</option>';
+        echo '	<option value="2" '.($SurveyDostop=='2'?"SELECTED":"").'>'.$lang['forum_clan'].'</option>';
+        echo '	<option value="3" '.($SurveyDostop=='3'?"SELECTED":"").'>'.$lang['forum_registered'].'</option>';
+        echo '</select>';
+
+        echo '<br />';
+
+        // Default trajanje piskotka
+        echo '<span class="nastavitveSpan6" ><label>' . $lang['SurveyCookie'] . ':</label></span>';
+
+        $result = sisplet_query("SELECT value FROM misc WHERE what='SurveyCookie'");
+        list ($SurveyCookie) = mysqli_fetch_row($result);
+
+        echo '<select name="SurveyCookie">';
+        echo '	<option value="-1" '.($SurveyCookie=='-1'?"SELECTED":"").'>'.$lang['without'].'</option>';
+        echo '	<option value="0" '.($SurveyCookie=='0'?"SELECTED":"").'>'.$lang['srv_cookie_0'].'</option>';
+        echo '	<option value="1" '.($SurveyCookie=='1'?"SELECTED":"").'>'.$lang['srv_cookie_1'].'</option>';
+        echo '	<option value="2" '.($SurveyCookie=='2'?"SELECTED":"").'>'.$lang['srv_cookie_2'].'</option>';
+        echo '</select>';
+
+        echo '<br />';
+        echo '</fieldset>';
+
+
+        // INFO
+        echo '<fieldset><legend>'.$lang['as_info'].'</legend>';
+        AppSettings::getInstance()->displaySettingsGroup('info');
+        echo '</fieldset>';
+
+
+        // OMEJITVE
+        echo '<fieldset><legend>'.$lang['as_limits'].'</legend>';
+        AppSettings::getInstance()->displaySettingsGroup('limits');
+        echo '</fieldset>';
+        
+
+        // SMTP NASTAVITVE
+        echo '<fieldset><legend>'.$lang['as_smtp'].'</legend>';
+        AppSettings::getInstance()->displaySettingsGroup('smtp');
+        echo '</fieldset>';
+        
+
+        // MODULI
+        echo '<fieldset><legend>'.$lang['as_modules'].'</legend>';
+        AppSettings::getInstance()->displaySettingsGroup('modules');
+        echo '</fieldset>';
+
+
+        echo '<br />';
+
+            
+        echo '<fieldset>';
+        echo '<legend>' . $lang['srv_edithelp'] . '</legend>';
+        
+        echo '<span class="nastavitveSpan1" ><label>' . $lang['srv_edithelp'] . ' '.Help::display('srv_window_help').': </label></span>';
+        Help :: edit_toggle();
+        
+        echo '</form>';
+        echo '</fieldset>';
+
+        
+        // Missingi
+        $smv = new SurveyMissingValues();
+        $smv->SystemFilters();
+        
+        
+        // save gumb
+        echo '  <div class="buttonwrapper floatLeft spaceLeft"><a class="ovalbutton ovalbutton_orange btn_savesettings" href="#" onclick="document.settingsanketa.submit();"><span>'.$lang['edit1337'] . '</span></a></div>';
+        
+        echo '<span class="clr"></span>';
+        
+        // div za prikaz uspešnosti shranjevanja
+        if ($_GET['s'] == '1') {
+            echo '<div id="success_save"></div>';
+            echo '<script type="text/javascript">$(document).ready(function() {show_success_save();});</script>';
+        }
+
+
+		echo '</div>';		
 	}
 
 	/**
@@ -6185,8 +6194,7 @@ class SurveyAdminSettings {
 		if(($comment_count['survey_resp']['unresolved']+$comment_count['survey_admin']['unresolved']) > 0) echo '</span>';
 		
 		echo ' '.$lang['srv_komentarji_odskupno'].' ';
-		echo $this->string_format((int)($comment_count['survey_resp']['all']+$comment_count['survey_admin']['all']), 'srv_cnt_komentarji_survey');
-		
+		echo $this->string_format((int)($comment_count['survey_resp']['all']+$comment_count['survey_admin']['all']), 'srv_cnt_komentarji_survey_od');
 		echo '</span>';
 		
 		
@@ -6675,7 +6683,7 @@ class SurveyAdminSettings {
 		if($comment_count['question']['unresolved'] > 0) echo '</span>';
 		
 		echo ' '.$lang['srv_komentarji_odskupno'].' ';
-		echo $this->string_format((int)$comment_count['question']['all'], 'srv_cnt_komentar_na_vprs');
+		echo $this->string_format((int)$comment_count['question']['all'], 'srv_cnt_komentar_na_vprs_od');
 		
 		echo '</span>';
 		
@@ -8113,7 +8121,7 @@ class SurveyAdminSettings {
 	function displayBtnMailtoPreview($row) {
 		global $lang;
 		echo '<div class="floatLeft"><div class="buttonwrapper">';
-		echo '<a class="ovalbutton ovalbutton_orange" href="#" onclick="'.( ($row['active'] != 1) ? 'alert(\''.$lang['srv_anketa_noactive2'].'\'); ' : 'preview_mailto_email(); ').'return false;">';
+		echo '<a class="ovalbutton ovalbutton_orange" href="#" onclick="'.( ($row['active'] != 1) ? 'genericAlertPopup(\'srv_anketa_noactive2\'); ' : 'preview_mailto_email(); ').'return false;">';
 		echo '<span>';
 		//'<img src="icons/icons/accept.png" alt="" vartical-align="middle" />'
 		echo  $lang['srv_mailto_preview'] . '</span></a></div></div>';
@@ -8205,7 +8213,6 @@ class SurveyAdminSettings {
     public function dodajNovegaUporabnika(){
         global $admin_type;
         global $lang;
-        global $virtual_domain;
 
         // admini lahko dodajajo uporabnike, ki jih nato managirajo 
         if($admin_type != 0)
@@ -8246,14 +8253,13 @@ class SurveyAdminSettings {
 	    global $admin_type;
 	    global $lang;
 	    global $global_user_id;
-	    global $virtual_domain;
 
         // managerji in admini lahko dodajajo uporabnike, ki jih nato managirajo
         if( !($admin_type == 1 || $admin_type == 0) )
             return '';
 
         // Na virtualkah imajo managerji omejitev st. dodeljenih uporabnikov - ZAENKRAT JE TO ONEMOGOCENO, KASNEJE SE LAHKO OMEJI NA PAKET
-        if(false && $virtual_domain && $admin_type == 1){
+        if(false && isVirtual() && $admin_type == 1){
 
             // Limit st. dodeljenih uporabnikov
             $managed_accounts_limit = 5;
@@ -9320,7 +9326,7 @@ class SurveyAdminSettings {
 	}
 	
 	function globalUserMyProfile () {
-		global $lang, $global_user_id, $admin_type, $site_domain, $site_url, $app_settings, $aai_instalacija;
+		global $lang, $global_user_id, $admin_type, $site_domain, $site_url;
 		
 		// podatki prijavljenega uporabnika
 		$sql = sisplet_query("SELECT id, name, surname, email, type, gdpr_agree, last_login FROM users WHERE id = '$global_user_id'");
@@ -9348,7 +9354,7 @@ class SurveyAdminSettings {
         
         
         // Trenutni paket funkcionalnosti
-        if($app_settings['commercial_packages']){
+        if(AppSettings::getInstance()->getSetting('app_settings-commercial_packages') === true){
 
             echo '<br>';
             
@@ -9361,7 +9367,7 @@ class SurveyAdminSettings {
 
             // Ni nobenega paketa
             if(mysqli_num_rows($sqlA) == 0){
-                $package_string = '1ka ('.$lang['srv_access_package_free'].') - <a href="'.$drupal_url.'cenik/zasebni-paketi">'.$lang['srv_narocila_buy'].'</a>';
+                $package_string = '1ka ('.$lang['srv_access_package_free'].') - <a href="'.$drupal_url.''.$lang['srv_narocila_buyurl'].'">'.$lang['srv_narocila_buy'].'</a>';
             }
             else{
                 $rowA = mysqli_fetch_array($sqlA);
@@ -9392,7 +9398,7 @@ class SurveyAdminSettings {
                     $package_string = $rowA['package_name'];
                     $package_string .= ' ('.$lang['srv_access_package_free'].')';
                     
-                    $package_string .= ' - <a href="'.$drupal_url.'cenik/zasebni-paketi">'.$lang['srv_narocila_buy'].'</a>';
+                    $package_string .= ' - <a href="'.$drupal_url.''.$lang['srv_narocila_buyurl'].'">'.$lang['srv_narocila_buy'].'</a>';
                 }
             }
 
@@ -9403,7 +9409,7 @@ class SurveyAdminSettings {
 		echo '<br />';
 		
         // AAI nima moznosti spreminjanja imena, priimka, emaila, gesla...
-        if($aai_instalacija){
+        if(isAAI()){
             echo '<span class="italic">'.$lang['srv_profil_aai_warning'].'</span>';
         }
         else{
@@ -9507,7 +9513,7 @@ class SurveyAdminSettings {
 		
 
 		// Save gumb - ce ni AAI
-        if(!$aai_instalacija){
+        if(!isAAI()){
 
             echo '  <div class="buttonwrapper floatLeft spaceLeft"><a class="ovalbutton ovalbutton_gray" href="#" onclick="izbrisi1kaRacun();"><span>'.$lang['delete_account'] . '</span></a></div>';
             echo '  <div class="buttonwrapper floatLeft spaceLeft"><a class="ovalbutton ovalbutton_orange btn_savesettings" href="#" onclick="save1kaRacunSettings();"><span>'.$lang['edit1337'] . '</span></a></div>';

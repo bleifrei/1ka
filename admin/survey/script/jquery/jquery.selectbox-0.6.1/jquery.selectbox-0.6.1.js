@@ -12,6 +12,11 @@
  * @author Krzysztof Suszyński <k.suszynski@wit.edu.pl>
 **/
 jQuery.fn.selectbox = function(options){
+
+    // Na mobitelu pustimo vedno default dropdowne
+    if ($('.mobile_header:visible').length != 0)
+        return;
+
 	/* Default settings */
 	var settings = {
 		className: 'jquery-selectbox',
@@ -159,7 +164,7 @@ jQuery.fn.selectbox = function(options){
 				jQuery('.'+settings.className + '-currentItem', replacement).text(v.text());
 			}
 		});
-		replacement.find('.' + settings.className + '-moreButton').click(function(){
+		replacement.find('.'+settings.className+'-moreButton, .'+settings.className+'-currentItem').click(function(){
 			var thisMoreButton = jQuery(this);
 			var otherLists = jQuery('.' + settings.className + '-list')
 				.not(thisMoreButton.siblings('.' + settings.className + '-list'));

@@ -215,13 +215,6 @@ class SurveyCopy {
 
 		$arr_src = array();
 
-		// subqueryji mysql cist ubijejo zato sem razbil v 2 locena queryja... v bistvu si zakesiramo seznam spremenljivk in ifov
-		// TODO ko se MySQL upgrada na 5.6 mogoce prestavit nazaj na navaden subquery, ali pa tut ne - bo za sprobat
-
-
-		$qry_src_survey = sisplet_query("SELECT * FROM srv_anketa WHERE id = '".self :: $src_survey."'", self :: $src_connect_db);
-		$anketa_array = self::sql2array($qry_src_survey);
-
         //Če imamo vklopljeno hierarhijo, potem vrednosti spremenljivk od hierarhije ne kopiramo
         // V kolikor imamo vklopljeno hierarhijo potem ne kopiramo spremenljivke od hierarhije
         $hierarhija_sql = null;
@@ -380,8 +373,11 @@ class SurveyCopy {
 			$qry_src_user = sisplet_query("SELECT * FROM srv_user WHERE ank_id  = '".self::$src_survey."'", self :: $src_connect_db);
 			$arr_src['srv_user'] = self::sql2array($qry_src_user);
 
-			$qry_src_data_checkgrid = sisplet_query("SELECT * FROM srv_data_checkgrid WHERE spr_id IN (".$qry_cache_spr_id.")", self :: $src_connect_db);
-			$arr_src['srv_data_checkgrid'] = self::sql2array($qry_src_data_checkgrid);
+			$qry_src_data_checkgrid_archive1 = sisplet_query("SELECT * FROM srv_data_checkgrid_archive1 WHERE spr_id IN (".$qry_cache_spr_id.")", self :: $src_connect_db);
+			$arr_src['srv_data_checkgrid_archive1'] = self::sql2array($qry_src_data_checkgrid_archive1);
+
+			$qry_src_data_checkgrid_archive2 = sisplet_query("SELECT * FROM srv_data_checkgrid_archive2 WHERE spr_id IN (".$qry_cache_spr_id.")", self :: $src_connect_db);
+			$arr_src['srv_data_checkgrid_archive2'] = self::sql2array($qry_src_data_checkgrid_archive2);
 			
 			$qry_src_data_checkgrid_active = sisplet_query("SELECT * FROM srv_data_checkgrid_active WHERE spr_id IN (".$qry_cache_spr_id.")", self :: $src_connect_db);
 			$arr_src['srv_data_checkgrid_active'] = self::sql2array($qry_src_data_checkgrid_active);
@@ -389,8 +385,11 @@ class SurveyCopy {
 			$qry_src_data_glasovanje = sisplet_query("SELECT * FROM srv_data_glasovanje WHERE spr_id IN (".$qry_cache_spr_id.")", self :: $src_connect_db);
 			$arr_src['srv_data_glasovanje'] = self::sql2array($qry_src_data_glasovanje);
 
-			$qry_src_data_grid = sisplet_query("SELECT * FROM srv_data_grid WHERE spr_id IN (".$qry_cache_spr_id.")", self :: $src_connect_db);
-			$arr_src['srv_data_grid'] = self::sql2array($qry_src_data_grid);
+			$qry_src_data_grid_archive1 = sisplet_query("SELECT * FROM srv_data_grid_archive1 WHERE spr_id IN (".$qry_cache_spr_id.")", self :: $src_connect_db);
+			$arr_src['srv_data_grid_archive1'] = self::sql2array($qry_src_data_grid_archive1);
+
+			$qry_src_data_grid_archive2 = sisplet_query("SELECT * FROM srv_data_grid_archive2 WHERE spr_id IN (".$qry_cache_spr_id.")", self :: $src_connect_db);
+			$arr_src['srv_data_grid_archive2'] = self::sql2array($qry_src_data_grid_archive2);
 
 			$qry_src_data_grid_active = sisplet_query("SELECT * FROM srv_data_grid_active WHERE spr_id IN (".$qry_cache_spr_id.")", self :: $src_connect_db);
 			$arr_src['srv_data_grid_active'] = self::sql2array($qry_src_data_grid_active);
@@ -398,14 +397,20 @@ class SurveyCopy {
 			$qry_src_data_rating = sisplet_query("SELECT * FROM srv_data_rating WHERE spr_id IN (".$qry_cache_spr_id.")", self :: $src_connect_db);
 			$arr_src['srv_data_rating'] = self::sql2array($qry_src_data_rating);
 
-			$qry_src_data_text = sisplet_query("SELECT * FROM srv_data_text WHERE spr_id IN (".$qry_cache_spr_id.")", self :: $src_connect_db);
-			$arr_src['srv_data_text'] = self::sql2array($qry_src_data_text);
+			$qry_src_data_text_archive1 = sisplet_query("SELECT * FROM srv_data_text_archive1 WHERE spr_id IN (".$qry_cache_spr_id.")", self :: $src_connect_db);
+			$arr_src['srv_data_text_archive1'] = self::sql2array($qry_src_data_text_archive1);
+
+			$qry_src_data_text_archive2 = sisplet_query("SELECT * FROM srv_data_text_archive2 WHERE spr_id IN (".$qry_cache_spr_id.")", self :: $src_connect_db);
+			$arr_src['srv_data_text_archive2'] = self::sql2array($qry_src_data_text_archive2);
 			
 			$qry_src_data_text_active = sisplet_query("SELECT * FROM srv_data_text_active WHERE spr_id IN (".$qry_cache_spr_id.")", self :: $src_connect_db);
 			$arr_src['srv_data_text_active'] = self::sql2array($qry_src_data_text_active);
 
-			$qry_src_data_textgrid = sisplet_query("SELECT * FROM srv_data_textgrid WHERE spr_id IN (".$qry_cache_spr_id.")", self :: $src_connect_db);
-			$arr_src['srv_data_textgrid'] = self::sql2array($qry_src_data_textgrid);
+			$qry_src_data_textgrid_archive1 = sisplet_query("SELECT * FROM srv_data_textgrid_archive1 WHERE spr_id IN (".$qry_cache_spr_id.")", self :: $src_connect_db);
+			$arr_src['srv_data_textgrid_archive1'] = self::sql2array($qry_src_data_textgrid_archive1);
+
+			$qry_src_data_textgrid_archive2 = sisplet_query("SELECT * FROM srv_data_textgrid_archive2 WHERE spr_id IN (".$qry_cache_spr_id.")", self :: $src_connect_db);
+			$arr_src['srv_data_textgrid_archive2'] = self::sql2array($qry_src_data_textgrid_archive2);
 			
 			$qry_src_data_textgrid_active = sisplet_query("SELECT * FROM srv_data_textgrid_active WHERE spr_id IN (".$qry_cache_spr_id.")", self :: $src_connect_db);
 			$arr_src['srv_data_textgrid_active'] = self::sql2array($qry_src_data_textgrid_active);
@@ -413,14 +418,20 @@ class SurveyCopy {
 			$qry_src_data_upload = sisplet_query("SELECT * FROM srv_data_upload WHERE ank_id='".self::$src_survey."'", self :: $src_connect_db);
 			$arr_src['srv_data_upload'] = self::sql2array($qry_src_data_upload);
 
-			$qry_src_data_vrednost = sisplet_query("SELECT * FROM srv_data_vrednost WHERE spr_id IN (".$qry_cache_spr_id.")", self :: $src_connect_db);
-			$arr_src['srv_data_vrednost'] = self::sql2array($qry_src_data_vrednost);
+			$qry_src_data_vrednost_archive1 = sisplet_query("SELECT * FROM srv_data_vrednost_archive1 WHERE spr_id IN (".$qry_cache_spr_id.")", self :: $src_connect_db);
+			$arr_src['srv_data_vrednost_archive1'] = self::sql2array($qry_src_data_vrednost_archive1);
+
+            $qry_src_data_vrednost_archive2 = sisplet_query("SELECT * FROM srv_data_vrednost_archive2 WHERE spr_id IN (".$qry_cache_spr_id.")", self :: $src_connect_db);
+			$arr_src['srv_data_vrednost_archive2'] = self::sql2array($qry_src_data_vrednost_archive2);
 
 			$qry_src_data_vrednost_active = sisplet_query("SELECT * FROM srv_data_vrednost_active WHERE spr_id IN (".$qry_cache_spr_id.")", self :: $src_connect_db);
 			$arr_src['srv_data_vrednost_active'] = self::sql2array($qry_src_data_vrednost_active);
 
-			$qry_src_user_grupa = sisplet_query("SELECT * FROM srv_user_grupa WHERE usr_id IN (".$qry_cache_usr_id.")", self::$src_connect_db);
-			$arr_src['srv_user_grupa'] = self::sql2array($qry_src_user_grupa);
+			$qry_src_user_grupa_archive1 = sisplet_query("SELECT * FROM srv_user_grupa_archive1 WHERE usr_id IN (".$qry_cache_usr_id.")", self::$src_connect_db);
+			$arr_src['srv_user_grupa_archive1'] = self::sql2array($qry_src_user_grupa_archive1);
+
+			$qry_src_user_grupa_archive2 = sisplet_query("SELECT * FROM srv_user_grupa_archive2 WHERE usr_id IN (".$qry_cache_usr_id.")", self::$src_connect_db);
+			$arr_src['srv_user_grupa_archive2'] = self::sql2array($qry_src_user_grupa_archive2);
 
 			$qry_src_user_grupa_active = sisplet_query("SELECT * FROM srv_user_grupa_active WHERE usr_id IN (".$qry_cache_usr_id.")", self::$src_connect_db);
 			$arr_src['srv_user_grupa_active'] = self::sql2array($qry_src_user_grupa_active);
@@ -473,8 +484,12 @@ class SurveyCopy {
 			// iz izvorne ankete preberemo vsa polja
 			if ( count($arr_src['srv_anketa']) > 0) {
                 
+                // Nastavimo se hash nove ankete
+                $hash = Common::generateSurveyHash();
+
                 // predefinirana polja (vsilimo vrednosti)
 				$pre_set = array('id' => "NULL",
+								'hash' => "'".$hash."'",
 								'backup' => "'0'",
 								'active' => "'0'",
 								'locked' => "'0'",
@@ -705,7 +720,6 @@ class SurveyCopy {
 
 					foreach ($srv_if AS $row) {
 						// IF-i, tabela srv_if
-						//$qry_src_if = sisplet_query("SELECT * FROM srv_if WHERE id = '".$row[id]."'", self :: $src_connect_db);
 						$qry_src_if = self::arrayfilter($arr_src['srv_if'], 'id', $row['id']);
 						$pre_set = array('id' => "NULL");
 						$tmp_if_ids = self :: preformCopyTable('srv_if', 'id', $qry_src_if, $pre_set);
@@ -912,13 +926,21 @@ class SurveyCopy {
 									$new_user_ids[$key] = $value;
 						}
 						
-						// srv_data_checkgrid - VSE VEDNO KOPIRAMO V ACTIVE TABELE
+						// srv_data_checkgrid_archive1 - VSE VEDNO KOPIRAMO V ACTIVE TABELE
 						$pre_set = array('spr_id' => array('field'=>'spr_id', 'from' => $new_spremenljivke_ids),
 										'vre_id' => array('field'=>'vre_id', 'from' => $new_vrednosti_ids),
 										'usr_id' => array('field'=>'usr_id', 'from' => $new_user_ids),
 										'grd_id' => array('field'=>'grd_id', 'from' => $new_grid_ids),
 										'loop_id' => array('field'=>'loop_id', 'from' => $new_loop_data_ids));
-						self::preformCopyTable('srv_data_checkgrid_active', null, $arr_src['srv_data_checkgrid'], $pre_set);
+						self::preformCopyTable('srv_data_checkgrid_active', null, $arr_src['srv_data_checkgrid_archive1'], $pre_set);
+
+						// srv_data_checkgrid_archive2 - VSE VEDNO KOPIRAMO V ACTIVE TABELE
+						$pre_set = array('spr_id' => array('field'=>'spr_id', 'from' => $new_spremenljivke_ids),
+										'vre_id' => array('field'=>'vre_id', 'from' => $new_vrednosti_ids),
+										'usr_id' => array('field'=>'usr_id', 'from' => $new_user_ids),
+										'grd_id' => array('field'=>'grd_id', 'from' => $new_grid_ids),
+										'loop_id' => array('field'=>'loop_id', 'from' => $new_loop_data_ids));
+						self::preformCopyTable('srv_data_checkgrid_active', null, $arr_src['srv_data_checkgrid_archive2'], $pre_set);
 						
 						// srv_data_checkgrid_active
 						$pre_set = array('spr_id' => array('field'=>'spr_id', 'from' => $new_spremenljivke_ids),
@@ -933,13 +955,21 @@ class SurveyCopy {
 										'usr_id' => array('field'=>'usr_id', 'from' => $new_user_ids));
 						self::preformCopyTable('srv_data_glasovanje', null, $arr_src['srv_data_glasovanje'], $pre_set);
 						
-						// srv_data_grid - VSE VEDNO KOPIRAMO V ACTIVE TABELE
+						// srv_data_grid_archive1 - VSE VEDNO KOPIRAMO V ACTIVE TABELE
 						$pre_set = array('spr_id' => array('field'=>'spr_id', 'from' => $new_spremenljivke_ids),
 										'vre_id' => array('field'=>'vre_id', 'from' => $new_vrednosti_ids),
 										'usr_id' => array('field'=>'usr_id', 'from' => $new_user_ids),
 										'grd_id' => array('field'=>'grd_id', 'from' => $new_grid_ids),
 										'loop_id' => array('field'=>'loop_id', 'from' => $new_loop_data_ids));
-						self::preformCopyTable('srv_data_grid_active', null, $arr_src['srv_data_grid'], $pre_set);
+						self::preformCopyTable('srv_data_grid_active', null, $arr_src['srv_data_grid_archive1'], $pre_set);
+
+						// srv_data_grid_archive2 - VSE VEDNO KOPIRAMO V ACTIVE TABELE
+						$pre_set = array('spr_id' => array('field'=>'spr_id', 'from' => $new_spremenljivke_ids),
+										'vre_id' => array('field'=>'vre_id', 'from' => $new_vrednosti_ids),
+										'usr_id' => array('field'=>'usr_id', 'from' => $new_user_ids),
+										'grd_id' => array('field'=>'grd_id', 'from' => $new_grid_ids),
+										'loop_id' => array('field'=>'loop_id', 'from' => $new_loop_data_ids));
+						self::preformCopyTable('srv_data_grid_active', null, $arr_src['srv_data_grid_archive2'], $pre_set);
 						
 						// srv_data_grid_active
 						$pre_set = array('spr_id' => array('field'=>'spr_id', 'from' => $new_spremenljivke_ids),
@@ -956,13 +986,21 @@ class SurveyCopy {
 										'loop_id' => array('field'=>'loop_id', 'from' => $new_loop_data_ids));
 						self::preformCopyTable('srv_data_rating', null, $arr_src['srv_data_rating'], $pre_set);
 						
-						// srv_data_text - VSE VEDNO KOPIRAMO V ACTIVE TABELE
+						// srv_data_text_archive1 - VSE VEDNO KOPIRAMO V ACTIVE TABELE
 						$pre_set = array('id' => "NULL",
 										'spr_id' => array('field'=>'spr_id', 'from' => $new_spremenljivke_ids),
 										'vre_id' => array('field'=>'vre_id', 'from' => $new_vrednosti_ids),
 										'usr_id' => array('field'=>'usr_id', 'from' => $new_user_ids),
 										'loop_id' => array('field'=>'loop_id', 'from' => $new_loop_data_ids));
-						self::preformCopyTable('srv_data_text_active', 'id', $arr_src['srv_data_text'], $pre_set);
+						self::preformCopyTable('srv_data_text_active', 'id', $arr_src['srv_data_text_archive1'], $pre_set);
+
+						// srv_data_text_archive2 - VSE VEDNO KOPIRAMO V ACTIVE TABELE
+						$pre_set = array('id' => "NULL",
+										'spr_id' => array('field'=>'spr_id', 'from' => $new_spremenljivke_ids),
+										'vre_id' => array('field'=>'vre_id', 'from' => $new_vrednosti_ids),
+										'usr_id' => array('field'=>'usr_id', 'from' => $new_user_ids),
+										'loop_id' => array('field'=>'loop_id', 'from' => $new_loop_data_ids));
+						self::preformCopyTable('srv_data_text_active', 'id', $arr_src['srv_data_text_archive2'], $pre_set);
 
 						// srv_data_text_active
 						$pre_set = array('id' => "NULL",
@@ -972,13 +1010,21 @@ class SurveyCopy {
 										'loop_id' => array('field'=>'loop_id', 'from' => $new_loop_data_ids));
 						self::preformCopyTable('srv_data_text_active', 'id', $arr_src['srv_data_text_active'], $pre_set);
 						
-						// srv_data_textgrid - VSE VEDNO KOPIRAMO V ACTIVE TABELE
+						// srv_data_textgrid_archive1 - VSE VEDNO KOPIRAMO V ACTIVE TABELE
 						$pre_set = array('spr_id' => array('field'=>'spr_id', 'from' => $new_spremenljivke_ids),
 										'vre_id' => array('field'=>'vre_id', 'from' => $new_vrednosti_ids),
 										'usr_id' => array('field'=>'usr_id', 'from' => $new_user_ids),
 										'grd_id' => array('field'=>'grd_id', 'from' => $new_grid_ids),
 										'loop_id' => array('field'=>'loop_id', 'from' => $new_loop_data_ids));
-						self::preformCopyTable('srv_data_textgrid_active', null, $arr_src['srv_data_textgrid'], $pre_set);
+						self::preformCopyTable('srv_data_textgrid_active', null, $arr_src['srv_data_textgrid_archive1'], $pre_set);
+
+						// srv_data_textgrid_archive2 - VSE VEDNO KOPIRAMO V ACTIVE TABELE
+						$pre_set = array('spr_id' => array('field'=>'spr_id', 'from' => $new_spremenljivke_ids),
+										'vre_id' => array('field'=>'vre_id', 'from' => $new_vrednosti_ids),
+										'usr_id' => array('field'=>'usr_id', 'from' => $new_user_ids),
+										'grd_id' => array('field'=>'grd_id', 'from' => $new_grid_ids),
+										'loop_id' => array('field'=>'loop_id', 'from' => $new_loop_data_ids));
+						self::preformCopyTable('srv_data_textgrid_active', null, $arr_src['srv_data_textgrid_archive2'], $pre_set);
 
 						// srv_data_textgrid_active
 						$pre_set = array('spr_id' => array('field'=>'spr_id', 'from' => $new_spremenljivke_ids),
@@ -993,12 +1039,19 @@ class SurveyCopy {
 										'usr_id' => array('field'=>'usr_id', 'from' => $new_user_ids));
 						self::preformCopyTable('srv_data_upload', null, $arr_src['srv_data_upload'], $pre_set);
 						
-						// srv_data_vrednost - VSE VEDNO KOPIRAMO V ACTIVE TABELE
+						// srv_data_vrednost_archive1 - VSE VEDNO KOPIRAMO V ACTIVE TABELE
 						$pre_set = array('spr_id' => array('field'=>'spr_id', 'from' => $new_spremenljivke_ids),
 										'vre_id' => array('field'=>'vre_id', 'from' => $new_vrednosti_ids),
 										'usr_id' => array('field'=>'usr_id', 'from' => $new_user_ids),
 										'loop_id' => array('field'=>'loop_id', 'from' => $new_loop_data_ids));
-						self::preformCopyTable('srv_data_vrednost_active', null, $arr_src['srv_data_vrednost'], $pre_set);
+						self::preformCopyTable('srv_data_vrednost_active', null, $arr_src['srv_data_vrednost_archive1'], $pre_set);
+
+						// srv_data_vrednost_archive2 - VSE VEDNO KOPIRAMO V ACTIVE TABELE
+						$pre_set = array('spr_id' => array('field'=>'spr_id', 'from' => $new_spremenljivke_ids),
+										'vre_id' => array('field'=>'vre_id', 'from' => $new_vrednosti_ids),
+										'usr_id' => array('field'=>'usr_id', 'from' => $new_user_ids),
+										'loop_id' => array('field'=>'loop_id', 'from' => $new_loop_data_ids));
+						self::preformCopyTable('srv_data_vrednost_active', null, $arr_src['srv_data_vrednost_archive2'], $pre_set);
 						
 						// srv_data_vrednost_active
 						$pre_set = array('spr_id' => array('field'=>'spr_id', 'from' => $new_spremenljivke_ids),
@@ -1007,10 +1060,15 @@ class SurveyCopy {
 										'loop_id' => array('field'=>'loop_id', 'from' => $new_loop_data_ids));
 						self::preformCopyTable('srv_data_vrednost_active', null, $arr_src['srv_data_vrednost_active'], $pre_set);
 						
-						// srv_user_grupa - VSE VEDNO KOPIRAMO V ACTIVE TABELE
+						// srv_user_grupa_archive1 - VSE VEDNO KOPIRAMO V ACTIVE TABELE
 						$pre_set = array('gru_id' => array('field'=>'gru_id', 'from' => $new_grupa_ids),
 										'usr_id' => array('field'=>'usr_id', 'from' => $new_user_ids));
-						self::preformCopyTable('srv_user_grupa_active', null, $arr_src['srv_user_grupa'], $pre_set);
+						self::preformCopyTable('srv_user_grupa_active', null, $arr_src['srv_user_grupa_archive1'], $pre_set);
+
+						// srv_user_grupa_archive2 - VSE VEDNO KOPIRAMO V ACTIVE TABELE
+						$pre_set = array('gru_id' => array('field'=>'gru_id', 'from' => $new_grupa_ids),
+										'usr_id' => array('field'=>'usr_id', 'from' => $new_user_ids));
+						self::preformCopyTable('srv_user_grupa_active', null, $arr_src['srv_user_grupa_archive2'], $pre_set);
 						
 						// srv_user_grupa_active
 						$pre_set = array('gru_id' => array('field'=>'gru_id', 'from' => $new_grupa_ids),
@@ -1115,15 +1173,14 @@ class SurveyCopy {
 			    		 */
 			    		
 			    		// ce polje v src datoteki ni nastavljeno ga damo na praznega
-			    		if ( ! isset($row_src[$dest_field]) && ! isset($pre_set[$dest_field]) ) {
-							$dest_value = "''";
-							
-						// ce je polje NULL, ga moramo rocno nastavit na NULL
-			    		} elseif (isset($row_src[$dest_field]) && ($row_src[$dest_field] === NULL)) {
-							$dest_value = "NULL";
-							
-			    		} else {
-			    		
+			    		if ( !isset($row_src[$dest_field]) && !isset($pre_set[$dest_field]) ) {
+							$dest_value = "''";	
+			    		} 
+                        // ce je polje NULL, ga moramo rocno nastavit na NULL
+                        elseif ( $row_src[$dest_field] === NULL && !isset($pre_set[$dest_field]) ) {
+							$dest_value = "NULL";	
+			    		} 
+                        else {
 			    			$dest_value = isset($pre_set[$dest_field]) 
 			    				? ( !(is_array($pre_set[$dest_field]) && isset($pre_set[$dest_field]['field']) && isset($pre_set[$dest_field]['from']))
 			    					? $pre_set[$dest_field]
@@ -1133,7 +1190,6 @@ class SurveyCopy {
 			    					)
 			    				) 
 			    				: "'".mysqli_real_escape_string($GLOBALS['connect_db'], $row_src[$dest_field])."'";
-						
 						}
 			    		
 				    	$insert_values .= $insert_values_prefix . $dest_value;
@@ -1223,11 +1279,17 @@ class SurveyCopy {
 
 
 		// Kopiramo odgovore	
-		// srv_data_vrednost
-		$sqlD = sisplet_query("SELECT * FROM srv_data_vrednost WHERE usr_id='".$usr_id."'");
+		// srv_data_vrednost_archive1
+		$sqlD = sisplet_query("SELECT * FROM srv_data_vrednost_archive1 WHERE usr_id='".$usr_id."'");
 		$pre_set = array(	'usr_id' => $new_usr_id,
 							'loop_id' => "NULL");
-		self::preformCopyTable('srv_data_vrednost', null, self::sql2array($sqlD), $pre_set);
+		self::preformCopyTable('srv_data_vrednost_archive1', null, self::sql2array($sqlD), $pre_set);
+
+		// srv_data_vrednost_archive2
+		$sqlD = sisplet_query("SELECT * FROM srv_data_vrednost_archive2 WHERE usr_id='".$usr_id."'");
+		$pre_set = array(	'usr_id' => $new_usr_id,
+							'loop_id' => "NULL");
+		self::preformCopyTable('srv_data_vrednost_archive2', null, self::sql2array($sqlD), $pre_set);
 		
 		// srv_data_vrednost_active
 		$sqlD = sisplet_query("SELECT * FROM srv_data_vrednost_active WHERE usr_id='".$usr_id."'");
@@ -1235,12 +1297,19 @@ class SurveyCopy {
 							'loop_id' => "NULL");
 		self::preformCopyTable('srv_data_vrednost_active', null, self::sql2array($sqlD), $pre_set);
 		
-		// srv_data_text
-		$sqlD = sisplet_query("SELECT * FROM srv_data_text WHERE usr_id='".$usr_id."'");
+		// srv_data_text_archive1
+		$sqlD = sisplet_query("SELECT * FROM srv_data_text_archive1 WHERE usr_id='".$usr_id."'");
 		$pre_set = array(	'id' => "NULL",
 							'usr_id' => $new_usr_id,
 							'loop_id' => "NULL");
-		self::preformCopyTable('srv_data_text', 'id', self::sql2array($sqlD), $pre_set);
+		self::preformCopyTable('srv_data_text_archive1', 'id', self::sql2array($sqlD), $pre_set);
+
+		// srv_data_text_archive2
+		$sqlD = sisplet_query("SELECT * FROM srv_data_text_archive2 WHERE usr_id='".$usr_id."'");
+		$pre_set = array(	'id' => "NULL",
+							'usr_id' => $new_usr_id,
+							'loop_id' => "NULL");
+		self::preformCopyTable('srv_data_text_archive2', 'id', self::sql2array($sqlD), $pre_set);
 		
 		// srv_data_text_active
 		$sqlD = sisplet_query("SELECT * FROM srv_data_text_active WHERE usr_id='".$usr_id."'");
@@ -1249,11 +1318,17 @@ class SurveyCopy {
 							'loop_id' => "NULL");
 		self::preformCopyTable('srv_data_text_active', 'id', self::sql2array($sqlD), $pre_set);
 		
-		// srv_data_checkgrid
-		$sqlD = sisplet_query("SELECT * FROM srv_data_checkgrid WHERE usr_id='".$usr_id."'");
+		// srv_data_checkgrid_archive1
+		$sqlD = sisplet_query("SELECT * FROM srv_data_checkgrid_archive1 WHERE usr_id='".$usr_id."'");
 		$pre_set = array(	'usr_id' => $new_usr_id,
 							'loop_id' => "NULL");
-		self::preformCopyTable('srv_data_checkgrid', null, self::sql2array($sqlD), $pre_set);
+		self::preformCopyTable('srv_data_checkgrid_archive1', null, self::sql2array($sqlD), $pre_set);
+
+		// srv_data_checkgrid_archive2
+		$sqlD = sisplet_query("SELECT * FROM srv_data_checkgrid_archive2 WHERE usr_id='".$usr_id."'");
+		$pre_set = array(	'usr_id' => $new_usr_id,
+							'loop_id' => "NULL");
+		self::preformCopyTable('srv_data_checkgrid_archive2', null, self::sql2array($sqlD), $pre_set);
 
 		// srv_data_checkgrid_active
 		$sqlD = sisplet_query("SELECT * FROM srv_data_checkgrid_active WHERE usr_id='".$usr_id."'");
@@ -1261,11 +1336,17 @@ class SurveyCopy {
 							'loop_id' => "NULL");
 		self::preformCopyTable('srv_data_checkgrid_active', null, self::sql2array($sqlD), $pre_set);
 
-		// srv_data_grid
-		$sqlD = sisplet_query("SELECT * FROM srv_data_grid WHERE usr_id='".$usr_id."'");
+		// srv_data_grid_archive1
+		$sqlD = sisplet_query("SELECT * FROM srv_data_grid_archive1 WHERE usr_id='".$usr_id."'");
 		$pre_set = array(	'usr_id' => $new_usr_id,
 							'loop_id' => "NULL");		
-		self::preformCopyTable('srv_data_grid', null, self::sql2array($sqlD), $pre_set);
+		self::preformCopyTable('srv_data_grid_archive1', null, self::sql2array($sqlD), $pre_set);
+
+		// srv_data_grid_archive2
+		$sqlD = sisplet_query("SELECT * FROM srv_data_grid_archive2 WHERE usr_id='".$usr_id."'");
+		$pre_set = array(	'usr_id' => $new_usr_id,
+							'loop_id' => "NULL");		
+		self::preformCopyTable('srv_data_grid_archive2', null, self::sql2array($sqlD), $pre_set);
 		
 		// srv_data_grid_active
 		$sqlD = sisplet_query("SELECT * FROM srv_data_grid_active WHERE usr_id='".$usr_id."'");
@@ -1273,11 +1354,17 @@ class SurveyCopy {
 							'loop_id' => "NULL");
 		self::preformCopyTable('srv_data_grid_active', null, self::sql2array($sqlD), $pre_set);
 		
-		// srv_data_textgrid
-		$sqlD = sisplet_query("SELECT * FROM srv_data_textgrid WHERE usr_id='".$usr_id."'");
+		// srv_data_textgrid_archive1
+		$sqlD = sisplet_query("SELECT * FROM srv_data_textgrid_archive1 WHERE usr_id='".$usr_id."'");
 		$pre_set = array(	'usr_id' => $new_usr_id,
 							'loop_id' => "NULL");
-		self::preformCopyTable('srv_data_textgrid', null, self::sql2array($sqlD), $pre_set);
+		self::preformCopyTable('srv_data_textgrid_archive1', null, self::sql2array($sqlD), $pre_set);
+
+		// srv_data_textgrid_archive2
+		$sqlD = sisplet_query("SELECT * FROM srv_data_textgrid_archive2 WHERE usr_id='".$usr_id."'");
+		$pre_set = array(	'usr_id' => $new_usr_id,
+							'loop_id' => "NULL");
+		self::preformCopyTable('srv_data_textgrid_archive2', null, self::sql2array($sqlD), $pre_set);
 
 		// srv_data_textgrid_active
 		$sqlD = sisplet_query("SELECT * FROM srv_data_textgrid_active WHERE usr_id='".$usr_id."'");
@@ -1301,11 +1388,17 @@ class SurveyCopy {
 		$pre_set = array(	'usr_id' => $new_usr_id);		
 		self::preformCopyTable('srv_data_glasovanje', null, self::sql2array($sqlD), $pre_set);
 		
-		// srv_user_grupa
-		$sqlD = sisplet_query("SELECT * FROM srv_user_grupa WHERE usr_id='".$usr_id."'");
+		// srv_user_grupa_archive1
+		$sqlD = sisplet_query("SELECT * FROM srv_user_grupa_archive1 WHERE usr_id='".$usr_id."'");
 		$pre_set = array(	'usr_id' => $new_usr_id,
 							'time_edit' => "NOW()");
-		self::preformCopyTable('srv_user_grupa', null, self::sql2array($sqlD), $pre_set);
+		self::preformCopyTable('srv_user_grupa_archive1', null, self::sql2array($sqlD), $pre_set);
+
+		// srv_user_grupa_archive2
+		$sqlD = sisplet_query("SELECT * FROM srv_user_grupa_archive2 WHERE usr_id='".$usr_id."'");
+		$pre_set = array(	'usr_id' => $new_usr_id,
+							'time_edit' => "NOW()");
+		self::preformCopyTable('srv_user_grupa_archive2', null, self::sql2array($sqlD), $pre_set);
 		
 		// srv_user_grupa_active
 		$sqlD = sisplet_query("SELECT * FROM srv_user_grupa_active WHERE usr_id='".$usr_id."'");

@@ -120,10 +120,9 @@ class UserAccess{
 	}
 
     private function __construct($usr_id){
-        global $app_settings;
 
         // Ce so paketi onemogoceni nič ne preverjamo
-        if(!isset($app_settings['commercial_packages']) || $app_settings['commercial_packages'] == false){
+        if(AppSettings::getInstance()->getSetting('app_settings-commercial_packages') !== true){
             return;
         }
 
@@ -133,7 +132,11 @@ class UserAccess{
             if(isset($_POST['anketa']) || isset($_GET['anketa'])){
 
                 $ank_id = (isset($_GET['anketa'])) ? $_GET['anketa'] : $_POST['anketa'];
-    
+
+                // Ce ni numeric imammo hash in pridobimo id iz njega
+                if(!is_numeric($ank_id))
+                    $ank_id = getSurveyIdFromHash($ank_id);
+
                 $sqlU = sisplet_query("SELECT insert_uid FROM srv_anketa WHERE id='".$ank_id."'");
                 $rowU = mysqli_fetch_array($sqlU);
     
@@ -229,13 +232,12 @@ class UserAccess{
 
     // Preverimo ce ima uporabnik dostop do neke funkcionalnosti
     public function checkUserAccess($what=''){
-        global $app_settings;
         global $admin_type;
         global $global_user_id;
         global $mysql_database_name;
 
         // Ce so paketi onemogoceni vrnemo vedno true
-        if(!isset($app_settings['commercial_packages']) || $app_settings['commercial_packages'] == false){
+        if(AppSettings::getInstance()->getSetting('app_settings-commercial_packages') !== true){
             return true;
         }
 
@@ -277,11 +279,10 @@ class UserAccess{
 
     // Vrnemo paket uporabnika
     public function getPackage(){
-        global $app_settings;
         global $admin_type;
     
         // Ce so paketi onemogoceni vrnemo -1
-        if(!isset($app_settings['commercial_packages']) || $app_settings['commercial_packages'] == false){
+        if(AppSettings::getInstance()->getSetting('app_settings-commercial_packages') !== true){
             return -1;
         }
 
@@ -345,7 +346,8 @@ class UserAccess{
 
         // Kateri paket je potreben za to funkcionalnost
         $package_required = (isset($this->functionality_package[$what])) ? $this->functionality_package[$what] : 3;
-        $package_required_name = $this->packages[$package_required]['name'];
+        $package_temp = $this->packages[$package_required]['name'];
+        $package_required_name = $lang['paket_opis_'.$package_temp];
 
         if($lang['id'] == '2') 
             $drupal_url = $site_url.'d/en/purchase/'.$package_required.'/package';
@@ -373,7 +375,8 @@ class UserAccess{
 
         // Kateri paket je potreben za to funkcionalnost
         $package_required = (isset($this->functionality_package[$what])) ? $this->functionality_package[$what] : 3;
-        $package_required_name = $this->packages[$package_required]['name'];
+        $package_temp = $this->packages[$package_required]['name'];
+        $package_required_name = $lang['paket_opis_'.$package_temp];
 
         if($lang['id'] == '2') 
             $drupal_url = $site_url.'d/en/purchase/'.$package_required.'/package';
@@ -402,7 +405,8 @@ class UserAccess{
 
         // Kateri paket je potreben za to funkcionalnost
         $package_required = (isset($this->functionality_package[$what])) ? $this->functionality_package[$what] : 3;
-        $package_required_name = $this->packages[$package_required]['name'];
+        $package_temp = $this->packages[$package_required]['name'];
+        $package_required_name = $lang['paket_opis_'.$package_temp];
 
         echo '<p class="user_access_warning_text">';
 

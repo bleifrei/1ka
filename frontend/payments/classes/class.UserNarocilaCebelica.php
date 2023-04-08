@@ -29,10 +29,9 @@ class UserNarocilaCebelica{
 
 
     public function __construct($narocilo_id=0){
-        global $cebelica_api;
 
         // Api koda za komunikacijo s cebelico
-        define("API_KODA", $cebelica_api);
+        define("API_KODA", AppSettings::getInstance()->getSetting('cebelica_api'));
 
         if($narocilo_id > 0){
 

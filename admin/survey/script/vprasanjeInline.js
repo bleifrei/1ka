@@ -653,9 +653,12 @@ function inline_vrednost_delete(spremenljivka, vrednost, confirmed/*, tip, other
 
 // narise polje za dodajanje vrednosti
 function inline_nova_vrednost (_this) {
-	
+
 	// ce je anketa zaklenjena
 	if ($(_this).attr('contenteditable') != 'true') return;
+
+    // Ce smo na mobitelu tega ni
+	if ($('.mobile_header:visible').length != 0) return;
 	
 	// ce imamo v edit modu vprasanja same default odgovore (to je ob novem vprasanju in ce se nic ne spreminja)
 	var variable_holder = $(_this).closest('.variable_holder');
@@ -703,6 +706,7 @@ function inline_nova_vrednost (_this) {
 							new_div +=		'<div id="vre_id_new" class="vrednost_inline" contenteditable="true" tabindex="1" default="1" vre_id="new">'+lang['srv_new_vrednost']+'</div>'+
 										' <span class="inline_other pointer" onclick="vrednost_new(\''+spremenljivka+'\', \'1\', \'\'); $(\'#fieldset'+spremenljivka+'\').show();"><span class="faicon add small icon-as_link" title="'+'"></span> '+lang['srv_novavrednost_drugo']+'</span>'+
 										' <span class="faicon delete small inline inline_delete" title="'+lang['srv_brisivrednost']+'"></span>'+
+										(($(_this).closest('.variabla').parent().find('.correct').length) ? ' <span class="faicon correct inline" spr_id="'+spremenljivka+'" vre_id="\''+$(_this).attr('vre_id')+'\'" title="'+lang['srv_vrednost_correct']+'"></span>' : '')+
                                         ' <span class="faicon odg_hidden inline inline_hidden" odg_vre="0" odg_id="new" title="'+lang['srv_hide-disable_answer-0']+'"></span>'+
                                         ' <span class="faicon odg_if_follow inline inline_if_follow '+if_class_locked+'" onclick="follow_up_condition(\'new\'); return false;" title="'+lang['srv_follow_up']+'"></span>'+
                                         ' <span class="faicon odg_if_not inline inline_if_not '+if_class_locked+'" onclick="vrednost_condition_editing(\'new\'); return false;" title="'+lang['srv_podif_edit']+'"></span>'+
@@ -713,6 +717,7 @@ function inline_nova_vrednost (_this) {
 							new_div +=		'<div id="vre_id_new" class="vrednost_inline" contenteditable="true" tabindex="1" default="1" vre_id="new">'+lang['srv_new_vrednost']+'</div>'+
 										' <span class="inline_other pointer" onclick="vrednost_new(\''+spremenljivka+'\', \'1\', \'\'); $(\'#fieldset'+spremenljivka+'\').show();"><span class="faicon add small icon-as_link" title="'+'"></span> '+lang['srv_novavrednost_drugo']+'</span>'+
 										' <span class="faicon delete small inline inline_delete" title="'+lang['srv_brisivrednost']+'"></span>'+
+										(($(_this).closest('.variabla').parent().find('.correct').length) ? ' <span class="faicon correct inline" spr_id="'+spremenljivka+'" vre_id="\''+$(_this).attr('vre_id')+'\'" title="'+lang['srv_vrednost_correct']+'"></span>' : '')+
                                         ' <span class="faicon odg_hidden inline inline_hidden" odg_vre="0" odg_id="new" title="'+lang['srv_hide-disable_answer-0']+'"></span>'+
                                         ' <span class="faicon odg_if_follow inline inline_if_follow '+if_class_locked+'" onclick="follow_up_condition(\'new\'); return false;" title="'+lang['srv_follow_up']+'"></span>'+
                                         ' <span class="faicon odg_if_not inline inline_if_not '+if_class_locked+'" onclick="vrednost_condition_editing(\'new\'); return false;" title="'+lang['srv_podif_edit']+'"></span>'+

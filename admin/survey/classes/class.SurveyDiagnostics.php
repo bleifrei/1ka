@@ -794,7 +794,7 @@ class SurveyDiagnostics
 		}
 		if (count($spr_id) > 0) {
 			
-			$db_table = ($this->surveyInfo['db_table'] == 1) ? '_active' : '';
+			$db_table = SurveyInfo::getInstance()->getSurveyArchiveDBString();
 			
 			#preštejemo komentarje uporabnikov na vprašanja
 			# srv_data_text where spr_id = 0 AND vre_id IN (id-ji spremenljivk)

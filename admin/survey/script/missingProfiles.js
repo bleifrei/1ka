@@ -132,11 +132,11 @@ function missingProfileAction(action) {
 				$("#renameProfileDiv").hide();
 				$("#missingProfileCoverDiv").fadeOut();
 			} else {
-				alert(response);
+				genericAlertPopup('alert_parameter_response',response);
 			}
 		});
 	} else {
-		alert(action);
+		genericAlertPopup('alert_parameter_action',action);
 	}
 }
 

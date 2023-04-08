@@ -265,19 +265,19 @@ footer .footer_content .logo_holder img {
 
 /************WELCOME STRAN***************/
 .main_content.welcome h2::before {
-  content: "1/5 - ";
+  content: "1/4 - ";
 }
 
 /******************************/
 /************FINISH STRAN***************/
 .main_content.finish h2::before {
-  content: "5/5 - ";
+  content: "4/4 - ";
 }
 
 /******************************/
 /************CHECK STRAN***************/
 .main_content.check h2::before {
-  content: "2/5 - ";
+  content: "2/4 - ";
 }
 .main_content.check .check_segment {
   margin: 0 0 20px 0;
@@ -312,7 +312,7 @@ footer .footer_content .logo_holder img {
 /******************************/
 /************SETTINGS STRAN***************/
 .main_content.settings h2::before {
-  content: "3/5 - ";
+  content: "3/4 - ";
 }
 .main_content.settings .settings_segment {
   margin: 0 0 20px 0;
@@ -343,7 +343,7 @@ footer .footer_content .logo_holder img {
 /******************************/
 /************DATABASE STRAN***************/
 .main_content.database h2::before {
-  content: "4/5 - ";
+  content: "3/4 - ";
 }
 
 /******************************/

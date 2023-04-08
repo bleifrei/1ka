@@ -37,10 +37,7 @@ class SurveyTTest
 
 			# polovimo vrsto tabel (aktivne / neaktivne)
 			SurveyInfo :: getInstance()->SurveyInit($this->sid);
-			if (SurveyInfo::getInstance()->getSurveyColumn('db_table') == 1) {
-				$this->db_table = '_active';
-			}
-
+			$this->db_table = SurveyInfo::getInstance()->getSurveyArchiveDBString();
 				
 			# Inicializiramo in polovimo nastavitve missing profila
 			SurveyStatusProfiles::Init($this->sid);
@@ -162,8 +159,8 @@ class SurveyTTest
 		# ali imamo testne podatke
 		if ($this->_HAS_TEST_DATA) {
 			# izrišemo bar za testne podatke	
-            $SSH -> displayTestDataBar(true);
             $SSH = new SurveyStaticHtml($this->sid);
+            $SSH -> displayTestDataBar(true);
 		}
 		
 		/*echo '<div id="dataOnlyValid">';

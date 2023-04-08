@@ -532,7 +532,6 @@ class HelperController extends Controller
                     array($ime,
                         $row['akronim'], #$row['naslov'],
                         date("d.m.Y, H:i:s"),
-                        //'<a href="'.self::$site_url.'a/'.get('anketa').'">'.self::$site_url.'a/'.get('anketa').'</a>',
                         '<a href="' . SurveyInfo::getSurveyLink() . '">' . SurveyInfo::getSurveyLink() . '</a>',
                         '<a href="' . self::$site_url . 'admin/survey/index.php?anketa=' . get('anketa') . '">' . self::$site_url . 'admin/survey/index.php?anketa=' . get('anketa') . '</a>',
                         '<a href="' . $pdf_url . '">' . self::$lang['srv_alert_link_pdf'] . '</a>',
@@ -554,7 +553,6 @@ class HelperController extends Controller
                     array($ime,
                         $row['naslov'],
                         date("d.m.Y, H:i:s"),
-                        //self::$site_url.'a/'.get('anketa'),
                         SurveyInfo::getSurveyLink(),
                         self::$site_url . 'admin/survey/index.php?anketa=' . get('anketa'),
                         '<a href="' . $pdf_url . '">' . self::$lang['srv_alert_link_pdf'] . '</a>',
@@ -660,7 +658,8 @@ class HelperController extends Controller
 					serialize(
 						array('m' => 'pdf_teammeter',
 							'anketa' => get('anketa'),
-							'skupina' => $rowTM['skupina']
+							'skupina' => $rowTM['skupina'],
+							'lang_id' => $rowTM['lang_id']
 						)));
 
 			if ($mail != '' && (strlen($mail) > 1)) {

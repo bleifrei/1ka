@@ -434,7 +434,7 @@ class SurveyRespondents {
 		global $site_path, $site_url, $lang;
 		
 		SurveyInfo::getInstance()->SurveyInit(self::getSurveyId());
-		$db_table = (SurveyInfo::getInstance()->getSurveyColumn('db_table') == 1) ? '_active' : '';
+		$db_table = SurveyInfo::getInstance()->getSurveyArchiveDBString();
 		
 		echo '<span>'.$lang['srv_respondents_added_respondents'].':</span>';
 		echo '<span class="floatRight spaceLeft" ><span class="buttonwrapper"><a class="ovalbutton ovalbutton_orange" href="' . $site_url . 'admin/survey/index.php?anketa='.self::getSurveyId().'&a=email&m=usermailing_setting" ><span>'.$lang['forward'].'</span></a></span></span>';	 	
@@ -669,7 +669,7 @@ class SurveyRespondents {
  		global $admin_type;
  		 	
 		SurveyInfo::getInstance()->SurveyInit(self::getSurveyId());
-		$db_table = (SurveyInfo::getInstance()->getSurveyColumn('db_table') == 1) ? '_active' : '';
+		$db_table = SurveyInfo::getInstance()->getSurveyArchiveDBString();
 			
 		// preverimo potrebne sistemske variable
         // tu je lahko vejica

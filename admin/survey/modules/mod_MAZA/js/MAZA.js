@@ -476,7 +476,7 @@ function maza_klikNaMapo() {
                 maza_saveGeofence(data.formatted_address, maza_create_basic_circle(pos, data.formatted_address, maza_default_radius, false));
             } else {
                 //odpre se okno, ce je prislo do napake - null - (mozen je tudi prekratek delay med geocoding requesti)
-                alert(lang['srv_resevanje_alert_location_not_found_map']);
+                genericAlertPopup('srv_resevanje_alert_location_not_found_map');
             }
         });
         

@@ -236,7 +236,7 @@ class Library {
                 echo '  <span class="sprites spacer12"></span>';
 
             echo '  <span class="'.($parent!=0 || $uid>0 || $admin_type==0 ? ' folderdrop' : '').'" id="sp'.$row['id'].'" eid="'.$row['id'].'"><span class="faicon folder icon-blue'.($parent!=0?' movable':'').'"></span>'.
-                 '  <span title="'.$lang['srv_rename_profile'].'" '.($admin_type==0||$uid>0?' onclick="folder_rename(\''.$row['id'].'\'); return false;"':'').'>'.$row['naslov'].'</span>';
+                 '  <span '.($admin_type==0||$uid>0? 'title="'.$lang['srv_rename_profile'].'" onclick="folder_rename(\''.$row['id'].'\'); return false;"':'').'>'.$row['naslov'].'</span>';
             if ($admin_type==0 || $uid>0)
             	echo '  <a href="/" onclick="javascript:library_new_folder(\''.$row['id'].'\',\''.$uid.'\'); return false;"><span class="faicon add icon-blue-hover-orange small new_folder" id="new_folder_'.$row['id'].'" title="'.$lang['srv_newfolder'].'"></span></a>';
 
@@ -301,7 +301,10 @@ class Library {
 
                                 // nova anketa kot template iz knjiznice
                                 echo '<a href="/" onclick="anketa_copy(\''.$row1['id'].'\'); return false;" title="'.$lang['srv_library_use_survey'].'"><span class="faicon copy"></span> <span class="library_item_setting_text">'.$lang['srv_anketacopy'].'</span></a> ';
-                                echo '<a href="'.$site_url.'main/survey/'.(!SurveyInfo::getInstance()->checkSurveyModule('uporabnost') ? 'index' : 'uporabnost').'.php?anketa='.$row1['id'].'&preview=on" target="_blank" title="'.$lang['srv_poglejanketo'].'"><span class="faicon preview"></span> <span class="library_item_setting_text">'.$lang['srv_poglejanketo2'].'</span></a> ';
+                                if(SurveyInfo::getInstance()->checkSurveyModule('uporabnost'))                                
+                                    echo '<a href="'.$site_url.'main/survey/uporabnost.php?anketa='.SurveyInfo::getInstance()->getSurveyHash().'&preview=on" target="_blank" title="'.$lang['srv_poglejanketo'].'"><span class="faicon preview"></span> <span class="library_item_setting_text">'.$lang['srv_poglejanketo2'].'</span></a> ';
+                                else
+                                    echo '<a href="'.$site_url.'main/survey/index.php?anketa='.SurveyInfo::getInstance()->getSurveyHash().'&preview=on" target="_blank" title="'.$lang['srv_poglejanketo'].'"><span class="faicon preview"></span> <span class="library_item_setting_text">'.$lang['srv_poglejanketo2'].'</span></a> ';
                                 
                                 // brisi iz knjiznice
                                 if ($admin_type == 0) {
@@ -317,7 +320,11 @@ class Library {
                                 }
                             }
                             else {
-                                echo '<a href="'.$site_url.'main/survey/'.(!SurveyInfo::getInstance()->checkSurveyModule('uporabnost') ? 'index' : 'uporabnost').'.php?anketa='.$row1['id'].'&preview=on" target="_blank" title="'.$lang['srv_poglejanketo'].'"><span class="faicon preview"></span></a>';
+                                if(SurveyInfo::getInstance()->checkSurveyModule('uporabnost'))                                
+                                    echo '<a href="'.$site_url.'main/survey/uporabnost.php?anketa='.SurveyInfo::getInstance()->getSurveyHash().'&preview=on" target="_blank" title="'.$lang['srv_poglejanketo'].'"><span class="faicon preview"></span></a>';
+                                else
+                                    echo '<a href="'.$site_url.'main/survey/index.php?anketa='.SurveyInfo::getInstance()->getSurveyHash().'&preview=on" target="_blank" title="'.$lang['srv_poglejanketo'].'"><span class="faicon preview"></span></a>';
+                                
                                 // moznost da povozi anketo z anketo iz knjiznice
                                 //TEGA NE DOVOLIMO KER NI OK DA SE KAR PREPISE OBSTOJECO ANKETO - anketo iz knjiznice se lahko po novem dodaja samo iz mojih anket oz. pri ustvarjanju
                                 echo ' <a href="/" onclick="alert_copy_anketa(\''.$row1['id'].'\'); return false;"><span class="sprites copy_small" title="'.$lang['srv_copy_srv'].'"></span></a>';
@@ -484,7 +491,11 @@ class Library {
 				echo '<a href="/" onclick="anketa_copy(\''.$row1['id'].'\'); return false;" title="'.$lang['srv_library_use_survey'].'"><span class="faicon copy"></span> '.$lang['srv_anketacopy'].'</a> ';
 				
 				// Preview
-				echo '<a href="'.$site_url.'main/survey/'.(!SurveyInfo::getInstance()->checkSurveyModule('uporabnost') ? 'index' : 'uporabnost').'.php?anketa='.$row1['id'].'&preview=on" target="_blank" title="'.$lang['srv_poglejanketo'].'"><span class="faicon preview"></span> '.$lang['srv_poglejanketo2'].'</a> ';
+                
+                if(SurveyInfo::getInstance()->checkSurveyModule('uporabnost'))
+				    echo '<a href="'.$site_url.'main/survey/uporabnost.php?anketa='.SurveyInfo::getInstance()->getSurveyHash().'&preview=on" target="_blank" title="'.$lang['srv_poglejanketo'].'"><span class="faicon preview"></span> '.$lang['srv_poglejanketo2'].'</a> ';
+                else
+				    echo '<a href="'.$site_url.'main/survey/index.php?anketa='.SurveyInfo::getInstance()->getSurveyHash().'&preview=on" target="_blank" title="'.$lang['srv_poglejanketo'].'"><span class="faicon preview"></span> '.$lang['srv_poglejanketo2'].'</a> ';
 				
 				// Urejanje - admin
 				if ($admin_type == 0)
@@ -954,9 +965,8 @@ class Library {
         $hierarhija = (empty($_POST['hierarhija']) ? false : true);
 
         if($hierarhija && $ank_id == 'privzeta'){
-            global $hierarhija_default_id;
 
-            $ank_id = $hierarhija_default_id;
+            $ank_id = AppSettings::getInstance()->getSetting('hierarhija-default_id');
         }
 
         if ($anketa > 0) {
@@ -1030,10 +1040,10 @@ class Library {
 
             // Če imamo hierarhijo in je privzeta anketa potem preverimo v settings_optional.php
             if(!empty($_POST['hierarhija']) && $ank_id == 'privzeta'){
-                global $hierarhija_default_id;
-                $ank_id=$hierarhija_default_id;
+                $ank_id = AppSettings::getInstance()->getSetting('hierarhija-default_id');
             }
-        }else {
+        }
+        else {
             $API_call = true;
         }
 

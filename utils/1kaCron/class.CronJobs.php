@@ -29,11 +29,11 @@ class CronJobs {
 	}
 	
 	
-	// Brisanje pobrisanih anket (anekte, ki so bile pobrisane pred vec kot 1 mesecem)
+	// Brisanje pobrisanih anket (anekte, ki so bile pobrisane pred vec kot 3 mesecih - prej je bilo samo 1 mesec)
 	private function surveyDeleteFromDB(){
 	
 		// Loop po pobrisanih anketah, ki so bile nazadnje urejane vec kot 1 mesec nazaj
-		$sql = sisplet_query("SELECT * FROM srv_anketa WHERE active='-1' AND edit_time < NOW() - INTERVAL 1 MONTH");
+		$sql = sisplet_query("SELECT * FROM srv_anketa WHERE active='-1' AND edit_time < NOW() - INTERVAL 3 MONTH");
 		if (!$sql) echo mysqli_error($GLOBALS['connect_db']);
 		
 		$s = new SurveyAdmin();

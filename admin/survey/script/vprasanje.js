@@ -1625,7 +1625,7 @@ function checkCheckboxLimits(spremenljivka, value, checkbox_limit_name){
 	//ce je min limit vecji od max limit, je potrebno javiti opozorilo in vrednost min limita dati na 0
 	//if(min_value > max_value){
 	if(max_value!=0 && min_value > max_value){
-		alert(lang['srv_checkbox_min_limit_error_msg']); //opozorilo v obliki pop-up okna		
+		genericAlertPopup('srv_checkbox_min_limit_error_msg'); //opozorilo v obliki pop-up okna		
 		$('#checkbox_min_limit_' + spremenljivka).val(0); //spremeni vrednost min limita na 0 oz. Ne	
 	}	
 }

@@ -50,8 +50,22 @@ class DisplayController{
         
     public function displayHead(){
         global $site_url;
-        global $app_settings;
         global $lang;
+
+
+        // Google analytics za AAI
+        if(isAAI()){
+            echo '<!-- Global site tag (gtag.js) - Google Analytics -->
+                        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-141542153-2"></script>
+                        <script>
+                            window.dataLayer = window.dataLayer || [];
+                            function gtag(){dataLayer.push(arguments);}
+                            gtag(\'js\', new Date());
+                            
+                            gtag(\'config\', \'UA-141542153-2\');
+                        </script>';
+        }
+
 
         echo '    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />';
         echo '    <meta charset="utf-8">';
@@ -70,8 +84,8 @@ class DisplayController{
         echo '    <meta name="revisit-after" content="7">';
             
         // Custom header title
-        if(isset($app_settings['head_title_custom']) && $app_settings['head_title_custom'] == 1){
-            echo '<title>'.$app_settings['head_title_text'].'</title>' . "\n";
+        if(AppSettings::getInstance()->getSetting('app_settings-head_title_custom')){
+            echo '<title>'.AppSettings::getInstance()->getSetting('app_settings-head_title_text').'</title>' . "\n";
         }
         // Default header title
         else{
@@ -99,8 +113,6 @@ class DisplayController{
 	public function displayHeader(){
 		global $site_url;
 		global $lang;
-		global $google_login_client_id;
-		global $aai_instalacija;
         
 
         // Logo v glavi
@@ -108,7 +120,7 @@ class DisplayController{
 
         echo '  <a href="'.$site_url.$this->root.'index.php">';
         echo '      <img src="'.$site_url.'/public/img/logo/1ka_'.($this->lang_id != 1 ? 'eng' : 'slo').'.svg">';
-        if($aai_instalacija){
+        if(isAAI()){
             echo '      <img src="'.$site_url.'/public/img/logo/arnes_logo.png" style="margin-left:30px;">';
         }
         echo '  </a>';
@@ -147,7 +159,6 @@ class DisplayController{
 	
 	// Izris vsebine
 	public function displayMain(){
-        global $virtual_domain;
                         
         switch($this->stran){	
 
@@ -164,35 +175,35 @@ class DisplayController{
                 break;
               
             /*case 'register':
-                if(!$virtual_domain)
+                if(!isVirtual())
                     $this->displayRegisterPage();
                 else
                     $this->displayFrontPage();
             break;*/
 
             case 'register_confirm':
-                if(!$virtual_domain)
+                if(!isVirtual())
                     $this->displayRegisterPageConfirm();
                 else
                     $this->displayFrontPage();
             break;	
 
             case 'register_email':
-                if(!$virtual_domain)
+                if(!isVirtual())
                     $this->displayRegisterPageEmail();
                 else
                     $this->displayFrontPage();
             break;
             
             case 'unregister':
-                if(!$virtual_domain)
+                if(!isVirtual())
                     $this->displayUnregisterPage();
                 else
                     $this->displayFrontPage();
             break;
 
             case 'unregister_confirm':
-                if(!$virtual_domain)
+                if(!isVirtual())
                     $this->displayUnregisterPageConfirm();
                 else
                     $this->displayFrontPage();
@@ -220,17 +231,14 @@ class DisplayController{
     
     // Izris footerja
     public function displayFooter(){
-        global $virtual_domain;
         global $lang;
-        global $app_settings;
-        global $aai_instalacija;
 
 
         // Stolpec 1
         echo '<div class="col">';
         echo '  <h2>'.$lang['simple_footer_about'].'</h2>';
         echo '  <span>'.$lang['simple_footer_about_1ka'].'</span>';
-        if($aai_instalacija)
+        if(isAAI())
             echo '  <span>'.$lang['simple_footer_about_faq'].'</span>';
         echo '  <span>'.$lang['simple_footer_about_general'].'</span>';
         echo '  <span>'.$lang['simple_footer_about_privacy'].'</span>';
@@ -246,9 +254,9 @@ class DisplayController{
         // Stolpec 2
         echo '<div class="col">';
         echo '  <h2>'.$lang['simple_footer_company'].'</h2>';
-        echo '  <span class="semi-bold">'.$app_settings['owner'].'</span>';
-        echo '  <span><a href="mailto:'.$app_settings['admin_email'].'">'.$app_settings['admin_email'].'</a></span>';
-        echo '  <span><a href="'.$app_settings['owner_website'].'" target="_blank">'.$app_settings['owner_website'].'</a></span>';
+        echo '  <span class="semi-bold">'.AppSettings::getInstance()->getSetting('app_settings-owner').'</span>';
+        echo '  <span><a href="mailto:'.AppSettings::getInstance()->getSetting('app_settings-admin_email').'">'.AppSettings::getInstance()->getSetting('app_settings-admin_email').'</a></span>';
+        echo '  <span><a href="'.AppSettings::getInstance()->getSetting('app_settings-owner_website').'" target="_blank">'.AppSettings::getInstance()->getSetting('app_settings-owner_website').'</a></span>';
         echo '</div>';
 
 
@@ -256,7 +264,7 @@ class DisplayController{
         echo '<div class="col">';
 
         // Logotipa FDV in CDI - samo pri virtualkah
-        if($virtual_domain || $aai_instalacija){
+        if(isVirtual() || isAAI()){
             echo '<div class="logo_holder">';
             echo '  <img src="'.$site_url.'/public/img/logo/fdv.png">';
             echo '  <img src="'.$site_url.'/public/img/logo/cdi_'.($this->lang_id != 1 ? 'eng' : 'slo').'.png">';
@@ -269,10 +277,9 @@ class DisplayController{
 	
 	// Izris prve strani
 	private function displayFrontPage(){
-        global $aai_instalacija;
         
         // AAI
-        if($aai_instalacija)
+        if(isAAI())
             $this->displayFrontPageFormAAI();
         else
             $this->displayFrontPageForm();
@@ -282,18 +289,16 @@ class DisplayController{
     private function displayFrontPageForm(){
         global $lang;
 		global $site_url;
-        global $app_settings;
-        global $virtual_domain;
 
 
-        echo '<div class="app_title">'.$app_settings['app_name'].'</div>';
+        echo '<div class="app_title">'.AppSettings::getInstance()->getSetting('app_settings-app_name').'</div>';
 
 
         // WHITE BOX FOR LOGIN / REGISTRATION
 		echo '<div class="landing_page_window">';      
 
         // Tabs - samo pri lastni instalaciji, pri virtualkah nimamo registracije
-        if($virtual_domain){
+        if(isVirtual()){
             echo '	<div class="tabs">';
             echo '	    <div class="tab full_width">'.$lang['login_short'].'</div>';
             echo '	</div>';
@@ -307,10 +312,10 @@ class DisplayController{
         
         // SKB ima blokirano prijavo za vse ipje razen svojega
         $ip = $_SERVER['REMOTE_ADDR'];
-        if(isset($app_settings['admin_allow_only_ip']) 
-            && $app_settings['admin_allow_only_ip'] != '' 
-            && !empty($app_settings['admin_allow_only_ip']) 
-            && !in_array($ip, $app_settings['admin_allow_only_ip'])
+        $admin_allow_only_ip = AppSettings::getInstance()->getSetting('app_limits-admin_allow_only_ip');
+        if($admin_allow_only_ip !== false 
+            && !empty($admin_allow_only_ip) 
+            && !in_array($ip, $admin_allow_only_ip)
         ){
             echo '<div style="padding: 50px; line-height: 30px; text-align: center; font-weight: 600;">Prijava v aplikacijo iz obstoječega IP naslova ('.$ip.') ni mogoča!</div>';
         }
@@ -331,7 +336,7 @@ class DisplayController{
 
         // APP SUBTITLE
         echo '<div class="app_subtitle">';
-        if($virtual_domain)
+        if(isVirtual())
             echo $lang['app_virtual_domain'];
         else
             echo $lang['app_installation'];
@@ -342,14 +347,13 @@ class DisplayController{
     private function displayFrontPageFormAAI(){
         global $lang;
 		global $site_url;
-        global $app_settings;
 
 
         // WHITE BOX FOR LOGIN / REGISTRATION
         echo '<div class="landing_page_window">';      
 
         // APP TITLE - aai
-        echo '<div class="app_title" style="text-transform: initial;">'.$app_settings['app_name'].'</div>';
+        echo '<div class="app_title" style="text-transform: initial;">'.AppSettings::getInstance()->getSetting('app_settings-app_name').'</div>';
 
         // AAI logo
         //echo '<div class="arnes_logo"><img src="'.$site_url.'/public/img/logo/arnes_logo.png"></div>';
@@ -431,8 +435,6 @@ class DisplayController{
     private function displayFrontPageRegistration(){
         global $lang;
 		global $site_url;
-		global $secret_captcha;
-		global $recaptcha_sitekey;
         
         if(!isset($_GET['a']) || $_GET['a'] != 'register'){
             $email = '';
@@ -477,8 +479,8 @@ class DisplayController{
 		echo '  <input class="regfield '.(isset($error['ime']) ? 'red' : '').'" id="ime" name="ime" value="'.$ime.'" placeholder="'.$lang['cms_register_user_nickname'].'" type="text">';
 				
 		// RECAPTCHA
-		if($secret_captcha != '' && $recaptcha_sitekey != '')
-			echo '  <div class="g-recaptcha" data-sitekey="'.$recaptcha_sitekey.'" '.(isset($_GET['invalid_recaptcha']) ? ' style="border:1px red solid"' : '').'></div>';	
+		if(AppSettings::getInstance()->getSetting('google-secret_captcha') !== false && AppSettings::getInstance()->getSetting('google-recaptcha_sitekey') !== false)
+			echo '  <div class="g-recaptcha" data-sitekey="'.AppSettings::getInstance()->getSetting('google-recaptcha_sitekey').'" '.(isset($_GET['invalid_recaptcha']) ? ' style="border:1px red solid"' : '').'></div>';	
 		
 		// Geslo
         echo '  <label for="p1" '.(isset($error['password']) ? 'class="red"' : '').'>'.$lang['login_password'].':</label>';
@@ -637,8 +639,6 @@ class DisplayController{
 	private function displayRegisterPage(){
 		global $lang;
 		global $site_url;
-		global $secret_captcha;
-        global $recaptcha_sitekey;
 		
 		// Pogledamo ce imamo kaksen error v GET-u
 		$error = false;
@@ -677,8 +677,8 @@ class DisplayController{
 		echo '			<input class="regfield" id="ime" name="ime" value="'.$ime.'" placeholder="'.$lang['cms_register_user_nickname'].'" type="text"></div>';
 				
 		// RECAPTCHA
-		if($secret_captcha != '' && $recaptcha_sitekey != '')
-			echo '<div class="g-recaptcha" data-sitekey="'.$recaptcha_sitekey.'" '.(isset($_GET['invalid_recaptcha']) ? ' style="border:1px red solid"' : '').'></div>';	
+		if(AppSettings::getInstance()->getSetting('google-secret_captcha') !== false && AppSettings::getInstance()->getSetting('google-recaptcha_sitekey') !== false)
+			echo '<div class="g-recaptcha" data-sitekey="'.AppSettings::getInstance()->getSetting('google-recaptcha_sitekey').'" '.(isset($_GET['invalid_recaptcha']) ? ' style="border:1px red solid"' : '').'></div>';	
 		
 		// Geslo
         echo '			<div class="form_row '.(isset($_GET['pass_mismatch']) || isset($_GET['pass_complex']) ? ' red' : '').'"><span class="label"><label for="geslo">'.$lang['login_password'].':</label></span>';
@@ -769,7 +769,6 @@ class DisplayController{
 		global $lang;
 		global $site_url;
 		global $site_url;
-		global $confirm_registration;
 		
 		// Ce nimamo poslanega emaila preusmerimo nazaj na prvo stran registracije
 		if(empty($_GET['e'])){
@@ -785,7 +784,7 @@ class DisplayController{
 		echo '	<h1>'.$lang['user_confirm_h'].'</h1>';
 		
 		// Ce iammo vklopljeno potrjevanje s strani admina je text drugacen
-		if (isset($confirm_registration) && $confirm_registration == 1)
+		if (AppSettings::getInstance()->getSetting('confirm_registration') === true)
 			echo '	<p>'.str_replace("SFMAIL", $email, $lang['user_confirm_p_admin']).'</p>';	
 		else
 			echo '	<p>'.str_replace("SFMAIL", $email, $lang['user_confirm_p']).'</p>';	
@@ -816,16 +815,8 @@ class DisplayController{
 		echo '	<p>'.$lang['unregister_confirm'].'</p>';
 		echo '	<br /><br />';
 		echo '	<a href="'.$site_url.$this->root.'index.php">'.$lang['no1'].'</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		//echo '	<a href="'.$site_url.$this->root.'index.php?a=email='.$email.'&amp;c=1&amp;o=1">'.$lang['yes'].'</a>';	
 		echo '	<a href="'.$site_url.'frontend/api/api.php?action=unregister_confirm&email='.$email.'">'.$lang['yes'].'</a>';
-			
-		echo "<br><br><br>";
-		$result = sisplet_query ("SELECT trim(value) from misc where what='UnregisterEmbed' AND length(value)>3");
-		if (mysqli_num_rows ($result)  > 0) {
-			$r = mysqli_fetch_row($result);
-			echo stripslashes($r[0]);
-		}
-			
+						
 		echo '</div>';
 	}
 	
@@ -964,4 +955,39 @@ class DisplayController{
 		
 		echo '</div>';
 	}
+
+
+    // Cookie notice
+    public function displayCookieNotice(){
+        global $lang;
+        global $cookie_domain;
+
+        if(!isAAI()){
+            return;
+        }
+
+        if(isset($_COOKIE['simple_frontend_cookie'])){
+            return;
+        }
+
+        echo '<div class="cookie_notice">';
+
+        echo '  <div class="left">';
+        echo '    <p class="bold">'.$lang['simple_cookie_1'].'</p>';
+        echo '    <p>'.$lang['simple_cookie_2'].'</p>';
+        echo '  </div>';
+
+        echo '  <div class="right">';
+        echo '    <button onClick="cookie_confirm();">'.$lang['simple_cookie_button'].'</button>';
+        echo '  </div>';
+
+        echo '</div>';
+    }
+
+    // Confirm cookie
+    public function cookieConfirm(){
+
+        // Set cookie for 90 days
+        setcookie("simple_frontend_cookie", "1", time() + (60*60*24*90), "/"); 
+    }
 }

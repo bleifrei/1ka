@@ -76,24 +76,28 @@ class Dostop {
 	}
 
 	/**
-	 * Kao meta admin, ki vidi vse
+	 * Meta admin, ki vidi vse ankete
 	 */
-	static function isMetaAdmin()
-	{
-		global $global_user_id;
+	static function isMetaAdmin(){		
+        global $global_user_id;
 		global $admin_type;
-		global $mysql_database_name;
 
-		// Samo na www in virtualkah
-		if(($mysql_database_name == 'www1kasi' || $mysql_database_name == 'real1kasi') && $admin_type == '0'){	
-			// vvasja@gmail.com - id: 100, peter.h1203@gmail.com - id: 12611, 1ka.techsupport - id: 49089 (virtualke), 72253
-			if (in_array($global_user_id, [100, 12611, 49089, 72253])) {
+        // Ce ni admin ni nikoli metaadmin
+        if($admin_type != '0'){
+            return FALSE;
+        }
+
+        $meta_admin_ids = AppSettings::getInstance()->getSetting('meta_admin_ids');
+
+        // Ce imamo nastavljene id-je za metaadmine v settings_optional
+        if(isset($meta_admin_ids) && !empty($meta_admin_ids)){
+
+            if (in_array($global_user_id, $meta_admin_ids)) {
 				return TRUE;
 			}
-		}
-
+        }
 		// Gorenje ima svoje metaadmine
-		if ($admin_type == '0' && Common::checkModule('gorenje')){
+		elseif(Common::checkModule('gorenje')){
 			global $meta_admin_emails;
 
 			$sql = sisplet_query("SELECT email FROM users WHERE id = '$global_user_id'");
@@ -275,7 +279,7 @@ class Dostop {
      */
 	public function ajax_add_new_user()
     {
-        global $pass_salt, $site_url, $site_domain, $virtual_domain, $lang, $app_settings;
+        global $pass_salt, $site_url, $site_domain, $lang;
 
         $email = $_POST['email'];
         $name = $_POST['name'];
@@ -317,13 +321,13 @@ class Dostop {
 
                 $UserContent .= $lang['register_add_user_content_edit'];
 
-                $PageName = $app_settings['app_name'];
+                $PageName = AppSettings::getInstance()->getSetting('app_settings-app_name');
 
                 $change = '<a href="'.$site_url.'admin/survey/index.php?a=nastavitve&m=global_user_myProfile">';
                 $out = '<a href="'.$this->page_urls['page_unregister'].'?email='.$email.'">';
 
                 // Ce gre slucajno za virtualko
-                $Subject = ($virtual_domain) ? $lang['register_user_subject_virtual'] : $lang['register_user_subject'];
+                $Subject = (isVirtual()) ? $lang['register_user_subject_virtual'] : $lang['register_user_subject'];
 
                 $UserContent = str_replace("SFNAME", $name, $UserContent);
                 $UserContent = str_replace("SFMAIL", $email, $UserContent);
@@ -336,7 +340,7 @@ class Dostop {
                 $Subject = str_replace("SFPAGENAME", $PageName, $Subject);
                 
                 // Ce gre slucajno za virtualko
-                if($virtual_domain)
+                if(isVirtual())
                     $Subject = str_replace("SFVIRTUALNAME", $site_domain, $Subject);
 
                 if ($password2 == "") {
@@ -680,7 +684,6 @@ class Dostop {
 		global $lang;
 		global $global_user_id;
 		global $admin_type;
-		global $virtual_domain;
 
 		$uid = $_POST['uid'];
 
@@ -754,7 +757,7 @@ class Dostop {
 		}
 
         // Na virtualkah manager ne sme odstraniti uporabnika iz pregleda (zaradi omejitve)
-        if($admin_type != '1' || !$virtual_domain){
+        if($admin_type != '1' || !isVirtual()){
             $sqlu = sisplet_query("SELECT * FROM srv_dostop_manage WHERE manager='$global_user_id' AND user='$uid'");
 
             if (mysqli_num_rows($sqlu) > 0) {
@@ -765,8 +768,7 @@ class Dostop {
         echo '</div>';
         
         // Segment paket
-        global $app_settings;
-        if($app_settings['commercial_packages'] == true){
+        if(AppSettings::getInstance()->getSetting('app_settings-commercial_packages') === true){
             echo '<div class="segment user_package">';
 
             $userAccess = UserAccess::getInstance($uid);
@@ -1507,7 +1509,6 @@ class Dostop {
 	public function ajax_confirm_user_email(){
 		global $pass_salt;
 		global $lang;
-		global $app_settings;
 
 		$uid = (!empty($_POST['uid']) ? $_POST['uid'] : NULL);
 
@@ -1537,7 +1538,7 @@ class Dostop {
             // Ce gre slucajno za virutalko
             $Subject = $lang['confirmed_user_mail_subject'];	
             
-            $PageName = $app_settings['app_name'];
+            $PageName = AppSettings::getInstance()->getSetting('app_settings-app_name');
             $ZaMail = '<!DOCTYPE HTML PUBLIC"-//W3C//DTD HTML 4.0 Transitional//EN">'.'<html><head>  <title>'.$Subject.'</title><meta content="text/html; charset=utf-8" http-equiv=Content-type></head><body>';
 
             // Besedilo v lang dilu je potrebno popravit, ker nimamo vec cel kup parametrov

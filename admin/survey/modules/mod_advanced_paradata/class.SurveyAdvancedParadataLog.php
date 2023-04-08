@@ -17,26 +17,18 @@ class SurveyAdvancedParadataLog {
 	
 	
 	// Privatni construct, ki ga 1x poklice getInstance
-	private function __construct (/*$anketa*/) {
+	private function __construct () {
 		
-		/*ini_set('display_errors', 1);
-		ini_set('display_startup_errors', 1);
-		error_reporting(E_ALL);*/
-		
-		// Ce imamo anketo
-		/*if ((int)$anketa > 0){
-			$this->anketa = $anketa;
-		}*/
-		
-		$this->anketa = (int)$_REQUEST['anketa'];		
-		//$this->anketa = $anketa_id;
+        if((isset($_GET['m']) && $_GET['m'] == 'quick_edit') || (isset($_GET['t']) && $_GET['t'] == 'postprocess'))
+            return false;
+            
+		$anketa_hash = $_REQUEST['anketa'];		
+		$this->anketa = getSurveyIdFromHash($anketa_hash);	
 		
 		if($this->anketa > 0){
 			SurveyInfo::getInstance()->SurveyInit($this->anketa);
 			$this->collectParadata = (SurveyInfo::getInstance()->checkSurveyModule('advanced_paradata')) ? true : false;
 		}
-		else
-			throw new Exception('Survey ID not set in class.SurveyAdvancedParadataLog.php !');
 	}
 	
 	// Vrne instanco classa - da mamo singleton
@@ -50,6 +42,10 @@ class SurveyAdvancedParadataLog {
 	
 	// Vrne ce zbiramo napredne parapodatke
 	public function paradataEnabled(){
+
+        if((isset($_GET['m']) && $_GET['m'] == 'quick_edit') || (isset($_GET['t']) && $_GET['t'] == 'postprocess'))
+            return false;
+
 		return $this->collectParadata;
     }
     

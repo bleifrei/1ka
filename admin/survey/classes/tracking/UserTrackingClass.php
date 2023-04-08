@@ -45,6 +45,9 @@ class UserTrackingClass
         // Izvoz v Excel
         echo '<p>'.$lang['srv_survey_archives_tracking_last_changes'].'</p>';
 
+        echo '<div id="table-tracking-wrapper1">';
+        echo '<div id="table-tracking-wrapper2">';
+
 
         echo '<table id="tracking">';
 
@@ -71,6 +74,9 @@ class UserTrackingClass
         }
 
         echo '</table>';
+
+        echo '</div>';
+        echo '</div>';
 
         echo '</fieldset>';
         

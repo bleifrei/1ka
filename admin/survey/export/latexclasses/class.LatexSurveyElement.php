@@ -90,7 +90,7 @@ class LatexSurveyElement{
 			$this->prevod = 1;
 		}else{
 			$this->prevod = 0;
-		}
+		}		
 		//preverjanje, ali je prevod - konec
 
 		//if($language!=-1){ //ce ni default jezik, ampak je prevod
@@ -102,8 +102,7 @@ class LatexSurveyElement{
 		{
 			SurveyUserSetting::getInstance()->Init($anketa, $global_user_id);
 			
-			if (SurveyInfo::getInstance()->getSurveyColumn('db_table') == 1)
-				$this->db_table = '_active';
+			$this->db_table = SurveyInfo::getInstance()->getSurveyArchiveDBString();
 		}		
 		else{
 			return false;			
@@ -206,14 +205,15 @@ class LatexSurveyElement{
 			$numberingText = ($this->numbering == 1) ? $this->encodeText($spremenljivke['variable']).' - ' : '';			
 			######################################### Stevilcenje vprasanj - konec		
 			//echo "goli naslov: ".$spremenljivke['naslov']."</br>";
-
+			//echo $this->dataPiping($spremenljivke['naslov']);			
+			
 			//belezenje imena spremenljivke, zaradi GDPR vprasanja
-			$this->variableName =$spremenljivke['variable'];
+			$this->variableName = $spremenljivke['variable'];
 			//belezenje imena spremenljivke, zaradi GDPR vprasanja - konec
 
 			#Izris stevilke in besedila vprasanja ter IF ali BLOK, ce so prisotni ###############################################
 			//$text = strip_tags($numberingText . $spremenljivke['naslov'], '<a><img><ul><li><ol><br>');
-			$text = strip_tags($numberingText . $spremenljivke['naslov'], '<a><img><ul><li><ol><br><p>');	//je potrebno spustiti <p>, zaradi GDPR vprasanja
+			$text = strip_tags($numberingText . $spremenljivke['naslov'], '<a><img><ul><li><ol><br><p>');	//je potrebno spustiti <p>, zaradi GDPR vprasanja			
 			
 			//echo "naslov: ".$text."</br>";
 			//$tex = $text." ".$texNewLine;
@@ -257,8 +257,10 @@ class LatexSurveyElement{
                     // Po novem izpisemo pred vsakim vprasanjem vse ife znotraj katerih se nahaja
                     Cache::cache_all_srv_branching($this->anketa);
 					$parents = Cache::srv_branching($spremenljivke['id'], 0)['parent'];
+					//echo "parents: ".$parents."</br>";
 					if($parents){
-						$tex .= $this->displayIf($parents);
+						$tex .= $this->displayIf($parents);	
+						//echo "blok: ".$this->displayIf($parents)."</br>";					
 						$tex .= $this->texNewLine;
 					}
 					#preuredil kodo, da zadeva deluje tako kot ta stara, ki se nahaja nad tem
@@ -269,7 +271,7 @@ class LatexSurveyElement{
 			//$tex .= '\textbf{'.$text.'} '.$texNewLine;	//izris besedila vprasanja
 			
 			if($export_subtype=='q_data'||$export_subtype=='q_data_all'){	//ce je izpis odgovorov
-				$text = $this->dataPiping($text);	//pokazi odgovore po zanki
+				$text = $this->dataPiping($text);	//pokazi odgovore po zanki				
 			}			
 
 			$tex .= ' \noindent '; //dodal pred vsakim tekstom vprasanja, da ni indent-a
@@ -281,9 +283,10 @@ class LatexSurveyElement{
 				}
 			}
 
-			$tex .= '\textbf{'.$this->encodeText($text).'} ';	//izris besedila vprasanja
+			//$tex .= '\textbf{'.$this->encodeText($text).'} ';	//izris besedila vprasanja
+			$tex .= '\textbf{'.$this->encodeText($text, null, null, $loop_id).'} ';	//izris besedila vprasanja	//encodeText($text='', $vre_id=0, $naslovStolpca = 0, $img_id=0){
 			
-			$this->questionText = $text;	//zabelezimo tekst vprasanja, ki ga potrebujemo kasneje			
+			$this->questionText = $text;	//zabelezimo tekst vprasanja, ki ga potrebujemo kasneje
 			
 			#Izris stevilke in besedila vprasanja ter IF ali BLOK, ce so prisotni - konec ###############################################
 			
@@ -428,7 +431,7 @@ class LatexSurveyElement{
 				return VsotaLatex::getInstance()->export($spremenljivke, $this->export_format, $this->questionText, $this->fillablePdf, $this->texNewLine, $this->getUserId(), $this->db_table, $export_subtype, $preveriSpremenljivko, $loop_id);
 			break;
 			case 24: // kombinirana tabela
-				return GridMultipleLatex::getInstance()->export($spremenljivke, $this->export_format, $this->questionText, $this->fillablePdf, $this->texNewLine, $this->getUserId(), $this->db_table, $export_subtype, $preveriSpremenljivko, $export_data_type, $loop_id);
+				return GridMultipleLatex::getInstance()->export($spremenljivke, $this->export_format, $this->questionText, $this->fillablePdf, $this->texNewLine, $this->getUserId(), $this->db_table, $export_subtype, $preveriSpremenljivko, $export_data_type, $loop_id, $this->language);
 			break;			
 			case 26: //lokacija
 				return LokacijaLatex::getInstance()->export($spremenljivke, $this->export_format, $this->questionText, $this->fillablePdf, $this->texNewLine, $this->getUserId(), $this->db_table, $export_subtype, $preveriSpremenljivko, $loop_id);
@@ -470,7 +473,7 @@ class LatexSurveyElement{
 	 
 	function displayIf($if=null){
 		global $lang;
-		//echo "funckija za if </br>";
+		//echo "funkcija za if </br>";
     	$sql_if = sisplet_query("SELECT tip FROM srv_if WHERE id = '$if'");
     	$row_if = mysqli_fetch_array($sql_if);
 
@@ -797,7 +800,7 @@ class LatexSurveyElement{
 	#funkcija, ki ureja pretvorbo stevilskega ID vprasanja v "crkovsko" identifikacijo, ker Latex ne podpira imen s stevilkami - konec #############################
 		
 	#funkcija ki skrbi za encode dolocenih spornih delov besedila v latex-u prijazno
-	function encodeText($text='', $vre_id=0, $naslovStolpca = 0){
+	function encodeText($text='', $vre_id=0, $naslovStolpca = 0, $img_id=0){
 		global $site_path, $lang;
 		//$text = str_replace(' ','X',$text);	//nadomesti presledke
 		//echo "Encoding ".$text."</br>";
@@ -863,19 +866,31 @@ class LatexSurveyElement{
 				$textPotem = substr($text, $posImg);	//tekst po img, z vkljuceno hmlt kodo z img
 				$posImgEnd = strpos($textPotem, '/>');	//pozicija, kjer se konca html koda za img
 				$textPotem = substr($textPotem, $posImgEnd+strlen('/>'));	//tekst od konca html kode za img dalje
-
-				//$text = $textPrej.' '.PIC_SIZE_ANS."{".$this->path2UploadedImages."".$this->getImageName($text, 0, '<img')."}".' '.$textPotem;				
-				//$text = $textPrej.' '.PIC_SIZE_ANS."{".$this->path2UploadedImages."".$this->getImageName($text, 0, '<img', $vre_id)."}".' '.$textPotem;
-				$imageName = $this->path2UploadedImages."".$this->getImageName($text, 0, '<img', $vre_id);
+				
+				$imageName = $this->path2UploadedImages."".$this->getImageName($text, 0, '<img', $vre_id, $img_id);				
 				$imageNameTest = $imageName.'.png';	//za preveriti, ali obstaja slikovna datoteka na strezniku
 				//error_log("iz survey element: ".$imageNameTest);
-				//echo("iz survey element: ".$imageNameTest."</br>");
-				if(filesize($imageNameTest) > 0){
+				//echo("iz survey element imageNameTest: ".$imageNameTest."</br>");
+				//echo "Obstaja ? ".file_exists($imageNameTest)."</br>";
+				//echo("iz survey element imageName: ".$imageName."</br>");
+				//echo "velikost: ".filesize($imageNameTest)."</br>";
+/* 				if(filesize($imageNameTest) > 0){
 					$text = $textPrej.' '.PIC_SIZE_ANS."{".$imageName."}".' '.$textPotem;
 				}else{
 					$image = $lang['srv_pc_unavailable'];
 					$text = $textPrej.' '.$image.' '.$textPotem;
-				}				
+				} */
+				$text = '';
+				//$text = $textPrej.' ';
+
+				//if(filesize($imageNameTest) > 0){
+				if(file_exists($imageNameTest)){
+					$text .= $textPrej.' '.PIC_SIZE_ANS."{".$imageName."}";
+				}else{
+					$image = $lang['srv_pc_unavailable'];
+					$text .= $image;					
+				}
+				$text .= ' '.$textPotem;
 			}
 			
 			//pred ureditvijo posebnih karakterjev, odstrani del teksta s kodo za sliko, da se ne pojavijo tezave zaradi imena datoteke od slike
@@ -930,7 +945,8 @@ class LatexSurveyElement{
 		//ureditev posebnih karakterjev za Latex - konec
 		
 		//ureditev grskih crk
-		$text = str_replace('α','\textalpha ',$text);
+		$text = str_replace('α','\textalpha ',$text); //ά
+		$text = str_replace('ά','\textalpha ',$text);
 		$text = str_replace('β','\textbeta ',$text);
 		$text = str_replace('γ','\textgamma ',$text);
 		$text = str_replace('δ','\textdelta ',$text);
@@ -944,7 +960,10 @@ class LatexSurveyElement{
 		$text = str_replace('μ','\textmugreek ',$text);
 		$text = str_replace('ν','\textnu ',$text);
 		$text = str_replace('ξ','\textxi ',$text);
-		//$text = str_replace('ο','\textomikron ',$text);
+		//$text = str_replace('ο','o',$text); // \textomicron ne dela
+		$text = str_replace('ο','\textgreek{ο}',$text);
+		//$text = str_replace('ς','\textvarsigma ',$text);
+		$text = str_replace('ς','\textgreek{ς}',$text);
 		$text = str_replace('π','\textpi ',$text);
 		$text = str_replace('ρ','\textrho ',$text);
 		$text = str_replace('σ','\textsigma ',$text);
@@ -954,7 +973,13 @@ class LatexSurveyElement{
 		$text = str_replace('χ','\textchi ',$text);
 		$text = str_replace('ψ','\textpsi ',$text);
 		$text = str_replace('ω','\textomega ',$text);
+		$text = str_replace('ύ','\textgreek{ύ}',$text);
 		//ureditev grskih crk - konec
+
+		//ureditev ostalih posebnih crk
+		$text = str_replace('ə','\textschwa ',$text);		
+		//ureditev ostalih posebnih crk - konec
+
 
 		//ureditev preureditve html kode ul in li v latex itemize
  		if($posUl !== false){			
@@ -966,8 +991,10 @@ class LatexSurveyElement{
 			if($numOfUl!=0 && $posLi !== false){	//ce imamo ul in li				
 				$text = str_replace('<ul>','\begin{itemize} ', $text);
 				$text = str_replace('<ul','\begin{itemize} ', $text);
-				$text = str_replace('<li>','\item ', $text);
-				$text = str_replace('<li','\item ', $text);
+/* 				$text = str_replace('<li>','\item ', $text);
+				$text = str_replace('<li','\item ', $text); */
+				$text = str_replace('<li>','\item \ ', $text);
+				$text = str_replace('<li','\item \ ', $text);
 				$text = str_replace('</ul>','\end{itemize} \ ', $text);					
 			}
 			//echo "prazno v html: ".strpos($text, '\r')."</br>";
@@ -985,8 +1012,10 @@ class LatexSurveyElement{
 			//if($numOfUl!=0){
 			if($numOfOl!=0 && $posLi !== false){	//ce imamo ol in li				
 				$text = str_replace('<ol>','\begin{enumerate} ', $text);
-				$text = str_replace('<li>','\item ', $text);
-				$text = str_replace('<li','\item ', $text);
+/* 				$text = str_replace('<li>','\item ', $text);
+				$text = str_replace('<li','\item ', $text); */
+				$text = str_replace('<li>','\item \ ', $text);
+				$text = str_replace('<li','\item \ ', $text);
 				$text = str_replace('</ol>','\end{enumerate} \ ', $text);					
 			}
 			//echo "prazno v html: ".strpos($text, '\r')."</br>";
@@ -1022,6 +1051,7 @@ class LatexSurveyElement{
 			$text = substr_replace($text, $this->texNewLine, MAX_STRING_LENGTH, 0);	//dodaj na ustrezni dolzini besedila prehod v novo vrstico
 		}
 		//priprava izpisa zelo dolgega besedila brez presledkov - konec
+		
 		//echo "text potem: ".$text."</br>";
 		
 		//detekcija prisotnosti e-naslova v besedilu in primerna preureditev, da pride do pravilnega izpisa
@@ -1064,20 +1094,29 @@ class LatexSurveyElement{
 		
 
 		//RESEVANJE odstranitve dodatnih style tag-ov po ul, ipd. #######################################################
-		$findStyleTag = 'style="';		
-		//$findStyleTagEnd = '"';
+		$findStyleTagFull = '<style="';
+		$findStyleTagIn = 'style="';		
 		$findStyleTagEnd = '">';
-		$numOfStyleTags = substr_count($text, $findStyleTag);	//stevilo 'style=" ' v tekstu
-		//echo "stevilo style: ".$numOfStyleTags." </br>";	
-		//echo 	$text."</br>";
+		$numOfStyleTagsFull = substr_count($text, $findStyleTagFull);	//stevilo '<style=" ' v tekstu
+		$numOfStyleTagsIn = substr_count($text, $findStyleTagIn);	//stevilo 'style=" ' v tekstu
+		if($numOfStyleTagsFull){
+			$numOfStyleTags = $numOfStyleTagsFull;
+			$findStyleTag = $findStyleTagFull;
+			$offset = 2;
+		}else{
+			$numOfStyleTags = $numOfStyleTagsIn;
+			$findStyleTag = $findStyleTagIn;
+			$offset = 1;
+		}
 		for($s=0; $s<$numOfStyleTags; $s++){	//za vsako najdeno 'style=" ' besedilo, uredi njeno odstranitev			
 			$posStyleTag = strpos($text, $findStyleTag);			
-			$posStyleTagEnd = strpos($text, $findStyleTagEnd, $posStyleTag);	//strpos(string,find,start) najdi $findStyleTagEnd v $text, isci od $posStyleTag dalje			
-			$dolzinaOff = $posStyleTagEnd - $posStyleTag + 2;			
-			$text = substr_replace($text, "", $posStyleTag, $dolzinaOff);
-		
+			$posStyleTagEnd = strpos($text, $findStyleTagEnd, $posStyleTag);	//strpos(string,find,start) najdi $findStyleTagEnd v $text, isci od $posStyleTag dalje
+			$dolzinaOff = $posStyleTagEnd - $posStyleTag + $offset;
+			$text = substr_replace($text, "", $posStyleTag, $dolzinaOff); //substr_replace(string,replacement,start,length)		
 		}
 		//RESEVANJE odstranitve dodatnih style tag-ov po ul, ipd. - konec #################################################
+
+		//echo 	"po style: ".$text."</br>";
 
  		if($pos === false && $posImg === false) {	//v tekstu ni br in img 		
 			
@@ -1127,10 +1166,10 @@ class LatexSurveyElement{
 	#funkcija ki skrbi za encode dolocenih spornih delov besedila v latex-u prijazno - konec
 		
 	#funkcija, ki skrbi za pridobitev imena slike, ki jo je potrebno izrisati ######################################
-	function getImageName($text='', $sprId=null, $findme='', $vre_id=0){
-		global $site_path;
+	function getImageName($text='', $sprId=null, $findme='', $vre_id=0, $img_id=0){
+		global $site_path, $site_url;
 		$imageName = '';
-
+		//echo "id slike $img_id </br>";
 		if($text == 'hotspot' && $findme == 'hotspot_image='){
 			$sqlParametrov = sisplet_query("SELECT params FROM srv_spremenljivka WHERE id='".$sprId."'");
 			$rowParametrov = mysqli_fetch_row($sqlParametrov);
@@ -1144,9 +1183,11 @@ class LatexSurveyElement{
 			$imageName = substr($text,$pos);	//pokazi le del text od besedila $findme dalje (vkljucno z besedilom)
 			//echo "imageName prej: ".$imageName."</br>";
 			
-			$findme = $site_path.'uploadi/editor/';
+			//$findme = $site_path.'uploadi/editor/';
+			$findme = $site_url.'uploadi/editor/';
 			//$findme = 'uploadi/editor/';
-			
+			//$findme = 'editor/';
+			//echo "findme: ".$findme."</br>";
 			$pos = strpos($imageName, $findme);	//najdi pozicijo teksta v $findme
 			//echo "najdi tole: ".$findme."</br>";
 			//echo "najdi tukaj: ".$imageName."</br>";
@@ -1158,16 +1199,20 @@ class LatexSurveyElement{
 			}
 			//echo "ali je slika na strežniku: ".$slikaNaStrezniku."</br>";
 			if($slikaNaStrezniku==1){	//ce je slika na strezniku
-				$imageName = substr($imageName,$pos+7);	//pokazi le del params od besedila 'editor/' dalje, brez besedila 'editor/'
+				$findEditor = 'editor/';				
+				$posEditor = strpos($imageName, $findEditor);	//najdi pozicijo teksta v $findEditor
+				$imageName = substr($imageName,$posEditor+7);	//pokazi le del params od besedila 'editor/' dalje, brez besedila 'editor/'				
+				//echo "imagename : ".$imageName."</br>";
 				$pos = $this->getEndPosition($imageName);	//najdi pozicijo konca URL slike	
 				$imageExtension = substr($imageName, $pos-3, 3);	//pridobi koncnico slike (za gif je potrebno sliko pretvoriti v png, saj latex ne podpira gif)
-	/* 			echo "exr1: ".$imageExtension."</br>";
+/* 				echo "exr1: ".$imageExtension."</br>";
 				$imageExtension = strrchr($imageName, '.');	//pridobi koncnico slike (za gif je potrebno sliko pretvoriti v png, saj latex ne podpira gif, jpg in jpeg)
 				echo "exr2: ".$imageExtension."</br>"; */
 				
 				$imageName = substr($imageName, 0, $pos);	//pokazi le del params od zacetka besedila do '"' oz. konca URL slike
 				
-				$path = $site_path.'uploadi/editor/'.$imageName;			
+				//$path = $site_path.'uploadi/editor/'.$imageName;
+				$path = $site_url.'uploadi/editor/'.$imageName;
 				
 				if($imageExtension == 'gif'){	//ce je slika gif, jo je potrebno pretvoriti v png					
 					$this->convertGifToPng($path, $slikaNaStrezniku);
@@ -1178,7 +1223,7 @@ class LatexSurveyElement{
 				}
 			}elseif($slikaNaStrezniku==0){	//ce slike ni na strezniku
 				//echo "vre_id: $vre_id </br>";
-				$imageName = $this->getOnlineImageName($imageName, $slikaNaStrezniku, $vre_id);	//pridobi njen URL
+				$imageName = $this->getOnlineImageName($imageName, $slikaNaStrezniku, $vre_id, $img_id);	//pridobi njen URL
 			}
 
 			$imageName = substr($imageName, 0, strrpos($imageName, '.'));
@@ -1230,7 +1275,7 @@ class LatexSurveyElement{
 	
 	
 	#funkcija, ki skrbi za pridobitev slike, ki se nahaja nekje online in jo je potrebno izrisati, in vrne lokalno ime slike ######################################
-	function getOnlineImageName($imageName='', $slikaNaStrezniku=null, $vre_id=null){
+	function getOnlineImageName($imageName='', $slikaNaStrezniku=null, $vre_id=null, $img_id=0){
 		global $site_path;	
 		//echo "imageName v getOnlineImageName nekje vmes 1: ".$imageName."</br>";
 		$row = Cache::srv_spremenljivka(self::$spremenljivka);
@@ -1258,9 +1303,11 @@ class LatexSurveyElement{
 		}
 		
 		if($vre_id){	//ce se pridobiva imena tmp slik iz vrednosti vprasanja
-			$imgFilename = self::$spremenljivka.'_'.$vre_id.'_tmpImage.'.$imageExtension;	//tmp ime slike, ki je sestavljeno iz id spremenljivke+tmpImage+extension
+			//$imgFilename = self::$spremenljivka.'_'.$vre_id.'_tmpImage.'.$imageExtension;	//tmp ime slike, ki je sestavljeno iz id spremenljivke+tmpImage+extension
+			$imgFilename = self::$spremenljivka.'_'.$vre_id.'_tmpImage_'.$img_id.'.'.$imageExtension;	//tmp ime slike, ki je sestavljeno iz id spremenljivke+tmpImage+extension
 		}else{
-			$imgFilename = self::$spremenljivka.'_tmpImage.'.$imageExtension;	//tmp ime slike, ki je sestavljeno iz id spremenljivke+tmpImage+extension
+			//$imgFilename = self::$spremenljivka.'_tmpImage.'.$imageExtension;	//tmp ime slike, ki je sestavljeno iz id spremenljivke+tmpImage+extension
+			$imgFilename = self::$spremenljivka.'_tmpImage_'.$img_id.'.'.$imageExtension;	//tmp ime slike, ki je sestavljeno iz id spremenljivke+tmpImage+extension
 		}
 		
 		$pathDir = $site_path.'uploadi/editor/';	//pot za novo mapo, kjer se bodo shranjevale slike za trenutno anketo	
@@ -1328,7 +1375,7 @@ class LatexSurveyElement{
 			}elseif($imageExtension == 'peg'){
 				unlink($imageName.'.j'.$imageExtension);	//izbrisi sliko
 			}
-		}		
+		}			
 	}	
 	
 	function getEndPosition($imageName=''){
@@ -1363,7 +1410,9 @@ class LatexSurveyElement{
 	 * @param mixed $vrednost
 	 */
 	 function srv_language_vrednost ($vre_id=null) {		
-		 //if ($this->language != -1) {
+		 //if ($this->language != -1) {	
+	/* 	echo "prevod funkcija: ".$this->prevod."</br>";	
+		echo "language: ".$this->language."</br>";	 */		
 		if ($this->prevod) {
 			$sqllString = "SELECT naslov, naslov2 FROM srv_language_vrednost WHERE vre_id='".$vre_id."' AND lang_id='".$this->language."'";
 			$sqll = sisplet_query($sqllString);
@@ -1379,10 +1428,11 @@ class LatexSurveyElement{
 	 * @param mixed $vrednost
 	 */
 	function srv_language_grid ($grd_id=null, $spr_id=null) {
-		 
+		//echo "prevod funkcija: ".$this->prevod."</br>";
 		 //if ($this->language != -1) {
 		if ($this->prevod) {
-			$sqllString = "SELECT naslov FROM srv_language_grid WHERE spr_id = '".$spr_id."' AND  grd_id='".$grd_id."' AND lang_id='".$this->language."'";
+			$sqllString = "SELECT naslov, podnaslov FROM srv_language_grid WHERE spr_id = '".$spr_id."' AND  grd_id='".$grd_id."' AND lang_id='".$this->language."'";
+			//echo $sqllString."</br>";
 			$sqll = sisplet_query($sqllString);
 			$rowl = mysqli_fetch_array($sqll);			
 			return $rowl;
@@ -1649,18 +1699,19 @@ class LatexSurveyElement{
 	#funkcija, ki skrbi za pravilen izris prve vrstice v tabelah (vrstica z vodoravnimi naslovi multigridov) - konec #####################
 	
 	#funkcija, ki skrbi za izris vrstic tabele (z multigrid) ###########################################################
-	function LatexVrsticeMultigrid($numRowsSql=null, $export_format='', $enota=null, $simbolTex=null, $navpicniOdgovori=null, $trakStartingNumberTmp=null, $fillablePdf=null, $numColSql=null, $spremenljivke=null, $trak=null, $vodoravniOdgovori=null, $texNewLine='', $navpicniOdgovori2=null, $missingOdgovori=null, $vodoravniOdgovoriTip=null, $vodoravniOdgovoriEnota=null, $vodoravniOdgovoriSprId=null, $data=null, $export_subtype=null, $preveriSpremenljivko=null, $userDataPresent=null, $presirokaKombo = null, $export_data_type=null){
+	function LatexVrsticeMultigrid($numRowsSql=null, $export_format='', $enota=null, $simbolTex=null, $navpicniOdgovori=null, $trakStartingNumberTmp=null, $fillablePdf=null, $numColSql=null, $spremenljivke=null, $trak=null, $vodoravniOdgovori=null, $texNewLine='', $navpicniOdgovori2=null, $missingOdgovori=null, $vodoravniOdgovoriTip=null, $vodoravniOdgovoriEnota=null, $vodoravniOdgovoriSprId=null, $data=null, $export_subtype=null, $preveriSpremenljivko=null, $userDataPresent=null, $presirokaKombo = null, $export_data_type=null, $usr_id=null, $loop_id=null){
 		$this->export_subtype = $export_subtype;
 		$tex = '';
 		global $lang, $site_path;
 		$this->path2Images = $site_path.'admin/survey/export/latexclasses/textemp/images/';
 		//$radioButtonTex = ($export_format=='pdf'?"{\Large $\ocircle$}" : "\\includegraphics[scale=".RADIO_BTN_SIZE."]{radio}");		
 		$indeksOdgovorovRespondentMultiNumText = 0;
-
-		if($spremenljivke['enota']==2||$spremenljivke['enota']==6){	//ce je seznam ali roleta	//$enota == 2 || $enota == 6
+		
+		//if($spremenljivke['enota']==2||$spremenljivke['enota']==6){	//ce je seznam ali roleta	//$enota == 2 || $enota == 6
+		if(($spremenljivke['enota']==2||$spremenljivke['enota']==6)&&$spremenljivke['tip']!=20){	//ce je seznam ali roleta in ni multinumber	//$enota == 2 || $enota == 6
 			if(count($missingOdgovori)==0){	//ce ni missing vrednosti
 				$numColSql = $numColSql + 1;
-			}			
+			}	
 		}
 		$userAnswerIndex = array();
  		$userAnswerIndex[$spremenljivke['id']] = 0;
@@ -1878,8 +1929,15 @@ class LatexSurveyElement{
 										//echo $vodoravniOdgovoriTip[$j-1]."</br>";
 										
 									}else{
-										$tex .= ' & \\textcolor{crta}{\footnotesize{'.$data[$userAnswerIndex[$spremenljivke['id']]].'}}';
+										//$tex .= ' & \\textcolor{crta}{\footnotesize{'.$data[$userAnswerIndex[$spremenljivke['id']]].'}}';
+										$test = $data[$userAnswerIndex[$spremenljivke['id']]];										
+										$test = Common::getInstance()->dataPiping($test, $usr_id, $loop_id);
+										$test = $this->encodeText($test);
+										//echo "podatek: ".$test." </br>";
+										//$tex .= ' & \\textcolor{crta}{\footnotesize{'.$data[$userAnswerIndex[$spremenljivke['id']]].'}}';
+										$tex .= ' & \\textcolor{crta}{\footnotesize{'.$test.'}}';
 										//echo "vodoravni odgovori tip ".$vodoravniOdgovoriTip[$j-1]." $i</br>";
+										
 									}
 									/* elseif($export_data_type==2 && $vodoravniOdgovoriTip[$j-1]){ //ce je skrcen izvoz IN 
 
@@ -1944,7 +2002,7 @@ class LatexSurveyElement{
 										//$tex .= '& \\textcolor{crta}{'.$vodoravniOdgovori[$j-1].'}';	//izris odgovora respondenta v roleti ali seznamu
 										//$tex .= '& \\textcolor{crta}{\footnotesize{'.$vodoravniOdgovori[$j-1].'}}';	//izris odgovora respondenta v roleti ali seznamu	
 										if($export_data_type==0||$export_data_type==2){	//ce skrcen izvoz
-											$tex .= '& \\textcolor{crta}{\footnotesize{'.$vodoravniOdgovori[$j-1].'}}';	//izris odgovora respondenta v roleti ali 
+											$tex .= '& \\textcolor{crta}{\footnotesize{'.$vodoravniOdgovori[$j-1].'}}';	//izris odgovora respondenta v roleti ali											
 										}else{	//drugace, ce je razsirjen izvoz
 											$tex .= '\item[] \\textcolor{crta}{\footnotesize{'.$vodoravniOdgovori[$j-1].'}}';	//izris odgovora respondenta v roleti ali 
 										}								
@@ -1955,7 +2013,7 @@ class LatexSurveyElement{
 										if($export_data_type==0||$export_data_type==2){	//ce skrcen izvoz
 											$tex .= ' & '.$vodoravniOdgovori[$j-1];
 										}else{	//drugace, ce je razsirjen izvoz
-											
+											//echo "tip exp: ".$export_data_type."</br>";
 										}
 										
 									}
@@ -2053,9 +2111,10 @@ class LatexSurveyElement{
 					}
 				}
 							
-				if(($enota == 2 || $enota == 6)&&$spremenljivke['tip']!=24){	//ce je roleta ali seznam in ni kombinirana tabela
+				//if(($enota == 2 || $enota == 6)&&$spremenljivke['tip']!=24){	//ce je roleta ali seznam in ni kombinirana tabela
+				if(($enota == 2 || $enota == 6)&&$spremenljivke['tip']!=24&&$spremenljivke['tip']!=20){	//ce je roleta ali seznam in ni kombinirana tabela in ni mutinumber
 					$tex .= '\end{itemize}';	//zakljucek itemize
-
+					//echo "teestirmo ".$spremenljivke['tip']." in $enota</br>";
 					/* if($export_format == 'rtf'){	//ce je rtf						
 						$tex .= ' \hline '; //dodaj crto na koncu vrstice
 					} */

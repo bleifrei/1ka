@@ -24,7 +24,7 @@ function collectDataAjax(){
                     location.reload(); 
                 }
                 else{
-                    alert(lang['srv_collectdata_failed']);
+                    genericAlertPopup('srv_collectdata_failed');
                 }
             }
         });  

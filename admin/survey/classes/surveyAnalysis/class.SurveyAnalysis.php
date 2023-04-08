@@ -196,9 +196,7 @@ class SurveyAnalysis {
 				
 				UserSetting :: getInstance()->Init($global_user_id);
 	
-				if (SurveyInfo::getInstance()->getSurveyColumn('db_table') == 1) {
-					self::$db_table = '_active';
-				}
+				self::$db_table = SurveyInfo::getInstance()->getSurveyArchiveDBString();
 	
 				# nastavimo vse filtre
 				self::setUpFilter();
@@ -7161,8 +7159,7 @@ class SurveyAnalysis {
         echo '</div>';	
         
         // Javascript s katerim povozimo urlje za izvoze, ki niso na voljo v paketu
-        global $app_settings;
-        if($app_settings['commercial_packages'] == true){
+        if(AppSettings::getInstance()->getSetting('app_settings-commercial_packages') === true){
             echo '<script> userAccessExport(); </script>';
         }
 	}

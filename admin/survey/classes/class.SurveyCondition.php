@@ -112,7 +112,7 @@ class SurveyCondition
 		$popUp->addButton(new PopUpCancelButton());
 		
 		#dodamo gumb izberi profil
-		$confirmAction = 'alert(\'No action set\')';
+		$confirmAction = 'genericAlertPopup(\'alert_no_action_set\')';
 		if (isset($this->_chooseProfileJSAction) && !empty($this->_chooseProfileJSAction))
 		{
 			$confirmAction = $this->_chooseProfileJSAction;

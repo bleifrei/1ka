@@ -238,6 +238,9 @@ function init_skavti_radar(labels, pohvale, izzivi){
 
     // Nastavitve grafa
     var options = {
+        /*responsive: true,
+        maintainAspectRatio: true,
+        aspectRatio: 0.8,*/
         scale: {
             angleLines: {
                 display: false

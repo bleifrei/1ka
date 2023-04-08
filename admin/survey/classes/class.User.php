@@ -96,18 +96,42 @@ class User {
 	public static function findByEmail($email = null){
 
 	    $user_id = sisplet_query("SELECT id FROM users WHERE email='".$email."'", "obj");
-	    if(!empty($user_id)){
-	        return $user_id->id;
-      }
+        if(!empty($user_id)){
+            return $user_id->id;
+        }
 
-      // Preverimo, če uporablja alternativni email
-      $alternativni = sisplet_query("SELECT user_id FROM user_emails WHERE email='".$email."'", "obj");
-	    if(!empty($alternativni)){
-	        return $alternativni->user_id;
-      }
+        // Preverimo, če uporablja alternativni email
+        $alternativni = sisplet_query("SELECT user_id FROM user_emails WHERE email='".$email."'", "obj");
+            if(!empty($alternativni)){
+                return $alternativni->user_id;
+        }
 
-      return null;
-  }
+        return null;
+    }
+
+    public static function findByEmail_AAI($email, $aai_id){
+
+	    $user_id = sisplet_query("SELECT id FROM users WHERE email='".$email."'", "obj");
+        if(!empty($user_id)){
+
+            // Ce se nimamo zabelezenega aai_id-ja (uuid), ga pri prvi novi prijavi zabelezimo
+            sisplet_query("UPDATE users SET aai_id='".$aai_id."' WHERE id='".$user_id->id."' AND email='".$email."' AND aai_id=''");
+
+            return $user_id->id;
+        }
+
+        // Preverimo, če obstaja racun s tem aai id (uuid)
+        $user_id = sisplet_query("SELECT id FROM users WHERE aai_id='".$aai_id."'", "obj");
+        if(!empty($user_id)){
+
+            // Ce obstaja pomeni da je bil aai email spremenjen - ga popravimo se v bazi
+            sisplet_query("UPDATE users SET email='".$email."' WHERE id='".$user_id->id."' AND aai_id='".$aai_id."'");
+
+            return $user_id->id;
+        }
+
+        return null;
+    }
 
 	public function insertAlternativeEmail($email = NULL, $active = 0)
 	{
@@ -147,7 +171,8 @@ class User {
 
       if(!empty($option)){
           sisplet_query("UPDATE user_options SET option_value='".$value."' WHERE user_id='".$this->user->id."' AND id='".$option->id."'");
-      }else{;
+      }
+      else{;
           sisplet_query("INSERT INTO user_options (user_id, option_name, option_value, created_at) VALUES ('".$this->user->id."', '".$name."', '".$value."', NOW())");
       }
   }

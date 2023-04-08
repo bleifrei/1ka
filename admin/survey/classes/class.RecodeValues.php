@@ -30,9 +30,8 @@ class RecodeValues {
 			self::$anketa = $anketa;
 			self::$spremenljivka = $spremenljivka;
 
-			SurveyInfo::getInstance()->SurveyInit($anketa);
-			if (SurveyInfo::getInstance()->getSurveyColumn('db_table') == 1)
-				self::$db_table = '_active';
+			SurveyInfo::getInstance()->SurveyInit($anketa);	
+            self::$db_table = SurveyInfo::getInstance()->getSurveyArchiveDBString();
 			
 			# polovimo manjkajoče privzete vrednosti ankete
 			self::$smv = new SurveyMissingValues(self::$anketa); 

@@ -1883,11 +1883,13 @@ function gridRepeatHeader(repeat_every, spr_id){
         // Za tabelo najprej pobrisemo vse ponovljene vrstice ce so ze prisotne
         $(table).find('tbody tr.repeat_header').remove();
 
+        var count_rows = $(table).find("tbody tr:visible").size();
+
         // Loopamo cez vidne vrstice in vstavimo header vsakih "repeat_every" vrstic
         $(table).find("tbody tr:visible").each(function(index) {
 
             // Insetamo naslovno vrstico na pravo mesto
-            if((index+1) % repeat_every == 0){
+            if((index+1) % repeat_every == 0 && count_rows > (index+1)){
                 $(this).after(table_header);    
             }
         });    

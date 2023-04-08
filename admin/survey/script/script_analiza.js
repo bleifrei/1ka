@@ -70,11 +70,11 @@ function analiza_init () {
 						if (response == '0') {
 							row.hide();
 						} else {
-							alert(response);
+							genericAlertPopup('alert_parameter_response',response);
 						}
 					});
 				} else {
-					alert("Napaka pri brisanju!");
+					genericAlertPopup('alert_delete_error');
 				}
 		    }
 		});
@@ -83,7 +83,7 @@ function analiza_init () {
 	$('#dataTable td .edit_square').live('click', function(event) {
 		// polovimo user id
 		var uid = $(this).parent().parent().find('.data_uid').html();
-		var href = srv_site_url+'main/survey/edit_anketa.php?anketa='+srv_meta_anketa_id+'&usr_id='+uid+'';
+		var href = srv_site_url+'main/survey/edit_anketa.php?anketa='+srv_meta_anketa_hash+'&usr_id='+uid+'';
 		if (uid > 0 ){
 			window.open(href, '_blank');
 		}
@@ -935,7 +935,7 @@ function saveArchiveAnaliza(aid) {
 			});
 			
 		} else {
-			alert('Napaka!');
+			genericAlertPopup('error');
 			$('#fullscreen').hide();
 			$('#fade').fadeOut('slow');
 
@@ -968,7 +968,7 @@ function doDeleteArchiveAnaliza(aid) {
 				$('#fade').fadeOut('slow');
 			});
 		} else {
-			alert('Napaka!');
+			genericAlertPopup('error');
 			$('#fullscreen').hide();
 			$('#fade').fadeOut('slow');
 		}
@@ -988,9 +988,9 @@ function createArchiveBeforeEmail() {
 			});
 		} else {
 			if (parseInt(response) == -1) {
-				alert("Nothing to archive!"+response);
+				genericAlertPopup('alert_no_archive_response',response);
 			} else {
-				alert("Error while creating archive!"+response);
+				genericAlertPopup('alert_archive_error_response',response);
 			}
 			$('#fullscreen').hide();
 			$('#fade').fadeOut('slow');
@@ -1205,7 +1205,7 @@ function deleteMultipleData(){
 		});
 	} else {
 		
-		alert(lang["srv_data_delete_not_selected"]);
+		genericAlertPopup('srv_data_delete_not_selected');
 	}
 }
 
@@ -1238,11 +1238,11 @@ function quickEditAction(action, usr_id){
 							var href = srv_site_url+'admin/survey/index.php?anketa='+srv_meta_anketa_id+'&a=data&m=quick_edit';
 							window.location = href;
 						} else {
-							alert(response);
+							genericAlertPopup('alert_parameter_response',response);
 						}
 					});
 				} else {
-					alert("Napaka pri brisanju!");
+					genericAlertPopup('alert_delete_error');
 				}
 			}
 		});
@@ -1250,7 +1250,7 @@ function quickEditAction(action, usr_id){
 	
 	// editiranje starega vnosa
 	if(action == 'edit'){
-		var href = srv_site_url+'main/survey/edit_anketa.php?anketa='+srv_meta_anketa_id+'&usr_id='+usr_id+'';
+		var href = srv_site_url+'main/survey/edit_anketa.php?anketa='+srv_meta_anketa_hash+'&usr_id='+usr_id+'';
 		if (usr_id > 0 ){
 			window.open(href, '_blank');
 		}
@@ -1305,7 +1305,7 @@ function quickEditAction(action, usr_id){
 						window.location = href;
 					});
 				} else {
-					alert("Napaka pri kopiranju!");
+					genericAlertPopup('alert_copy_error');
 				}
 			}
 		});
@@ -1419,7 +1419,7 @@ function doArchiveChart() {
 			$('#fullscreen').show();
 		});	
 	} else {
-		alert ('Ni podatkov za arhiv! Najprej kreirajte tabele.');
+		genericAlertPopup('alert_no_archive_tables');
 	}
 }
 function submitArchiveChart() {
@@ -1438,7 +1438,7 @@ function submitArchiveChart() {
 			$("#fullscreen").show();
 		});
 	} else {
-		alert ('Ni podatkov za arhiv! Najprej kreirajte tabele.');
+		genericAlertPopup('alert_no_archive_tables');
 	}
 }
 
@@ -1456,9 +1456,9 @@ function createArchiveChartBeforeEmail() {
 				});
 			} else {
 				if (parseInt(response) == -1) {
-					alert("Nothing to archive!"+response);
+					genericAlertPopup('alert_no_archive_response',response);
 				} else {
-					alert("Error while creating archive!"+response);
+					genericAlertPopup('alert_archive_error_response',response);
 				}
 				$('#fullscreen').hide();
 				$('#fade').fadeOut('slow');
@@ -1466,7 +1466,7 @@ function createArchiveChartBeforeEmail() {
 		});
 
 	} else {
-		alert ('Ni podatkov za arhiv! Najprej kreirajte tabele.');
+		genericAlertPopup('alert_no_archive_tables');
 	}
 };
 

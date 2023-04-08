@@ -74,6 +74,7 @@ class HeatmapLatex extends LatexSurveyElement
 			//pregled vseh moznih vrednosti (kategorij) po $sqlVrednosti
 			while ($rowVrednost = mysqli_fetch_assoc($sqlVrednosti)){
 				$stringTitleRow = $rowVrednost['naslov']; //odgovori na levi strani
+				$stringTitleRow = Common::getInstance()->dataPiping($stringTitleRow, $usr_id, $loop_id);
 				array_push($navpicniOdgovori, $this->encodeText($stringTitleRow) );	//filanje polja z navpicnimi odgovori (po vrsticah)	
 			}
 			//pregled vseh moznih vrednosti (kategorij) po $sqlVrednosti - konec
@@ -110,12 +111,17 @@ class HeatmapLatex extends LatexSurveyElement
 				if($whileIndeks == 0){ //ce so prisotna imena obmocij, izpisi besedilo "Obmocja na sliki"
 					$tex .= $lang['srv_export_hotspot_regions_names'].': '.$texNewLine;	//izpis besedila "Obmocja na sliki"
 				}
-				$tex .= $rowHotSpotRegions['region_name'].''.$texNewLine;
-				if($rowHotSpotRegions['region_name']){					
-					array_push($obmocjaNaSliki, $rowHotSpotRegions['region_name']);
-					//array_push($coordsObmocijNaSliki, $rowHotSpotRegions['region_coords']);
-					$coordsObmocijNaSliki[$rowHotSpotRegions['region_name']]=$rowHotSpotRegions['region_coords'];
-					$point[$rowHotSpotRegions['region_name']] = 0;
+				
+				$regionName = $rowHotSpotRegions['region_name'];
+				$regionName = Common::getInstance()->dataPiping($regionName, $usr_id, $loop_id);
+				$regionName = $this->encodeText($regionName);
+				$tex .= $regionName.''.$texNewLine;
+				//echo "ime: $regionName </br>";
+				
+				if($regionName){				
+					array_push($obmocjaNaSliki, $regionName);				
+					$coordsObmocijNaSliki[$regionName]=$rowHotSpotRegions['region_coords'];					
+					$point[$regionName] = 0;
 				}
 				$whileIndeks++;
 			}
@@ -221,7 +227,7 @@ class HeatmapLatex extends LatexSurveyElement
 								$point[$obmocjaNaSliki[$o]]++;
 							}
 						}
-						//echo "stevilo tock znotraj obmocja: ".$point["Besedilo"]."</br>";
+						//echo "stevilo tock znotraj obmocja: ".$point["Besedilo"]."</br>";						
 					}
 					#pridobitev podatkov o obmocjih in podatka o prisotnosti tocke v obmocju - konec
 					//echo $answer."</br>";

@@ -32,11 +32,10 @@ class ApiLogin
         global $site_path;
         global $site_domain;
         global $cookie_domain;
-		global $virtual_domain;
 
 
 		// Overridi za virtualne domene na TUS strezniku
-		if(isset($virtual_domain) && $virtual_domain == true){
+		if(isVirtual()){
 			if (getenv('apache_site_path') != '') $site_url = getenv('apache_site_url');
 			if (getenv('apache_site_path') != '') $site_path = getenv('apache_site_path');
 			if (getenv('apache_site_domain') != '') $site_domain = getenv('apache_site_domain');
@@ -416,16 +415,16 @@ class ApiLogin
         global $cookie_domain;
         global $originating_domain;
         global $keep_domain;
-        global $app_settings;
 
 
         // Ce imamo vklopljeno blokiranje dostopa do admina glede na ip
-        if(isset($app_settings['admin_allow_only_ip']) && $app_settings['admin_allow_only_ip'] != '' && !empty($app_settings['admin_allow_only_ip'])){
+        $admin_allow_only_ip = AppSettings::getInstance()->getSetting('app_limits-admin_allow_only_ip');
+        if($admin_allow_only_ip !== false && !empty($admin_allow_only_ip)){
 
             $ip = $_SERVER['REMOTE_ADDR'];
 
             // Preverimo ip - ce se ne ujema ne pustimo logina
-            if(!in_array($ip, $app_settings['admin_allow_only_ip'])){
+            if(!in_array($ip, $admin_allow_only_ip)){
                 header('location: '.$this->page_urls['page_login'.$this->prijava]);
                 die();
             }
@@ -602,8 +601,6 @@ class ApiLogin
     {
         require_once('../../function/JWT.php');
 
-        global $google_login_client_id;
-        global $google_login_client_secret;
         global $site_url;
         global $lang;
         global $proxy;
@@ -617,8 +614,8 @@ class ApiLogin
                 'header' => "Content-type: application/x-www-form-urlencoded\r\n",
                 'method' => 'POST',
                 'content' => http_build_query([
-                  'client_id' => $google_login_client_id,
-                  'client_secret' => $google_login_client_secret,
+                  'client_id' => AppSettings::getInstance()->getSetting('google-login_client_id'),
+                  'client_secret' => AppSettings::getInstance()->getSetting('google-login_client_secret'),
                   'code' => $oauth2_code,
                   'grant_type' => 'authorization_code',
                   'redirect_uri' => $site_url.'frontend/api/google-oauth2.php',
@@ -634,8 +631,8 @@ class ApiLogin
                 'header' => "Content-type: application/x-www-form-urlencoded\r\n",
                 'method' => 'POST',
                 'content' => http_build_query([
-                  'client_id' => $google_login_client_id,
-                  'client_secret' => $google_login_client_secret,
+                  'client_id' => AppSettings::getInstance()->getSetting('google-login_client_id'),
+                  'client_secret' => AppSettings::getInstance()->getSetting('google-login_client_secret'),
                   'code' => $oauth2_code,
                   'grant_type' => 'authorization_code',
                   'redirect_uri' => $site_url.'frontend/api/google-oauth2.php',
@@ -713,11 +710,9 @@ class ApiLogin
     // Prijavi userja v 1ko z FB racunom (kopirano iz ProfileClass.php) - PRETESTIRATI
     private function userLoginFacebook()
     {
-        global $facebook_appid;
-        global $facebook_appsecret;
         global $cookie_path;
 
-        if ($r = file_get_contents("https://graph.facebook.com/v2.9/oauth/access_token?client_id=".$facebook_appid."&redirect_uri=https://www.1ka.si/frontend/api/fb_login.php&client_secret=".$facebook_appsecret."&code=".$_GET['code'])) {
+        if ($r = file_get_contents("https://graph.facebook.com/v2.9/oauth/access_token?client_id=".AppSettings::getInstance()->getSetting('facebook-appid')."&redirect_uri=https://www.1ka.si/frontend/api/fb_login.php&client_secret=".AppSettings::getInstance()->getSetting('facebook-appsecret')."&code=".$_GET['code'])) {
 
             $at = json_decode($r);
             $user = json_decode(file_get_contents('https://graph.facebook.com/me?fields=email,first_name,last_name&access_token='.$at->{'access_token'}));
@@ -894,12 +889,15 @@ class ApiLogin
         $mails = explode(";", $data[0]);
         sort($mails);
         $mail = $mails[0];
+        
+        // Pridobimo aai (shibboleth) "uuid"
+        $aai_id = $data[1];
 
-        $ime = $data[1];
-        $priimek = $data[2];
+        $ime = $data[2];
+        $priimek = $data[3];
 
-        $njegova = $data[3];
-        $moja = $data[4];
+        $njegova = $data[4];
+        $moja = $data[5];
 
 
         // Preverimo ce ima veljaven token (najprej pobrisemo stare)
@@ -911,14 +909,15 @@ class ApiLogin
             $pass = base64_encode((hash('SHA256', "e5zhbWRTEGW&u375ejsznrtztjhdtz%WZ&".$pass_salt)));
 
             // Preverimo ce obstaja user v bazi
-            $user_id_1ka = User::findByEmail($mail);
+            $user_id_1ka = User::findByEmail_AAI($mail, $aai_id);
+
             if (empty($user_id_1ka)) {
                        
                 // Nastavimo pass
                 $pass = base64_encode(hash('SHA256', "e5zhbWRTEGW&u375ejsznrtztjhdtz%WZ&".$pass_salt));
                 
                 // dodaj ga v bazo
-                sisplet_query("INSERT INTO users (email, name, surname, type, pass, eduroam, when_reg) VALUES ('$mail', '$ime', '$priimek', '3', '".$pass."', '1', NOW())");
+                sisplet_query("INSERT INTO users (email, aai_id, name, surname, type, pass, eduroam, when_reg) VALUES ('$mail', '$aai_id', '$ime', '$priimek', '3', '".$pass."', '1', NOW())");
 
                 // Pridobimo id dodanega userja
                 $user_id = mysqli_insert_id($GLOBALS['connect_db']);
@@ -926,10 +925,11 @@ class ApiLogin
             else {
 
                 // potegni geslo in mu daj kuki
-                $result = sisplet_query("SELECT pass, id FROM users WHERE id='".$user_id_1ka."'");    
+                $result = sisplet_query("SELECT pass, email FROM users WHERE id='".$user_id_1ka."'");    
                 $r = mysqli_fetch_row($result);
                 
                 $pass = $r[0];
+                $mail = $r[1];
                 $user_id = $user_id_1ka;
             }
 
@@ -976,7 +976,6 @@ class ApiLogin
         global $site_url;
         global $cookie_domain;
         global $global_user_id;
-        global $aai_instalacija;
 
         setcookie('uid', '', time() - 3600, '/', $cookie_domain);
         setcookie('unam', '', time() - 3600, '/', $cookie_domain);
@@ -1017,7 +1016,7 @@ class ApiLogin
         }
 
         // Ce gre za arnes aai odjavo odjavimo posebej
-        if ($aai_instalacija){
+        if (isAAI()){
             setcookie("aai", '', time() - 3600, '/', $cookie_domain);
             header('location: '.$site_url.'/logout_AAI.php?return='.$site_url);
             die();
@@ -1030,8 +1029,6 @@ class ApiLogin
     // Registrira userja v 1ko - vnos podatkov
     private function userRegister()
     {
-        global $secret_captcha;
-
         $error = [];
 
         $email = (isset($_POST['email'])) ? $_POST['email'] : '';
@@ -1050,9 +1047,9 @@ class ApiLogin
 
 
         // Preverimo ReCaptcha
-        if (!empty($secret_captcha)) {
+        if (AppSettings::getInstance()->getSetting('google-secret_captcha') !== false) {
             $recaptchaResponse = $_POST['g-recaptcha-response'];
-            $requestReCaptcha = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=".$secret_captcha."&response=".$recaptchaResponse);
+            $requestReCaptcha = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=".AppSettings::getInstance()->getSetting('google-secret_captcha')."&response=".$recaptchaResponse);
 
             if (!strstr($requestReCaptcha, "true")) {
                 $error['invalid_recaptcha'] = '1';
@@ -1260,11 +1257,8 @@ class ApiLogin
         global $site_url;
         global $site_path;
         global $site_domain;
-        global $virtual_domain;
         global $pass_salt;
         global $lang;
-        global $confirm_registration;
-        global $app_settings;
 
 
         $email = (isset($_POST['email']) ? $_POST['email'] : '');
@@ -1301,7 +1295,7 @@ class ApiLogin
         $priimek = '';
 
 		// Ce imamo vklopljeno potrjevanje urednika aplikacije ga potrdi admin
-        if (isset($confirm_registration) && $confirm_registration == 1)
+        if (AppSettings::getInstance()->getSetting('confirm_registration') === true)
             $status = 2;
 		else
             $status = 1;
@@ -1332,16 +1326,16 @@ class ApiLogin
         $Content .= $lang['confirm_user_mail_ignore'];
 
 		// Ce gre slucajno za virutalko
-		$Subject = ($virtual_domain) ? $lang['confirm_user_mail_subject_virtual'] : $lang['confirm_user_mail_subject'];	
+		$Subject = (isVirtual()) ? $lang['confirm_user_mail_subject_virtual'] : $lang['confirm_user_mail_subject'];	
 		
 		// Ce mora admin potrditi dobi email admin in ne uporabnik!
-		if(isset($confirm_registration) && $confirm_registration == 1){
+		if(AppSettings::getInstance()->getSetting('confirm_registration') === true){
 
 			// Popravimo besedilo emaila
 	        $Content = $lang['confirm_user_mail_admin'];	        
 		}
         
-        $PageName = $app_settings['app_name'];
+        $PageName = AppSettings::getInstance()->getSetting('app_settings-app_name');
 
 		$ZaMail = '<!DOCTYPE HTML PUBLIC"-//W3C//DTD HTML 4.0 Transitional//EN">'.'<html><head>  <title>'.$Subject.'</title><meta content="text/html; charset=utf-8" http-equiv=Content-type></head><body>';
 
@@ -1358,7 +1352,7 @@ class ApiLogin
         $Subject = str_replace("SFPAGENAME", $PageName, $Subject);
         
 		// Ce gre slucajno za virutalko
-		if($virtual_domain)
+		if(isVirtual())
 			$Subject = str_replace("SFVIRTUALNAME", $site_domain, $Subject);	
 
 
@@ -1377,8 +1371,8 @@ class ApiLogin
             $MA = new MailAdapter(null, 'account');
                 
             // Ce mora admin potrditi, posljemo njemu mail
-            if(isset($confirm_registration) && $confirm_registration == 1){
-                global $confirm_registration_admin;
+            if(AppSettings::getInstance()->getSetting('confirm_registration') === true){
+                $confirm_registration_admin = AppSettings::getInstance()->getSetting('confirm_registration_admin');
 
                 if(is_array($confirm_registration_admin)){
                     // Mail posljemo vsem nastavljenim adminom
@@ -1423,11 +1417,8 @@ class ApiLogin
         global $site_url;
         global $site_path;
         global $site_domain;
-        global $virtual_domain;
         global $pass_salt;
         global $cookie_domain;
-		global $confirm_registration;
-		global $app_settings;
 
 
         if (!isset ($_GET['code'])) {
@@ -1457,14 +1448,14 @@ class ApiLogin
                 $pass = $r['pass'];
                 $ime = $r['name'];
 
-                $PageName = $app_settings['app_name'];
+                $PageName = AppSettings::getInstance()->getSetting('app_settings-app_name');
 
                 include_once('../../lang/'.$r['lang'].'.php');
                 $Content = $lang['confirm_user_content'];
                 $Subject = $lang['confirm_user_subject'];
 
                 // Ce je ga moramo po registraciji odobriti dobi drugacno sporocilo
-                if (isset($confirm_registration) && $confirm_registration == 1){
+                if (AppSettings::getInstance()->getSetting('confirm_registration') === true){
                     $UserContent = $lang['register_user_banned_content'];
                 }
                 else{
@@ -1481,7 +1472,7 @@ class ApiLogin
                 $out = '<a href="'.$this->page_urls['page_unregister'].'?email='.$email.'">';
 
 				// Ce gre slucajno za virtualko
-                $Subject = ($virtual_domain) ? $lang['register_user_subject_virtual'] : $lang['register_user_subject'];
+                $Subject = (isVirtual()) ? $lang['register_user_subject_virtual'] : $lang['register_user_subject'];
 
                 $UserContent = str_replace("SFNAME", $ime, $UserContent);
                 $UserContent = str_replace("SFMAIL", $email, $UserContent);
@@ -1493,7 +1484,7 @@ class ApiLogin
                 
 				$Subject = str_replace("SFPAGENAME", $PageName, $Subject);
 				// Ce gre slucajno za virtualko
-				if($virtual_domain)
+				if(isVirtual())
 					$Subject = str_replace("SFVIRTUALNAME", $site_domain, $Subject);
 
                 if ($geslo2 == "") {
@@ -1532,7 +1523,7 @@ class ApiLogin
                 }
 
 				// Ce imamo vklopljeno potrjevanje urednika aplikacije je to izvedel admin in ne prijavljamo
-		        if (!isset($confirm_registration) || $confirm_registration != 1){
+		        if (AppSettings::getInstance()->getSetting('confirm_registration') !== true){
 
                     // določi še, od kje se je prijavil
                     $hostname = "";
@@ -1615,7 +1606,6 @@ class ApiLogin
         global $lang;
         global $global_user_id;
         global $cookie_domain;
-        global $app_settings;
 
         $email = $global_user_id;
 
@@ -1630,14 +1620,14 @@ class ApiLogin
             }
         }
 
-        $result = sisplet_query("SELECT value FROM misc WHERE what='ByeEmail'");
-        list ($ByeEmail) = mysqli_fetch_row($result);
-        $result = sisplet_query("SELECT value FROM misc WHERE what='ByeEmailSubject'");
-        list ($ByeEmailSubject) = mysqli_fetch_row($result);
+
+        $ByeEmail = '<p>Spoštovani,</p><p>Uspešno ste se odjavili iz spletnega mesta www.1ka.si.</p><p>Veseli nas, da ste preizkusili orodje 1ka.</p><p>SFPAGENAME ekipa</p>';
+        $ByeEmailSubject = 'Uspešna odjava';
+
         $result = sisplet_query("SELECT name FROM users WHERE email='$email'");
         list ($ime) = mysqli_fetch_row($result);
 
-        $PageName = $app_settings['app_name'];
+        $PageName = AppSettings::getInstance()->getSetting('app_settings-app_name');
 
         $ByeEmail = str_replace("SFPAGENAME", $PageName, $ByeEmail);
         if (strlen($ime) > 2) {
@@ -1710,9 +1700,7 @@ class ApiLogin
         global $pass_salt;
         global $site_path;
         global $site_domain;
-        global $virtual_domain;
         global $cookie_domain;
-        global $app_settings;
 
         if (isset ($_GET['email']) || isset ($_POST['email'])) {
 
@@ -1773,11 +1761,11 @@ class ApiLogin
                 $result = sisplet_query("UPDATE users SET LastLP=UNIX_TIMESTAMP(NOW()), lost_password='".base64_encode((hash(SHA256, $geslo.$pass_salt)))."', lost_password_code='$passhint' WHERE email='$email'");
 
 				// Ce gre slucajno za virtualko
-                $Subject = ($virtual_domain) ? $lang['lost_pass_subject_virtual'] : $lang['lost_pass_subject'];
+                $Subject = (isVirtual()) ? $lang['lost_pass_subject_virtual'] : $lang['lost_pass_subject'];
 
                 $Content = $lang['lost_pass_mail'];
 
-                $PageName = $app_settings['app_name'];
+                $PageName = AppSettings::getInstance()->getSetting('app_settings-app_name');
 
                 $ZaMail = '<!DOCTYPE HTML PUBLIC"-//W3C//DTD HTML 4.0 Transitional//EN">'.'<html><head>  <title>'.$Subject.'</title><meta content="text/html; charset=utf-8" http-equiv=Content-type></head><body>';
 
@@ -1799,7 +1787,7 @@ class ApiLogin
 				$Subject = str_replace("SFPAGENAME", $PageName, $Subject);
                 
                 // Ce gre slucajno za virtualko
-				if($virtual_domain)
+				if(isVirtual())
 					$Subject = str_replace("SFVIRTUALNAME", $site_domain, $Subject);
 
                 if ($LoginWith == 1) {

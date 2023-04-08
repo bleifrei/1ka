@@ -25,11 +25,8 @@ class UserNarocilaStripe{
 
 
     public function __construct($narocilo_id){
-        global $app_settings;
-        global $stripe_secret;
-        global $stripe_key;
 
-        $this->stripeService = new \Stripe\StripeClient($stripe_secret);
+        $this->stripeService = new \Stripe\StripeClient(AppSettings::getInstance()->getSetting('stripe-secret'));
 
         if($narocilo_id > 0){
 

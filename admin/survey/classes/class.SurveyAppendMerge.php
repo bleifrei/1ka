@@ -24,9 +24,7 @@ class SurveyAppendMerge {
 		
 		SurveyInfo::getInstance()->SurveyInit($this->anketa);
 		
-		if (SurveyInfo::getInstance()->getSurveyColumn('db_table') == 1)
-			$this->db_table = '_active';
-		
+		$this->db_table = SurveyInfo::getInstance()->getSurveyArchiveDBString();	
 	}
 	
 	function display ($merge = false) {
@@ -113,9 +111,7 @@ class SurveyAppendMerge {
 			echo $lang['srv_append_step2'];
 			echo '<div class="append_step">';
 			
-			echo '<script type="text/javascript">';
-			echo "$('ul.connectedSortable').sortable({update : function () { append_refreshFieldsList(); }, forcePlaceholderSize: 'true',tolerance: 'pointer',placeholder: 'inv_field_placeholder',});";
-			echo '</script>';
+            echo '<script type="text/javascript">initAppendMergeConnectedSortable();</script>';
 			
 			echo '<span><label><input name="inv_import_type" id="inv_import_type0" type="radio" value="0" onclick="append_change_import_type(\''.$site_url.'admin/survey/index.php?anketa='.$this->anketa.'&a=data&m='.$_GET['m'].'\');" checked="checked">';
 			echo ''.$lang['srv_iz_seznama'].'</label></span>';
@@ -247,9 +243,7 @@ class SurveyAppendMerge {
 			echo $lang['srv_merge_step2'];
 			echo '<div class="append_step">';
 			
-			echo '<script type="text/javascript">';
-			echo "$('ul.connectedSortable').sortable({update : function () { append_refreshFieldsList(); }, forcePlaceholderSize: 'true',tolerance: 'pointer',placeholder: 'inv_field_placeholder',});";
-			echo '</script>';
+			echo '<script type="text/javascript">initAppendMergeConnectedSortable();</script>';
 			
 			echo '<span><label><input name="inv_import_type" id="inv_import_type0" type="radio" value="0" onclick="append_change_import_type(\''.$site_url.'admin/survey/index.php?anketa='.$this->anketa.'&a=data&m='.$_GET['m'].'\');" checked="checked">';
 			echo ''.$lang['srv_iz_seznama'].'</label></span>';

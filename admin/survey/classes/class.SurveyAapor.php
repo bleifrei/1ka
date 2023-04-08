@@ -162,7 +162,7 @@ class SurveyAapor {
 			
 			echo 'Povezave:<br/>';
 		   // echo '<a href="http://www.aapor.org/For_Researchers/4683.htm" target="_blank">';
-			echo '<a href="https://www.esomar.org/knowledge-and-standards/research-resources/aapor-standard-definitions.php" target="_blank">';
+			echo '<a href="https://www.esomar.org/what-we-do/code-guidelines/AAPOR-Standard-Definitions-Final-Dispositions-of-Case-Codes-and-Outcome-Rates-for-Surveys" target="_blank">';
 			echo 'Standard Definitions – Final Dispositions of Case Codes and Outcome Rates for Surveys (PDF)';
 			echo '</a>';
 			echo '</div>';

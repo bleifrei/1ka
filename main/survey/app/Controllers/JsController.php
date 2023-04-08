@@ -21,6 +21,7 @@ use SurveySetting;
 use SurveySlideshow;
 use Common;
 use SurveyPanel;
+use AppSettings;
 
 class JsController extends Controller
 {
@@ -64,7 +65,6 @@ class JsController extends Controller
     {
         global $lang;
         global $site_url;
-        global $secret_captcha;
 		global $admin_type;
 
         // Dodaten text pri alertu ce smo v testnem vnosu
@@ -1819,7 +1819,7 @@ class JsController extends Controller
                 echo ' } catch (e) {} ' . "\n";
             } 
             // ranking premikanje
-            else if ($row['tip'] == 17 && $row['design'] == 2) {
+            else if ($row['tip'] == 17 && $row['design'] == 2 && get('mobile') == '0') {
                 echo ' try { 																										' . "\n";
                 echo '  if ( ';
                 $this->generateCondition($row['if_id']);
@@ -1839,14 +1839,15 @@ class JsController extends Controller
                 echo ' } catch (e) {} ' . "\n";
             } 
             // ranking prestavljanje
-            else if ($row['tip'] == 17 && $row['design'] == 0) {
+            else if ($row['tip'] == 17 && $row['design'] == 0 && get('mobile') == '0') {
+                
                 echo ' try { 																										' . "\n";
                 echo '  if ( ';
                 $this->generateCondition($row['if_id']);
                 echo ' ) { ' . "\n";
 
                 echo '   document.getElementById(\'spremenljivka_' . $row['spr_id'] . '_vrednost_' . $row['id'] . '\').style.display = \'\'; ' . "\n";
-
+                
                 echo '  } else { ' . "\n";
                 
                 echo '   $(\'#spremenljivka_' . $row['spr_id'] . '_vrednost_' . $row['id'] . '\').hide(); ' . "\n";                 
@@ -1854,10 +1855,52 @@ class JsController extends Controller
 
                 echo '  } ' . "\n";
 
+
+                // Pri rankingu prestejemo in skrijemo tudi prazne okvirje na desni
+                // Prestejemo skrite
+                echo ' var count = $(\'#prestavljanje_'.$row['spr_id'].'\').find(\'.ranking:hidden\').length;   ' . "\n"; 
+
+                // Prikazemo vse
+                echo ' $(\'#prestavljanje_'.$row['spr_id'].'\').find(\'.dropholder\').find(\'ul li\').show();   ' . "\n"; 
+
+                // Skrijemo toliko okvirjev kolikor je skritih elementov
+                echo ' for(var i=0; i<count; i++){ $(\'#prestavljanje_'.$row['spr_id'].'\').find(\'.dropholder\').find(\'ul li:visible\').last().hide(); }' . "\n"; 
+
+
                 echo $sum;
 
                 echo ' } catch (e) {} ' . "\n";
             } 
+            // ranking ostevilcevanje
+            else if ($row['tip'] == 17 && ($row['design'] == 1 || get('mobile') != '0')) {
+
+                echo ' try { 																										' . "\n";
+                echo '  if ( ';
+                $this->generateCondition($row['if_id']);
+                echo ' ) { ' . "\n";
+
+                echo '   document.getElementById(\'vrednost_if_' . $row['id'] . '\').style.display = \'\'; ' . "\n";
+
+                echo '  } else { ' . "\n";
+                echo '   document.getElementById(\'vrednost_if_' . $row['id'] . '\').style.display = \'none\'; ' . "\n";
+
+                echo '  } ' . "\n";
+
+
+                // Pri rankingu prestejemo in skrijemo tudi odvecne vrednosti v dropdownu
+                // Prestejemo vidne
+                echo ' var count_visible = $(\'#spremenljivka_'.$row['spr_id'].'\').find(\'.variabla:visible\').length;   ' . "\n"; 
+
+                // Na novo napolnimo select
+                echo ' $(\'#spremenljivka_'.$row['spr_id'].'\').find(\'select\').empty()' . "\n"; 
+                echo ' $(\'#spremenljivka_'.$row['spr_id'].'\').find(\'select\').append(\'<option></option>\')' . "\n"; 
+                echo ' for(var i=1; i<=count_visible; i++){ $(\'#spremenljivka_'.$row['spr_id'].'\').find(\'select\').append(\'<option value="\'+i+\'">\'+i+\'</option>\'); }' . "\n"; 
+
+
+                echo $sum;
+
+                echo ' } catch (e) {} ' . "\n";
+            }
             else {
                 if ($spremenljivka_dd == $row['spr_id'] && ($orientation_dd == 8 || $enota_dd == 9)) {//ce je drag and drop
                     echo ' try {																									' . "\n";

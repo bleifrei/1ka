@@ -95,9 +95,7 @@ class LatexSurvey{
 		//if ( SurveyInfo::getInstance()->SurveyInit($this->anketa['id']) && $this->init())
 		if ( SurveyInfo::getInstance()->SurveyInit($this->anketa) )
 		{		
-			if (SurveyInfo::getInstance()->getSurveyColumn('db_table') == 1){
-				$this->db_table = '_active';
-			}
+			$this->db_table = SurveyInfo::getInstance()->getSurveyArchiveDBString();
 		}
 		else{
 			return false;

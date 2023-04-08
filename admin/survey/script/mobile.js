@@ -8,33 +8,99 @@ function mobile_init(){
         closed: function () {
 
         }
-      })
+    })
 
-      // dynamically bind 'closing' event
-      zeynep.on('closing', function () {
+    // dynamically bind 'closing' event
+    zeynep.on('closing', function () {
 
-      })
+    })
 
-      // handle zeynepjs overlay click
-      $('.mobile_menu_close').on('click', function () {
-            zeynep.close();
-            $('#fade').fadeOut();
+    // handle zeynepjs overlay click
+    $('.mobile_menu_close').on('click', function () {
 
-            $('.mobile_menu_close').fadeOut('fast', function(){
-                $('.mobile_menu_open').fadeIn('fast');
-            });
-      })
+        $('#fade').fadeOut();
 
-      // open zeynepjs side menu
-      $('.mobile_menu_open').on('click', function () {
-            zeynep.open();
+        mobile_menu_close(zeynep);
+    })
+
+    // open zeynepjs side menu
+    $('.mobile_menu_open').on('click', function () {
+
+        if($('#fade').is(':hidden')){
             $('#fade').fadeIn();
+        }
+        else{
+            mobile_settings_close(zeynep);
+        }
+        
+        mobile_menu_open(zeynep);
+    })
 
-            $('.mobile_menu_open').fadeOut('fast', function(){
-                $('.mobile_menu_close').fadeIn('fast');
-            });
-      })
+    // handle settings overlay click
+    $('.mobile_settings_close').on('click', function () {
+
+        $('#fade').fadeOut();
+
+        mobile_settings_close(zeynep);
+    })
+
+    // open settings side menu
+    $('.mobile_settings_open').on('click', function () {
+
+        if($('#fade').is(':hidden')){
+            $('#fade').fadeIn();
+        }
+        else{
+            mobile_menu_close(zeynep);
+        }
+
+        mobile_settings_open(zeynep);
+    })
 }
+
+// Odpremo mobile meni na levi
+function mobile_menu_open(zeynep){
+
+    zeynep.open();
+
+    $('.mobile_menu_open').fadeOut('fast', function(){
+        $('.mobile_menu_close').fadeIn('fast');
+    });
+}
+
+// Zapremo mobile meni na levi
+function mobile_menu_close(zeynep){
+
+    zeynep.close();
+
+    $('.mobile_menu_close').fadeOut('fast', function(){
+        $('.mobile_menu_open').fadeIn('fast');
+    });
+}
+
+// Odpremo settings meni na desni
+function mobile_settings_open(){
+
+    $('.mobile_settings').animate({"margin-right": '+=85vw'},200,'linear');
+
+    $('.mobile_settings_open').fadeOut('fast', function(){
+        $('.mobile_settings_close').fadeIn('fast');
+    });
+}
+
+// Zapremo settings meni na desni
+function mobile_settings_close(callback){
+
+    $('.mobile_settings').animate({"margin-right": '-85vw'},200,'linear');
+
+    $('.mobile_settings_close').fadeOut('fast', function(){
+        $('.mobile_settings_open').fadeIn('fast');
+    });
+
+    if (typeof callback == "function")
+        callback();
+}
+
 
 // Popup za dodajanje vprasanja na mobile
 function mobile_add_question_popup(){

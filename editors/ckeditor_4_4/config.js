@@ -74,6 +74,15 @@ CKEDITOR.editorConfig = function (config) {
         //{name: 'insert', items: ['Image', 'ImageMap']}
 		{name: 'insert', items: ['Image']}
     ];
+    config.toolbar_Notification = [
+        {name: 'document', items: ['Source', '-']},
+        {name: 'clipboard', items: ['PasteText','RemoveFormat', 'Undo', 'Redo', 'Scayt']},
+        {name: 'basicstyles', items: ['Bold', 'Underline', 'Italic', 'Strike', '-']},
+        {name: 'links', items: ['Link', 'Unlink', 'Image', 'SpecialChar']},
+        {name: 'colors', items: ['TextColor', 'BGColor']},
+        {name: 'paragraph', items: ['NumberedList', 'BulletedList', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock','-']},
+        {name: 'vec', items:['-', 'FontSize', 'Font',  'Outdent', 'Indent']}
+    ];
 
     config.removeButtons = 'Cut,Copy,Paste,Subscript,Superscript';
 

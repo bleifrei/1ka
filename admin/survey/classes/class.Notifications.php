@@ -134,9 +134,12 @@ class Notifications {
 		// Checkboxa za posiljenje vsem uporabnikoom (slo in ang)
 		echo '<div style="padding-top:5px;"><input type="checkbox" value="1" name="recipient_all_slo" id="recipient_all_slo" onClick="recipient_all_disable_email();"> <label for="recipient_all_slo"><span class="clr bold">'.$lang['srv_notifications_send_all_slo'].'</span></label></div>';
 		echo '<div style="padding-top:5px;"><input type="checkbox" value="1" name="recipient_all_ang" id="recipient_all_ang" onClick="recipient_all_disable_email();"> <label for="recipient_all_ang"><span class="clr bold">'.$lang['srv_notifications_send_all_ang'].'</span></label></div><br />';
-		
+
+        // Naslov sporocila
 		echo '<span class="clr bold">'.$lang['srv_notifications_send_title'].': </span><input type="text" name="title"><br /><br />';
-		echo '<span class="clr bold">'.$lang['srv_notifications_send_text'].': </span><textarea name="notification"></textarea><br />';
+
+        // Besedilo sporocila (editor)
+		echo '<span class="clr bold">'.$lang['srv_notifications_send_text'].': </span><textarea id="notification" name="notification" autocomplete="off"></textarea><br />';
 		
 		// Avtomatsko prikaži obvestilo po prijavi
 		echo '<div style="padding-top:5px;"><input type="checkbox" value="1" name="force_show" id="force_show"> <label for="force_show"><span class="clr bold">'.$lang['srv_notifications_force_show'].'</span></label></div><br />';
@@ -151,6 +154,9 @@ class Notifications {
 		}
 		
 		echo '</div>';
+
+        // Inicializiramo editor
+        echo '<script type="text/javascript">create_editor_notification(\'notification\');</script>';
 	}	
 	
 	
@@ -332,8 +338,13 @@ class Notifications {
 		
 		// Prikaz izbranega sporocila
 		echo '<div id="message">';
+
 		echo '<span class="bold">'.$row['title'].' <span class="italic">('.$row['date'].')</span></span>';
-		echo '<p>'.nl2br($row['text']).'</p>';
+
+        // Stara sporocila so brez editorja
+        $text = (strtotime($row['date']) < strtotime('2021-08-26')) ? nl2br($row['text']) : $row['text'];
+		echo '<p>'.$text.'</p>';
+
 		echo '</div>';
 		
 		echo '<div class="clr"></div>';
@@ -356,7 +367,9 @@ class Notifications {
 			
 			echo '<span class="bold">'.$row['title'].' <span class="italic">('.$row['date'].')</span></span>';
 			
-			echo '<br />'.nl2br($row['text']);
+            // Stara sporocila so brez editorja
+            $text = (strtotime($row['date']) < strtotime('2021-08-26')) ? nl2br($row['text']) : $row['text'];
+			echo '<br />'.$text;
 			
 			echo '</li>';
 		}
@@ -379,14 +392,14 @@ class Notifications {
 	}
 	
 	public function ajax_viewGDPRMessage(){
-		global $lang, $global_user_id, $aai_instalacija;	
+		global $lang, $global_user_id;	
 		
 		echo '<h2>'.$lang['srv_notifications_unread'].'</h2>';
 		
 		echo '<ul>';
 		echo '<li class="unread active">';
         
-        if(isset($aai_instalacija) && $aai_instalacija == true){
+        if(isAAI()){
             echo '<span class="bold">'.$lang['srv_gdpr_notification_title_aai'].'</span>';
         }
         else{

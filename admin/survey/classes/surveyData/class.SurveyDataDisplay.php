@@ -165,8 +165,7 @@ class SurveyDataDisplay{
 		self::$survey = SurveyInfo::getInstance()->getSurveyRow();
 		
 		# aktivne tabele
-		if (SurveyInfo::getInstance()->getSurveyColumn('db_table') == 1)
-			self::$db_table = '_active';
+		self::$db_table = SurveyInfo::getInstance()->getSurveyArchiveDBString();
 
 		# ali je anketa tipa SN - social network
         self::$is_social_network = (SurveyInfo::getInstance()->checkSurveyModule('social_network')) ? true : false;
@@ -834,13 +833,6 @@ class SurveyDataDisplay{
                 if (self::$_VARS[VAR_SHOW_SYSTEM] == false ) {
                     echo '<input type="checkbox" id="dataIcons_quick_view" onchange="changeDataIcons(); return false;"'.(self::$displayEditIcons['dataIcons_quick_view'] == true ? ' checked="checekd"' : '').'/><label for="dataIcons_quick_view">'.$lang['srv_dataIcons_quick_view'].'</label>';
                     echo '&nbsp;&nbsp;';
-                    /*echo '<input type="checkbox" id="dataIcons_edit" onchange="changeDataIcons(); return false;"'.(self::$displayEditIcons['dataIcons_edit'] == true ? ' checked="checekd"' : '').'/><label for="dataIcons_edit">'.$lang['srv_dataIcons_edit'].'</label>';
-                    if (self::$displayEditIcons['dataIcons_edit'] == true) {
-                        echo ' '.Help::display('srv_podatki_urejanje_inline');
-                    }
-                    echo '&nbsp;&nbsp;';
-                    echo '<input type="checkbox" id="dataIcons_write" onchange="changeDataIcons(); return false;"'.(self::$displayEditIcons['dataIcons_write'] == true ? ' checked="checekd"' : '').'/><label for="dataIcons_write">'.$lang['srv_dataIcons_write'].'</label>';
-                    echo '&nbsp;&nbsp;';*/
                     echo '<input type="checkbox" id="dataIcons_labels" onchange="changeDataIcons(); return false;"'.(self::$displayEditIcons['dataIcons_labels'] == true ? ' checked="checekd"' : '').'/><label for="dataIcons_labels">'.$lang['srv_dataIcons_labels'].'</label>';
                     
                     if ( self::showMultiple() ) {
@@ -850,13 +842,6 @@ class SurveyDataDisplay{
                 } else {
                     echo '<input type="checkbox" id="dataIcons_quick_view"  disabled="disabled" /><label for="dataIcons_quick_view" class="gray">'.$lang['srv_dataIcons_quick_view'].'</label>';
                     echo '&nbsp;&nbsp;';
-                    /*echo '<input type="checkbox" id="dataIcons_edit" disabled="disabled" /><label for="dataIcons_edit" class="gray">'.$lang['srv_dataIcons_edit'].'</label>';
-                    if (self::$displayEditIcons['dataIcons_edit'] == true) {
-                        echo ' '.Help::display('srv_podatki_urejanje_inline');
-                    }
-                    echo '&nbsp;&nbsp;';
-                    echo '<input type="checkbox" id="dataIcons_write" disabled="disabled"  /><label for="dataIcons_write" class="gray">'.$lang['srv_dataIcons_write'].'</label>';
-                    echo '&nbsp;&nbsp;';*/
                     echo '<input type="checkbox" id="dataIcons_labels" disabled="disabled" /><label for="dataIcons_labels" class="gray">'.$lang['srv_dataIcons_labels'].'</label>';
                     
                     if ( self::showMultiple() ) {
@@ -1226,8 +1211,20 @@ class SurveyDataDisplay{
 			echo '&nbsp;&nbsp;';
 			
             // Preverimo, ce je funkcionalnost v paketu, ki ga ima uporabnik
-            $userAccess = UserAccess::getInstance($global_user_id);       
-            echo '<input type="checkbox" id="dataIcons_write" onchange="changeDataIcons(); return false;"'.(self::$displayEditIcons['dataIcons_write'] == true ? ' checked="checked"' : '').' '.(!$userAccess->checkUserAccess($what='data_export') ? 'disabled="disabled"' : '').' /><label for="dataIcons_write" '.(!$userAccess->checkUserAccess($what='data_export') ? 'class="user_access_locked"' : '').'>'.$lang['srv_dataIcons_write'].'</label>';
+            $userAccess = UserAccess::getInstance($global_user_id);
+			if(!$userAccess->checkUserAccess($what='data_export')) {
+				echo '<input type="checkbox" id="dataIcons_write" onclick="popupUserAccess(\'data_export\'); return false;"'
+				.(self::$displayEditIcons['dataIcons_write'] == true ? ' checked="checked"' : '').' '
+				.' /><label for="dataIcons_write" '
+				.(!$userAccess->checkUserAccess($what='data_export') ? 'class="user_access_locked"' : '').'>'
+				.$lang['srv_dataIcons_write'].'</label>';
+			}
+			else {
+				echo '<input type="checkbox" id="dataIcons_write" onchange="changeDataIcons(); return false;"'
+				.(self::$displayEditIcons['dataIcons_write'] == true ? ' checked="checked"' : '').' '
+				.' /><label for="dataIcons_write" '
+				.'>'.$lang['srv_dataIcons_write'].'</label>';
+			}       
 
 			$arrow = (isset($_SESSION['sid_' . self::$sid]['dataIcons_settings'])) ? $_SESSION['sid_' . self::$sid]['dataIcons_settings'] : 0;
 			echo '<div id="toggleDataCheckboxes" ' . $borderLeft . ' onClick="toggleDataCheckboxes(\'data\');"><span class="faicon ' . ($arrow == 1 ? ' dropup_blue' : 'dropdown_blue') . '"></span> ' . $lang['srv_extra_settings'] . '</div>';
@@ -2729,7 +2726,7 @@ class SurveyDataDisplay{
 		if ($quick_view == false) {
 			//echo '<input type="submit" value="Shrani" /> ';<a href="#" onclick="document.forms['myFormName'].submit(); return false;">...</a>
 			echo '<span class="floatRight spaceLeft" ><div class="buttonwrapper"><a class="ovalbutton ovalbutton_orange" href="#" onclick="document.forms[\'vnos\'].submit(); return false;"><span>' . $lang['save'] . '</span></a></div></span>';
-			echo '<span class="floatRight spaceRight" ><div class="buttonwrapper"><a class="ovalbutton ovalbutton_gray" href="../survey/index.php?anketa='.self::$sid.'&a='.A_COLLECT_DATA.'"><span>Nazaj na podatke</span></a></div></span>';
+			echo '<span class="floatRight spaceRight" ><div class="buttonwrapper"><a class="ovalbutton ovalbutton_gray" href="../survey/index.php?anketa='.self::$sid.'&a='.A_COLLECT_DATA.'"><span>' . $lang['srv_back_to_data'] . '</span></a></div></span>';
 
 			#echo '</form>'."\n";
 		}
@@ -3052,11 +3049,9 @@ class SurveyDataDisplay{
                 echo '<td class="right">'.$text.'</td></tr>';
             }
 
-            if ( $admin_type <= 1) {
-                
+            if ( $admin_type <= 1) {          
                 echo '<tr><td class="left">'.$lang['srv_sc_txt1'].':</td>';
-                echo '<td class="right"><a href="#" onclick="sc_display(\''.self::$usr_id.'\'); return false;">'.$lang['srv_sc_txt2'].'</a></td></tr>';
-                
+                echo '<td class="right"><a href="#" onclick="sc_display(\''.self::$usr_id.'\'); return false;">'.$lang['srv_sc_txt2'].'</a></td></tr>';           
             }
         }
 		

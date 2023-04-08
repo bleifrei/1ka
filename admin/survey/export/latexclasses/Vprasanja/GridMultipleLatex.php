@@ -29,6 +29,9 @@ class GridMultipleLatex extends LatexSurveyElement
     private static $_instance;
 	protected $texBigSkip = '\bigskip ';
 	protected $loop_id = null;	// id trenutnega loopa ce jih imamo
+	protected $usr_id = null;
+	protected $language;
+	protected $prevod;
 
     public static function getInstance()
     {
@@ -38,9 +41,23 @@ class GridMultipleLatex extends LatexSurveyElement
         return new GridMultipleLatex();
     }
 	
-	public function export($spremenljivke=null, $export_format='', $questionText='', $fillablePdf=null, $texNewLine='', $usr_id=null, $db_table=null, $export_subtype='', $preveriSpremenljivko=null, $export_data_type='', $loop_id=null){
+	public function export($spremenljivke=null, $export_format='', $questionText='', $fillablePdf=null, $texNewLine='', $usr_id=null, $db_table=null, $export_subtype='', $preveriSpremenljivko=null, $export_data_type='', $loop_id=null, $language=null){
 		// Ce je spremenljivka v loopu
 		$this->loop_id = $loop_id;
+		$this->usr_id = $usr_id;
+		
+		$this->language = $language;
+//print_r($spremenljivke);
+		//preverjanje, ali je prevod
+		if(isset($_GET['language'])){
+			$this->language = $_GET['language'];
+			$this->prevod = 1;
+		}else{
+			$this->prevod = 0;
+		}
+		//preverjanje, ali je prevod - konec
+
+
 		//echo "<b>tip izpisa:  $export_data_type</b> </br>"; //$export_data_type: 1 - Razsirjen, 2 - Skrcen
 		$presirokaTabela = 0;
 		//preveri, ce je kaj v bazi
@@ -133,14 +150,32 @@ class GridMultipleLatex extends LatexSurveyElement
 			//ce je prisoten id uporabnika - ureditev belezenja vnesenega odgovora pod Drugo: - konec
 
 			//pregled vseh moznih vrednosti (kategorij) po $sqlVrednosti - navpicni odgovori
-			while ($rowVrednost = mysqli_fetch_assoc($sqlVrednosti)){			
-				$stringTitleRow = ((( $rowVrednost['naslov'] ) ? $rowVrednost['naslov'] : ( ( $rowVrednost['naslov2'] ) ? $rowVrednost['naslov2'] : $rowVrednost['variable'] ) ));			
+			while ($rowVrednost = mysqli_fetch_assoc($sqlVrednosti)){
+				$stringTitleRow = '';
+				/* $stringTitleRow = ((( $rowVrednost['naslov'] ) ? $rowVrednost['naslov'] : ( ( $rowVrednost['naslov2'] ) ? $rowVrednost['naslov2'] : $rowVrednost['variable'] ) ));
 				# po potrebi prevedemo naslov 			
 				$naslov = $this->srv_language_vrednost($rowVrednost['id']);
 				if ($naslov != '') {
 					//$rowVrednost['naslov'] = $naslov;
 					$stringTitleRow = $naslov;
+				}	 */	
+				
+				if($this->prevod){ //ce je prevod ankete
+					# po potrebi prevedemo naslov 			
+					$rowl = $this->srv_language_vrednost($rowVrednost['id']);					
+					if ($rowl != '') {						
+						$stringTitleRow = ((( $rowl['naslov'] ) ? $rowl['naslov'] : ( ( $rowl['naslov2'] ) ? $rowl['naslov2'] : $rowl['variable'] ) )); //prevod naslova v ustreznem jeziku;
+					}
+					if($stringTitleRow == ''){	//ce ni prevoda, prevzemi izvirno
+						$stringTitleRow = ((( $rowVrednost['naslov'] ) ? $rowVrednost['naslov'] : ( ( $rowVrednost['naslov2'] ) ? $rowVrednost['naslov2'] : $rowVrednost['variable'] ) ));	
+					}
+				}else{
+					$stringTitleRow = ((( $rowVrednost['naslov'] ) ? $rowVrednost['naslov'] : ( ( $rowVrednost['naslov2'] ) ? $rowVrednost['naslov2'] : $rowVrednost['variable'] ) ));
 				}
+
+
+				//echo "vrednost: ".$rowVrednost['id']."</br>";
+				//echo "kombo naslov1: $stringTitleRow</br>";
 
 				$besediloDrugo = '';
 
@@ -153,7 +188,8 @@ class GridMultipleLatex extends LatexSurveyElement
 					$indeksBesediloDrugo++;	//povecaj indeks za izpis vnesenega besedila v Drugo:
 				}
 				//ce je drugo vnesen kot odgovor in je prisoten id uporabnika - konec
-			
+
+				$stringTitleRow = Common::getInstance()->dataPiping($stringTitleRow, $usr_id, $loop_id);			
 				array_push($navpicniOdgovori, $this->encodeText($stringTitleRow)." ".$besediloDrugo);	//filanje polja z navpicnimi odgovori (po vrsticah)
 			}
 			//pregled vseh moznih vrednosti (kategorij) po $sqlVrednosti - navpicni odgovori - konec
@@ -164,19 +200,31 @@ class GridMultipleLatex extends LatexSurveyElement
 			$steviloSkupinRoletSeznamov = 0;	//belezi stevilo enot z roletami ali seznamov (pomembno za pravilen izris, za presiroko tabelo)
 			$steviloOdgovorovRoletSeznamov = 0;	//belezi stevilo posameznih odgovorov, ki sestavljajo razlicne rolete ali sezname
 			$sprIdRoletSeznamov = 0;
-			$sprIdRoletSeznamovTmp = 0;
+			$sprIdRoletSeznamovTmp = 0;			
 
 			//pregled vseh odgovorov po stolpcih po $sqlStolpciVrednosti - vodoravni odgovori
 			while ($colVrednost = mysqli_fetch_assoc($sqlStolpciVrednosti)){
+				$stringTitleCol = '';				
+				$rowl = $this->srv_language_grid($colVrednost['variable'],$colVrednost['spr_id']);							
+				if (strip_tags($rowl['naslov']) != '') $colVrednost['naslov'] = $rowl['naslov'];				
+				$stringTitleCol = $colVrednost['naslov'];
 				
-				#staro, izpis naslovov stolpcev tabele z isto velikostjo pisave, kot vse ostalo
-				/* $stringTitleCol = $colVrednost['naslov'];	
-				array_push($vodoravniOdgovori, $this->encodeText($stringTitleCol, 0, 1) );	//filanje polja z vodoravnimi odgovori (po stolpcih) */
-				#staro - konec
+				/* if($this->prevod){ //ce je prevod ankete
+					# po potrebi prevedemo naslov 			
+					$rowl = $this->srv_language_grid($colVrednost['variable'],$colVrednost['spr_id']);					
+					if ($rowl != '') {						
+						$stringTitleCol = $rowl['naslov']; //prevod naslova v ustreznem jeziku;
+					}
+					if($stringTitleCol == ''){	//ce ni prevoda, prevzemi izvirno
+						$stringTitleCol = ((( $colVrednost['naslov'] ) ? $colVrednost['naslov'] : ( ( $colVrednost['naslov2'] ) ? $colVrednost['naslov2'] : $colVrednost['variable'] ) ));	
+					}
+				}else{
+					$stringTitleCol = ((( $colVrednost['naslov'] ) ? $colVrednost['naslov'] : ( ( $colVrednost['naslov2'] ) ? $colVrednost['naslov2'] : $colVrednost['variable'] ) ));
+				} */
 
-				$stringTitleCol = $this->encodeText($colVrednost['naslov'], 0, 1);
-				$stringTitleCol = '\footnotesize{'.$stringTitleCol.'}';	//zmanjsanje pisave za naslove stolpcev tabele
-				array_push($vodoravniOdgovori, $stringTitleCol);	//filanje polja z vodoravnimi odgovori (po stolpcih)
+				$stringTitleCol = Common::getInstance()->dataPiping($stringTitleCol, $usr_id, $loop_id);				
+				$stringTitleCol = '\footnotesize{'.$this->encodeText($stringTitleCol, 0, 1).'}';	//zmanjsanje pisave za naslove stolpcev tabele
+				array_push($vodoravniOdgovori, $stringTitleCol);	//filanje polja z vodoravnimi odgovori (po stolpcih)				
 
 				$rowMultiple = mysqli_fetch_array($sqlMultiple);
 				array_push($vodoravniOdgovoriTip, $rowMultiple['tip']);	//filanje polja s tipi spremenljivk
@@ -200,7 +248,7 @@ class GridMultipleLatex extends LatexSurveyElement
 					//echo "spr: $sprIdRoletSeznamov </br>";			
 				}
 
-				$sprIdRoletSeznamovTmp = $sprIdRoletSeznamov;
+				$sprIdRoletSeznamovTmp = $sprIdRoletSeznamov;				
 			}
 			//pregled vseh odgovorov po stolpcih po $sqlStolpciVrednosti - vodoravni odgovori - konec
 
@@ -403,7 +451,7 @@ class GridMultipleLatex extends LatexSurveyElement
 				#izris vrstic tabele
 				$fillablePdf = 0;
 				//echo "stevilo stolpcev tabele $numColSql </br>";
-				$tex .= $this->LatexVrsticeMultigrid($numRowsSql, $export_format, $enota, $simbolTex, $navpicniOdgovori, 0, $fillablePdf, $numColSql, $spremenljivke, $trak, $vodoravniOdgovori, $texNewLine, 0, 0, $vodoravniOdgovoriTip, $vodoravniOdgovoriEnota, $vodoravniOdgovoriSprId, $userAnswer, $export_subtype, $preveriSpremenljivko, $userDataPresent, $presirokaTabela, $export_data_type);
+				$tex .= $this->LatexVrsticeMultigrid($numRowsSql, $export_format, $enota, $simbolTex, $navpicniOdgovori, 0, $fillablePdf, $numColSql, $spremenljivke, $trak, $vodoravniOdgovori, $texNewLine, 0, 0, $vodoravniOdgovoriTip, $vodoravniOdgovoriEnota, $vodoravniOdgovoriSprId, $userAnswer, $export_subtype, $preveriSpremenljivko, $userDataPresent, $presirokaTabela, $export_data_type, $this->usr_id, $this->loop_id);
 				#izris vrstic tabele - konec
 				
 				$tex .= $this->EndLatexTable($export_format, 'tabularx', 'tabular');	//zakljucek tabele
@@ -453,8 +501,12 @@ class GridMultipleLatex extends LatexSurveyElement
 						array_push($vodoravniOdgovoriSprId, $rowMultiple['spr_id']); //filanje polja z id spremenljivk
 						array_push($vodoravniOdgovoriEnota, $rowMultiple['enota']); //filanje polja z enoto spremenljivk
 						//print_r($vodoravniOdgovoriTip);
-						$stringTitleCol = $this->encodeText($rowMultiple['naslov'], 0, 1);
-						$stringTitleCol = '\footnotesize{'.$stringTitleCol.'}';	//zmanjsanje pisave za naslove stolpcev tabele
+						
+						//$stringTitleCol = $this->encodeText($rowMultiple['naslov'], 0, 1);
+						//$stringTitleCol = '\footnotesize{'.$stringTitleCol.'}';	//zmanjsanje pisave za naslove stolpcev tabele
+						$stringTitleCol = $rowMultiple['naslov'];						
+						$stringTitleCol = Common::getInstance()->dataPiping($stringTitleCol, $usr_id, $loop_id);				
+						$stringTitleCol = '\footnotesize{'.$this->encodeText($stringTitleCol, 0, 1).'}';	//zmanjsanje pisave za naslove stolpcev tabele
 						
 						//if(($vodoravniOdgovoriEnota[0] == 2 || $vodoravniOdgovoriEnota[0] == 6) && $izpisOdgovorov && $export_data_type == 1){	//(ce je roleta ALI seznam) IN je izpis odgovorov IN razsirjen izvoz
 						if(($vodoravniOdgovoriEnota[0] == 2 || $vodoravniOdgovoriEnota[0] == 6) && $izpisOdgovorov && $export_data_type == 1 || ($izpisOdgovorov && $export_data_type == 2 && $vodoravniOdgovoriTip[0] == 6 )){	//(ce je roleta ALI seznam) IN je izpis odgovorov IN razsirjen izvoz ALI (je izpis odgovorov IN skrcen izvoz IN radio button)
@@ -540,7 +592,7 @@ class GridMultipleLatex extends LatexSurveyElement
 					#izris vrstic tabele
 					$fillablePdf = 0;					
 					//echo "stevilo stolpcev tabele $steviloStolpcev </br>";
-					$tex .= $this->LatexVrsticeMultigrid($numRowsSql, $export_format, $enota, $simbolTex, $navpicniOdgovori, 0, $fillablePdf, $steviloStolpcev, $spremenljivke, $trak, $vodoravniOdgovori, $texNewLine, 0, 0, $vodoravniOdgovoriTip, $vodoravniOdgovoriEnota, $vodoravniOdgovoriSprId, $userAnswer, $export_subtype, $preveriSpremenljivko, $userDataPresent, $presirokaTabela, $export_data_type);
+					$tex .= $this->LatexVrsticeMultigrid($numRowsSql, $export_format, $enota, $simbolTex, $navpicniOdgovori, 0, $fillablePdf, $steviloStolpcev, $spremenljivke, $trak, $vodoravniOdgovori, $texNewLine, 0, 0, $vodoravniOdgovoriTip, $vodoravniOdgovoriEnota, $vodoravniOdgovoriSprId, $userAnswer, $export_subtype, $preveriSpremenljivko, $userDataPresent, $presirokaTabela, $export_data_type, $this->usr_id, $this->loop_id);
 					#izris vrstic tabele - konec
 
 					$tex .= $this->EndLatexTable($export_format, 'tabularx', 'tabular');	//zakljucek tabele

@@ -90,8 +90,7 @@ class RtfIzvoz {
 			$this->anketa['uid'] = $global_user_id;
 			SurveyUserSetting::getInstance()->Init($this->anketa['id'], $this->anketa['uid']);
 
-			if (SurveyInfo::getInstance()->getSurveyColumn('db_table') == 1)
-				$this->db_table = '_active';
+			$this->db_table = SurveyInfo::getInstance()->getSurveyArchiveDBString();
 		}
 		else
 			return false;

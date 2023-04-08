@@ -47,8 +47,7 @@ class Prevajanje {
 				
 		SurveySetting::getInstance()->Init($this->anketa);
 		
-		if (SurveyInfo::getInstance()->getSurveyColumn('db_table') == 1)
-			$this->db_table = '_active';
+		$this->db_table = SurveyInfo::getInstance()->getSurveyArchiveDBString();
 		
 		$row = SurveyInfo::getInstance()->getSurveyRow();
 		

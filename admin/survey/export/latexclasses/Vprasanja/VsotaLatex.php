@@ -27,6 +27,7 @@ class VsotaLatex extends LatexSurveyElement
     private static $_instance;
 	protected $texBigSkip = ' \bigskip ';
 	protected $loop_id = null;	// id trenutnega loopa ce jih imamo
+	protected $usr_id = null;
 	
     public static function getInstance()
     {
@@ -40,7 +41,7 @@ class VsotaLatex extends LatexSurveyElement
 	public function export($spremenljivke=null, $export_format='', $questionText='', $fillablePdf=null, $texNewLine='', $usr_id=null, $db_table=null, $export_subtype=null, $preveriSpremenljivko=null, $loop_id=null){
 		// Ce je spremenljivka v loopu
 		$this->loop_id = $loop_id;
-		
+		$this->usr_id = $usr_id;
 		//preveri, ce je kaj v bazi
 		//$userDataPresent = $this->GetUsersData($db_table, $spremenljivke['id'], $spremenljivke['tip'], $usr_id);
 		$userDataPresent = $this->GetUsersData($db_table, $spremenljivke['id'], $spremenljivke['tip'], $usr_id, $this->loop_id);
@@ -72,7 +73,9 @@ class VsotaLatex extends LatexSurveyElement
 			//pregled vseh moznih vrednosti (kategorij) po $sqlVrednosti
 			while ($rowVrednost = mysqli_fetch_assoc($sqlVrednosti)){
 				$stringTitleRow = $rowVrednost['naslov']; //odgovori na levi strani
-				array_push($navpicniOdgovori, $this->encodeText($stringTitleRow) );	//filanje polja z navpicnimi odgovori (po vrsticah)	
+				$stringTitleRow = Common::getInstance()->dataPiping($stringTitleRow, $usr_id, $loop_id);
+				$stringTitleRow = $this->encodeText($stringTitleRow);				
+				array_push($navpicniOdgovori, $stringTitleRow );	//filanje polja z navpicnimi odgovori (po vrsticah)	
 				
 				//ureditev polja s podatki trenutnega uporabnika ######################################################
 				//$sqlUserAnswer = sisplet_query("SELECT text FROM srv_data_text".$db_table." WHERE spr_id='".$spremenljivke['id']."' AND usr_id='".$usr_id."' AND vre_id='".$rowVrednost['id']."' AND loop_id $loop_id");
@@ -119,7 +122,9 @@ class VsotaLatex extends LatexSurveyElement
 		
 		$parameterTabularL = 'rl';	//parametri za tabelo
 		
-		$textVsota = $this->encodeText($spremenljivke['vsota']);
+		$textVsota = $spremenljivke['vsota'];
+		$textVsota = Common::getInstance()->dataPiping($textVsota, $this->usr_id, $this->loop_id);
+		$textVsota = $this->encodeText($textVsota);		
 		
 		if($textVsota==''){
 			$textVsota = $lang['srv_vsota_text'];

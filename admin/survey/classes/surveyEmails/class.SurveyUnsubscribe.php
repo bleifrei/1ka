@@ -122,7 +122,7 @@ class SurveyUnsubscribe {
 		
 		$anketa = self::$sid;
 		
-		$db_table = (SurveyInfo::getInstance()->getSurveyColumn('db_table') == 1) ? '_active' : '';
+		$db_table = SurveyInfo::getInstance()->getSurveyArchiveDBString();
 		
 		$lang_id = (int)$_GET['language'];
 		if ($lang_id != null) $_lang = '_'.$lang_id; else $_lang = '';

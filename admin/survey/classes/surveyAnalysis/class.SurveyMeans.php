@@ -41,9 +41,7 @@ class SurveyMeans{
 
 			# polovimo vrsto tabel (aktivne / neaktivne)
 			SurveyInfo :: getInstance()->SurveyInit($this->sid);
-			if (SurveyInfo::getInstance()->getSurveyColumn('db_table') == 1) {
-				$this->db_table = '_active';
-			}
+			$this->db_table = SurveyInfo::getInstance()->getSurveyArchiveDBString();
 
 			# Inicializiramo in polovimo nastavitve missing profila
 			SurveyStatusProfiles::Init($this->sid);

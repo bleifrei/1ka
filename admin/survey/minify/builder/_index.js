@@ -162,12 +162,12 @@ var MUB = {
                     ext = thisExt; 
                 else if (thisExt !== ext) {
                     fail = true;
-                    return alert('extensions must match!');
+                    return genericAlertPopup('alert_extensions_match');
                 }
                 this.value = this.value.replace(/^\//, '');
                 if (-1 !== $.inArray(this.value, sources)) {
                     fail = true;
-                    return alert('duplicate file!');
+                    return genericAlertPopup('alert_duplicate_file');
                 }
                 sources.push(this.value);
             } 

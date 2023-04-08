@@ -71,8 +71,6 @@ class MailAdapter{
     private function prepareSurveySettings(){
         global $admin_type;
         global $mysql_database_name;
-        global $email_server_settings;
-        global $email_server_fromSurvey;
 
 
         // Polovimo nastavitve ce obstajajo v bazi
@@ -112,33 +110,34 @@ class MailAdapter{
 			
 			// Pri 1ka nastavitvah lahko nastavljamo samo reply to, vse ostalo je veedno default
 			if($this->settings['1ka']['SMTPReplyTo'] == '')
-				$this->settings['1ka']['SMTPReplyTo'] = $email_server_settings['SMTPReplyTo'];
+				$this->settings['1ka']['SMTPReplyTo'] = AppSettings::getInstance()->getSetting('email_server_settings-SMTPReplyTo');
 			
-			$this->settings['1ka']['SMTPFrom'] = $email_server_settings['SMTPFrom'];
-            $this->settings['1ka']['SMTPFromNice'] = $email_server_settings['SMTPFromNice'];    
-            $this->settings['1ka']['SMTPHost'] = $email_server_settings['SMTPHost'];
-            $this->settings['1ka']['SMTPPort'] = $email_server_settings['SMTPPort'];
+			$this->settings['1ka']['SMTPFrom'] = AppSettings::getInstance()->getSetting('email_server_settings-SMTPFrom');
+            $this->settings['1ka']['SMTPFromNice'] = AppSettings::getInstance()->getSetting('email_server_settings-SMTPFromNice');    
+            $this->settings['1ka']['SMTPHost'] = AppSettings::getInstance()->getSetting('email_server_settings-SMTPHost');
+            $this->settings['1ka']['SMTPPort'] = AppSettings::getInstance()->getSetting('email_server_settings-SMTPPort');
 
-            if(isset($email_server_settings['SMTPAuth']) && $email_server_settings['SMTPAuth'] == 1){
-                $this->settings['1ka']['SMTPAuth'] = $email_server_settings['SMTPAuth'];
-                $this->settings['1ka']['SMTPUsername'] = $email_server_settings['SMTPUsername'];
-                $this->settings['1ka']['SMTPPassword'] = $email_server_settings['SMTPPassword'];
+            if(AppSettings::getInstance()->getSetting('email_server_settings-SMTPAuth') === true){
+                $this->settings['1ka']['SMTPAuth'] = 1;
+                $this->settings['1ka']['SMTPUsername'] = AppSettings::getInstance()->getSetting('email_server_settings-SMTPUsername');
+                $this->settings['1ka']['SMTPPassword'] = AppSettings::getInstance()->getSetting('email_server_settings-SMTPPassword');
             }
 
-            if(isset($email_server_settings['SMTPSecure']))
-                $this->settings['1ka']['SMTPSecure'] = $email_server_settings['SMTPSecure'];
+            if(AppSettings::getInstance()->getSetting('email_server_settings-SMTPSecure') !== false)
+                $this->settings['1ka']['SMTPSecure'] = AppSettings::getInstance()->getSetting('email_server_settings-SMTPSecure');
 
             // Pri google smtp je username vedno email
             if($this->mailMode == 'google')
                 $this->settings['google']['SMTPUsername'] = $this->settings['google']['SMTPFrom'];
             
 			// ce posiljamo mail vabila in smo na www.1ka.si oz. virutalkah in smo admin - posiljamo preko sekundarnega maila (raziskave@1ka.si)
-			if($this->type == 'invitation' && $admin_type == 0 && isset($email_server_settings['secondary_mail'])){
-				$this->settings['1ka']['SMTPFrom'] = $email_server_settings['secondary_mail']['SMTPFrom'];
-				$this->settings['1ka']['SMTPFromNice'] = $email_server_settings['secondary_mail']['SMTPFromNice'];
-				$this->settings['1ka']['SMTPReplyTo'] = $email_server_settings['secondary_mail']['SMTPReplyTo'];
-				$this->settings['1ka']['SMTPUsername'] = $email_server_settings['secondary_mail']['SMTPUsername'];
-				$this->settings['1ka']['SMTPPassword'] = $email_server_settings['secondary_mail']['SMTPPassword'];
+			if($this->type == 'invitation' && $admin_type == 0 && AppSettings::getInstance()->getSetting('email_server_settings-secondary_mail-SMTPFrom') !== false){
+
+				$this->settings['1ka']['SMTPFrom'] = AppSettings::getInstance()->getSetting('email_server_settings-secondary_mail-SMTPFrom');
+				$this->settings['1ka']['SMTPFromNice'] = AppSettings::getInstance()->getSetting('email_server_settings-secondary_mail-SMTPFromNice');
+				$this->settings['1ka']['SMTPReplyTo'] = AppSettings::getInstance()->getSetting('email_server_settings-secondary_mail-SMTPReplyTo');
+				$this->settings['1ka']['SMTPUsername'] = AppSettings::getInstance()->getSetting('email_server_settings-secondary_mail-SMTPUsername');
+				$this->settings['1ka']['SMTPPassword'] = AppSettings::getInstance()->getSetting('email_server_settings-secondary_mail-SMTPPassword');
             }
 
             // Nastavimo default delay
@@ -149,20 +148,20 @@ class MailAdapter{
         else{
             
             // Nastavimo 1ka smtp
-            $this->settings['1ka']['SMTPFrom'] = $email_server_settings['SMTPFrom'];
-            $this->settings['1ka']['SMTPFromNice'] = $email_server_settings['SMTPFromNice'];
-            $this->settings['1ka']['SMTPReplyTo'] = $email_server_settings['SMTPReplyTo'];
-            $this->settings['1ka']['SMTPHost'] = $email_server_settings['SMTPHost'];
-            $this->settings['1ka']['SMTPPort'] = $email_server_settings['SMTPPort'];
+            $this->settings['1ka']['SMTPFrom'] = AppSettings::getInstance()->getSetting('email_server_settings-SMTPFrom');
+            $this->settings['1ka']['SMTPFromNice'] = AppSettings::getInstance()->getSetting('email_server_settings-SMTPFromNice');
+            $this->settings['1ka']['SMTPReplyTo'] = AppSettings::getInstance()->getSetting('email_server_settings-SMTPReplyTo');
+            $this->settings['1ka']['SMTPHost'] = AppSettings::getInstance()->getSetting('email_server_settings-SMTPHost');
+            $this->settings['1ka']['SMTPPort'] = AppSettings::getInstance()->getSetting('email_server_settings-SMTPPort');
 
-            if(isset($email_server_settings['SMTPAuth']) && $email_server_settings['SMTPAuth'] == 1){
-                $this->settings['1ka']['SMTPAuth'] = $email_server_settings['SMTPAuth'];
-                $this->settings['1ka']['SMTPUsername'] = $email_server_settings['SMTPUsername'];
-                $this->settings['1ka']['SMTPPassword'] = $email_server_settings['SMTPPassword'];
+            if(AppSettings::getInstance()->getSetting('email_server_settings-SMTPAuth') === true){
+                $this->settings['1ka']['SMTPAuth'] = 1;
+                $this->settings['1ka']['SMTPUsername'] = AppSettings::getInstance()->getSetting('email_server_settings-SMTPUsername');
+                $this->settings['1ka']['SMTPPassword'] = AppSettings::getInstance()->getSetting('email_server_settings-SMTPPassword');
             }
 
-            if(isset($email_server_settings['SMTPSecure']))
-                $this->settings['1ka']['SMTPSecure'] = $email_server_settings['SMTPSecure'];
+            if(AppSettings::getInstance()->getSetting('email_server_settings-SMTPSecure') !== false)
+                $this->settings['1ka']['SMTPSecure'] = AppSettings::getInstance()->getSetting('email_server_settings-SMTPSecure');
 
             // Nastavimo default delay
             $this->settings['1ka']['SMTPDelay'] = 500000;
@@ -178,7 +177,7 @@ class MailAdapter{
 
             
             // Ce imamo nastavljeno, da se za posiljanje iz ankete uporabi isti smtp streznik kot za generalno posiljanje
-            if($email_server_fromSurvey){
+            if(AppSettings::getInstance()->getSetting('email_server_fromSurvey') === true){
                 $this->prepareGeneralSettings();
             }
             else{
@@ -187,13 +186,13 @@ class MailAdapter{
                 if($this->type == 'invitation'){
 
                     // Pri vabilih je default 1ka streznik samo na www.1ka.si in to samo za admine
-                    if($admin_type == 0 && isset($email_server_settings['secondary_mail'])){
+                    if($admin_type == 0 && AppSettings::getInstance()->getSetting('email_server_settings-secondary_mail-SMTPFrom') !== false){
                         $this->mailMode = '1ka';
-                        $this->settings['1ka']['SMTPFrom'] = $email_server_settings['secondary_mail']['SMTPFrom'];
-                        $this->settings['1ka']['SMTPFromNice'] = $email_server_settings['secondary_mail']['SMTPFromNice'];
-                        $this->settings['1ka']['SMTPReplyTo'] = $email_server_settings['secondary_mail']['SMTPReplyTo'];
-                        $this->settings['1ka']['SMTPUsername'] = $email_server_settings['secondary_mail']['SMTPUsername'];
-                        $this->settings['1ka']['SMTPPassword'] = $email_server_settings['secondary_mail']['SMTPPassword'];
+                        $this->settings['1ka']['SMTPFrom'] = AppSettings::getInstance()->getSetting('email_server_settings-secondary_mail-SMTPFrom');
+                        $this->settings['1ka']['SMTPFromNice'] = AppSettings::getInstance()->getSetting('email_server_settings-secondary_mail-SMTPFromNice');
+                        $this->settings['1ka']['SMTPReplyTo'] = AppSettings::getInstance()->getSetting('email_server_settings-secondary_mail-SMTPReplyTo');
+                        $this->settings['1ka']['SMTPUsername'] = AppSettings::getInstance()->getSetting('email_server_settings-secondary_mail-SMTPUsername');
+                        $this->settings['1ka']['SMTPPassword'] = AppSettings::getInstance()->getSetting('email_server_settings-secondary_mail-SMTPPassword');
                     }
                     // Drugace je potrebno nastaviti smtp
                     else{
@@ -211,37 +210,36 @@ class MailAdapter{
 
     // Pripravimo nastavitve splosnega posiljanja v aplikaciji glede na nastavitve v settings_optional.php
     private function prepareGeneralSettings(){
-        global $email_server_settings;
         global $mysql_database_name;
       
         $this->mailMode = 'smtp';
         $this->settings['SMTPMailMode'] = 2;
 
         $this->settings['smtp'] = array(
-            'SMTPFrom'      => $email_server_settings['SMTPFrom'],
-            'SMTPFromNice'  => $email_server_settings['SMTPFromNice'],
-            'SMTPReplyTo'   => $email_server_settings['SMTPReplyTo'],
+            'SMTPFrom'      => AppSettings::getInstance()->getSetting('email_server_settings-SMTPFrom'),
+            'SMTPFromNice'  => AppSettings::getInstance()->getSetting('email_server_settings-SMTPFromNice'),
+            'SMTPReplyTo'   => AppSettings::getInstance()->getSetting('email_server_settings-SMTPReplyTo'),
 
-            'SMTPHost'   => $email_server_settings['SMTPHost'],
-            'SMTPPort'   => $email_server_settings['SMTPPort']
+            'SMTPHost'   => AppSettings::getInstance()->getSetting('email_server_settings-SMTPHost'),
+            'SMTPPort'   => AppSettings::getInstance()->getSetting('email_server_settings-SMTPPort')
         );
 
-        if(isset($email_server_settings['SMTPAuth']) && $email_server_settings['SMTPAuth'] == 1){
-            $this->settings['smtp']['SMTPAuth'] = $email_server_settings['SMTPAuth'];
-            $this->settings['smtp']['SMTPUsername'] = $email_server_settings['SMTPUsername'];
-            $this->settings['smtp']['SMTPPassword'] = $email_server_settings['SMTPPassword'];
+        if(AppSettings::getInstance()->getSetting('email_server_settings-SMTPAuth') === true){
+            $this->settings['smtp']['SMTPAuth'] = 1;
+            $this->settings['smtp']['SMTPUsername'] = AppSettings::getInstance()->getSetting('email_server_settings-SMTPUsername');
+            $this->settings['smtp']['SMTPPassword'] = AppSettings::getInstance()->getSetting('email_server_settings-SMTPPassword');
         }
 
-        if(isset($email_server_settings['SMTPSecure']))
-            $this->settings['smtp']['SMTPSecure'] = $email_server_settings['SMTPSecure'];
+        if(AppSettings::getInstance()->getSetting('email_server_settings-SMTPUsername') !== false)
+            $this->settings['smtp']['SMTPSecure'] = AppSettings::getInstance()->getSetting('email_server_settings-SMTPSecure');
 
         // ce posiljamo v povezavi s placili (racuni, predracuni...) - posiljamo preko tretjega maila (invoice@1ka.si)
-        if($this->type == 'payments' && isset($email_server_settings['payments_mail']) && $mysql_database_name == 'real1kasi'){
-            $this->settings['smtp']['SMTPFrom'] = $email_server_settings['payments_mail']['SMTPFrom'];
-            $this->settings['smtp']['SMTPFromNice'] = $email_server_settings['payments_mail']['SMTPFromNice'];
-            $this->settings['smtp']['SMTPReplyTo'] = $email_server_settings['payments_mail']['SMTPReplyTo'];
-            $this->settings['smtp']['SMTPUsername'] = $email_server_settings['payments_mail']['SMTPUsername'];
-            $this->settings['smtp']['SMTPPassword'] = $email_server_settings['payments_mail']['SMTPPassword'];
+        if($this->type == 'payments' && AppSettings::getInstance()->getSetting('email_server_settings-payments_mail-SMTPFrom') !== false && $mysql_database_name == 'real1kasi'){
+            $this->settings['smtp']['SMTPFrom'] = AppSettings::getInstance()->getSetting('email_server_settings-payments_mail-SMTPFrom');
+            $this->settings['smtp']['SMTPFromNice'] = AppSettings::getInstance()->getSetting('email_server_settings-payments_mail-SMTPFromNice');
+            $this->settings['smtp']['SMTPReplyTo'] = AppSettings::getInstance()->getSetting('email_server_settings-payments_mail-SMTPReplyTo');
+            $this->settings['smtp']['SMTPUsername'] = AppSettings::getInstance()->getSetting('email_server_settings-payments_mail-SMTPUsername');
+            $this->settings['smtp']['SMTPPassword'] = AppSettings::getInstance()->getSetting('email_server_settings-payments_mail-SMTPPassword');
         }
 
         // Nastavimo default delay
@@ -709,7 +707,7 @@ class MailAdapter{
 
     // Pripravimo design emaila
     private function prepareEmailDesign($content, $heading='', $image='', $button=''){
-        global $lang, $app_settings, $site_domain;
+        global $lang, $site_domain;
 
         // V nekaterih primerih ne designeramo maila
         if(!in_array($this->type, array('account', 'payments')) || !in_array($site_domain, array('localhost', 'www.1ka.si', 'test.1ka.si', 'test2.1ka.si'))){

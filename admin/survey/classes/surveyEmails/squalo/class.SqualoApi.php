@@ -18,12 +18,10 @@ class SqualoApi {
 
 
     private function executeCall($action, $method, $data){
-        global $squalo_user;
-        global $squalo_key;
 
         // Add credentials
-        $data['apiUser'] = $squalo_user;
-        $data['apiKey'] = $squalo_key;
+        $data['apiUser'] = AppSettings::getInstance()->getSetting('squalo-user');
+        $data['apiKey'] = AppSettings::getInstance()->getSetting('squalo-key');
 
         // GET call - set url params
         if($method == 'GET'){

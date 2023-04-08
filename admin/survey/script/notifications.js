@@ -1,9 +1,14 @@
 // poslje novo sporocilo
 function sendNotification() {
 
+    if(CKEDITOR.instances['notification']){
+		CKEDITOR.instances['notification'].destroy();
+	}
+
 	var recipient = $( "input[name='recipient']" ).val();	
 	var title = $( "input[name='title']" ).val();
-	var notification = $( "textarea[name='notification']" ).val();
+    //var notification = $( "textarea[name='notification']" ).val();
+    var notification = $("#notification").val();
 	
 	if ($( "input[name='recipient_all_slo']" ).is(':checked'))
 		var recipient_all_slo = 1;
@@ -20,7 +25,21 @@ function sendNotification() {
 	else
 		var force_show = 0;
 	
-	$('#notifications').load('ajax.php?t=notifications&a=sendNotification', {anketa:srv_meta_anketa_id, recipient:recipient, recipient_all_slo:recipient_all_slo, recipient_all_ang:recipient_all_ang, title:title, notification:notification, force_show:force_show});
+	$('#notifications').load('ajax.php?t=notifications&a=sendNotification', {
+        anketa:srv_meta_anketa_id, 
+        recipient:recipient, 
+        recipient_all_slo:recipient_all_slo, 
+        recipient_all_ang:recipient_all_ang, 
+        title:title, 
+        notification:notification, 
+        force_show:force_show,
+
+        function(){
+            if (!CKEDITOR.instances) {
+                CKEDITOR.replace['notification'];
+            }
+        }
+    });
 }
 
 // prikaze sporocilo in ga oznaci kot viewed

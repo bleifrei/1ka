@@ -11,20 +11,26 @@ include_once ('../settings.php');
 $struktura = array();
 $podatki = array(
     'srv_user' => array(), 
-    'srv_data_checkgrid' => array(), 
+    'srv_data_checkgrid_archive1' => array(), 
+    'srv_data_checkgrid_archive2' => array(), 
     'srv_data_checkgrid_active' => array(), 
     'srv_data_glasovanje' => array(), 
-    'srv_data_grid' => array(), 
+    'srv_data_grid_archive1' => array(), 
+    'srv_data_grid_archive2' => array(), 
     'srv_data_grid_active' => array(), 
     'srv_data_rating' => array(), 
-    'srv_data_text' => array(), 
+    'srv_data_text_archive1' => array(), 
+    'srv_data_text_archive2' => array(), 
     'srv_data_text_active' => array(), 
-    'srv_data_textgrid' => array(), 
+    'srv_data_textgrid_archive1' => array(), 
+    'srv_data_textgrid_archive2' => array(), 
     'srv_data_textgrid_active' => array(), 
     'srv_data_upload' => array(),
-    'srv_data_vrednost' => array(), 
+    'srv_data_vrednost_archive1' => array(), 
+    'srv_data_vrednost_archive2' => array(), 
     'srv_data_vrednost_active' => array(), 
-    'srv_user_grupa' => array(), 
+    'srv_user_grupa_archive1' => array(), 
+    'srv_user_grupa_archive2' => array(), 
     'srv_user_grupa_active' => array());
 
 
@@ -102,20 +108,26 @@ if ($handle = opendir($sync_server_path)) {
                         }
 
                         $podatki['srv_user'] = array_merge($podatki['srv_user'], $kljuc['srv_user']);
-                        $podatki['srv_data_checkgrid'] = array_merge($podatki['srv_data_checkgrid'], $kljuc['srv_data_checkgrid']);
+                        $podatki['srv_data_checkgrid_archive1'] = array_merge($podatki['srv_data_checkgrid_archive1'], $kljuc['srv_data_checkgrid_archive1']);
+                        $podatki['srv_data_checkgrid_archive2'] = array_merge($podatki['srv_data_checkgrid_archive2'], $kljuc['srv_data_checkgrid_archive2']);
                         $podatki['srv_data_checkgrid_active'] = array_merge($podatki['srv_data_checkgrid_active'], $kljuc['srv_data_checkgrid_active']);
                         $podatki['srv_data_glasovanje'] = array_merge($podatki['srv_data_glasovanje'], $kljuc['srv_data_glasovanje']);
-                        $podatki['srv_data_grid'] = array_merge($podatki['srv_data_grid'], $kljuc['srv_data_grid']);
+                        $podatki['srv_data_grid_archive1'] = array_merge($podatki['srv_data_grid_archive1'], $kljuc['srv_data_grid_archive1']);
+                        $podatki['srv_data_grid_archive2'] = array_merge($podatki['srv_data_grid_archive2'], $kljuc['srv_data_grid_archive2']);
                         $podatki['srv_data_grid_active'] = array_merge($podatki['srv_data_grid_active'], $kljuc['srv_data_grid_active']);
                         $podatki['srv_data_rating'] = array_merge($podatki['srv_data_rating'], $kljuc['srv_data_rating']);
-                        $podatki['srv_data_text'] = array_merge($podatki['srv_data_text'], $kljuc['srv_data_text']);
+                        $podatki['srv_data_text_archive1'] = array_merge($podatki['srv_data_text_archive1'], $kljuc['srv_data_text_archive1']);
+                        $podatki['srv_data_text_archive2'] = array_merge($podatki['srv_data_text_archive2'], $kljuc['srv_data_text_archive2']);
                         $podatki['srv_data_text_active'] = array_merge($podatki['srv_data_text_active'], $kljuc['srv_data_text_active']);
-                        $podatki['srv_data_textgrid'] = array_merge($podatki['srv_data_textgrid'], $kljuc['srv_data_textgrid']);
+                        $podatki['srv_data_textgrid_archive1'] = array_merge($podatki['srv_data_textgrid_archive1'], $kljuc['srv_data_textgrid_archive1']);
+                        $podatki['srv_data_textgrid_archive2'] = array_merge($podatki['srv_data_textgrid_archive2'], $kljuc['srv_data_textgrid_archive2']);
                         $podatki['srv_data_textgrid_active'] = array_merge($podatki['srv_data_textgrid_active'], $kljuc['srv_data_textgrid_active']);
                         $podatki['srv_data_upload'] = array_merge($podatki['srv_data_upload'], $kljuc['srv_data_upload']);
-                        $podatki['srv_data_vrednost'] = array_merge($podatki['srv_data_vrednost'], $kljuc['srv_data_vrednost']);
+                        $podatki['srv_data_vrednost_archive1'] = array_merge($podatki['srv_data_vrednost_archive1'], $kljuc['srv_data_vrednost_archive1']);
+                        $podatki['srv_data_vrednost_archive2'] = array_merge($podatki['srv_data_vrednost_archive2'], $kljuc['srv_data_vrednost_archive2']);
                         $podatki['srv_data_vrednost_active'] = array_merge($podatki['srv_data_vrednost_active'], $kljuc['srv_data_vrednost_active']);
-                        $podatki['srv_user_grupa'] = array_merge($podatki['srv_user_grupa'], $kljuc['srv_user_grupa']);
+                        $podatki['srv_user_grupa_archive1'] = array_merge($podatki['srv_user_grupa_archive1'], $kljuc['srv_user_grupa_archive1']);
+                        $podatki['srv_user_grupa_archive2'] = array_merge($podatki['srv_user_grupa_archive2'], $kljuc['srv_user_grupa_archive2']);
                         $podatki['srv_user_grupa_active'] = array_merge($podatki['srv_user_grupa_active'], $kljuc['srv_user_grupa_active']);
 
                         $uvozeno = true;

@@ -922,10 +922,9 @@ class HierarhijaAjax
     public function pridobiVseAnketeKiSoVknjizniciZaHierarhijo()
     {
         global $site_url;
-        global $hierarhija_folder_id;
 
-        $ime_mape = sisplet_query("SELECT * FROM srv_library_folder where id='" . $hierarhija_folder_id . "'", "obj")->naslov;
-        $ankete_v_knjiznici = sisplet_query("SELECT * FROM srv_library_anketa WHERE folder='" . $hierarhija_folder_id . "'", "obj");
+        $ime_mape = sisplet_query("SELECT * FROM srv_library_folder where id='" . AppSettings::getInstance()->getSetting('hierarhija-folder_id') . "'", "obj")->naslov;
+        $ankete_v_knjiznici = sisplet_query("SELECT * FROM srv_library_anketa WHERE folder='" . AppSettings::getInstance()->getSetting('hierarhija-folder_id') . "'", "obj");
 
         if (empty($ime_mape) && sizeof($ankete_v_knjiznici) == 0) {
             echo 'Knjižnica je prazna.';
@@ -937,14 +936,14 @@ class HierarhijaAjax
 
         if (is_array($ankete_v_knjiznici) && empty($ankete_v_knjiznici->ank_id)) {
             foreach ($ankete_v_knjiznici as $anketa) {
-                $srv_anketa = sisplet_query("SELECT id, naslov FROM srv_anketa WHERE id='" . $anketa->ank_id . "'", "obj");
+                $srv_anketa = sisplet_query("SELECT id, naslov, hash FROM srv_anketa WHERE id='" . $anketa->ank_id . "'", "obj");
 
                 if(!empty($srv_anketa->naslov)) {
                     echo '<li>';
                     echo '<input type="radio" name="knjiznica_izbira" id="ank_'.$anketa->ank_id.'" value="'.$anketa->ank_id.'" /> ';
                     echo '<span class="enka-checkbox-radio"></span>';
                     echo '<span>
-                                <a href="'.$this->site_url.'/main/survey/index.php?anketa='.$anketa->ank_id.'&amp;preview=on" target="_blank" title="Predogled ankete">
+                                <a href="'.$this->site_url.'/main/survey/index.php?anketa='.$srv_anketa->hash.'&amp;preview=on" target="_blank" title="Predogled ankete">
                                   <span class="faicon preview"></span>
                                 </a>
                           </span>';
@@ -953,13 +952,13 @@ class HierarhijaAjax
                 }
             }
         } elseif (is_object($ankete_v_knjiznici)) {
-            $srv_anketa = sisplet_query("SELECT id, naslov FROM srv_anketa WHERE id='" . $ankete_v_knjiznici->ank_id . "'", "obj");
+            $srv_anketa = sisplet_query("SELECT id, naslov, hash FROM srv_anketa WHERE id='" . $ankete_v_knjiznici->ank_id . "'", "obj");
 
             if(!empty($srv_anketa->naslov)) {
                 echo '<li>';
                 echo '<input type="radio" name="knjiznica_izbira" id="ank_'.$ankete_v_knjiznici->ank_id.'" value="'.$ankete_v_knjiznici->ank_id.'" /> ';
                 echo '<span>
-                            <a href="'.$this->site_url.'main/survey/index.php?anketa='.$ankete_v_knjiznici->ank_id.'&amp;preview=on" target="_blank" title="Predogled ankete">
+                            <a href="'.$this->site_url.'main/survey/index.php?anketa='.$srv_anketa->hash.'&amp;preview=on" target="_blank" title="Predogled ankete">
                               <span class="faicon preview"></span>
                             </a>
                       </span>';

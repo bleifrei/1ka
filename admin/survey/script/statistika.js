@@ -97,7 +97,7 @@ function renameStatisticProfile() {
 		if (response > 0) {
 			$("#statistic_profile .active").html(name);
 		} else if (response < 0){
-			alert("Error!");
+			genericAlertPopup('error');
 		}
 	});
 }
@@ -145,7 +145,7 @@ function create_new_statistic_interval_filter() {
 			$("#div_statistic_date_select").load("ajax.php?t=dashboard&a=loadStatisticProfile", {anketa:srv_meta_anketa_id});
 		} else { 
 			// prišlo je do napake;
-			alert(response);
+			genericAlertPopup('alert_parameter_response',response);
 		}
 	});
 }

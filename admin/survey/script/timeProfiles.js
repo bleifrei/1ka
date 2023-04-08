@@ -117,7 +117,7 @@ function timeProfileAction(action) {
 		var stat_interval = $("#stat_interval").val();
 		if (type == 1 && stat_interval == '') {
 			// če je type 1 (intervalni način) in interval ni izbran, damo opozorilo
-			alert(lang['srv_time_profile_error_interval']);
+			genericAlertPopup('srv_time_profile_error_interval');
 			return false;
 		} else {
 			$.post("ajax.php?t=timeProfile&a=saveProfile", {anketa:srv_meta_anketa_id, pid:pid, type:type, startDate:startDate,endDate:endDate,stat_interval:stat_interval}, function(response) {
@@ -125,7 +125,7 @@ function timeProfileAction(action) {
 			});
 		}
 	} else {
-		alert(action);
+		genericAlertPopup('alert_parameter_action',action);
 		return false;
 	}
 }

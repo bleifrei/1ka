@@ -19,7 +19,7 @@ function newSurveyCondition()
 			} 
 			else 
 			{
-				alert('Error! (errCode:'+data.error+')');
+				genericAlertPopup('alert_error_code',data.error);
 			}
 		}
 	)
@@ -47,7 +47,7 @@ function deleteSurveyCondition(cid)
 		} 
 		else 
 		{
-			alert('Error! (errCode:'+data.error+')');
+			genericAlertPopup('alert_error_code',data.error);
 		}
 	}
 	);
@@ -73,7 +73,7 @@ function renameSurveyCondition()
 			} 
 			else 
 			{
-				alert(data.errorMsg+'');
+				genericAlertPopup('alert_parameter_dataerrormsg');
 			}
 		}
 	);

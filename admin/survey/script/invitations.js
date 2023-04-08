@@ -170,10 +170,10 @@ function inv_add_recipients(profile_id) {
 			$elm.next().find('a').addClass('active');
 			$elm.removeClass('inv_ff_left_on').addClass('inv_ff_right_on').next().next().addClass('inv_ff_left_on');
 		} else {
-			alert(lang['srv_invitation_note1']);
+			genericAlertPopup('srv_invitation_note1');
 		}
 	} else {
-		alert(lang['srv_invitation_note2']);
+		genericAlertPopup('srv_invitation_note2');
 	}
 
 }
@@ -843,7 +843,7 @@ function inv_message_save_details() {
 					window.location.reload()
 				} else {
 					// so napake
-					alert (' '+data.msg);
+					genericAlertPopup('alert_parameter_datamsg',data.msg);
 				}
 			}
 		);
@@ -860,100 +860,6 @@ function inv_new_message_list_change(what) {
 	}
 }
 
-/*
-function edit_message_save(mid) {
-	// shranimo v mid
-	var replyto = $("#inv_message_replyto").val();
-	var subject = $("#inv_message_subject").val();
-	var body = $("#inv_message_body").val();
-	var profile_comment = $("#inv_message_comment").val();
-	var quickSave = true;
-	if (!mid || mid == 'undefined') {
-		mid = $("#inv_recipients_profile_name select").val();
-		quickSave = false;
-	}
-	var naslov = $("#rec_profile_name").val();
-	var old_mid = $("#invitation_messages ol li.active").attr('mid');
-	// resetiramo morebitne prejšne napake
-	$("#inv_message_replyto").css({
-		'border' : 'none'
-	});
-	$("#inv_message_subject").css({
-		'border' : 'none'
-	});
-	$("#inv_message_body").css({
-		'border' : 'none'
-	});
-
-	$("#inv_error_note").addClass('hidden');
-
-	$.post(
-			'ajax.php?t=invitations&a=save_message',
-			{
-				anketa : srv_meta_anketa_id,
-				mid : mid,
-				old_mid:old_mid,
-				quickSave:quickSave,
-				replyto : replyto,
-				subject : subject,
-				body : body,
-				noNavi : 'true',
-				profile_comment : profile_comment,
-				naslov:naslov
-			},
-			function(data) {
-				data = jQuery.parseJSON(data);
-				if (data.error == "0") {
-					// redirektamo na pošiljanje
-					//var href = 'index.php?anketa='+srv_meta_anketa_id+'&a=invitations&m=send_message';
-					//window.location = href;
-					window.location.reload()
-				} else {
-					// skrijemo okno in 
-					$('#fade').fadeOut('slow');
-					$('#fullscreen').fadeOut('slow').html('')
-					// prikažemo obvestilo o napaki
-					$("#inv_error_note").html(data.msg);
-					$("#inv_error_note").removeClass('hidden');
-					if (data.inv_message_replyto == '1') {
-						$("#inv_message_replyto").css({
-							'border' : '1px solid red'
-						});
-					}
-					if (data.inv_message_subject == '1') {
-						$("#inv_message_subject").css({
-							'border' : '1px solid red'
-						});
-					}
-					if (data.inv_message_body == '1') {
-						$("#inv_message_body").css({
-							'border' : '1px solid red'
-						});
-					}
-				}
-			});
-
-	return false;
-
-}
-
-function invSendMail() {
-	var send_type = $('input[name=mailto]:checked').val();
-	var prefix = "";
-	var checkboxes = "";
-
-	$('input[name="mailto_status[]"]:checked').each(function(el) {
-		checkboxes = checkboxes+prefix+$(this).val(); 
-		prefix = ",";
-	});
-
-	$('#fade').fadeTo('slow', 1);
-	$('#fullscreen').html('').fadeIn('slow');
-	
-	$("#fullscreen").load('ajax.php?t=invitations&a=check_send_mail',{anketa:srv_meta_anketa_id, noNavi:'true', send_type:send_type, checkboxes:checkboxes});
-
-};
-*/
 function inv_del_rec_profile() {
 
     var pid = $("#inv_import_list_profiles ol li.active").attr("pid");
@@ -984,7 +890,7 @@ function inv_edit_rec_profile() {
 }
 
 function inv_prepare_add_recipients() {
-	alert('Deprecated!');
+	genericAlertPopup('alert_deprecated');
 	return false;
 }
 
@@ -1005,10 +911,10 @@ function inv_recipients_add_to_list() {
 			$('#fullscreen').html('').fadeIn('slow');
 			$("#fullscreen").load('ajax.php?t=invitations&a=get_profile_name', {anketa:srv_meta_anketa_id, recipients_list:recipients_list, fields:fields, noNavi:'true', doAdd:doAdd});
 		} else {
-			alert(lang['srv_invitation_note1']);
+			genericAlertPopup('srv_invitation_note1');
 		}
 	} else {
-		alert(lang['srv_invitation_note2']);
+		genericAlertPopup('srv_invitation_note2');
 	}
 }
 
@@ -1118,7 +1024,7 @@ function inv_recipients_form_action(action) {
 					if (data.success == 1) {
 						$(".anketa_edit_main").load('ajax.php?t=invitations&a=view_recipients', {anketa:srv_meta_anketa_id});
 					} else {
-						alert(data.error);
+						genericAlertPopup('alert_parameter_dataerror',data.error);
 					}
 				});
 			}
@@ -1399,10 +1305,10 @@ function inv_list_get_name(saveNew) {
 			$('#fullscreen').html('').fadeIn('slow');
 			$("#fullscreen").load('ajax.php?t=invitations&a=list_get_name', {anketa:srv_meta_anketa_id, recipients_list:recipients_list, fields:fields, noNavi:'true', pid:pid, saveNew:saveNew});
 		} else {
-			alert(lang['srv_invitation_note1']);
+			genericAlertPopup('srv_invitation_note1');
 		}
 	} else {
-		alert(lang['srv_invitation_note2']);
+		genericAlertPopup('srv_invitation_note2');
 	}
 
 }
@@ -1420,7 +1326,7 @@ function inv_list_save() {
 	var recipients_list = $("#inv_prof_recipients_list").val();
 	var field_list = $("#inv_prof_field_list").val();
 	var saveNew = ($("#saveNew").val() == 'true') ? 'true': 'false';
-	alert(profile_name);
+	genericAlertPopup('alert_parameter_profilename',profile_name);
 	$(".anketa_edit_main").load('ajax.php?t=invitations&a=inv_list_save', {anketa:srv_meta_anketa_id, recipients_list:recipients_list, field_list:field_list, profile_id:profile_id, profile_name:profile_name, profile_comment:profile_comment, saveNew:saveNew});
 	$('#fade').fadeOut('slow');
 	$('#fullscreen').fadeOut('slow').html('');
@@ -1517,10 +1423,10 @@ function inv_upload_list_check() {
 		if (extension == 'txt' || extension == 'csv')  {
 			$('#inv_recipients_upload_form').submit();
 		} else {
-			alert("Nepravilna vrsta datoteke!");
+			genericAlertPopup('alert_incorrect_filetype');
 		}
 	} else {
-		alert("Izberite datoteko!");
+		genericAlertPopup('alert_choose_file');
 	}
 }
 
@@ -1654,12 +1560,12 @@ function invRecipientsForward() {
 		}
 		else
 		{
-			alert(lang['srv_invitation_note1']);
+			genericAlertPopup('srv_invitation_note1');
 		}
 	} 
 	else 
 	{
-		alert(lang['srv_invitation_note2']);
+		genericAlertPopup('srv_invitation_note2');
 	}
 }
 
@@ -1730,13 +1636,6 @@ function smtpAAISet(){
 	
     // Shranimo formo
     $("form[name='settingsanketa_"+srv_meta_anketa_id+"']").submit();
-
-    // Prikazemo nastavitve za Arnes smtp
-    /*$('#send_mail_mode1, #send_mail_mode2').hide();
-    $('#send_mail_mode0').show();
-
-    // Zapremo popup
-    smtpAAIPopupClose();*/
 }
 function smtpAAIAccept(){
 	
@@ -1761,3 +1660,20 @@ function squaloSwitch(){
     }
 }
 
+// Sortiranje box-ov pri dodajanju respondentov
+function initInvitationsConnectedSortable(){
+
+    // Na mobitelu ne inicializiramo sorrtiranja, ker potem gumbi niso klikabilni (na nekaterih androidih ne deluje ok)
+    if($(window).width() < 850)
+        return false;
+
+    $('ul.connectedSortable').sortable({
+        update: function(){ 
+            refreshFieldsList(); 
+        }, 
+        forcePlaceholderSize:'true', 
+        tolerance:'pointer', 
+        placeholder:'inv_field_placeholder', 
+        cancel:'#inv_field_relation'
+    });
+}

@@ -85,7 +85,7 @@ function zoomProfileAction(action) {
 			//$("#zoom_cover_div").show();
 			$("#zoom_div div#newProfileDiv").show();
 		} else {
-			alert('Najprej izberite variable');
+			genericAlertPopup('alert_choose_variables');
 		}
 
 	} else if (action == 'newCancel'){
@@ -110,10 +110,10 @@ function zoomProfileAction(action) {
 						// dropdownu dodamo nov prodil in ga izberemo
 							//$("#current_condition_profile").append( $("<option></option>").attr("value", newId).attr( "selected", true).text(name));
 					} else {
-						alert(data.msg);
+						genericAlertPopup('alert_parameter_datamsg',data.msg);
 					}
 				} else {
-					alert(data.msg);
+					genericAlertPopup('alert_parameter_datamsg',data.msg);
 				}
 		});
 		//$("#zoom_cover_div").hide();
@@ -130,7 +130,7 @@ function zoomProfileAction(action) {
 		$("#zoom_div div#deleteProfileDiv").hide();
 		//$("#zoom_cover_div").fadeOut();
 	} else {
-		alert(action);	
+		genericAlertPopup('alert_parameter_action',action);	
 	}
 }
 

@@ -24,6 +24,7 @@ use SurveySlideshow;
 use GDPR;
 use MAZA;
 use UserAccess;
+use SurveyCheck;
 
 
 class InitClass extends Controller
@@ -52,7 +53,10 @@ class InitClass extends Controller
         // cist na zacetku preverimo referer. Ce je prisel od kje drugje (napacno skopiran link itd...) ga preusmerimo na prvo stran ankete
         if (isset($_SERVER['HTTP_REFERER']) && strpos($_SERVER['HTTP_REFERER'], self::$site_url) === false && !isset($_GET['code']) && !isset($_GET['return']) && !isset($_GET['params'])) {
 
-            $anketa = (isset($_GET['anketa'])) ? $_GET['anketa'] : ((isset($_POST['anketa'])) ? $_POST['anketa'] : die("Missing anketa id!"));
+            $anketa_hash = (isset($_GET['anketa'])) ? $_GET['anketa'] : ((isset($_POST['anketa'])) ? $_POST['anketa'] : die("Missing anketa id!"));
+            save('anketa_hash', $anketa_hash);
+
+            $anketa = getSurveyIdFromHash($anketa_hash);
             save('anketa', $anketa);
 
             // Pri ul evalvaciji tega ne pustimo, ker drugace narobe preusmeri
@@ -69,7 +73,6 @@ class InitClass extends Controller
 
                     $g .= Header::getSurveyParams();
 
-                    //$redirect_url = self::$site_url."a/".get('anketa').$g;
                     $redirect_url = SurveyInfo::getSurveyLink(false, false) . $g;
                     $request_url = 'http' . ($_SERVER['HTTPS'] ? 's' : null) . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 
@@ -89,9 +92,18 @@ class InitClass extends Controller
         }
 
         if (isset($_GET['anketa']) || isset($_POST['anketa'])) {
-			
-            $anketa = (isset($_GET['anketa'])) ? $_GET['anketa'] : ((isset($_POST['anketa'])) ? $_POST['anketa'] : die("Missing anketa id!"));
-            save('anketa', $anketa);		
+            $anketa_hash = (isset($_GET['anketa'])) ? $_GET['anketa'] : ((isset($_POST['anketa'])) ? $_POST['anketa'] : die("Missing anketa id!"));
+            save('anketa_hash', $anketa_hash);	
+            
+            $anketa = getSurveyIdFromHash($anketa_hash);
+            save('anketa', $anketa);
+
+            // Preverimo, ce gre za deaktivirano phishing anketo - vrnemo 404
+            global $mysql_database_name;
+            if($mysql_database_name == 'real1kasi' && in_array(get('anketa'), array('321069','328454','328864','329691')) ){
+                http_response_code(404);
+                die();
+            }
 
             // Preverimo ce gre za POSEBNO webSM anketo (ki ne shranjuje nicesar - samo direktno preusmeri na ustrezno stran)
             if (get('anketa') == get('webSMSurvey') && Common::checkModule('websmsurvey') == '1')
@@ -99,8 +111,8 @@ class InitClass extends Controller
 
             // polovimo podatke o anketi
             SurveyInfo::getInstance()->SurveyInit(get('anketa'));
-            if (SurveyInfo::getInstance()->getSurveyColumn('db_table') == 1)
-                save('db_table', '_active');
+            $db_table = SurveyInfo::getInstance()->getSurveyArchiveDBString();
+            save('db_table', $db_table);
 
             $rowa = SurveyInfo::getInstance()->getSurveyRow();
 			
@@ -137,7 +149,8 @@ class InitClass extends Controller
 
                 Body::getInstance()->displayStaticIntroduction();
                 die();
-            } // Ce imamo staticen uvod s captcho in smo kliknili na naslednjo stran, najprej preverimo captcho
+            } 
+            // Ce imamo staticen uvod s captcho in smo kliknili na naslednjo stran, najprej preverimo captcho
             elseif ($rowa['intro_static'] == 2 && $rowa['show_intro'] == 1 && count($_POST) != 0 && isset($_GET['grupa']) && $_GET['grupa'] == '0') {
                 Check::getInstance()->check_captcha_intro();
             }
@@ -290,13 +303,10 @@ class InitClass extends Controller
                         $this->set_userstatus(6);
 
                         Body::getInstance()->displayKonec();
-
                     } 
                     elseif (get('displayAllPages')) {
 
-                        Body::getInstance()->displayAllPages();
-
-                        
+                        Body::getInstance()->displayAllPages();       
                     } 
                     // prikazemo ustrezno stran / grupo
                     elseif (get('grupa') > 0) {
@@ -405,7 +415,6 @@ class InitClass extends Controller
                                 header('Location: ' . SurveyInfo::getSurveyLink(false, false) . '&grupa=' . get('grupa') . '&ime=' . get('ime_AW') . Header::getSurveyParams() . get('cookie_url') . '');
                             elseif (get('loop_id') != null)
                                 header('Location: ' . SurveyInfo::getSurveyLink(false, false) . '&grupa=' . get('grupa') . '&loop_id=' . get('loop_id') . Header::getSurveyParams() . get('cookie_url') . '');
-
                         } 
                         else {
 
@@ -453,8 +462,8 @@ class InitClass extends Controller
 
         // polovimo podatke o anketi
         \SurveyInfo::getInstance()->SurveyInit(get('anketa'));
-        if (\SurveyInfo::getInstance()->getSurveyColumn('db_table') == 1)
-            save('db_table', '_active');
+        $db_table = \SurveyInfo::getInstance()->getSurveyArchiveDBString();
+        save('db_table', $db_table);
 
         \SurveySetting::getInstance()->Init(get('anketa'));
         save('usr_id', $_REQUEST['usr_id']);
@@ -954,6 +963,13 @@ class InitClass extends Controller
 
         // drugace gremo kreirat nov cookie
         if (get('usr_id') == null) {
+
+            // Najprej preverimo limit responsov na anketi - zaenkrat ne naredimo nic, samo posljemo mail ko je limit dosezen
+            $check = new SurveyCheck(get('anketa'));
+            if($check->checkLimitResponses()){
+                /*Display::getInstance()->displayNapaka(self::$lang['srv_survey_repsonse_limit']);
+                die();*/
+            }
 
             // izberemo random hash, ki se ni v bazi
             do {

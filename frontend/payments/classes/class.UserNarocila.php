@@ -77,6 +77,30 @@ class UserNarocila{
         return $narocila;
     }
 
+    // Dobimo podatke zadnjega narocila za dolocenega uporabnika
+    public function getLastNarocilo($usr_id){
+        global $admin_type;
+
+        $return = array();
+
+        // Dobimo zadnje narocilo uporabnika
+        $sqlNarocilo = sisplet_query("SELECT un.*, up.name AS package_name, up.description AS package_description, up.price AS package_price
+                                        FROM user_access_narocilo un, user_access_paket up
+                                        WHERE un.usr_id='".$usr_id."' AND un.package_id=up.id
+                                        ORDER BY un.time DESC
+                                    ");
+
+        // Uporabnik nima se nobenega narocila
+        if(mysqli_num_rows($sqlNarocilo) == 0){
+            $return['id'] = '0';
+        }
+        else{
+            $return = mysqli_fetch_array($sqlNarocilo);
+        }
+                                
+        return $return;
+    }
+
     // Izracunamo koncno ceno glede na paket, trajanje in popust (v eur)
     public function getPrice($package_name, $trajanje, $discount=0, $time=''){
 
@@ -395,7 +419,7 @@ class UserNarocila{
 
     // Izpisemo seznam vseh narocil - admin
     public function displayNarocilaTableAdmin(){
-        global $lang, $global_user_id, $app_settings;
+        global $lang, $global_user_id;
 
         // Admini vidijo vsa narocila
         $data = $this->getNarocila();
@@ -468,7 +492,7 @@ class UserNarocila{
             echo $lang['srv_narocilo_status_'.$data_row['status']];
 
             // Na www.1ka.si lahko narocilo placa samo Goran
-            if($data_row['status'] != '1' && $data_row['status'] != '2' && ($app_settings['app_name'] != 'www.1ka.si' || $global_user_id == '112696')){
+            if($data_row['status'] != '1' && $data_row['status'] != '2' && (AppSettings::getInstance()->getSetting('app_settings-app_name') != 'www.1ka.si' || $global_user_id == '112696')){
                 echo '<br />';
                 echo '<span class="as_link" onClick="urediNarociloPay(\''.$data_row['id'].'\')">'.$lang['srv_narocilo_placaj'].'</span>';
 
@@ -761,6 +785,10 @@ class UserNarocila{
             
             return $response;
         }
+
+        // Ce je slucajno drzava prazna jo nastavimo na slovenijo - zankrat pustimo, da vidimo, ce se se kdaj poslje prazno polje (naceloma se nebi smelo)
+        /*if($podjetje_drzava == '')
+            $podjetje_drzava = 'Slovenija';*/
         
         // Nastavimo ce placa DDV (zavezanci iz EU ga ne placajo)
         if(self::checkPayDDV($podjetje_davcna, $podjetje_drzava))
@@ -1313,6 +1341,22 @@ class UserNarocila{
         
         // Lastna instalacija - paket
         $strinjanje_s_pogoji = isset($narocilo_data['strinjanje_s_pogoji']) ? $narocilo_data['strinjanje_s_pogoji'] : '';
+
+        // Varnostno preverimo, če robot izpolni polje
+        $varnostno_polje = isset($narocilo_data['varnostno-polje']) ? $narocilo_data['varnostno-polje'] : '';
+        if(!empty($varnostno_polje)){
+            return ['false' => true];
+        }
+
+          // Preverimo ReCaptcha
+        if (in_array($paket, [1,2,3]) && AppSettings::getInstance()->getSetting('google-secret_captcha') !== false) {
+            $recaptchaResponse = isset($narocilo_data['g-recaptcha-response']) ? $narocilo_data['g-recaptcha-response'] : '';
+            $requestReCaptcha = file_get_contents('https://www.google.com/recaptcha/api/siteverify?secret=' . AppSettings::getInstance()->getSetting('google-secret_captcha') . '&response=' . $recaptchaResponse);
+
+            if (!strstr($requestReCaptcha, 'true')) {
+                return ['false' => true];
+            }
+        }
 
 
         // Posljemo mail s podatki povprasevanja

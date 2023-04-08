@@ -1,33 +1,8 @@
-function CookieAlertSubmit (form) {
+function cookie_confirm() {
 	
-	$("#kuki").dialog({
-		modal: true,
-		buttons: {
-			"DA, Nadaljuj s prijavo": function() {
-				$(this).dialog( "close" );
-				$('#' + form).submit();
-			},
-			"Ne": function() {
-				$(this).dialog( "close" );
-			}
-		}
-	});
-}
-
-function CookieAlertFB () {
-
-	$("#kuki").dialog({
-		modal: true,
-		buttons: {
-			"DA, Nadaljuj s prijavo": function() {
-				$(this).dialog( "close" );
-				document.location.href='../api/fb_login.php';
-			},
-			"Ne": function() {
-				$(this).dialog( "close" );
-			}
-		}
-	});
+	$.get('frontend/simple/ajax.php?a=cookie_confirm', function(){
+        $('.cookie_notice').animate({bottom:'-100%'}, {duration: 1000});
+    });
 }
 
 function LostPassword(alert_text) {
@@ -48,14 +23,6 @@ function LostPassword(alert_text) {
 		document.location.href = '../api/api.php?action=reset_password&email=' + email + lang_param;
 	}
 }
-
-// function CheckEmailFP() {
-//   var Email = document.getElementById('em');
-//   console.log(Email.value);
-//   if (Email.search('@') == -1 || Email.indexOf('.') == -1)
-//     alert ('Prosimo, popravite email');
-// }
-
 
 // Posljemo zahtevo za izbris (iz simple frontenda)
 function sendGDPRRequest(){

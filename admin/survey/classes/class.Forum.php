@@ -404,26 +404,10 @@ class Forum {
 	}	
 	
 	// Polepsa izpis datuma in ure
-	function datetime($time) {
-		global $admin_type;
-		
-		$sql = sisplet_query("SELECT value FROM misc WHERE what='ForumHourDisplay'");
-		$row = mysqli_fetch_row($sql);
-
-		// Funkcija se klice zelooooo pogosto, zato sem vrgel ven substr in sestavljam rocno, je hitreje.
-		if ($row[0] == 0 || $admin_type==0)
-			return $time[8] .$time[9] ."." .$time[5] .$time[6] ."." .$time[0] .$time[1] .$time[2] .$time[3] ." " .$time[11] .$time[12] .":" .$time[14] .$time[15];
-		else 
-			return $time[8] .$time[9] ."." .$time[5] .$time[6] ."." .$time[0] .$time[1] .$time[2] .$time[3];
-	}
-	
-	// Polepsa izpis datuma in ure
 	function datetime1($time) {
 		global $admin_type;
 		
-		$sql = sisplet_query("SELECT value FROM misc WHERE what='ForumHourDisplay'");
-		$row = mysqli_fetch_row($sql);
-		if ($row[0] == 0 || $admin_type==0)
+		if ($admin_type==0)
 			return $time[8] .$time[9] ."." .$time[5] .$time[6]  ." " .$time[11] .$time[12] .":" .$time[14] .$time[15];
 		else
 			return $time[8] .$time[9] ."." .$time[5] .$time[6];

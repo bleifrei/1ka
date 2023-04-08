@@ -28,6 +28,7 @@ RUN /usr/local/bin/docker-php-ext-install \
         bcmath \
         soap \
         gd \
+        opcache \
         zip
 
 # Enable rewrite module

@@ -865,7 +865,7 @@ class BranchingAjax {
     		Common::getInstance()->updateEditStamp();
 		}
 		
-        $text = $_POST['text'];
+        $text = strip_tags($_POST['text']);
         $operator = $_POST['operator'];
         $negation = $_POST['negation'];
         $conjunction = $_POST['conjunction'];
@@ -1080,7 +1080,7 @@ class BranchingAjax {
 		}
 		
         $if = $_POST['if'];
-        $label = $_POST['label'];
+        $label = strip_tags($_POST['label']);
 
         sisplet_query("UPDATE srv_if SET label='$label' WHERE id = '$if'");
     }
@@ -1418,12 +1418,6 @@ class BranchingAjax {
         echo $row['id'];
     }
 
-    function ajax_get_new_if () {
-        $sql = sisplet_query("SELECT * FROM misc WHERE what='new_if_$this->anketa'");
-        $row = mysqli_fetch_array($sql);
-        echo $row['value'];
-    }
-
     function ajax_if_collapsed () {
     	Common::updateEditStamp();
     	
@@ -1459,7 +1453,7 @@ class BranchingAjax {
     	
         $id = $_POST['id'];
         $text = $_POST['text'];
-        $opomba = $_POST['opomba'];
+        $opomba = strip_tags($_POST['opomba']);
 
         if ($id == -1) {
             sisplet_query("UPDATE srv_anketa SET introduction='$text', intro_opomba='$opomba' WHERE id='$this->anketa'");
@@ -2172,7 +2166,7 @@ class BranchingAjax {
 		// komentarji respondentov
 		elseif ($type == 2) {     
 		
-			$db_table = (SurveyInfo::getInstance()->getSurveyColumn('db_table') == 1) ? '_active' : '';
+			$db_table = SurveyInfo::getInstance()->getSurveyArchiveDBString();
 		
 			$orderby = $sortpostorder == 1 ? 'DESC' : 'ASC' ;
 			$sql = sisplet_query("SELECT d.*, u.time_edit FROM srv_data_text".$db_table." d, srv_user u WHERE d.spr_id='0' AND d.vre_id='$spremenljivka' AND u.id=d.usr_id ORDER BY d.id $orderby");
@@ -2924,11 +2918,6 @@ class BranchingAjax {
 		if (!$sql) echo mysqli_error($GLOBALS['connect_db']);
 		$if_id = mysqli_insert_id($GLOBALS['connect_db']);
 
-		$sqlm = sisplet_query("SELECT * FROM misc WHERE what='new_if_$this->anketa'");
-		if (mysqli_num_rows($sqlm) > 0)
-			sisplet_query("UPDATE misc SET value='$if_id' WHERE what='new_if_$this->anketa'");
-		else
-			sisplet_query("INSERT INTO misc (what, value) VALUES ('new_if_$this->anketa', '$if_id')");
 
 		if ($this->spremenljivka > 0 || ($if > 0 && $endif == 1)) {
 			$sql = sisplet_query("SELECT * FROM srv_branching WHERE element_spr = '$this->spremenljivka' AND element_if='$if'");

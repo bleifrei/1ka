@@ -811,10 +811,6 @@ class SurveyAnalysisArchive {
 	static function ViewArchive($aid) {
 		global $site_path, $global_user_id, $lang, $site_url;
 
-		#izpišemo osnovni html
-		$sql = sisplet_query("SELECT * FROM misc WHERE what='name'");
-		$row = mysqli_fetch_array($sql);
-
 		// nastavimo jezik
 		if (self::$sid > 0) {
 			$sql = sisplet_query("SELECT lang_admin FROM srv_anketa WHERE id = '".self::$sid."'");

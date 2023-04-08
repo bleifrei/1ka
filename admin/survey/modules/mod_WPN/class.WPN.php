@@ -99,7 +99,6 @@ class WPN {
     }
     
     public function sendWebPushNotificationsToAll(){
-        //global $FCM_server_key;
         
         $title = $_POST['wpn_title'];
         $message = $_POST['wpn_message'];

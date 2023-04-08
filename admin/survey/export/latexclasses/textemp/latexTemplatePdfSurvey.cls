@@ -18,8 +18,11 @@
 
 \usepackage{textgreek}	%za resevanje grskih crk
 
-\usepackage[T2A,T1]{fontenc} %za cirilico
-\usepackage[russian,english]{babel} %za cirilico
+\usepackage{tipa} %za cudne simbole
+%\usepackage[T2A,T1]{fontenc} %za cirilico
+\usepackage[LGR,T3,T2A,T1]{fontenc} %za cirilico
+%\usepackage[russian,english]{babel} %za cirilico
+\usepackage[greek,russian,english]{babel} %za cirilico in grsko
 %\usepackage[russian]{babel} %za cirilico
 
 \usepackage[utf8]{inputenc} % za uporabo utf8

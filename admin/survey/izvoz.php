@@ -6,7 +6,7 @@ include_once('definition.php');
 include_once('../../function.php');
 include_once('../../vendor/autoload.php');
 
-global $site_path, $global_user_id, $admin_type, $lang, $app_settings;
+global $site_path, $global_user_id, $admin_type, $lang;
 
 
 # error reporting
@@ -51,6 +51,7 @@ define("M_REPORT_PDF_EMPLOYMETER","pdf_employmeter");
 define("M_REPORT_PDF_MFDPS","pdf_mfpds");
 define("M_REPORT_PDF_MJU","pdf_mju");
 define("M_REPORT_PDF_MJU2","pdf_mju2");
+define("M_REPORT_PDF_NIJZ","pdf_nijz");
 define("M_REPORT_BORZA","borza_chart");
 define("M_REPORT_PDF_HEATMAP_IMAGE","heatmap_image_pdf");
 define("M_REPORT_HIERARHIJA_PDF_IZPIS", "hierarhija_pdf_izpis");
@@ -139,15 +140,15 @@ if(in_array($_GET['a'], array('pdf_gdpr_individual', 'pdf_gdpr_activity', 'rtf_g
     $export_type = 'new';
 }
 // Posebna porocila, ki so vedno stari izvozi
-elseif(in_array($_GET['m'], array('pdf_teammeter','pdf_employmeter', 'pdf_evoli', 'maza_csv', 'borza_csv', 'pdf_mju', 'pdf_mju2', 'advanced_paradata_csv', 'json_survey'))){
+elseif(in_array($_GET['m'], array('pdf_teammeter','pdf_employmeter', 'pdf_evoli', 'maza_csv', 'borza_csv', 'pdf_mju', 'pdf_mju2', 'advanced_paradata_csv', 'json_survey', 'pdf_nijz'))){
     $export_type = 'old';
 }
 // Ce imamo vklopljeno nastavitev za nove izvoze
-elseif(isset($app_settings['export_type']) && $app_settings['export_type'] == 'new'){
+elseif(AppSettings::getInstance()->getSetting('app_settings-export_type') == 'new'){
     $export_type = 'new';
 }
 // Ce imamo vklopljeno nastavitev za nove izvoze samo za admine
-elseif(isset($app_settings['export_type']) && $app_settings['export_type'] == 'new_admin' && $admin_type == 0){ 
+elseif(AppSettings::getInstance()->getSetting('app_settings-export_type') == 'new_admin' && $admin_type == 0){ 
     $export_type = 'new';
 }
 else{
@@ -366,6 +367,17 @@ switch ( $_GET['m'] ) {
 		
 		$sme = new SurveyMJUEnote($_GET['anketa']);
 		$sme->executeExport2($type, $enota);
+			break;
+	/////////////////////////////////////
+
+    //////////////////NIJZ/////////////////
+	case M_REPORT_PDF_NIJZ:
+		
+		$usr_id = (isset($_GET['usr_id']) && $_GET['usr_id'] > 0) ? $_GET['usr_id'] : 0;
+        $anketa = (isset($_GET['anketa']) && $_GET['anketa'] > 0) ? $_GET['anketa'] : 0; 
+
+        $nijz = new SurveyNIJZ($anketa, $usr_id, $nijz_type='2');
+        $nijz->createReport2();
 			break;
 	/////////////////////////////////////
 			

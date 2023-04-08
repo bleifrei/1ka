@@ -159,6 +159,7 @@ class SurveyInfo
 	
 	// te funkcije ohranimo, da se obdrzi kompatibilnost za nazaj. Za naprej se lahko uporabi kar direktno getSurveyColumn (v primerih kjer se lahko)
 	static function getSurveyId()			{ return self::$surveyId; }
+	static function getSurveyHash()			{ return self::getSurveyColumn('hash'); }
 	static function getSurveyTitle()		{ return strip_tags(self::getSurveyColumn('naslov')); }
 	static function getSurveyAkronim()		{ return strip_tags(self::getSurveyColumn('akronim')); }
 	static function getSurveyActive()		{ return self::getSurveyColumn('active'); }
@@ -477,7 +478,8 @@ class SurveyInfo
 				echo $prefix.$_starts[2].'.'.$_starts[1].'.'.$_starts[0].'-'.$_expire[2].'.'.$_expire[1].'.'.$_expire[0];
 				$prefix = '; ';
 			}
-		} else {
+		} 
+        else {
 			echo $lang['srv_anketa_noactive2'].'!';
 		}
 		echo "<br />";
@@ -510,14 +512,18 @@ class SurveyInfo
 		}
 	}
 	
-	static function doVariablesCount($query)	{ 
+	static function doVariablesCount($query){ 
+        
 		// zloopamo skozi vprašanja in za vsako vprašan je preberemo št variabel
 		$cnt= 0;
 
 	    while ($rowVprasanje = mysqli_fetch_assoc($query)) {
 	    	
 	    	$spr_id= $rowVprasanje['id'];
-	    	switch ( $rowVprasanje['tip'] ) { // v odvisnosti od tipa vprašanja pohandlamo podatke
+
+            // v odvisnosti od tipa vprašanja pohandlamo podatke
+	    	switch ( $rowVprasanje['tip'] ) {
+
 	    		case 1: // radio
 	    		case 3: // dropdown
 					$cnt++; // za sam header
@@ -529,12 +535,12 @@ class SurveyInfo
 						}
 					}
 	    		break;
+
 	    		case 2: // checkbox
 	    		case 6: // multigrid
 				case 18: // vsota
 				case 17: // ranking
 				case 21: // text*
-//					$cnt++; // za sam header
 					$sqlSrvVred = self::select_sql_vrednost($rowVprasanje['id']);
 					while ( $rowSrvVred = mysqli_fetch_assoc($sqlSrvVred) ) {
 						$cnt++; // za vsako variablo
@@ -543,6 +549,7 @@ class SurveyInfo
 						}
 					}
 				break;
+
 				case 4: // text
 				case 8: // datum
 				case 7: // number
@@ -553,6 +560,7 @@ class SurveyInfo
 						$cnt+=2;
 					}
 				break;
+
 				case 16: // multicheckbox
 				case 19: // multitext
 				case 20: // multinumber
@@ -570,17 +578,21 @@ class SurveyInfo
 						}
 					}
 				break;
-                                case 26: // lokacija
-                                        if($rowVprasanje['enota'] == 3){
-                                            $sqlSrvVred = self::select_sql_vrednost($rowVprasanje['id']);
-                                            while ( $rowSrvVred = mysqli_fetch_assoc($sqlSrvVred) ) {
-                                                    $cnt++; // za vsako variablo
-                                            }
-                                        }
-                                        else
-                                            $cnt++; // moja lokacija in multilokacija je 1
+
+                // lokacija
+                case 26: 
+                    if($rowVprasanje['enota'] == 3){
+                        $sqlSrvVred = self::select_sql_vrednost($rowVprasanje['id']);
+                        while ( $rowSrvVred = mysqli_fetch_assoc($sqlSrvVred) ) {
+                                $cnt++; // za vsako variablo
+                        }
+                    }
+                    else
+                        $cnt++; // moja lokacija in multilokacija je 1
 				break;
-				case 27: // heatmap
+
+                // heatmap
+				case 27: 
 					$cnt++; // za koordinate
 					$sqlSrvVred = self::select_sql_vrednost($rowVprasanje['id']);
 					while ( $rowSrvVred = mysqli_fetch_assoc($sqlSrvVred) ) {	//za morebitna obmocja
@@ -642,10 +654,9 @@ class SurveyInfo
 		
 		if ($anketa == false)
 			$anketa = self::$surveyId;
-		
-		// V get-u ni vec id ankete ampak string (zaradi zascite, da en more kdorkoli dostopati do vseh anket)
-		$anketa_string = Common::encryptAnketaID($anketa);
-		
+
+        $anketa_string = self::getSurveyHash();
+				
 		if ( ! isset( self::$surveyLink[$anketa_string] ) ) {
 			
 			$sqll = sisplet_query("SELECT link FROM srv_nice_links WHERE ank_id = '".$anketa."' ORDER BY id ASC LIMIT 1");
@@ -656,7 +667,7 @@ class SurveyInfo
 			} 
 			else {		
 				if (self::checkSurveyModule('uporabnost') && $uporabnost == true) // na redirectih pa v form action ne sme it na uporabnost (ker se odpira znotraj frama)
-					$link = $site_url.'main/survey/uporabnost.php?anketa=' . $anketa_string ;
+					$link = $site_url.'main/survey/uporabnost.php?anketa=' . $anketa_string;
 				else
 					$link = $site_url.'a/' . $anketa_string ;	
 			}
@@ -846,6 +857,34 @@ class SurveyInfo
 		}
 		else
 			return false;
+	}
+
+
+	// Vrnemo pripeto ime tabele s podatki ce gre za arhivsko ali aktivno anketo (_active, archive1, archive2...)
+	public static function getSurveyArchiveDBString() {
+        
+        $db_table = self::getSurveyColumn('db_table');
+
+        switch($db_table){
+
+            // Arhivska 1
+            case '0':
+                $db_table_string = '_archive1';
+                break;
+
+            // Arhivska 2
+            case '2':
+                $db_table_string = '_archive2';
+                break;
+            
+            // Aktivna anketa
+            case '1':
+            default:
+                $db_table_string = '_active';
+                break;
+        }
+
+        return $db_table_string;
 	}
 }
 ?>

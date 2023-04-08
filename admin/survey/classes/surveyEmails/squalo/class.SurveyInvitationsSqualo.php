@@ -38,8 +38,6 @@ class SurveyInvitationsSqualo {
     private function checkSqualoEnabled(){
         global $mysql_database_name;
         global $admin_type;
-        global $squalo_user;
-        global $squalo_key;
   
         // Zaenkrat imajo squalo samo admini
         if($admin_type != 0)
@@ -50,7 +48,7 @@ class SurveyInvitationsSqualo {
             return false;
 
         // Zaenkrat imajo squalo samo admini
-        if(!isset($squalo_user) || $squalo_user == '' || !isset($squalo_key) || $squalo_key == '')
+        if(AppSettings::getInstance()->getSetting('squalo-user') === false || AppSettings::getInstance()->getSetting('squalo-key') === false)
             return false;
 
         return true;
@@ -254,8 +252,7 @@ class SurveyInvitationsSqualo {
         // če mamo personalizirana email vabila, userje dodamo v bazo
         if ($individual == 1) {
                        
-            if (SurveyInfo::getInstance()->getSurveyColumn('db_table') == 1)
-			    $db_table = '_active';
+            $db_table = SurveyInfo::getInstance()->getSurveyArchiveDBString();
 
             $inv_variables_link = array('email'=>'email','geslo'=>'password','ime'=>'firstname','priimek'=>'lastname','naziv'=>'salutation','telefon'=>'phone','drugo'=>'custom','odnos'=>'relation','last_status'=>'last_status','sent'=>'sent','responded'=>'responded','unsubscribed'=>'unsubscribed');
                 

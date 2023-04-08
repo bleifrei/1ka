@@ -42,10 +42,9 @@ class Common {
 	{
 		if ($anketa) {
 			self::$anketa = $anketa;
-			SurveyInfo::getInstance()->SurveyInit(self::$anketa);
-			if (SurveyInfo::getInstance()->getSurveyColumn('db_table') == 1)
-				self::$db_table = '_active';
 
+			SurveyInfo::getInstance()->SurveyInit(self::$anketa);
+			self::$db_table = SurveyInfo::getInstance()->getSurveyArchiveDBString();
 		}
 	}
 
@@ -240,9 +239,8 @@ class Common {
 			$sql = sisplet_query("SELECT id FROM srv_user WHERE preview='1' AND time_edit < NOW() - INTERVAL 3 HOUR AND ank_id = '".$sid."'");
 
 		# polovimo vrsto tabel za to anketo
-		$strDbTable = "SELECT db_table FROM srv_anketa WHERE id = $sid";
-		$qryDbTable = sisplet_query($strDbTable);
-		list($db_table) = mysqli_fetch_row($qryDbTable);
+        SurveyInfo::getInstance()->SurveyInit($sid);
+        $db_table = SurveyInfo::getInstance()->getSurveyArchiveDBString();
 
 		$list = '';
 		// se je dogajalo da je 0 ... pa se je pojavljal mysql_fetch error
@@ -255,6 +253,7 @@ class Common {
 		}
 		if ($list != '') {
 			sisplet_query("BEGIN");
+            
 			// tabela z respondenti
 			$deleted = sisplet_query("DELETE FROM srv_user WHERE preview='1' AND id IN ($list) AND ank_id = '$sid'");
 
@@ -708,27 +707,15 @@ class Common {
 	 */
 	function getFromEmail() {
 		global $global_user_id, $site_domain;
-		$MailFrom = 'info@1ka.si';
 
-		# nastavimo pošiljatelja
-		# za SAFE.SI naredimo hardcoded da se pošilja kao iz SAFE.SI
-		if (strpos($site_domain, "safe.si") === false)
-		{
-			#nismo iz SAFE.SI
-			$r = sisplet_query("SELECT value FROM misc WHERE what='AlertFrom'");
-			list ($MailFrom) = mysqli_fetch_row($r);
-		}
-		else
-		{
-			# smo na SAFE.SI
-			$MailFrom = 'info@safe.si';
-		}
+        if(AppSettings::getInstance()->getSetting('email_server_settings-SMTPFrom') !== false)
+		    $MailFrom = AppSettings::getInstance()->getSetting('email_server_settings-SMTPFrom');
 
 		# Če je slučanjo napaka nastavimo info@1ka.si
-		if ($MailFrom == null || trim($MailFrom) == '' || !$this->validEmail($MailFrom))
-		{
+		if ($MailFrom == null || trim($MailFrom) == '' || !$this->validEmail($MailFrom)){
 			$MailFrom = 'info@1ka.si';
 		}
+
 		return $MailFrom;
 	}
 
@@ -2076,29 +2063,23 @@ class Common {
 		return $help_url;
 	}
 
-	// Nov algoritem za id ankete v url-ju (ni vec stevilka ampak string - vsako liho stevilko zamenjamo z ustrezno crko npr. 1234 -> A2C4)
-	public static function encryptAnketaID($anketa_id){
+	// Nov algoritem za id ankete v url-ju za izpolnjevanje
+	public static function generateSurveyHash(){
+        
+        $unique = false;
 
-		// Ali imamo vklopljeno sifriranje id-ja anket v url-ju - ZENKRAT UGASNJENO
-		//if(true){
-		if(false){
-			$anketa_arr = str_split($anketa_id);
-			$anketa_string = '';
+        while(!$unique){
 
-			foreach($anketa_arr as $pos => $num){
+            // Zgeneriramo random string z 8 znaki
+            $hash = substr(md5(uniqid(mt_rand(), true)), 0, 8);
 
-				// Na lihih mestih pretvorimo stevilko v crko
-				if($pos % 2 == 0)
-					$anketa_string .= chr(97 + $num);
-				else
-					$anketa_string .= $num;
-			}
-			//$anketa_string = strtolower($anketa_string);
-		}
-		else
-			$anketa_string = $anketa_id;
-
-		return $anketa_string;
+            // Preverimo ce slucajno ze obstaja v bazi
+            $sql = sisplet_query("SELECT 1 FROM srv_anketa WHERE hash='".$hash."' LIMIT 1");
+            if (mysqli_num_rows($sql) == 0)
+                $unique = true;
+        }
+       
+		return $hash;
 	}
 
 	// Algoritem, ki iz texta ustvari strukturo vprasanj in variabel (za uvoz anekte iz texta)
@@ -2159,10 +2140,9 @@ class Common {
     // Vrne string s signaturjem za email v ustreznem jeziku (default slovenski)
     public static function getEmailSignature($lang_id = 0){
         global $lang;
-        global $app_settings;
 
-        if(isset($app_settings['email_signature_custom']) && $app_settings['email_signature_custom'] == 1){
-            $signature = '<br /><br /><br />'.$app_settings['email_signature_text'];
+        if(AppSettings::getInstance()->getSetting('app_settings-email_signature_custom') !== false){
+            $signature = '<br /><br /><br />'.AppSettings::getInstance()->getSetting('app_settings-email_signature_text');
         }
         else{
 

@@ -54,7 +54,7 @@ function conditionProfileAction(action) {
 				// dropdownu dodamo nov prodil in ga izberemo
 					$("#current_condition_profile").append( $("<option></option>").attr("value", newId).attr( "selected", true).text(name));
 			} else {
-				alert('Error!');
+				genericAlertPopup('error');
 			}
 
 		});
@@ -106,5 +106,5 @@ function conditionProfileAction(action) {
 		$.post('ajax.php?t=conditionProfile&a=change_condition_profile', { anketa : srv_meta_anketa_id, pid : pid, meta_akcija : srv_meta_akcija, podstran : srv_meta_podstran, condition_label:condition_label, condition_error:condition_error }, function() {
 			return reloadData('condition');
 		});
-	} else {alert('Missing action:'+action)};
+	} else {genericAlertPopup('alert_missing_action',action)};
 }

@@ -21,7 +21,7 @@
     }
 
 
-    global $site_url, $global_user_id, $app_settings;
+    global $site_url, $global_user_id;
 
     $surveySkin = 0;
 
@@ -85,8 +85,8 @@
     $rowv = mysqli_fetch_array($sqlv);
 
     // Custom head title
-    if(isset($app_settings['head_title_custom']) && $app_settings['head_title_custom'] == 1){
-        echo '<title>'.$app_settings['head_title_text'].'</title>' . "\n";
+    if(AppSettings::getInstance()->getSetting('app_settings-head_title_custom')){
+        echo '<title>'.AppSettings::getInstance()->getSetting('app_settings-head_title_text').'</title>' . "\n";
     }
     // Default head title
     else{

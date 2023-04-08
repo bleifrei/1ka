@@ -23,8 +23,7 @@ class TrackingClass
 		
 		# poiščemo aktivno anketo
 		SurveyInfo :: getInstance()->SurveyInit($this->anketa);
-		if (SurveyInfo::getInstance()->getSurveyColumn('db_table') == 1)
-			$this->db_table = '_active';
+		$this->db_table = SurveyInfo::getInstance()->getSurveyArchiveDBString();
 
         if ($_GET['m'] == 'tracking_data')
             $this->sub = 'data';
@@ -322,7 +321,7 @@ class TrackingClass
 
 		# poiščemo aktivno anketo
 		SurveyInfo :: getInstance()->SurveyInit($anketa);
-		$db_table = (SurveyInfo::getInstance()->getSurveyColumn('db_table') == 1) ? '_active' : '';
+		$db_table = SurveyInfo::getInstance()->getSurveyArchiveDBString();
 		
         $get = '';
         foreach ($_GET AS $key => $val) {

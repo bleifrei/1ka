@@ -15,6 +15,7 @@ use SurveyAdvancedParadataLog;
 use SurveyInfo;
 use SurveyThemeEditor;
 use SurveyPanel;
+use AppSettings;
 
 class HeaderController extends Controller
 {
@@ -116,9 +117,11 @@ class HeaderController extends Controller
             return header('Location: ' . self::$site_url);
             die("Missing anketa id!");
         }
-        $anketa = (($get->anketa) ? $get->anketa : $_POST['anketa']);
+        $anketa_hash = (($get->anketa) ? $get->anketa : $_POST['anketa']);
+        $anketa = getSurveyIdFromHash($anketa_hash);
 
         // Shranimo vse spremenljivke iz get parametrov v classu VariableClass
+        save('anketa_hash', $anketa_hash);
         save('anketa', $anketa);
         save('get', $get);
 
@@ -149,8 +152,6 @@ class HeaderController extends Controller
      * @desc zgenereira header
      */
     public function header(){
-        global $app_settings;
-
 
         // preprecimo caching - tudi s klikom na gumb nazaj!
         header("Last-Modified: " . gmdate("D, j M Y H:i:s") . " GMT");
@@ -168,8 +169,8 @@ class HeaderController extends Controller
         $rowv = mysqli_fetch_array($sqlv);
 
         // Custom header title
-        if(isset($app_settings['head_title_custom']) && $app_settings['head_title_custom'] == 1){
-            echo '<title>'.strip_tags(Helper::getInstance()->displayAkronim(0)).' - '.$app_settings['head_title_text'].'</title>' . "\n";
+        if(AppSettings::getInstance()->getSetting('app_settings-head_title_custom')){
+            echo '<title>'.strip_tags(Helper::getInstance()->displayAkronim(0)).' - '.AppSettings::getInstance()->getSetting('app_settings-head_title_text').'</title>' . "\n";
         }
         // Default header title
         else{
@@ -875,7 +876,7 @@ class HeaderController extends Controller
             // Ce je original visji kot 160 ga avtomatsko pomanjsamo
             elseif($size_orig[1] > 160) {
 
-                $image = self::$site_url . 'function/thumb.php?src=' . self::$site_url . 'main/survey/uploads/' . $logo . '&h=100';
+                $image = self::$site_url . 'utils/thumb.php?src=' . self::$site_url . 'main/survey/uploads/' . $logo . '&h=100';
                 $size = @getimagesize($image);
 
                 if($size){

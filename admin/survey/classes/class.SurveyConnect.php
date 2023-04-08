@@ -24,8 +24,7 @@ class SurveyConnect {
 		
 		SurveyInfo::getInstance()->SurveyInit($this->anketa);
 		
-		if (SurveyInfo::getInstance()->getSurveyColumn('db_table') == 1)
-			$this->db_table = '_active';
+		$this->db_table = SurveyInfo::getInstance()->getSurveyArchiveDBString();
 	}
 	
 	function ajax () {
@@ -111,7 +110,24 @@ class SurveyConnect {
 							if (!$subsql) echo mysqli_error($GLOBALS['connect_db']);
 							while ($subrow = mysqli_fetch_assoc($subsql)) {
 	
-								$db_table = ($subrow['db_table'] == 1) ? '_active' : '';
+                                switch($subrow['db_table']){
+
+                                    // Arhivska 1
+                                    case '0':
+                                        $db_table = '_archive1';
+                                        break;
+                        
+                                    // Arhivska 2
+                                    case '2':
+                                        $db_table = '_archive2';
+                                        break;
+                                    
+                                    // Aktivna anketa
+                                    case '1':
+                                    default:
+                                        $db_table = '_active';
+                                        break;
+                                }
 								
 								$subsql1 = sisplet_query("SELECT d.* FROM srv_data_vrednost".$db_table." d, srv_vrednost v, srv_user u WHERE d.spr_id='$subrow[id]' AND d.vre_id=v.id AND v.variable='$unikat' AND u.id=d.usr_id AND u.deleted='0'");
 								if (!$subsql1) echo mysqli_error($GLOBALS['connect_db']);

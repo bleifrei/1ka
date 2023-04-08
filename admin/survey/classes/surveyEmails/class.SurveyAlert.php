@@ -93,7 +93,7 @@ class SurveyAlert
 	 *  se s pomočjo crontaba zaganja vsak dan samodejno.
 	 */
 	static function prepareSendExpireAlerts() {
-		global $site_url, $lang, $mysql_database_name, $app_settings;
+		global $site_url, $lang, $mysql_database_name;
         
         // napolnimo tabelo srv_alert v bazi surveycrontab
 		$sqlSurvey = sisplet_query("SELECT active FROM srv_anketa WHERE id='".self::getSurveyId()."'");
@@ -163,7 +163,7 @@ class SurveyAlert
 				array(
 					self::$data['survey_naslov'],
 					date('r'),
-					$site_url.'main/survey/index.php?anketa='.self::getSurveyId(),
+					$site_url.'main/survey/index.php?anketa='.SurveyInfo::getInstance()->getSurveyHash(),
 					self::$data['expire_days'],
 					'<a href="'.$site_url.'admin/survey/index.php?anketa='.self::getSurveyId().'">'.$site_url.'admin/survey/index.php?anketa='.self::getSurveyId().'</a>',
         			'<a href="'.$pdf_url.'">'.$pdf_url.'</a>',
@@ -185,7 +185,7 @@ class SurveyAlert
 				array(
 					self::$data['survey_naslov'],
 					date('r'),
-					$site_url.'main/survey/index.php?anketa='.self::getSurveyId(), 
+					$site_url.'main/survey/index.php?anketa='.SurveyInfo::getInstance()->getSurveyHash(), 
 					self::$data['expire_days'],
 					'<a href="'.$site_url.'admin/survey/index.php?anketa='.self::getSurveyId().'">'.$site_url.'admin/survey/index.php?anketa='.self::getSurveyId().'</a>',
         			'<a href="'.$pdf_url.'">'.$pdf_url.'</a>',
@@ -245,7 +245,7 @@ class SurveyAlert
 	 * Funkcija pošlje emaile ob spremembi aktivnosti ankete
 	 */
 	static function sendMailActive() {
-        global $lang, $site_url, $site_path, $app_settings;
+        global $lang, $site_url, $site_path;
         
 		// poiščemo vse email naslove
 		// poiscemo e-maile od avtorja in userjev v dostopu
@@ -306,7 +306,7 @@ class SurveyAlert
 			array(
 				self::$data['survey_naslov'],
 				date('r'),
-				$site_url.'main/survey/index.php?anketa='.self::getSurveyId(), 
+				$site_url.'main/survey/index.php?anketa='.SurveyInfo::getInstance()->getSurveyHash(), 
 				self::$data['expire_days'],
 				'<a href="'.$site_url.'admin/survey/index.php?anketa='.self::getSurveyId().'">'.$site_url.'admin/survey/index.php?anketa='.self::getSurveyId().'</a>',
         		'<a href="'.$pdf_url.'">'.$pdf_url.'</a>',
@@ -325,7 +325,7 @@ class SurveyAlert
 			array(
 				self::$data['survey_naslov'],
 				date('r'),
-				$site_url.'main/survey/index.php?anketa='.self::getSurveyId(), 
+				$site_url.'main/survey/index.php?anketa='.SurveyInfo::getInstance()->getSurveyHash(), 
 				self::$data['expire_days'],
 				'<a href="'.$site_url.'admin/survey/index.php?anketa='.self::getSurveyId().'">'.$site_url.'admin/survey/index.php?anketa='.self::getSurveyId().'</a>',
         		'<a href="'.$pdf_url.'">'.$pdf_url.'</a>', 
@@ -368,7 +368,7 @@ class SurveyAlert
 	 * Funkcija pošlje emaile ob izbrisu ankete
 	 */
 	static function sendMailDelete() {
-		global $lang, $site_url, $site_path, $app_settings;
+		global $lang, $site_url, $site_path;
 
 		// poiščemo vse email naslove
 		// poiscemo e-maile od avtorja in userjev v dostopu
@@ -426,7 +426,7 @@ class SurveyAlert
 			array(
 				self::$data['survey_naslov'],
 				date('r'),
-				$site_url.'main/survey/index.php?anketa='.self::getSurveyId(), 
+				$site_url.'main/survey/index.php?anketa='.SurveyInfo::getInstance()->getSurveyHash(), 
 				self::$data['expire_days'],
 				'<a href="'.$site_url.'admin/survey/index.php?anketa='.self::getSurveyId().'">'.$site_url.'admin/survey/index.php?anketa='.self::getSurveyId().'</a>',
         		'<a href="'.$pdf_url.'">'.$pdf_url.'</a>',
@@ -445,7 +445,7 @@ class SurveyAlert
 				array(
 					self::$data['survey_naslov'],
 					date('r'),
-					$site_url.'main/survey/index.php?anketa='.self::getSurveyId(), 
+					$site_url.'main/survey/index.php?anketa='.SurveyInfo::getInstance()->getSurveyHash(), 
 					self::$data['expire_days'],
 					'<a href="'.$site_url.'admin/survey/index.php?anketa='.self::getSurveyId().'">'.$site_url.'admin/survey/index.php?anketa='.self::getSurveyId().'</a>',
         			'<a href="'.$pdf_url.'">'.$pdf_url.'</a>',
@@ -484,7 +484,7 @@ class SurveyAlert
 	}
 	
 	static function setDefaultAlertBeforeExpire() {
-		global $lang, $site_url, $site_path, $app_settings;
+		global $lang, $site_url, $site_path;
 		
 		$turn_on_alert = false;
 		
@@ -535,7 +535,6 @@ class SurveyAlert
 	static function setDefaultAlertActivation() {
 		global $lang;
         global $global_user_id;
-        global $app_settings;
 		
 		$anketa = self::getSurveyId();
 		

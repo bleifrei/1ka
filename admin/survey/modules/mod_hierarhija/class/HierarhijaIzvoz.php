@@ -313,8 +313,7 @@ class HierarhijaIzvoz {
 			}
 		}
 
-		$db_table = (SurveyInfo::getInstance()
-		                       ->getSurveyColumn('db_table') == 1) ? '_active' : '';
+		$db_table = SurveyInfo::getInstance()->getSurveyArchiveDBString();
 
 		// tukaj pridobimo podatke o anketi za določeno strukturo
 		// preverimov prvi in zadnji nivo

@@ -28,9 +28,8 @@ class SurveyAnalysisHelper {
 			self::$anketa = $anketa;
 				
 			SurveyInfo::getInstance()->SurveyInit(self::$anketa);
-			if (SurveyInfo::getInstance()->getSurveyColumn('db_table') == 1)
-				self::$db_table = '_active';
-				
+			
+            self::$db_table = SurveyInfo::getInstance()->getSurveyArchiveDBString();		
 		}
 	}
 	
@@ -71,8 +70,8 @@ class SurveyAnalysisHelper {
 		
 		echo '<div id="bottom_data_legend" class="floatLeft">';
 		echo '<div>';
-		echo '<div id="bdld1" class="as_link strong" onclick="$(\'#bottom_data_legend_detail, #bdld1, #bdld2\').toggle();"><span class="faicon plus"></span></div>';
-		echo '<div id="bdld2" class="as_link strong" style="display:none" onclick="$(\'#bottom_data_legend_detail, #bdld1, #bdld2\').toggle();"><span class="faicon minus"></span></div> '.$lang['srv_bottom_data_legend_note'];
+		echo '<div id="bdld1" class="as_link strong" onclick="$(\'#bottom_data_legend_detail, #bdld1, #bdld2\').toggle();"><span class="faicon plus"></span> '.$lang['srv_bottom_data_legend_note'].'</div>';
+		echo '<div id="bdld2" class="as_link strong" style="display:none" onclick="$(\'#bottom_data_legend_detail, #bdld1, #bdld2\').toggle();"><span class="faicon minus"></span> '.$lang['srv_bottom_data_legend_note'].'</div>';
 		echo '</div>';
 		echo '<div id="bottom_data_legend_detail" style="display:none">';
 		echo '<ul>';
@@ -92,8 +91,8 @@ class SurveyAnalysisHelper {
 		
 		echo '<div id="bottom_data_legend" class="floatLeft bg_blue">';
 		echo '<div>';
-		echo '<div id="bdlds1" class="as_link strong" onclick="$(\'#bottom_data_legend_detail_status, #bdlds1, #bdlds2\').toggle();"><span class="faicon plus"></span></div>';
-		echo '<div id="bdlds2" class="as_link strong" style="display:none" onclick="$(\'#bottom_data_legend_detail_status, #bdlds1, #bdlds2\').toggle();"><span class="faicon minus"></span></div> '.$lang['srv_bottom_data_legend_status_note'];
+		echo '<div id="bdlds1" class="as_link strong" onclick="$(\'#bottom_data_legend_detail_status, #bdlds1, #bdlds2\').toggle();"><span class="faicon plus"></span> '.$lang['srv_bottom_data_legend_status_note'].'</div>';
+		echo '<div id="bdlds2" class="as_link strong" style="display:none" onclick="$(\'#bottom_data_legend_detail_status, #bdlds1, #bdlds2\').toggle();"><span class="faicon minus"></span> '.$lang['srv_bottom_data_legend_status_note'].'</div>';
 		echo '</div>';
 		echo '<div id="bottom_data_legend_detail_status" style="display:none">';
 		echo '<ul>';
@@ -111,8 +110,8 @@ class SurveyAnalysisHelper {
 		
 		echo '<div id="bottom_data_legend" class="floatLeft test">';
 		echo '<div>';
-		echo '<div id="bdldt1" class="as_link strong" onclick="$(\'#bottom_data_legend_detail_test, #bdldt1, #bdldt2\').toggle();"><span class="faicon plus"></span></div>';
-		echo '<div id="bdldt2" class="as_link strong" style="display:none" onclick="$(\'#bottom_data_legend_detail_test, #bdldt1, #bdldt2\').toggle();"><span class="faicon minus"></span></div> '.$lang['srv_bottom_data_legend_test_note'];
+		echo '<div id="bdldt1" class="as_link strong" onclick="$(\'#bottom_data_legend_detail_test, #bdldt1, #bdldt2\').toggle();"><span class="faicon plus"></span> '.$lang['srv_bottom_data_legend_test_note'].'</div>';
+		echo '<div id="bdldt2" class="as_link strong" style="display:none" onclick="$(\'#bottom_data_legend_detail_test, #bdldt1, #bdldt2\').toggle();"><span class="faicon minus"></span> '.$lang['srv_bottom_data_legend_test_note'].'</div>';
 		echo '</div>';
 		echo '<div id="bottom_data_legend_detail_test" style="display:none">';
 		echo '<ul>';

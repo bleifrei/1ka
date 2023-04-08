@@ -138,8 +138,9 @@ class DisplayController extends Controller
     }
 
 	// Prikaze ikono za izvoz pdf rezultatov v zakljucku
-    public function displayRespondetnPDF()
-    {
+    public function displayRespondetnPDF(){
+        global $site_domain;
+
         $row = SurveyInfo::getInstance()->getSurveyRow();
 
         if ((int)$row['concl_PDF_link'] == 1) {
@@ -183,6 +184,18 @@ class DisplayController extends Controller
 				
 				echo '</p></div>';
 			}
+            // Ce gre za nijz anketo - posebno pdf porocilo (nijz2)
+			//elseif(get('anketa') == '125'){
+			elseif($site_domain == 'anketa.nijz.si' && (get('anketa') == '127704' || get('anketa') == '127858')){
+
+                # parametre zapakiramo v array injih serializiramo in zakodiramo z base64
+				$pdf_url = self::$site_url . 'admin/survey/izvoz.php?dc=' . base64_encode(serialize(array('m' => 'pdf_nijz', 'anketa' => get('anketa'), 'usr_id' => get('usr_id'))));
+				
+				#echo '<div id="icon_bar">';
+				echo '<br class="clr"/><div><p>';
+				echo '<a href="' . $pdf_url . '" class="pdfExport" target="_blank"><span class="sprites pdf_white"></span> '.self::$lang['srv_report_pdf'].'</a>';
+				echo '</p></div>';
+            }
 			else{
 				# parametre zapakiramo v array injih serializiramo in zakodiramo z base64
 				$pdf_url = self::$site_url . 'admin/survey/izvoz.php?dc=' . base64_encode(serialize(array('a' => 'pdf_results', 'anketa' => get('anketa'), 'usr_id' => get('usr_id'), 'type' => '0')));
@@ -499,17 +512,23 @@ class DisplayController extends Controller
         $vprasanja = array();
         $spr_ids = '';
 
-        // Loop cez vsa ustrezna vprasanja in njihove vrednosti (jih zakesiramo)
-		$sqlS = sisplet_query("SELECT s.id AS spr_id, s.naslov AS spr_naslov, s.variable AS spr_variable
-								FROM srv_spremenljivka s, srv_grupa g
+
+        // Loop cez vsa ustrezna vprasanja in njihove vrednosti (jih zakesiramo) in bloke v katerih se nahajajo (pohvale in izzivi morajo biti iz locenih blokov)
+		$sqlS = sisplet_query("SELECT s.id AS spr_id, s.naslov AS spr_naslov, s.variable AS spr_variable, i.label AS block_label, i.id AS block_id
+								FROM srv_spremenljivka s, srv_grupa g, srv_branching b, srv_if i
 								WHERE g.ank_id='".get('anketa')."' AND s.gru_id=g.id 
 									AND s.variable LIKE 'R%'
+                                    AND b.ank_id='".get('anketa')."' AND b.element_spr=s.id AND i.id=b.parent AND i.tip='1'
                             ");
+
 		if (!$sqlS) echo mysqli_error($GLOBALS['connect_db']);
 		while($rowS = mysqli_fetch_array($sqlS)){
 
             $vprasanje_number = substr($rowS['spr_variable'], 1);
-            $vprasanja[$rowS['spr_id']] = $vprasanje_number;
+            $vprasanja[$rowS['spr_id']]['number'] = $vprasanje_number;
+
+            $vprasanja[$rowS['spr_id']]['block_id'] = $rowS['block_id'];
+            $vprasanja[$rowS['spr_id']]['block_label'] = $block_label;
 
             // ID-ji vprasanj za query
             $spr_ids .= $rowS['spr_id'].',';
@@ -581,18 +600,28 @@ class DisplayController extends Controller
         echo '<div class="spremenljivka" style="border-bottom:0;"><div class="naslov">'.$rowNagovor['naslov'].'</div></div>';
         
         $i = 1;
+        $used_block_ids = array();
 		foreach($pohvale as $pohvala_vrednost => $vrednost){
             
+            $spr_id = $vrednost['spr_id'];
+
+            $block_id = $vprasanja[$spr_id]['block_id'];
+
+            // Pohvala iz tega bloka je ze bila prikazana
+            if(in_array($block_id, $used_block_ids))
+                continue;
+            
+            // Prikazane so bile ze 3 pohvale
             if($i > $max_odgovorov)
                 break;
 
-            $spr_id = $vrednost['spr_id'];
-            $vprasanje_number = $vprasanja[$spr_id];
+            $vprasanje_number = $vprasanja[$spr_id]['number'];
 
             echo '<div class="spremenljivka">';			        
             echo '	<div class="naslov">'.$pohvale_besedilo[$vprasanje_number].'</div>';	            
             echo '</div>';
             
+            $used_block_ids[] = $block_id;
             $i++;
         }
         
@@ -608,18 +637,28 @@ class DisplayController extends Controller
         echo '<div class="spremenljivka" style="border-bottom:0;"><div class="naslov">'.$rowNagovor['naslov'].'</div></div>';
 
         $i = 1;
+        $used_block_ids = array();
 		foreach($izzivi as $izziv_vrednost => $vrednost){
-            
+
+            $spr_id = $vrednost['spr_id'];
+
+            $block_id = $vprasanja[$spr_id]['block_id'];
+
+            // Izziv iz tega bloka je ze bil prikazan
+            if(in_array($block_id, $used_block_ids))
+                continue;
+
+            // Prikazani so bili ze 3 izzivi
             if($i > $max_odgovorov)
                 break;
 
-            $spr_id = $vrednost['spr_id'];
-            $vprasanje_number = $vprasanja[$spr_id];
+            $vprasanje_number = $vprasanja[$spr_id]['number'];
 
             echo '<div class="spremenljivka">';			   
             echo '	<div class="naslov">'.$izzivi_besedilo[$vprasanje_number].'</div>';	        
             echo '</div>';
             
+            $used_block_ids[] = $block_id;
             $i++;
         }
         
@@ -700,7 +739,7 @@ class DisplayController extends Controller
         $json_pohvale = json_encode($pohvale);
         $json_izzivi = json_encode($izzivi);
 
-        echo '<br><h2 style="padding-left: 20px;">Pajkova mreža</h2>';
+        echo '<br><h2 style="padding-left: 20px;">PAJKOVA MREŽA</h2>';
 
         // Nagovor za mrezo
         $sqlNagovor = sisplet_query("SELECT s.naslov, s.variable 
@@ -779,35 +818,6 @@ class DisplayController extends Controller
             echo '</div>';
 
         }
-    }
-
-    /**
-     * @desc konstruktor
-     */
-    public function PrintSurvey()
-    {
-
-        if (isset($_GET['anketa'])) {
-            save('anketa', $_GET['anketa']);
-
-            $rowa = SurveyInfo::getInstance()->getSurveyRow();
-
-            // uvodni nagovor
-            if ($rowa['show_intro'] != 0) {
-                Body::getInstance()->displayIntroduction();
-            }
-
-            // prikažemo ankete
-            do {
-                save('grupa', Find::getInstance()->findNextGrupa());
-
-                Body::getInstance()->displayAnketa();
-            } while (get('grupa') != Find::getInstance()->findNextGrupa() && Find::getInstance()->findNextGrupa() > 0);
-
-            // prikažemo konec
-            Body::getInstance()->displayKonec();
-        } else
-            echo 'Ni podatkov o anketi!';
     }
 
 

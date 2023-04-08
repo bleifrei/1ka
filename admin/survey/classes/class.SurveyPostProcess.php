@@ -27,8 +27,7 @@ class SurveyPostProcess {
 		
 		SurveyInfo::getInstance()->SurveyInit($this->anketa);
 		
-		if (SurveyInfo::getInstance()->getSurveyColumn('db_table') == 1)
-			$this->db_table = '_active';
+		$this->db_table = SurveyInfo::getInstance()->getSurveyArchiveDBString();
 		
 		#inicializiramo class za datoteke
 		$this->SDF = SurveyDataFile::get_instance();

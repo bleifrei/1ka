@@ -21,10 +21,7 @@ class UserNarocilaPaypal{
     private $paypal_client;
 
 
-    public function __construct($narocilo_id){
-        global $app_settings;        
-        global $paypal_client_id;
-        global $paypal_secret;
+    public function __construct($narocilo_id){     
         global $mysql_database_name;
         
         if($narocilo_id > 0){
@@ -43,9 +40,9 @@ class UserNarocilaPaypal{
 
             // Ustvarimo okolje za paypal
             if($mysql_database_name == 'real1kasi')
-                $environment = new ProductionEnvironment($paypal_client_id, $paypal_secret);
+                $environment = new ProductionEnvironment(AppSettings::getInstance()->getSetting('paypal-client_id'), AppSettings::getInstance()->getSetting('paypal-secret'));
             else
-                $environment = new SandboxEnvironment($paypal_client_id, $paypal_secret);
+                $environment = new SandboxEnvironment(AppSettings::getInstance()->getSetting('paypal-client_id'), AppSettings::getInstance()->getSetting('paypal-secret'));
 
             $this->paypal_client = new PayPalHttpClient($environment);
         }

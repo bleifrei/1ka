@@ -2144,12 +2144,14 @@ class ApiSurvey {
         $res = sisplet_query("SELECT value FROM misc WHERE what='SurveyCookie'");
         list ($SurveyCookie) = mysqli_fetch_row($res);
 
+        // Nastavimo se hash
+        $hash = Common::generateSurveyHash();
 
         // GLASOVANJE
         if ($survey_type == 0) {
 
-            $sql = sisplet_query("INSERT INTO srv_anketa (id, naslov, akronim, db_table, starts, expire, dostop, insert_uid, insert_time, edit_uid, edit_time, cookie, text, url, intro_opomba, survey_type, lang_admin, lang_resp, active, skin, show_intro, show_concl, locked, mobile_created) " .
-                    "VALUES ('', '$naslov', '$akronim', '1', $starts, $expire, '0', '$global_user_id', NOW(), '$global_user_id', NOW(), '$SurveyCookie', '', '$url', '', '0', '$lang_admin', '$lang_resp', '0', '1kaBlue', '0', '0', '0', '$mobile_created')");
+            $sql = sisplet_query("INSERT INTO srv_anketa (id, hash, naslov, akronim, db_table, starts, expire, dostop, insert_uid, insert_time, edit_uid, edit_time, cookie, text, url, intro_opomba, survey_type, lang_admin, lang_resp, active, skin, show_intro, show_concl, locked, mobile_created) " .
+                    "VALUES ('', '".$hash."', $naslov', '$akronim', '1', $starts, $expire, '0', '$global_user_id', NOW(), '$global_user_id', NOW(), '$SurveyCookie', '', '$url', '', '0', '$lang_admin', '$lang_resp', '0', '1kaBlue', '0', '0', '0', '$mobile_created')");
 
             if (!$sql) {
                 $error = mysqli_error($GLOBALS['connect_db']);
@@ -2158,7 +2160,8 @@ class ApiSurvey {
 
 
             if ($anketa > 0) {
-                $url .= 'a/' . $anketa;
+
+                $url .= 'a/' . $hash;
 
                 // vnesemo tudi 1. grupo aka page
                 $sql = sisplet_query("INSERT INTO srv_grupa (id, ank_id, naslov, vrstni_red) VALUES ('', '$anketa', '$lang[srv_stran] 1', '1')");
@@ -2219,8 +2222,8 @@ class ApiSurvey {
             $zakljucek_besedilo = $purifier->purify_DB($zakljucek['besedilo']);
             $show_concl = ($zakljucek['hide_zakljucek'] == '1') ? 0 : 1;
 
-            $sql = sisplet_query("INSERT INTO srv_anketa (id, naslov, akronim, db_table, starts, expire, dostop, insert_uid, insert_time, edit_uid, edit_time, cookie, text, url, intro_opomba, survey_type, lang_admin, lang_resp, active, skin, introduction, conclusion, show_intro, show_concl, locked, mobile_created) " .
-                    "VALUES ('', '$naslov', '$akronim', '1', $starts, $expire, '0', '$global_user_id', NOW(), '$global_user_id', NOW(), '$SurveyCookie', '', '$url', '', '2', '$lang_admin', '$lang_resp', '$autoActiveSurvey', '1ka', '$uvod_besedilo', '$zakljucek_besedilo', '$show_intro', '$show_concl', '1', '$mobile_created')");
+            $sql = sisplet_query("INSERT INTO srv_anketa (id, hash, naslov, akronim, db_table, starts, expire, dostop, insert_uid, insert_time, edit_uid, edit_time, cookie, text, url, intro_opomba, survey_type, lang_admin, lang_resp, active, skin, introduction, conclusion, show_intro, show_concl, locked, mobile_created) " .
+                    "VALUES ('', '".$hash."', $naslov', '$akronim', '1', $starts, $expire, '0', '$global_user_id', NOW(), '$global_user_id', NOW(), '$SurveyCookie', '', '$url', '', '2', '$lang_admin', '$lang_resp', '$autoActiveSurvey', '1ka', '$uvod_besedilo', '$zakljucek_besedilo', '$show_intro', '$show_concl', '1', '$mobile_created')");
             if (!$sql) {
                 $error = mysqli_error($GLOBALS['connect_db']);
             }
@@ -2228,7 +2231,8 @@ class ApiSurvey {
 
 
             if ($anketa > 0) {
-                $url .= 'a/' . $anketa;
+
+                $url .= 'a/' . $hash;
 
                 // vnesemo tudi 1. grupo aka page
                 $sql = sisplet_query("INSERT INTO srv_grupa (id, ank_id, naslov, vrstni_red) VALUES ('', '$anketa', '$lang[srv_stran] 1', '1')");
@@ -2267,7 +2271,8 @@ class ApiSurvey {
             $json_array['id'] = $anketa;
 
             $json_array['note'] = 'Survey created';
-        } else {
+        } 
+        else {
             $json_array['error'] = 'Error creating survey';
         }
 
@@ -3377,7 +3382,7 @@ class ApiSurvey {
 
                         // vstavimo v srv_data_text (email, ime, priimek)
                         SurveyInfo::getInstance()->SurveyInit($ank_id);
-                        $db_table = (SurveyInfo::getInstance()->getSurveyColumn('db_table') == 1) ? '_active' : '';
+                        $db_table = SurveyInfo::getInstance()->getSurveyArchiveDBString();
                         foreach ($sys_vars AS $sid => $spremenljivka) {
                             if ($spremenljivka['variable'] == 'email')
                                 sisplet_query("INSERT INTO srv_data_text" . $db_table . " (spr_id, vre_id, text, usr_id) VALUES ('" . $sid . "', '" . $spremenljivka['vre_id'] . "', '" . $email . "', '" . $usr_id . "')");
@@ -3424,7 +3429,7 @@ class ApiSurvey {
 
                         // vstavimo v srv_data_text (email, ime, priimek)
                         SurveyInfo::getInstance()->SurveyInit($ank_id);
-                        $db_table = (SurveyInfo::getInstance()->getSurveyColumn('db_table') == 1) ? '_active' : '';
+                        $db_table = SurveyInfo::getInstance()->getSurveyArchiveDBString();
                         foreach ($sys_vars AS $sid => $spremenljivka) {
                             if ($spremenljivka['variable'] == 'email') {
                                 $data_insert = sisplet_query("INSERT INTO srv_data_text" . $db_table . " (spr_id, vre_id, text, usr_id) VALUES ('" . $sid . "', '" . $spremenljivka['vre_id'] . "', '" . $email . "', '" . $usr_id . "')");
@@ -3519,9 +3524,9 @@ class ApiSurvey {
                     $add = false;
 
                 if (SurveyInfo::getInstance()->checkSurveyModule('uporabnost'))
-                    $link = 'main/survey/uporabnost.php?anketa=' . $anketa . '&skupina=' . $vre_id;
+                    $link = 'main/survey/uporabnost.php?anketa=' . SurveyInfo::getInstance()->getSurveyHash() . '&skupina=' . $vre_id;
                 else
-                    $link = 'main/survey/index.php?anketa=' . $anketa . '&skupina=' . $vre_id;
+                    $link = 'main/survey/index.php?anketa=' . SurveyInfo::getInstance()->getSurveyHash() . '&skupina=' . $vre_id;
 
                 if ($add) {
                     $f = @fopen($site_path . '.htaccess', 'a');
@@ -3626,9 +3631,9 @@ class ApiSurvey {
                     $add = false;
 
                 if (SurveyInfo::getInstance()->checkSurveyModule('uporabnost'))
-                    $link = 'main/survey/uporabnost.php?anketa=' . $anketa . '&skupina=' . $vre_id;
+                    $link = 'main/survey/uporabnost.php?anketa=' . SurveyInfo::getInstance()->getSurveyHash() . '&skupina=' . $vre_id;
                 else
-                    $link = 'main/survey/index.php?anketa=' . $anketa . '&skupina=' . $vre_id;
+                    $link = 'main/survey/index.php?anketa=' . SurveyInfo::getInstance()->getSurveyHash() . '&skupina=' . $vre_id;
 
                 if ($add) {
                     $f = @fopen($site_path . '.htaccess', 'a');
@@ -3887,7 +3892,7 @@ class ApiSurvey {
 
                             // vstavimo v srv_data_text (email, ime, priimek)
                             SurveyInfo::getInstance()->SurveyInit($ank_id);
-                            $db_table = (SurveyInfo::getInstance()->getSurveyColumn('db_table') == 1) ? '_active' : '';
+                            $db_table = SurveyInfo::getInstance()->getSurveyArchiveDBString();
                             foreach ($sys_vars AS $sid => $spremenljivka) {
                                 if ($spremenljivka['variable'] == 'email')
                                     sisplet_query("INSERT INTO srv_data_text" . $db_table . " (spr_id, vre_id, text, usr_id) VALUES ('" . $sid . "', '" . $spremenljivka['vre_id'] . "', '" . $email . "', '" . $usr_id . "')");
@@ -3934,7 +3939,7 @@ class ApiSurvey {
 
                             // vstavimo v srv_data_text (email, ime, priimek)
                             SurveyInfo::getInstance()->SurveyInit($ank_id);
-                            $db_table = (SurveyInfo::getInstance()->getSurveyColumn('db_table') == 1) ? '_active' : '';
+                            $db_table = SurveyInfo::getInstance()->getSurveyArchiveDBString();
                             foreach ($sys_vars AS $sid => $spremenljivka) {
                                 if ($spremenljivka['variable'] == 'email') {
                                     $data_insert = sisplet_query("INSERT INTO srv_data_text" . $db_table . " (spr_id, vre_id, text, usr_id) VALUES ('" . $sid . "', '" . $spremenljivka['vre_id'] . "', '" . $email . "', '" . $usr_id . "')");

@@ -23,8 +23,8 @@ services:
 
     mysql:
         container_name: mysql_1ka
-        ##image: mariadb:10.3
-        image: mysql:5.6.40
+        image: mariadb:10.3
+        ##image: mysql:5.6.40
         ports: 
             - "3306:3306"
         volumes:
@@ -38,7 +38,8 @@ services:
             - MYSQL_ROOT_PASSWORD=1234
             - MYSQL_PASSWORD=1234
             - MYSQL_DATABASE=1ka
-            - MYSQL_ALLOW_EMPTY_PASSWORD=true 
+            - MYSQL_ALLOW_EMPTY_PASSWORD=true
+        command: mysqld --sql_mode="" --innodb-flush-method=fsync
             
     phpmyadmin:
         container_name: phpmyadmin_1ka
@@ -50,6 +51,7 @@ services:
         environment:
             - PMA_HOST=mysql
             - PMA_PORT=3306
+            - UPLOAD_LIMIT=300M
         networks:
             - default
             

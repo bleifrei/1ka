@@ -614,9 +614,7 @@ class SurveyTelephone {
 			echo '</ul>';
 			echo '</div>';
 			echo '<br class="clr" />';
-			echo '<script type="text/javascript">';
-			echo "$('ul.connectedSortable').sortable({update : function () { refreshFieldsList(); }, forcePlaceholderSize: 'true',tolerance: 'pointer',placeholder: 'inv_field_placeholder',});";
-			echo '</script>';
+			echo '<script type="text/javascript">initTelephoneConnectedSortable();</script>';
 
 			# iz seznama
 			echo '<div id="inv_import_list"'.($import_type != 1 ? '' : ' class="hidden"').'>' ;
@@ -3398,11 +3396,12 @@ class SurveyTelephone {
 	function startSurvey() {
 		# nastavimo marker na A
 		# in vrnemo dva urlja, enega za reload strani, drugega pa odpiranje ankete
-		global $lang,$site_url, $global_user_id;
+		global $lang, $site_url, $global_user_id;
 		
 		$return = array('error'=>'1', 'msg'=>'Napaka','reloadUrl'=>'','surveyUrl'=>'');
 		
 		if ((int)$_POST['usr_id'] > 0) {
+
 			$usr_id = (int)$_POST['usr_id'];
 			
 			# nastavimo url za nastavitev statusa in reload strani
@@ -3423,7 +3422,7 @@ class SurveyTelephone {
 				$user_data = mysqli_fetch_assoc($chk_query);
 				
 				# sestavimo še url za odpiranje izpolnjevanja ankete
-				$return['surveyUrl'] = $site_url.'a/'.Common::encryptAnketaID($this->sid).'&survey-'.$this->sid.'&code='.$user_data['pass'];
+				$return['surveyUrl'] = $site_url.'a/'.SurveyInfo::getInstance()->getSurveyHash().'&survey-'.$this->sid.'&code='.$user_data['pass'];
 				$return['error'] = '';
 			} 
 			else {
@@ -3472,7 +3471,7 @@ class SurveyTelephone {
 					sisplet_query($strInsert);
 					
 					# vstavimo v srv_data_text
-					$db_table = (SurveyInfo::getInstance()->getSurveyColumn('db_table') == 1) ? '_active' : '';
+					$db_table = SurveyInfo::getInstance()->getSurveyArchiveDBString();
 					if (count($strInsertDataText) > 0) {
 						$strInsert = "INSERT INTO srv_data_text".$db_table." (spr_id, vre_id, text, usr_id) VALUES ";
 							$strInsert .= implode(',',$strInsertDataText);
@@ -3481,7 +3480,7 @@ class SurveyTelephone {
 					sisplet_query("COMMIT");
 					
 					# sestavimo še url za odpiranje izpolnjevanja ankete
-					$return['surveyUrl'] = $site_url.'a/'.Common::encryptAnketaID($this->sid).'&survey-'.$this->sid.'&code='.$res_row[password];
+					$return['surveyUrl'] = $site_url.'a/'.SurveyInfo::getInstance()->getSurveyHash().'&survey-'.$this->sid.'&code='.$res_row[password];
 					$return['error'] = '';
 				}
 			}

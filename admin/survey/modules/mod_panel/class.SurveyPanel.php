@@ -20,9 +20,7 @@ class SurveyPanel{
 
 			# polovimo vrsto tabel (aktivne / neaktivne)
 			SurveyInfo :: getInstance()->SurveyInit($this->anketa);
-			if (SurveyInfo::getInstance()->getSurveyColumn('db_table') == 1) {
-				$this->db_table = '_active';
-			}
+			$this->db_table = SurveyInfo::getInstance()->getSurveyArchiveDBString();
 		}
 	}
 	

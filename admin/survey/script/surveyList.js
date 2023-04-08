@@ -144,7 +144,7 @@ function surveyList_knjiznica (anketa) {
  * 
  */
 function surveyList_knjiznica_noaccess (msg) {
-	alert(msg);
+	genericAlertPopup('alert_parameter_msg');
 }
 
 /** doda/odstrani anketo v uporabnisko knjiznico in refresa ikono za knjiznico ankete

@@ -36,7 +36,7 @@
     /********** BODY **********/
     echo '<body class="'.($_GET['a'] == '' ? 'landing_page' : $_GET['a']).'">';
     
-    echo '<div id="content" '.($aai_instalacija ? 'class="aai"' : '').'>';
+    echo '<div id="content" '.(isAAI() ? 'class="aai"' : '').'>';
 
 
 	// Glava
@@ -46,7 +46,6 @@
     
 
     // Vsebina strani
-    global $aai_instalacija;
     echo '<div id="main">';
 
     echo '<div class="main_content">';
@@ -64,6 +63,10 @@
     echo '</div>';
 
     echo '</footer>';
+
+
+    // Cookie notice  
+    $dc->displayCookieNotice();	
     
     
     echo '</div>';

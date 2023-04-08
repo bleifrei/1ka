@@ -7,11 +7,10 @@ class SurveyRecoding
 
 	function __construct($anketa) {
 		$this->anketa = $anketa;
+
 		SurveyInfo::getInstance()->SurveyInit($anketa);
-		if (SurveyInfo::getInstance()->getSurveyColumn('db_table') == 1)
-			
-		$this->db_table = '_active';
-		
+
+		$this->db_table = SurveyInfo::getInstance()->getSurveyArchiveDBString();
 	}
 	
 	function Ajax() {

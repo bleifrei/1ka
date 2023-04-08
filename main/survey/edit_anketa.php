@@ -2,7 +2,9 @@
 
 include_once('../../function.php');
 
-$anketa = $_GET['anketa'];
+$anketa_hash = $_GET['anketa'];
+$anketa = getSurveyIdFromHash($anketa_hash);
+
 $usr_id = $_GET['usr_id'];
 $preview = $_GET['preview'];
 $code = isset($_GET['code']) ? '&code='.$_GET['code'] : '';
@@ -21,9 +23,9 @@ if ($_GET['quick_view'] == 1) {
 
 if ($row1['cookie'] == -1) {
 	
-	header("Location: ".$site_url."main/survey/index.php?anketa=$anketa&survey-".$anketa."=".$row['cookie'].$urejanje.$code);
+	header("Location: ".$site_url."main/survey/index.php?anketa=".$anketa_hash."&survey-".$anketa."=".$row['cookie'].$urejanje.$code);
 } else {
 	setcookie('survey-'.$anketa, $row['cookie'], 0);
-	header("Location: ".$site_url."main/survey/index.php?anketa=$anketa".$urejanje.$code);
+	header("Location: ".$site_url."main/survey/index.php?anketa=".$anketa_hash.$urejanje.$code);
 }
 ?>

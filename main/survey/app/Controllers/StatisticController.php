@@ -138,8 +138,9 @@ class StatisticController extends Controller
         $sqla = sisplet_query("SELECT starts, expire, statistics, db_table FROM srv_anketa WHERE id ='$row2[ank_id]'");
         $rowa = mysqli_fetch_array($sqla);
 
-        if ($rowa['db_table'] == 1)
-            save('db_table', '_active');
+        SurveyInfo::getInstance()->SurveyInit($row2['ank_id']);	
+        $db_table = SurveyInfo::getInstance()->getSurveyArchiveDBString();
+        save('db_table', $db_table);
 
         $text = $rowa['statistics'];
 
@@ -262,13 +263,13 @@ class StatisticController extends Controller
 
             echo '<ul>';
             while ($rowArchive = mysqli_fetch_array($sqlArchive)) {
-                $sql4 = sisplet_query("SELECT naslov, starts, insert_uid FROM srv_anketa WHERE id = '$rowArchive[ank_id]'");
+                $sql4 = sisplet_query("SELECT naslov, starts, insert_uid, hash FROM srv_anketa WHERE id = '$rowArchive[ank_id]'");
                 $row4 = mysqli_fetch_array($sql4);
 
                 if($row4['insert_uid'] == $global_user_id){
                     echo '<li>';
 
-                    echo '<a href="' . $site_url . 'a/' . $rowArchive['ank_id'] . '&glas_end=0' . get('cookie_url') . '">' . $row4['naslov'] . '</a>';
+                    echo '<a href="' . $site_url . 'a/' . $row4['hash'] . '&glas_end=0' . get('cookie_url') . '">' . $row4['naslov'] . '</a>';
                     echo ' (' . $row4['starts'] . ')';
 
                     echo '</li>';

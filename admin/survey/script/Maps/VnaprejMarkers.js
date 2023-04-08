@@ -317,7 +317,7 @@ function drawMarkers(spremenljivka) {
             } else {
                 marker.setMap(null);
                 //odpre se okno, ce je prislo do napake - null - (mozen je tudi prekratek delay med geocoding requesti)
-                alert(lang['srv_resevanje_alert_location_not_found_map']);
+                genericAlertPopup('srv_resevanje_alert_location_not_found_map');
             }
         });
     });

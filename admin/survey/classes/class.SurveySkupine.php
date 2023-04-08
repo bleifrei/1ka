@@ -82,7 +82,7 @@ class SurveySkupine {
 					$link = $vrednost['nice_url'];
 				echo ' (<a href="'.$link.'" target="_blank" title="URL skupine '.$vrednost['naslov'].'">'.$link.'</a>)';
 				
-				echo '<span class="faicon delete_circle icon-orange_link spaceLeft" style="margin-bottom:1px;" onclick="delete_skupina(\'1\', \''.$vrednost['id'].'\', \''.$vrednost['naslov'].'\');"></span>';
+				echo '<span class="faicon delete_circle icon-orange_link spaceLeft" style="margin-bottom:1px;" onclick="delete_skupina(\'1\', \''.$vrednost['id'].'\');"></span>';
 				
 				echo '</p>';
 			}
@@ -284,9 +284,9 @@ class SurveySkupine {
                     if (strlen($nice_url) < 3) $add = false;
                                     
                     if (SurveyInfo::getInstance()->checkSurveyModule('uporabnost'))
-                        $link = 'main/survey/uporabnost.php?anketa='.$anketa.'&skupina='.$vre_id;
+                        $link = 'main/survey/uporabnost.php?anketa='.SurveyInfo::getInstance()->getSurveyHash().'&skupina='.$vre_id;
                     else
-                        $link = 'main/survey/index.php?anketa='.$anketa.'&skupina='.$vre_id;
+                        $link = 'main/survey/index.php?anketa='.SurveyInfo::getInstance()->getSurveyHash().'&skupina='.$vre_id;
                     
                     if ($add) {		
                         $f = @fopen($site_path.'.htaccess', 'a');
@@ -303,13 +303,13 @@ class SurveySkupine {
                 // Vrnemo novo geslo, ki ga vstavimo v html
                 echo '<p>';
 
-                echo '<strong>'.$naslov_vrednost.'</strong>';
+                echo '<strong>'.stripslashes($naslov_vrednost).'</strong>';
                 if($skupine == 1){
                     $link = $this->getUrl($spr_id, $vre_id);
-                    echo ' (<a href="'.$link.'" target="_blank" title="URL skupine '.$naslov_vrednost.'">'.$link.'</a>)';
+                    echo ' (<a href="'.$link.'" target="_blank" title="URL skupine '.stripslashes($naslov_vrednost).'">'.$link.'</a>)';
                 }
 
-                echo '<span class="faicon delete_circle icon-orange_link spaceLeft" style="margin-bottom:1px;" onclick="delete_skupina(\''.$skupine.'\', \''.$vre_id.'\', \''.$naslov_vrednost.'\');"></span>';		
+                echo '<span class="faicon delete_circle icon-orange_link spaceLeft" style="margin-bottom:1px;" onclick="delete_skupina(\''.$skupine.'\', \''.$vre_id.'\');"></span>';		
                 
                 echo '</p>';
             }
@@ -319,9 +319,8 @@ class SurveySkupine {
 			
 			$skupine = (isset($_POST['skupine'])) ? $_POST['skupine'] : 1;
 			$vre_id = (isset($_POST['vre_id'])) ? $_POST['vre_id'] : 0;
-			$naslov = (isset($_POST['text'])) ? $_POST['text'] : '';
 			
-			$sql2 = sisplet_query("SELECT vrstni_red FROM srv_vrednost WHERE id='$vre_id'");
+			$sql2 = sisplet_query("SELECT vrstni_red, naslov FROM srv_vrednost WHERE id='$vre_id'");
 			$row2 = mysqli_fetch_array($sql2);
 			$index = $row2['vrstni_red'];
 			
@@ -337,7 +336,7 @@ class SurveySkupine {
 			
 			// Ce gre za password ga zbrisemo
 			if($skupine == 2){
-				$password = $_POST['text'];
+				$password = $row2['naslov'];
 				if ($password != '') {
 					$s = sisplet_query("DELETE FROM srv_password WHERE ank_id='$this->anketa' AND password = '$password'");
 					if (!$s) echo mysqli_error($GLOBALS['connect_db']);

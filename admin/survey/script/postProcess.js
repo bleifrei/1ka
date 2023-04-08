@@ -678,24 +678,14 @@ function postProcessAddRelevanceTitles() {
 }
 
 function showSurveyAnswers(event) {
-/*
-	var srv_site_url = $("#srv_site_url").val();
-	var target = $(event.target);
-	var uid = $(target).parent().find('.data_uid').html();
-	var href = srv_site_url+'main/survey/edit_anketa.php?anketa='+srv_meta_anketa_id+'&usr_id='+uid+'&quick_view=1';
-	//alert(href);
-	//return false;
-	if (uid > 0 ){
-		window.open(href, '_blank');
-	}		
-*/
+
 	// polovimo user id
 	var srv_site_url = $("#srv_site_url").val();
 	var target = $(event.target);
 	var uid = $(target).parent().parent().find('.data_uid').html();
-//	var href = srv_site_url+'main/survey/edit_anketa.php?anketa='+srv_meta_anketa_id+'&usr_id='+uid+'&quick_view=1';
 	var href = srv_site_url+'admin/survey/index.php?anketa='+srv_meta_anketa_id+'&a=data&m=quick_edit&usr_id='+uid+'&quick_view=1';
-	if (uid > 0 ){
+	
+    if (uid > 0 ){
 		window.location = href;
 	}
 }	

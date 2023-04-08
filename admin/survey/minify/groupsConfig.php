@@ -48,7 +48,6 @@ return [
         dirname(__FILE__).'/../script/vprasanje.js',
         dirname(__FILE__).'/../script/vprasanjeInline.js',
         dirname(__FILE__).'/../script/prevajanje.js',
-        dirname(__FILE__).'/../script/telefon.js',
         dirname(__FILE__).'/../script/missingValues.js',
         dirname(__FILE__).'/../script/missingProfiles.js',
         dirname(__FILE__).'/../script/variableProfiles.js',
@@ -210,6 +209,7 @@ return [
         dirname(__FILE__).'/../script/dostop.js',
         dirname(__FILE__).'/../script/narocila.js',
         dirname(__FILE__).'/../script/datepicker.js',
+        dirname(__FILE__).'/../script/notifications.js',
     ],
 
 

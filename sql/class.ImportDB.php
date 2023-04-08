@@ -7,7 +7,7 @@
 
 class ImportDB{
 	
-	var $clean_db_file = '1ka_clean_27-7-2020.sql';		// Datoteka prazne baze za uvoz
+	var $clean_db_file = '1ka_clean_26-11-2021.sql';		// Datoteka prazne baze za uvoz
 	var $update_db_file = 'update2.sql';				// Datoteka prazne baze za uvoz
 	var $excecute = false;								// Ali izvajamo update/import						
 	var $version = '';									// Trenutna verzija 1ke

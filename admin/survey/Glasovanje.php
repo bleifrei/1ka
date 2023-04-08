@@ -143,12 +143,8 @@ class Glasovanje {
 		echo '<label for="glasovanja_intro_0" class="pointer"><input type="radio" name="glasovanja_intro" value="0" id="glasovanja_intro_0" onClick="edit_glasovanje(\'' . $row2['spr_id'] . '\', this.value, \'show_intro\')" ' . ($rowA['show_intro'] == 0 ? ' checked' : '') . '/>' . $lang['no1'] . '</label><br /> ';
 
 		echo '<span class="nastavitveSpan4"><label>' . $lang['glasovanja_strani_outro'] . ':</label></span>';
-		echo '<label for="glasovanja_concl_1" class="pointer"><input type="radio" name="glasovanja_concl" value="1" id="glasovanja_concl_1" onClick="edit_glasovanje(\'' . $row2['spr_id'] . '\', this.value, \'show_concl\')" ' . ($rowA['show_concl'] == 1 ? ' checked' : '') . '/>' . $lang['glasovanja_strani_outro_show'] . '</label> ';
-		echo '<label for="glasovanja_concl_0" class="pointer"><input type="radio" name="glasovanja_concl" value="0" id="glasovanja_concl_0" onClick="edit_glasovanje(\'' . $row2['spr_id'] . '\', this.value, \'show_concl\')" ' . ($rowA['show_concl'] == 0 ? ' checked' : '') . '/>' . $lang['glasovanja_strani_outro_hide'] . '</label> ';
-		//echo '<input type="radio" name="glasovanja_concl" value="-1" id="glasovanja_concl_-1" onClick="edit_glasovanje(\'' . $row2['spr_id'] . '\', this.value, \'show_concl\')" ' . ($rowA['show_concl'] == -1 ? ' checked' : '') . '/><label for="glasovanja_concl_-1" class="pointer">' . $lang['glasovanja_strani_outro_hide'] . '</label> ';
-		// tega ni treba vec
-		/*if($rowA['show_concl'] != 1)
-			echo '<a href="#" onclick="vprasanje_fullscreen(\'-2\')">(' . $lang['edit3'] . ')</a>';*/
+		echo '<label for="glasovanja_concl_1" class="pointer"><input type="radio" name="glasovanja_concl" value="1" id="glasovanja_concl_1" onClick="edit_glasovanje(\'' . $row2['spr_id'] . '\', this.value, \'show_concl\')" ' . ($rowA['show_concl'] == 1 ? ' checked' : '') . '/>' . $lang['yes'] . '</label> ';
+		echo '<label for="glasovanja_concl_0" class="pointer"><input type="radio" name="glasovanja_concl" value="0" id="glasovanja_concl_0" onClick="edit_glasovanje(\'' . $row2['spr_id'] . '\', this.value, \'show_concl\')" ' . ($rowA['show_concl'] == 0 ? ' checked' : '') . '/>' . $lang['no1'] . '</label> ';
 		
 		echo '</fieldset>';
 
@@ -163,15 +159,11 @@ class Glasovanje {
 		echo '<span class="nastavitveSpan4" style="width: 140px;"><label>' . $lang['glasovanja_results_survey_title'] . ':</label></span>';
 		echo '<label><input type="radio" name="survey_hide_title" value="0" onClick="edit_glasovanje(\'' . $row2['spr_id'] . '\', this.value, \'survey_hide_title\')" '.($survey_hide_title == 0 ? ' checked="checked"' : '').'>' . $lang['yes'] . '</label> ';
 		echo '<label><input type="radio" name="survey_hide_title" value="1" onClick="edit_glasovanje(\'' . $row2['spr_id'] . '\', this.value, \'survey_hide_title\')" '.($survey_hide_title == 1 ? ' checked="checked"' : '').'>' . $lang['no1'] . '</label><br />';
-		/*echo '<input type="radio" name="glasovanja_survey_title" value="0" id="glasovanja_survey_title_0" onClick="edit_glasovanje(\'' . $row2['spr_id'] . '\', this.value, \'akronim\')" ' . ($rowA['akronim'] == ' ' ? ' checked' : '') . '/><label for="glasovanja_survey_title_0" class="pointer">' . $lang['no1'] . '</label> ';
-		echo '<input type="radio" name="glasovanja_survey_title" value="1" id="glasovanja_survey_title_1" onClick="edit_glasovanje(\'' . $row2['spr_id'] . '\', this.value, \'akronim\')" ' . ($rowA['akronim'] == '' ? ' checked' : '') . '/><label for="glasovanja_survey_title_1" class="pointer">' . $lang['yes'] . '</label> ';
-		echo '<input type="radio" name="glasovanja_survey_title" value="2" id="glasovanja_survey_title_2" onClick="edit_glasovanje(\'' . $row2['spr_id'] . '\', this.value, \'akronim\')" ' . ($rowA['akronim'] == $lang['poll'] ? ' checked' : '') . '/><label for="glasovanja_survey_title_2" class="pointer">"' . $lang['poll'] . '"</label><br /> ';*/
 		
 		//anketa v arhivu - prikaz arhiva
-		echo '<span class="nastavitveSpan4" style="width: 140px;"><label>' . $lang['glasovanja_results_archive'] . ':</label></span>';
+		echo '<span class="nastavitveSpan4" style="width: 140px;"><label>' . $lang['glasovanja_results_archive'] . ':</label>'. Help :: display('srv_glasovanje_archive').'</span>';
 		echo '<label for="stat_archive_1" class="pointer"><input type="radio" name="stat_archive" value="1" id="stat_archive_1" onClick="edit_glasovanje(\'' . $row2['spr_id'] . '\', this.value, \'stat_archive\')" ' . ($row2['stat_archive'] == 1 ? ' checked' : '') . '/>' . $lang['yes'] . '</label> ';
 		echo '<label for="stat_archive_0" class="pointer"><input type="radio" name="stat_archive" value="0" id="stat_archive_0" onClick="edit_glasovanje(\'' . $row2['spr_id'] . '\', this.value, \'stat_archive\')" ' . ($row2['stat_archive'] == 0 ? ' checked' : '') . '/>' . $lang['no1'] . '</label><br /> ';
-		//echo '<input type="checkbox" name="stat_archive" value="1" id="stat_archive" onClick="edit_glasovanje(\'' . $row2['spr_id'] . '\', this, \'stat_archive\')" ' . ($row2['stat_archive'] == 1 ? ' checked' : '') . '/><label for="stat_archive" class="pointer"></label><br /> ';	
 
 		echo '</fieldset>';
 		
@@ -187,26 +179,35 @@ class Glasovanje {
 		echo '<label for="show_stat_2" class="pointer"><input type="radio" name="show_stat" value="2" id="show_stat_2" onClick="edit_glasovanje(\'' . $row2['spr_id'] . '\', this.value, \'stat\')" ' . ($row['stat'] == 2 ? ' checked' : '') . '/>' . $lang['glasovanja_results_admin'] . '</label><br /> ';
 	
 		if($row['stat'] > 0){
-			//prikaz stevila glasov, v procentih in z grafom
+
+			// prikaz stevila glasov, v procentih in z grafom
+            echo '<div>';
 			echo '<span class="nastavitveSpan5" style="width: 100%;"><label>' . $lang['glasovanja_results_type'] . ':</label></span><br />';
 			echo '<label for="glasovanja_results" class="pointer"><input type="checkbox" name="glasovanja_results" value="1" id="glasovanja_results" onClick="edit_glasovanje(\'' . $row2['spr_id'] . '\', this, \'show_results\')" ' . ($row2['show_results'] == 1 ? ' checked' : '') . '/>' . $lang['glasovanja_results_count'] . '</label> ';
 			echo '<label for="glasovanja_percent" class="pointer"><input type="checkbox" name="glasovanja_percent" value="1" id="glasovanja_percent" onClick="edit_glasovanje(\'' . $row2['spr_id'] . '\', this, \'show_percent\')" ' . ($row2['show_percent'] == 1 ? ' checked' : '') . '/>' . $lang['glasovanja_results_percent'] . '</label> ';
 			echo '<label for="glasovanja_graph" class="pointer"><input type="checkbox" name="glasovanja_graph" value="1" id="glasovanja_graph" onClick="edit_glasovanje(\'' . $row2['spr_id'] . '\', this, \'show_graph\')" ' . ($row2['show_graph'] == 1 ? ' checked' : '') . '/>' . $lang['glasovanja_results_graph'] . '</label><br /> ';
+            echo '</div>';
 
-			//prikaz stevila glasov
+			// prikaz stevila glasov
+            echo '<div>';
 			echo '<span class="nastavitveSpan4"><label>' . $lang['glasovanja_results_allcount'] . ':</label></span>';
 			echo '<label for="glasovanja_count_0" class="pointer"><input type="radio" name="glasovanja_count" value="0" id="glasovanja_count_0" onClick="edit_glasovanje(\'' . $row2['spr_id'] . '\', this.value, \'stat_count\')" ' . ($row2['stat_count'] == 0 ? ' checked' : '') . '/>' . $lang['no1'] . '</label> ';
 			echo '<label for="glasovanja_count_1" class="pointer"><input type="radio" name="glasovanja_count" value="1" id="glasovanja_count_1" onClick="edit_glasovanje(\'' . $row2['spr_id'] . '\', this.value, \'stat_count\')" ' . ($row2['stat_count'] == 1 ? ' checked' : '') . '/>' . $lang['yes'] . '</label><br /> ';
+            echo '</div>';
 
-			//prikaz casa glasovanja
+			// prikaz casa glasovanja
+            echo '<div>';
 			echo '<span class="nastavitveSpan4"><label>' . $lang['glasovanja_results_time'] . ':</label></span>';
 			echo '<label for="glasovanja_time_0" class="pointer"><input type="radio" name="glasovanja_time" value="0" id="glasovanja_time_0" onClick="edit_glasovanje(\'' . $row2['spr_id'] . '\', this.value, \'stat_time\')" ' . ($row2['stat_time'] == 0 ? ' checked' : '') . '/>' . $lang['no1'] . '</label> ';
 			echo '<label for="glasovanja_time_1" class="pointer"><input type="radio" name="glasovanja_time" value="1" id="glasovanja_time_1" onClick="edit_glasovanje(\'' . $row2['spr_id'] . '\', this.value, \'stat_time\')" ' . ($row2['stat_time'] == 1 ? ' checked' : '') . '/>' . $lang['yes'] . '</label><br /> ';
+            echo '</div>';
 
-			//prikaz naslova vprasanja
+			// prikaz naslova vprasanja
+            echo '<div>';
 			echo '<span class="nastavitveSpan4"><label>' . $lang['glasovanja_results_title'] . ':</label></span>';
 			echo '<label for="glasovanja_title_1" class="pointer"><input type="radio" name="glasovanja_title" value="1" id="glasovanja_title_1" onClick="edit_glasovanje(\'' . $row2['spr_id'] . '\', this.value, \'show_title\')" ' . ($row2['show_title'] == 1 ? ' checked' : '') . '/>' . $lang['no1'] . '</label> ';
-			echo '<label for="glasovanja_title_0" class="pointer"><input type="radio" name="glasovanja_title" value="0" id="glasovanja_title_0" onClick="edit_glasovanje(\'' . $row2['spr_id'] . '\', this.value, \'show_title\')" ' . ($row2['show_title'] == 0 ? ' checked' : '') . '/>' . $lang['yes'] . '</label><br /> ';
+			echo '<label for="glasovanja_title_0" class="pointer"><input type="radio" name="glasovanja_title" value="0" id="glasovanja_title_0" onClick="edit_glasovanje(\'' . $row2['spr_id'] . '\', this.value, \'show_title\')" ' . ($row2['show_title'] == 0 ? ' checked' : '') . '/>' . $lang['yes'] . '</label> ';
+            echo '</div>';
 		}
 		echo '</fieldset>';
 
@@ -214,82 +215,78 @@ class Glasovanje {
 		// SPODNJE EXTRA NASTAVITVE
 		echo '<div id="glas_extra_settings" '.($displayExtra==0 ? ' style="display: none;"' : '').' >';
 
-			//PISKOTEK
-			echo '    <fieldset>'. NEW_LINE;
-			echo '    <legend>' . $lang['cookie'] . '</legend>'. NEW_LINE;
-
-			//piskotek shrani
-			echo '<span class="nastavitveSpan4" style="width: 100%;"><label>' . $lang['srv_cookie'] . ':</label></span><br />';
-			echo '<label for="cookie_-1" class="pointer"><input type="radio" name="cookie" value="-1" id="cookie_-1" onClick="edit_glasovanje(\'' . $rowA['spr_id'] . '\', this.value, \'cookie\')" ' . ($rowA['cookie'] == -1 ? ' checked' : '') . '/>' . $lang['a_without'] . '</label> ';
-			echo '<label for="cookie_1" class="pointer"><input type="radio" name="cookie" value="1" id="cookie_1" onClick="edit_glasovanje(\'' . $rowA['spr_id'] . '\', this.value, \'cookie\')" ' . ($rowA['cookie'] == 1 ? ' checked' : '') . '/>' . $lang['srv_cookie_1'] . '</label><br /> ';
-
-			echo '    </fieldset>';
-
-			//TRAJANJE
+			// TRAJANJE
 			echo '    <fieldset>'. NEW_LINE;
 			echo '    <legend>' . $lang['duration'] . '</legend>'. NEW_LINE;
 
-			echo '<span class="nastavitveSpan4" style="width: 100%;"><label>' . $lang['srv_starts'] . ':</label></span><br/>';
-			echo '<input id="starts" type="text" name="starts" value="' . $rowA['starts'] . '" onBlur="edit_glasovanje(\'' . $rowA['spr_id'] . '\', this.value, \'starts\')" />
-			<span class="faicon calendar_icon icon-as_link" id="starts_img"></span>
-			<script type="text/javascript">
-			Calendar.setup({
-			inputField  : "starts",
-			ifFormat    : "%Y-%m-%d",
-			button      : "starts_img",
-			singleClick : true,
+			echo '<span class="nastavitveSpan4" style="width: 100%;"><label>' . $lang['srv_starts'] . ':</label></span>';
+			echo '<p><input id="starts" type="text" name="starts" value="' . date('d.m.Y', strtotime($rowA['starts'])) . '" disabled autocomplete="off"></p>';
 
-			onUpdate : function() {
-			edit_glasovanje(\'' . $rowA['spr_id'] . '\', document.getElementById("starts").value, \'starts\');
-			}
-			});
-			</script>
-			';
-			echo '<br/>';
-			echo '<span class="nastavitveSpan4" style="width: 100%;"><label>' . $lang['srv_expire'] . ':</label></span><br/>';
-			echo '<input id="expire" type="text" name="expire" value="' . $rowA['expire'] . '" onBlur="edit_glasovanje(\'' . $rowA['spr_id'] . '\', this.value, \'expire\')" />
-			<span class="faicon calendar_icon icon-as_link" id="expire_img"></span>
-			<script type="text/javascript">
-				Calendar.setup({
-					inputField  : "expire",
-					ifFormat    : "%Y-%m-%d",
-					button      : "expire_img",
-					singleClick : true,
-					onUpdate : function() {
-						edit_glasovanje(\'' . $rowA['spr_id'] . '\', document.getElementById("expire").value, \'expire\');
-					}
-				});
-			</script>
-			';
-			echo '<br/>';
+			echo '<span class="nastavitveSpan4" style="width: 100%;"><label>' . $lang['srv_expire'] . ':</label></span>';
+			echo '<p><input id="expire" type="text" name="expire" value="' . date('d.m.Y', strtotime($rowA['expire'])) . '" disabled autocomplete="off"></p>';
+
+            echo '<script type="text/javascript">	
+
+                    $(document).ready(function() {
+            			$( "#starts" ).datepicker({
+							showOtherMonths: true,
+							selectOtherMonths: true,
+							changeMonth: true,
+							changeYear: true,
+							dateFormat: "dd.mm.yy",
+							showAnim: "slideDown",
+							showOn: "button",
+							buttonText: "",
+							onSelect: function(selected, evnt) {
+								edit_glasovanje(\'' . $rowA['spr_id'] . '\', this.value, \'starts\')
+            				}
+            			});
+                        $( "#expire" ).datepicker({
+							showOtherMonths: true,
+							selectOtherMonths: true,
+							changeMonth: true,
+							changeYear: true,
+							dateFormat: "dd.mm.yy",
+							showAnim: "slideDown",
+							showOn: "button",
+							buttonText: "",
+							onSelect: function(selected, evnt) {
+								edit_glasovanje(\'' . $rowA['spr_id'] . '\', this.value, \'expire\')
+            				}
+            			});
+            		});
+                </script>';
 
 			echo '    </fieldset>';
 
 
-			//Izbira skina za glasovanje				
+			// Izbira skina za glasovanje				
 
 			echo '<fieldset>';
 			echo '<legend>' . $lang['srv_themes'] . '</legend>';
 
-			//izbira skina
+
+			// Izbira skina za anketo
 			echo '<span class="nastavitveSpan4"><label>' . $lang['glasovanja_theme'] . ':</label></span>';
 
-			$dir = opendir($site_path . 'main/survey/skins/');
+            echo '<select name="skin_anketa" id="skin_anketa" onChange="edit_glasovanje(\'' . $row2['spr_id'] . '\', this.value, \'skin_anketa\')">' . NEW_LINE;
 
-			echo '<select name="skin_anketa" id="skin_anketa" onChange="edit_glasovanje(\'' . $row2['spr_id'] . '\', this.value, \'skin_anketa\')">' . NEW_LINE;
-			while ($file = readdir($dir)) {
-				if ($file != '.' && $file != '..' && $file != '.svn' && strtolower(substr($file, -4, 4)) == '.css')
-					echo '            <option value="' . substr($file, 0, -4) . '"' . ($rowA['skin'] == substr($file, 0, -4) ? ' selected="selected"' : '') . '>' . substr($file, 0, -4) . '</option>' . NEW_LINE;
-				elseif ($file != '.' && $file != '..' && $file != '.svn' && strtolower(substr($file, -4, 4)) != '.css') {
-					if (is_file($site_path . 'main/survey/skins/' . $file . '/' . $file . '.css')) {
-						echo '            <option value="' . $file . '"' . ($rowA['skin'] == $file ? ' selected="selected"' : '') . '>' . $file . '</option>' . NEW_LINE;
-					}
+            $st = new SurveyTheme();
+			$skins = $st->getGroups();
+			foreach ($skins['0']['skins'] as $key => $skin) {
+
+				$simple_name = preg_replace("/\.css$/", '', $skin);
+
+				// Default skin po novem izkljucimo
+				if ($simple_name != 'Default') {
+                    echo '  <option value="'.$simple_name.'"' . ($rowA['skin'] == $simple_name ? ' selected="selected"' : '') . '>'.($simple_name == '1kaBlue' ? $simple_name.' (' . $lang['default'] . ')' : $simple_name).'</option>' . NEW_LINE;
 				}
 			}
+
 			echo '</select><br>' . NEW_LINE;
 			
-			
-			//izbira skina za statistiko
+
+			// Izbira skina za statistiko
 			echo '<span class="nastavitveSpan4"><label>' . $lang['glasovanja_stat_theme'] . ':</label></span>';
 
 			$dir = opendir($site_path . 'main/survey/skins/glasovanje/');
@@ -474,90 +471,12 @@ class Glasovanje {
 
 			echo '<div class="save_button">';
 			echo '  <span class="floatLeft spaceRight"><div class="buttonwrapper" id="save_button_'.$id.'" ><a class="ovalbutton ovalbutton_orange" href="#" onclick="normalmode_introconcl(\''.$id.'\',\''.$editmode.'\',\''.$fullscreen.'\'); return false;"><span>';
-			//echo '<img src="icons/icons/accept.png" alt="" vartical-align="middle" />';
-			echo $lang['srv_potrdi'].'</span></a></div></span>';
-			echo '</div>';
-			echo '<div class="clr"></div>';
-        }
-        echo '      </div> <!-- /spremenljivka_content_'.$id.' -->'."\n\r";
-		
-		
-		
-		
-		
-/*
-		//if ($row['statistics'] == '') {
-		//	$text = $lang['results'];
-		//} else {
-		//	$text = $row['statistics'];
-		//}
-		$text = $row['statistics'];
-
-        echo '      <div id="spremenljivka_content_'.$id.'" class="spremenljivka_content'.($editmode==1?' active':'').'" spr_id="'.$id.'" '.($editmode==0?'onclick="editmode_introconcl(\''.$id.'\');"':'').'>'."\n\r";
-
-        if ($editmode == 0) {
-			// <-- Zgornja vrstica pri editiranju vprasanj ---
-			echo '<div class="spremenljivka_settings spremenljivka_settings_active">';
-			echo '<div style="float:left;width:auto;">';
-			// variabla
-			echo '<div class="variable_name" id="div_variable_'.$id.'">';
-			echo $lang['srv_statistics_edit'];
-			echo '</div>'."\n\r";
-			echo '</div>';		
-			echo '<div class="clr"></div>';
-			echo '</div>';
-			// --- Zgornja vrstica pri editiranju vprasanj --> 
-
-			// <-- Editor teksta vprasanja --- 
-			echo '<div class="spremenljivka_tekst_form">';
-
-			echo '<span>'.$text.'</span>';
-			echo '<div class="clr"></div>';        
-						
-			echo '</div>';
-					
-			// --- Editor teksta vprasanja --> 
-
-
-
-			echo '<div class="clr"></div>';
-
-        } 
-		else {
-
-			// <-- Zgornja vrstica pri editiranju vprasanj ---
-			echo '<div class="spremenljivka_settings spremenljivka_settings_active">';
-			echo '<div style="float:left;width:auto;">';
-			// variabla
-			echo '<div class="variable_name" id="div_variable_-3">';
-			echo $lang['srv_statistics_edit'];
-			echo '</div>'."\n\r";
-			echo '</div>';	
-			echo '<div class="clr"></div>';
-			echo '</div>';
-			// --- Zgornja vrstica pri editiranju vprasanj --> 
-
-			echo '      <form name="editintro_'.substr($id, 1, 1).'" action="" method="post">'."\n\r";
-			// <-- Editor teksta vprasanja --- 
-			echo '<div class="spremenljivka_tekst_form">';
-			echo '<div id="editor_display_'.$id.'" class="editor_display" onclick="editor_display(\''.$id.'\'); $(this).hide();"><small>Editor</small></div>';
-			echo '<textarea name="naslov_'.$id.'" class="texteditor naslov" id="naslov_'.$id.'" >'.$text.'</textarea>';
-			echo '<div class="clr"></div>';        
-						
-			echo '</div>';
-			echo '</form>';
-					
-			// --- Editor teksta vprasanja --> 
-
-			echo '<div class="save_button">';
-			echo '  <span class="floatLeft spaceRight"><div class="buttonwrapper" id="save_button_'.$id.'" ><a class="ovalbutton ovalbutton_orange" href="#" onclick="normalmode_introconcl(\''.$id.'\',\''.$editmode.'\',\''.$fullscreen.'\'); return false;"><span>';
 			echo $lang['srv_potrdi'].'</span></a></div></span>';
 			echo '</div>';
 			echo '<div class="clr"></div>';
         }
 
         echo '      </div> <!-- /spremenljivka_content_'.$id.' -->'."\n\r";
-*/
     }
 
 
@@ -590,23 +509,20 @@ class Glasovanje {
 				else
 					sisplet_query("UPDATE srv_anketa SET show_concl='1' WHERE id = '$this->anketa'");
 			}
-
+            elseif($what == 'starts' || $what == 'expire') {
+                $results_date = date('Y-m-d', strtotime($results));
+				sisplet_query("UPDATE srv_anketa SET $what = '$results_date' WHERE id = '$this->anketa'");
+			}
 			elseif($what == 'show_intro' || $what == 'show_concl' || $what == 'cookie' || $what == 'user_from_cms' || $what == 'block_ip' || $what == 'starts' || $what == 'expire' || $what == 'vote_limit' || $what == 'vote_count' || $what == 'countType' || $what == 'progressbar') {
 				sisplet_query("UPDATE srv_anketa SET $what = '$results' WHERE id = '$this->anketa'");
 			}
-			
 			elseif($what == 'survey_hide_title') {
 				SurveySetting::getInstance()->Init($this->anketa);
 				SurveySetting::getInstance()->setSurveyMiscSetting('survey_hide_title', $results);
 			}
-
 			elseif($what == 'finish_author' || $what == 'finish_respondent_cms' || $what == 'finish_other' | $what == 'finish_other_emails') {
-				sisplet_query("INSERT INTO srv_alert (ank_id, $what) VALUES ('$this->anketa', '$results')
-				ON DUPLICATE KEY UPDATE $what = '$results' ");
-
-				//sisplet_query("UPDATE srv_alert SET $what = '$results' WHERE ank_id = '$this->anketa'");
-			}
-			
+				sisplet_query("INSERT INTO srv_alert (ank_id, $what) VALUES ('$this->anketa', '$results') ON DUPLICATE KEY UPDATE $what = '$results' ");
+			}	
 			elseif($what == 'akronim') {
 				if($results == 0)
 					sisplet_query("UPDATE srv_anketa SET $what = ' ' WHERE id = '$this->anketa'");
@@ -615,11 +531,9 @@ class Glasovanje {
 				else
 					sisplet_query("UPDATE srv_anketa SET $what = '$lang[poll]' WHERE id = '$this->anketa'");
 			}
-			
 			elseif($what == 'skin_anketa') {
 				sisplet_query("UPDATE srv_anketa SET skin = '$results' WHERE id = '$this->anketa'");
 			}
-
 			elseif($what == 'embed'){
 				sisplet_query("UPDATE srv_glasovanje SET $what = '$results' WHERE spr_id = '$spremenljivka'");
 				
@@ -636,7 +550,6 @@ class Glasovanje {
 					sisplet_query("UPDATE srv_anketa SET skin='Default', concl_end_button='1', concl_back_button='1' WHERE id = '$this->anketa'");
 				}
 			}
-			
 			else{
 				sisplet_query("UPDATE srv_glasovanje SET $what = '$results' WHERE spr_id = '$spremenljivka'");			
 			}

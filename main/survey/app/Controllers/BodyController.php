@@ -30,6 +30,7 @@ use SurveyGorenje;
 use SurveyNIJZ;
 use GDPR;
 use UserAccess;
+use AppSettings;
 
 
 class BodyController extends Controller
@@ -395,14 +396,13 @@ class BodyController extends Controller
 
 		// Ce imamo staticen uvod in preverjanje s captcho
 		if($row['intro_static'] == 2){
-			global $recaptcha_sitekey;
 
 			$captcha_error = (isset($_GET['captcha_error']) && $_GET['captcha_error'] == 1) ? true : false;
 
 			echo '<br />';
 
 			echo '<p>';
-			echo '<div class="g-recaptcha" data-sitekey="' .$recaptcha_sitekey .'"></div>';
+			echo '<div class="g-recaptcha" data-sitekey="'.AppSettings::getInstance()->getSetting('google-recaptcha_sitekey').'"></div>';
 			echo '</p>';
 
 			if($captcha_error){
@@ -445,7 +445,6 @@ class BodyController extends Controller
      ************************************************/
 	public function displayStaticIntroduction()
 	{
-
         $row = SurveyInfo::getInstance()->getSurveyRow();
 
         // datapiping
@@ -459,6 +458,24 @@ class BodyController extends Controller
         elseif (isset($_GET['mobile']) && $_GET['mobile'] == 2)
             $class .= ' tablet_preview';
 
+            
+        // Spremenljivke, ki se rabijo v JS
+        echo '  <script>													' . "\n";
+						                                
+        echo '    var srv_meta_anketa_id = ' . get('anketa') . ';         	' . "\n";
+		echo '    var srv_site_url = \'' . self::$site_url . '\';           ' . "\n";
+		echo '    var _lang = \'' . self::$lang['language'] . '\';          ' . "\n";
+        
+        // GDPR popup
+        echo '    $(".gdpr_popup_trigger").click(function(){ show_gdpr_about(\''.get('lang_id').'\'); });' . "\n";
+
+        echo '  </script>                                                   ' . "\n";
+
+
+        // crn div za ozadje popupov
+		echo '<div id="fade"></div>';
+		echo '<div id="popup"></div>';
+        
 
         echo '<div class="outercontainer_holder ' . $class . ' uvod_static">';
         echo '<div class="outercontainer_holder_top"></div>';
@@ -657,7 +674,6 @@ class BodyController extends Controller
         global $lang;
         global $admin_type;
         global $site_url;
-        global $app_settings;
 
         Header::getInstance()->displaySistemske();
 
@@ -676,6 +692,7 @@ class BodyController extends Controller
                 $sql4 = sisplet_query("SELECT d.* FROM srv_spremenljivka s, srv_grupa g, srv_data_text" . get('db_table') . " d WHERE g.ank_id='" . get('anketa') . "'AND s.gru_id=g.id AND s.sistem='1' AND s.variable='sifizv1' AND d.spr_id=s.id AND d.usr_id='" . get('usr_id') . "'");
                 $sql5 = sisplet_query("SELECT s.* FROM srv_spremenljivka s, srv_grupa g WHERE g.ank_id='" . get('anketa') . "'AND s.gru_id=g.id AND s.sistem='1' AND s.variable='podipl'");
                 $sql6 = sisplet_query("SELECT s.* FROM srv_spremenljivka s, srv_grupa g WHERE g.ank_id='" . get('anketa') . "'AND s.gru_id=g.id AND s.sistem='1' AND s.variable='podipl2'");
+                $sql7 = sisplet_query("SELECT s.* FROM srv_spremenljivka s, srv_grupa g WHERE g.ank_id='" . get('anketa') . "'AND s.gru_id=g.id AND s.sistem='1' AND s.variable='podipl3'");
 
                 // Ce imamo sifro predmeta gre za anketo za ocenjevanje predmetov
                 if (mysqli_num_rows($sql2) > 0) {
@@ -710,6 +727,16 @@ class BodyController extends Controller
 
                     // student je v celoti odgovoril na anketo
                     sisplet_query("INSERT INTO eval_data_podipl2 (student, ank_id) VALUES ('$row1[student]', '" . get('anketa') . "')");
+
+					// Pobrisemo md5 (id studenta) iz zacasne tabele eval_data_user zaradi anonimnosti
+					sisplet_query("DELETE FROM eval_data_user WHERE usr_id='".get('usr_id')."' AND ank_id='".get('anketa')."'");
+                }
+                // splosna PODIPLOMSKA anketa 3 (ena na studenta, brez predmetov)
+                elseif (mysqli_num_rows($sql7) > 0) {
+                    $row1 = mysqli_fetch_array($sql1);
+
+                    // student je v celoti odgovoril na anketo
+                    sisplet_query("INSERT INTO eval_data_podipl3 (student, ank_id) VALUES ('$row1[student]', '" . get('anketa') . "')");
 
 					// Pobrisemo md5 (id studenta) iz zacasne tabele eval_data_user zaradi anonimnosti
 					sisplet_query("DELETE FROM eval_data_user WHERE usr_id='".get('usr_id')."' AND ank_id='".get('anketa')."'");
@@ -827,7 +854,7 @@ class BodyController extends Controller
 				$panel_settings = $sp->getPanelSettings();
                 
                 // Posebno samo za ipanel - Izraelski projekt
-                if($app_settings['app_name'] == 'www.1ka.si' && (get('anketa') == '232992' || get('anketa') == '232795' || get('anketa') == '248217' || get('anketa') == '248757' || get('anketa') == '248762')){
+                if(AppSettings::getInstance()->getSetting('app_settings-app_name') == 'www.1ka.si' && (get('anketa') == '232992' || get('anketa') == '232795' || get('anketa') == '248217' || get('anketa') == '248757' || get('anketa') == '248762')){
 
                     // Pridobimo id panelista ki je bil shranjen na zacetku resevanja v sistemsko spremenljivko
                     $sqlP = sisplet_query("SELECT d.*, s.variable FROM srv_data_text".get('db_table')." d, srv_spremenljivka s, srv_grupa g 
@@ -890,10 +917,10 @@ class BodyController extends Controller
                     // Glede na vrednost
                     $naslednja = array_search($resevanje->koda, $kode) + 1;
 
-                    $url = sisplet_query("SELECT url FROM srv_hierarhija_koda WHERE koda='".$kode[$naslednja]."'", "obj");
+                    $url = sisplet_query("SELECT h.url, a.hash FROM srv_hierarhija_koda h, srv_anketa a WHERE h.koda='".$kode[$naslednja]."' AND h.anketa_id=a.id", "obj");
 
                     $url_encode_spremenljivke = urlencode(base64_encode($url->url . '&supersifra=' . $resevanje->supersifra.'&resujem='.$naslednja));
-                    $redirect = $site_url .'a/'.get('anketa').'?enc='.$url_encode_spremenljivke;
+                    $redirect = $site_url .'a/'.$url->hash.'?enc='.$url_encode_spremenljivke;
 
                     header("Location: $redirect");
                 }
@@ -943,8 +970,8 @@ class BodyController extends Controller
 			
 			
 			// URL na katerega skocimo ce se zapre okno - pogledamo ce imamo nastavljen custom url (settings_optional.php)
-            if(isset($app_settings['survey_finish_url']) && $app_settings['survey_finish_url'] != '')
-                $close_url = $app_settings['survey_finish_url'];
+            if(AppSettings::getInstance()->getSetting('app_settings-survey_finish_url') !== false)
+                $close_url = AppSettings::getInstance()->getSetting('app_settings-survey_finish_url');
             else
                 $close_url = 'https://www.1ka.si/';
             
@@ -1013,7 +1040,6 @@ class BodyController extends Controller
                 echo '</div>' . "\n"; //-grupa
 
                 if ($row['user_from_cms'] == 2) {
-                    //echo '<p style="text-align:center"><a href="'.$site_url.'a/'.$this->anketa.'">'.$lang['srv_nextins'].'</a></p>';
                     echo '<p style="text-align:center"><a href="' . SurveyInfo::getSurveyLink() . '">' . $lang['srv_nextins'] . '</a></p>';
                 }
 
@@ -1090,9 +1116,7 @@ class BodyController extends Controller
 
                     if (!get('printPreview')) {
                         $srv_konec = SurveySetting::getInstance()->getSurveyMiscSetting('srvlang_srv_konec' . $_lang);
-                        /*if ($row['text'] != '')	// besedilo koncne povezave shranimo v misc setting, da bo konsistentno z ostalimi prevodi
-                            $text = $row['text'];
-                        else*/
+
                         if ($srv_konec != '')
                             $text = $srv_konec;
                         else
@@ -1108,7 +1132,7 @@ class BodyController extends Controller
                 if ($row['user_from_cms'] == 2 && $row['user_from_cms_email'] == 1 && $admin_type <= 2) { // vnosos
                     $sqlg = sisplet_query("SELECT id FROM srv_grupa WHERE ank_id='" . get('anketa') . "'ORDER BY vrstni_red ASC LIMIT 1");
                     $rowg = mysqli_fetch_array($sqlg);
-                    //echo '<p class="vnos"><a href="'.$site_url.'a/'.$this->anketa.'&grupa='.$rowg['id'].'">'.$lang['srv_nextins'].'</a> | <a href="'.$site_url.'admin/survey/index.php?anketa='.$this->anketa.'">'.$lang['srv_insend'].'</a></p>';
+
                     echo '<p class="vnos"><a href="' . SurveyInfo::getSurveyLink() . '&grupa=' . $rowg['id'] . '">' . $lang['srv_nextins'] . '</a> | <a href="' . $site_url . 'admin/survey/index.php?anketa=' . get('anketa') . '">' . $lang['srv_insend'] . '</a></p>';
                 }
 
@@ -1230,7 +1254,7 @@ class BodyController extends Controller
         
         // SKAVTI - prikaz povzetka odgovorov in grafa
         global $mysql_database_name;
-        //if($mysql_database_name == '1ka' && get('anketa') == '64'){
+        //if($mysql_database_name == '1ka' && get('anketa') == '52'){
         if($mysql_database_name == 'real1kasi' && (get('anketa') == '293926' || get('anketa') == '314856' || get('anketa') == '332793')){
 			echo '<div id="skavti_answers">';
 			Display::getInstance()->displaySkavtiAnswers();
@@ -1263,11 +1287,10 @@ class BodyController extends Controller
      * @desc prikaze konec ankete
      */
     public function displayKonecGlasovanje(){
-        global $app_settings;
 
         echo '<script>var srv_meta_anketa_id = ' . get('anketa') . ';</script>';
 
-        //izpis zakljucka
+        // izpis zakljucka
         if (isset($_GET['glas_end']) && $_GET['glas_end'] == 1) {
             if (!get('printPreview')) {
 
@@ -1287,8 +1310,8 @@ class BodyController extends Controller
 
 
 				// URL na katerega skocimo ce se zapre okno - pogledamo ce imamo nastavljen custom url (settings_optional.php)
-                if(isset($app_settings['survey_finish_url']) && $app_settings['survey_finish_url'] != '')
-                    $close_url = $app_settings['survey_finish_url'];
+                if(AppSettings::getInstance()->getSetting('app_settings-survey_finish_url') !== false)
+                    $close_url = AppSettings::getInstance()->getSetting('app_settings-survey_finish_url');
                 else
                     $close_url = 'https://www.1ka.si/';
 				
@@ -1304,11 +1327,19 @@ class BodyController extends Controller
                     }
                 }
 
+                SurveySetting::getInstance()->Init(get('anketa'));
+                $hide_mobile_img = SurveySetting::getInstance()->getSurveyMiscSetting('hide_mobile_img');
+                $class = ($hide_mobile_img == '1') ? 'hide_mobile_img' : '';
+                if (isset($_GET['mobile']) && $_GET['mobile'] == 1)
+                    $class .= ' mobile_preview';
+                elseif (isset($_GET['mobile']) && $_GET['mobile'] == 2)
+                    $class .= ' tablet_preview';
 
-                echo '<div class="outercontainer_holder concl_glasovanje">';
+
+                echo '<div class="outercontainer_holder '.$class.' concl_glasovanje">';
                 echo '<div class="outercontainer_holder_top"></div>';
 
-                echo '<div id="outercontainer concl_glasovanje">' . "\n";
+                echo '<div id="outercontainer" class="'.$class.'">' . "\n";
 				echo '<div class="outercontainer_header"></div>';
 				
                 echo '<div id="container">' . "\n";
@@ -1328,7 +1359,7 @@ class BodyController extends Controller
                 } else {
                     $concl = $row['conclusion'];
                 }
-                echo '    <h3><p>' . $concl . '</p></h3>' . "\n";
+                echo '    <div class="naslov"><p>' . $concl . '</p></div>' . "\n";
 
                 echo '  </div>' . "\n";
 
@@ -1397,14 +1428,29 @@ class BodyController extends Controller
 
             //ce statistike ne prikazujemo skocimo na zakljucek (ce imammo izklopljeno ali nastavleno na samo urednike in ni urednik)
             if ($rows['stat'] == 0 || ($rows['stat'] == 2 && self::$admin_type != 0 && self::$admin_type != 1)) {
-                //header('Location: '.self::$site_url.'a/'.get('anketa').'&grupa='.get('grupa').'&glas_end=1'.get('cookie_url').'');
-                header('Location: ' . SurveyInfo::getSurveyLink() . '&grupa=' . get('grupa') . (isset($_GET['language']) ? '&language=' . $_GET['language'] : '') . '&glas_end=1' . get('cookie_url') . '');
-            } else {
+                header('Location: ' . SurveyInfo::getSurveyLink() 
+                    . '&grupa=' . get('grupa') 
+                    . (isset($_GET['language']) ? '&language=' . $_GET['language'] : '')
+                    . '&glas_end=1'
+                    . (isset($_GET['preview']) ? '&preview=' . $_GET['preview'] : '')
+                    . (isset($_GET['mobile']) ? '&mobile=' . $_GET['mobile'] : '')
+                    . get('cookie_url') . '');
+            } 
+            else {
 
-                echo '<div class="outercontainer_holder concl_statistika">';
+                SurveySetting::getInstance()->Init(get('anketa'));
+                $hide_mobile_img = SurveySetting::getInstance()->getSurveyMiscSetting('hide_mobile_img');
+                $class = ($hide_mobile_img == '1') ? 'hide_mobile_img' : '';
+                if (isset($_GET['mobile']) && $_GET['mobile'] == 1)
+                    $class .= ' mobile_preview';
+                elseif (isset($_GET['mobile']) && $_GET['mobile'] == 2)
+                    $class .= ' tablet_preview';
+
+
+                echo '<div class="outercontainer_holder '.$class.' concl_statistika">';
                 echo '<div class="outercontainer_holder_top"></div>';
 
-                echo '<div id="outercontainer concl_statistika">' . "\n";
+                echo '<div id="outercontainer" class="concl_statistika '.$class.'">' . "\n";
 				echo '<div class="outercontainer_header"></div>';
 				
                 echo '<div id="container">' . "\n";
@@ -1420,8 +1466,8 @@ class BodyController extends Controller
                 echo '</div>' . "\n";
 
                 echo '<div class="buttons">';
-                //$url_stat = ''.self::$site_url.'a/'.get('anketa').'&grupa='.get('grupa').'&glas_end=1'.get('cookie_url');
-                $url_stat = '' . SurveyInfo::getSurveyLink() . '&grupa=' . get('grupa') . (isset($_GET['language']) ? '&language=' . $_GET['language'] : '') . '&glas_end=1' . get('cookie_url');
+
+                $url_stat = '' . SurveyInfo::getSurveyLink() . '&grupa=' . get('grupa') . (isset($_GET['language']) ? '&language=' . $_GET['language'] : '') . '&glas_end=1' . (isset($_GET['preview']) ? '&preview=' . $_GET['preview'] : '').(isset($_GET['mobile']) ? '&mobile=' . $_GET['mobile'] : '').get('cookie_url');
                 $js = 'document.location.href=\'' . $url_stat . '\';';
 
                 // Gumb nazaj
@@ -1629,8 +1675,8 @@ class BodyController extends Controller
 			if ($row['user_from_cms'] == 2 && $row['user_from_cms_email'] == 1 && $admin_type <= 2) { // vnosos
 				$sqlg = sisplet_query("SELECT id FROM srv_grupa WHERE ank_id='" . get('anketa') . "'ORDER BY vrstni_red ASC LIMIT 1");
 				$rowg = mysqli_fetch_array($sqlg);
-				//echo '<p class="vnos"><a href="'.$site_url.'a/'.$this->anketa.'&grupa='.$rowg['id'].'">'.$lang['srv_nextins'].'</a> | <a href="'.$site_url.'admin/survey/index.php?anketa='.$this->anketa.'">'.$lang['srv_insend'].'</a></p>';
-				echo '<p class="vnos"><a href="' . SurveyInfo::getSurveyLink() . '&grupa=' . $rowg['id'] . '">' . $lang['srv_nextins'] . '</a> | <a href="' . $site_url . 'admin/survey/index.php?anketa=' . get('anketa') . '">' . $lang['srv_insend'] . '</a></p>';
+
+                echo '<p class="vnos"><a href="' . SurveyInfo::getSurveyLink() . '&grupa=' . $rowg['id'] . '">' . $lang['srv_nextins'] . '</a> | <a href="' . $site_url . 'admin/survey/index.php?anketa=' . get('anketa') . '">' . $lang['srv_insend'] . '</a></p>';
 			}
 
             echo '</div>' . "\n"; // -container
@@ -1693,7 +1739,7 @@ class BodyController extends Controller
 
 				// Preverimo ce gre za prvo popravljanje podatkov in avtomatsko ustvarimo arhiv podatkov ce je potrebno
 				//ob_flush();	// ZAKAJ JE TUKAJ TA FLUSH? KER POTEM NE DELA NAKNADNO UREJANJE CE IMA ANKETA LOOPE
-				$sas = new SurveyAdminSettings();
+				$sas = new SurveyAdminSettings($action=0, $anketa=get('anketa'));
 				$sas->checkFirstDataChange();
 
 				// Updatamo tracking (ker gre za editiranje odgovorov)
@@ -1907,7 +1953,7 @@ class BodyController extends Controller
 
 
     public function displayFooterNote(){
-        global $mysql_database_name, $app_settings;
+        global $mysql_database_name;
 
         $row = SurveyInfo::getInstance()->getSurveyRow();
 
@@ -1919,9 +1965,8 @@ class BodyController extends Controller
         }
 
         // Custom footer
-        if(isset($app_settings['footer_survey_custom']) && $app_settings['footer_survey_custom'] == 1){
-
-            echo '<p>'.$app_settings['footer_survey_text'].'</p>';
+        if(AppSettings::getInstance()->getSetting('app_settings-footer_survey_custom') !== false){
+            echo '<p>'.AppSettings::getInstance()->getSetting('app_settings-footer_survey_text').'</p>';
         }
         // Default footer
         else{
@@ -2174,6 +2219,9 @@ class BodyController extends Controller
 
             if (isset($_GET['code']))
                 echo '<input type="hidden" name="code" value="' . $_GET['code'] . '">';
+
+            if (isset($_GET['glas_end']))
+                echo '<input type="hidden" name="glas_end" value="' . $_GET['glas_end'] . '">';
 
             echo '<p><label for="disableif"><input type="checkbox" value="1" ' . ($_GET['disableif'] == '1' ? ' checked' : '') . ' name="disableif" id="disableif" onchange="document.change_diable.submit();"><span class="enka-checkbox-radio"></span>';
             echo ' ' . self::$lang['srv_disableif'] . '</label></p>';

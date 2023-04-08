@@ -151,16 +151,9 @@ class Profile {
 
 			$this->ZePrijavljen = true;
 
-			// Preveri ce moramo po registraciji vrec na kak URL
-			$rt = sisplet_query ("SELECT value FROM misc WHERE what='AfterReg'");
-			$rxx = mysqli_fetch_row ($rt);
-
-			if (strlen ($rxx[0]) > 3){
-				$rxx[0] = str_replace ($originating_domain, $keep_domain, $rxx[0]);
-				header ('location: ' .$rxx[0] .'?&l=1');
-			}
-			else 
-				header ('location: /index.php');
+            // Moramo po registraciji vrec na kak URL
+            $rxx = str_replace ($originating_domain, $keep_domain, '/admin/survey/');
+            header ('location: '.$rxx.'?&l=1');
 		}
 		else 
 			header ('location: /index.php'); 
@@ -223,24 +216,15 @@ class Profile {
 
 		$this->ZePrijavljen = true;
 
-		// Preveri ce moramo po registraciji vrec na kak URL
-		$rt = sisplet_query ("SELECT value FROM misc WHERE what='AfterReg'");
-		$rxx = mysqli_fetch_row ($rt);
-
-		if (strlen ($rxx[0]) > 3){
-			$rxx[0] = str_replace ($originating_domain, $keep_domain, $rxx[0]);
-			header ('location: ' .$rxx[0] .'?&l=1');
-		}
-		else 
-			header ('location: /index.php');
+        // Moramo po registraciji vrec na kak URL
+        $rxx = str_replace ($originating_domain, $keep_domain, '/admin/survey/');
+        header ('location: '.$rxx.'?&l=1');
 	}
 	
 	function GoogleLogin () {
 		
 		require_once ('../function/JWT.php');
-		
-		global $google_login_client_id;
-		global $google_login_client_secret;
+
 		global $site_url;
 		global $lang;
 		global $proxy;
@@ -254,8 +238,8 @@ class Profile {
 					'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
 					'method'  => 'POST',
 					'content' => http_build_query(array(
-						'client_id' => $google_login_client_id,
-						'client_secret' => $google_login_client_secret,
+						'client_id' => AppSettings::getInstance()->getSetting('google-login_client_id'),
+						'client_secret' => AppSettings::getInstance()->getSetting('google-login_client_secret'),
 						'code' => $oauth2_code,
 						'grant_type' => 'authorization_code',
 						'redirect_uri' => $site_url .'utils/google-oauth2.php',
@@ -272,8 +256,8 @@ class Profile {
 					'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
 					'method'  => 'POST',
 					'content' => http_build_query(array(
-						'client_id' => $google_login_client_id,
-						'client_secret' => $google_login_client_secret,
+						'client_id' => AppSettings::getInstance()->getSetting('google-login_client_id'),
+						'client_secret' => AppSettings::getInstance()->getSetting('google-login_client_secret'),
 						'code' => $oauth2_code,
 						'grant_type' => 'authorization_code',
 						'redirect_uri' => $site_url .'utils/google-oauth2.php',
@@ -392,67 +376,44 @@ class Profile {
 				sisplet_query ("UPDATE users SET last_login=NOW() WHERE id='" .$r[3] ."'");
 
 
-                                // določi še, od kje se je prijavil
+                // določi še, od kje se je prijavil
 
-                                $hostname="";
-                                $headers = apache_request_headers();
-                                if (array_key_exists('X-Forwarded-For', $headers)){
-                                    $hostname=$headers['X-Forwarded-For'];
-                                } else {
-                                    $hostname=$_SERVER["REMOTE_ADDR"];
-                                }
+                $hostname="";
+                $headers = apache_request_headers();
+                if (array_key_exists('X-Forwarded-For', $headers)){
+                    $hostname=$headers['X-Forwarded-For'];
+                } else {
+                    $hostname=$_SERVER["REMOTE_ADDR"];
+                }
 
-                                sisplet_query ("INSERT INTO user_login_tracker (uid, IP, kdaj) VALUES ('" .$r[3] ."', '" .$hostname ."', NOW())");
+                sisplet_query ("INSERT INTO user_login_tracker (uid, IP, kdaj) VALUES ('" .$r[3] ."', '" .$hostname ."', NOW())");
 
                                 
 				setcookie ("uid", base64_encode($this->email), time()+$LifeTime, '/', $cookie_domain);
                 setcookie("unam", base64_encode($r[4].' '.$r[5]),time() + $LifeTime, '/', $cookie_domain);
 				setcookie ("secret", $r[1], time()+$LifeTime, '/', $cookie_domain);
 
-				if ($r[2] == "2" || $r[2] == "6") 
-				{
+				if ($r[2] == "2" || $r[2] == "6"){
 					setcookie ("P", time(), time()+$LifeTime, '/', $cookie_domain);
 				}
 
 				$this->ZePrijavljen = true;
 
-                                if (isset ($_POST['l']) && $_POST['l']!='')
-				{
+                if (isset ($_POST['l']) && $_POST['l']!=''){
 					header ('location: ' .$site_url .str_replace (base64_decode($_POST['l']), $site_url, ""));
 				}
 
-		
-				// Preveri ce moramo po registraciji vrec na kak URL
-				$rt = sisplet_query ("SELECT value FROM misc WHERE what='AfterReg'");
-				$rxx = mysqli_fetch_row ($rt);
-
-				if (strlen ($rxx[0]) > 3)
-				{
-					$rxx[0] = str_replace ($originating_domain, $keep_domain, $rxx[0]);
-					header ('location: ' .$rxx[0] .'?&l=1');
-				} else {
-					$CheckCasovnice = sisplet_query ("SELECT * FROM misc WHERE what='TimeTables' AND value='1'");
-					if (mysqli_num_rows ($CheckCasovnice) != 0)
-					{
-						if (!isset ($_GET['l']))	header('Location: ' .$site_url .'index.php?fl=13');
-						else				header('Location: ' .base64_decode($_GET['l']) .'&l=1');
-					}
-					else
-					{
-						if (!isset ($_GET['l']))	header('Location: ' .$site_url .'?l=1');
-						else				header('Location: ' .base64_decode($_GET['l']) .'?&l=1');
-					}
-				}
+				// Moramo po registraciji vrec na kak URL
+				$rxx = str_replace ($originating_domain, $keep_domain, '/admin/survey/');
+				header ('location: '.$rxx.'?&l=1');
 			}
-			else
-			{
+			else{
 				// Password prompt
 				header ('location: ' .$site_url .'index.php?fl=8&lact=20&em=' .$this->email .(isset ($_GET['l'])?'&l=' .$_GET['l']:''));
 				die();
 			}
 		}
-		else
-		{
+		else{
 			// Ni kul mail
 			header ('location: ' .$site_url .'index.php?fl=8&lact=10&em=' .$this->email .(isset ($_GET['l'])?'&l=' .$_GET['l']:''));
 			die();
@@ -511,197 +472,5 @@ class Profile {
 			header('Location:' .$site_url);
     }
 
-
-	function FBLogin() {
-		global $facebook_appid;
-		global $facebook_appsecret;
-		global $cookie_path;
-
-        if ($r = file_get_contents ("https://graph.facebook.com/v2.9/oauth/access_token?client_id=" .$facebook_appid ."&redirect_uri=https://www.1ka.si/fb_login.php&client_secret=" .$facebook_appsecret ."&code=" .$_GET['code'])) {
-            $at = json_decode ($r);
-
-            $user = json_decode(file_get_contents('https://graph.facebook.com/me?fields=email,first_name,last_name&access_token=' .$at->{'access_token'}));
-
-            if (!isset ($user->email) && isset ($user->name)) {
-                    $user->email = str_replace(" ", ".", $user->first_name ."." .$user->last_name) ."@facebook.com";
-            }
-
-            $old_email = str_replace(" ", ".", $user->first_name ."." .$user->last_name) ."@facebook.com";
-            $old_email = str_replace (array(" ","č","ć","Č","Ć","ž","Ž","š","Š","đ","Đ"), array(".","c","c","C","C","z","Z","s","S","d","D"), $old_email);
-
-            // preveri email, ce ga imas v bazi:
-            if (isset ($user->email) && $user->email!='') {
-                $result = sisplet_query ("select u.name, u.surname, f.id, u.id, u.pass FROM users u, fb_users f WHERE u.id=f.uid AND u.email='" .str_replace ("'", '', $user->email) ."'");
-                if (mysqli_num_rows ($result)==0) {
-                    $result2 = sisplet_query ("select u.id FROM users u LEFT JOIN fb_users f on (u.id=f.uid) where u.email='" .str_replace ("'", '', $old_email) ."'");
-                    if (mysqli_num_rows ($result2)>0) {
-                        $r2 = mysqli_fetch_row ($result2);
-
-                        $result3 = sisplet_query ("SELECT id FROM users WHERE email='" .$user->email ."'");
-                        if (mysqli_num_rows ($result3) > 0) {
-                            $real_id = mysqli_fetch_row ($result3);
-
-                            // moramo popravljati IDje in jebat ježa
-                            // iz "pravega" skopiram geslo na "fb", "fb" popravim v pravega in pravega dizejblam. In iz pravega vse srv_dpstop popravim na "fb"
-                            sisplet_query ("UPDATE users a, users b SET a.pass=b.pass WHERE a.email='" .str_replace ("'", '', $old_email) ."' AND b.email='" .str_replace ("'", '', $user->email) ."'");
-                            sisplet_query ("UPDATE users SET email=CONCAT('D3LMD-' , email) WHERE email='" .str_replace ("'", '', $user->email) ."'");
-
-                            if ($real_id[0] > 0 && $r2[0] > 0) {
-                                sisplet_query ("UPDATE srv_dostop SET uid=" .$r2[0] ." WHERE uid=" .$real_id[0]);
-                            }
-                        }
-                        sisplet_query ("UPDATE users SET email='" .str_replace ("'", '', $user->email) ."' WHERE id='" .$r2[0] ."'");
-
-                    }
-
-                }
-                $result = sisplet_query ("select u.name, u.surname, IF(ISNULL(f.id),'0',f.id), u.id, u.pass FROM users u LEFT JOIN fb_users f on (u.id=f.uid) where u.email='" .str_replace ("'", '', $user->email) ."'");
-
-
-				// je noter, preveri ce je v FB (podatki, podatki!)
-				if (mysqli_num_rows ($result)>0) {
-					
-					$r = mysqli_fetch_row ($result);
-					
-					if ($r[2]!='0') {
-						// samo prijavi
-						$this->EncPass = $r[4];
-						$this->email = str_replace (" ", ".", $user->email);
-
-						$this->Login();
-					} 
-					else {
-						// dodaj FB podatke in prijavi
-						if (isset ($user->first_name)) $fn = $user->first_name;
-						else $fn = $r[0];
-
-						if (isset ($user->last_name)) $ln = $user->last_name;
-						else $ln = $r[1];
-
-						if (isset ($user->gender)) $gn = $user->gender;
-						else $gn = '';
-						
-						if (isset ($user->profile_link)) $pl = $user->profile_link;
-						else $pl = '';
-						
-						if (isset ($user->timezone)) $tz =  $user->timezone;
-						else $tz = '';
-						
-						sisplet_query ("INSERT INTO fb_users (uid, first_name, last_name, gender, timezone, profile_link) VALUES ('" .$r[3] ."', '" .$fn ."', '" .$ln ."', '" .$gn ."', '" .$tz ."', '" .$pl ."')");
-
-						// Prijaviga :)
-						$this->EncPass = $r[4];
-						$this->email = $user->email;
-
-						$this->Login();
-
-					}
-				} 
-				else {
-					// registriraj, dodaj FB podatke in prijavi
-					// dodaj FB podatke in prijavi
-					if (isset ($user->first_name)) $fn = $user->first_name;
-					else $fn = str_replace (" ", ".", $r[0]);
-
-					if (isset ($user->last_name)) $ln = $user->last_name;
-					else $ln = $r[1];
-
-					if (isset ($user->gender)) $gn = $user->gender;
-					else $gn = '';
-
-					if (isset ($user->profile_link)) $pl = $user->profile_link;
-					else $pl = '';
-
-					if (isset ($user->timezone)) $tz =  $user->timezone;
-					else $tz = '';
-
-					// geslo med 00000 in zzzzz
-					$this->pass = base_convert(mt_rand(0x19A100, 0x39AA3FF), 10, 36); 
-					$this->EncPass = base64_encode((hash('SHA256', $this->pass .$pass_salt)));
-					$this->email = str_replace (array(" ","č","ć","Č","Ć","ž","Ž","š","Š","đ","Đ"), array(".","c","c","C","C","z","Z","s","S","d","D"), $user->email);
-
-					//sisplet_query ("INSERT INTO users (name, surname, email, pass, when_reg) VALUES ('" .iconv('utf-8', 'iso-8859-2//TRANSLIT', $fn) ."', '" .iconv('utf-8', 'iso-8859-2//TRANSLIT',$ln) ."', '" .iconv('utf-8', 'iso-8859-2//TRANSLIT',$this->email) ."', '" .$this->EncPass ."', NOW())");
-					sisplet_query ("INSERT INTO users (name, surname, email, pass, when_reg) VALUES ('" . $fn ."', '" . $ln ."', '" .iconv('utf-8', 'iso-8859-2//TRANSLIT',$this->email) ."', '" .$this->EncPass ."', NOW())");
-					$uid = mysqli_insert_id($GLOBALS['connect_db']);
-
-					//sisplet_query ("INSERT INTO fb_users (uid, first_name, last_name, gender, timezone, profile_link) VALUES ('" .$uid ."', '" .iconv('utf-8', 'iso-8859-2//TRANSLIT',$fn) ."', '" .iconv('utf-8', 'iso-8859-2//TRANSLIT',$ln) ."', '" .$gn ."', '" .$tz ."', '" .$pl ."')");
-					sisplet_query ("INSERT INTO fb_users (uid, first_name, last_name, gender, timezone, profile_link) VALUES ('" .$uid ."', '" . $fn ."', '" . $ln ."', '" .$gn ."', '" .$tz ."', '" .$pl ."')");
-
-					// prijavi
-					$this->Login();
-				}
-			}
-		}
-	}
-}
-
-
-// popravek, FB sprememba...
-function get_facebook_cookie($app_id, $app_secret) {
-	if ($_COOKIE['fbsr_' . $app_id] != '') {
-		return get_new_facebook_cookie($app_id, $app_secret);
-	} else {
-		return get_old_facebook_cookie($app_id, $app_secret);
-	}
-}
-
-function get_old_facebook_cookie($app_id, $app_secret) {
-	$args = array();
-	parse_str(trim($_COOKIE['fbs_' . $app_id], '\\"'), $args);
-	ksort($args);
-	$payload = '';
-	foreach ($args as $key => $value) {
-		if ($key != 'sig') {
-			$payload .= $key . '=' . $value;
-		}
-	}
-	if (md5($payload . $app_secret) != $args['sig']) {
-		return array();
-	}
-	return $args;   
-}
-
-function get_new_facebook_cookie($app_id, $app_secret) {
-	$signed_request = parse_signed_request($_COOKIE['fbsr_' . $app_id], $app_secret);
-	// $signed_request should now have most of the old elements
-    
-	$signed_request[uid] = $signed_request[user_id]; // for compatibility 
-
-	if (!is_null($signed_request)) {
-		// the cookie is valid/signed correctly
-		// lets change "code" into an "access_token"
-		$access_token_response = file_get_contents("https://graph.facebook.com/oauth/access_token?client_id=$app_id&redirect_uri=&client_secret=$app_secret&code=$signed_request[code]");
-		parse_str($access_token_response);
-		$signed_request[access_token] = $access_token;
-		$signed_request[expires] = time() + $expires;
-	}
-	return $signed_request;
-}
-
-
-function parse_signed_request($signed_request, $secret) {
-	list($encoded_sig, $payload) = explode('.', $signed_request, 2); 
-
-	// decode the data
-	$sig = base64_url_decode($encoded_sig);
-	$data = json_decode(base64_url_decode($payload), true);
-
-	if (strtoupper($data['algorithm']) !== 'HMAC-SHA256') {
-		error_log('Unknown algorithm. Expected HMAC-SHA256');
-		return null;
-	}
-
-	// check sig
-	$expected_sig = hash_hmac('sha256', $payload, $secret, $raw = true);
-	if ($sig !== $expected_sig) {
-		error_log('Bad Signed JSON signature!');
-		return null;
-	}
-
-	return $data;
-}
-
-function base64_url_decode($input) {
-	return base64_decode(strtr($input, '-_', '+/'));
 }
 

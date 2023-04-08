@@ -1,3 +1,34 @@
+// meta podatki
+var srv_meta_anketa_id 	= $("#srv_meta_anketa").val();
+
+// avtomatsko vsake 30 sekund preverimo, ce se je pojavila kaksna nova stevilka
+function preveri_nove_stevilke () {
+    $.timer(30000, function (timer) {
+        
+        $('#preveri_stevilke').load('ajax.php?t=telefon&a=preveri_stevilke', {anketa: srv_meta_anketa_id});
+        timer.stop();
+    });
+}
+
+// dashboard filter na datum 
+function tel_date_filter () {
+	
+	// Ce imamo nastavljen datum "od"
+	var dateFrom = $('#tel_dash_dateFrom').val();
+	var dateFromText = '';
+	if(dateFrom != '')
+		dateFromText = '&date_from=' + dateFrom;
+		
+	// Ce imamo nastavljen datum "do"	
+	var dateTo = $('#tel_dash_dateTo').val();
+	var dateToText = '';
+	if(dateTo != '')
+		dateToText = '&date_to=' + dateTo;
+
+	var srv_site_url = $("#srv_site_url").val();
+	srv_site_url += 'admin/survey/index.php?anketa='+srv_meta_anketa_id+'&a=telephone&m=dashboard'+dateFromText+dateToText;			
+	window.location.href = srv_site_url;
+}
 
 function showPhnList(pid) {
 	$("#globalSettingsInner").load('ajax.php?t=telephone&m=recipients_lists', {anketa:srv_meta_anketa_id, pid:pid });
@@ -45,10 +76,10 @@ function phn_add_recipients() {
 			$elm.next().find('a').addClass('active');
 			$elm.removeClass('inv_ff_left_on').addClass('inv_ff_right_on').next().next().addClass('inv_ff_left_on');
 		} else {
-			alert(lang['srv_invitation_note1']);
+			genericAlertPopup('srv_invitation_note1');
 		}
 	} else {
-		alert(lang['srv_invitation_note2']);
+		genericAlertPopup('srv_invitation_note2');
 	}
 
 	return true;
@@ -79,7 +110,7 @@ function phnStartSurvey(usr_id){
 				window.location = return_data.reloadUrl;
 				return false;
 			} else {
-				alert(return_data.msg);
+				genericAlertPopup('alert_parameter_datamsg');
 			}
 		},
 		async: false
@@ -177,13 +208,13 @@ function phnGetNewProfileName() {
 				$('#fullscreen').html('').fadeIn('slow');
 				$("#fullscreen").load('ajax.php?t=telephone&m=getProfileName', {anketa:srv_meta_anketa_id, recipients_list:recipients_list, fields:fields, noNavi:'true', pid:pid});
 			} else {
-				alert(lang['srv_invitation_note1']);
+				genericAlertPopup('srv_invitation_note1');
 			}
 		} else {
-			alert(lang['srv_invitation_note2']);
+			genericAlertPopup('srv_invitation_note2');
 		}
 	} else {
-		alert('Invalid PID!');
+		genericAlertPopup('alert_invalidPID');
 	}
 }
 
@@ -240,4 +271,21 @@ function phnUndoStatus(usr_id) {
 	$.post('ajax.php?t=telephone&m=undoLastStatus', {anketa:srv_meta_anketa_id, usr_id:usr_id}, function() {
 		phnGoToUser(usr_id);
 	});
+}
+
+// Sortiranje box-ov pri dodajanju respondentov
+function initTelephoneConnectedSortable(){
+
+    // Na mobitelu ne inicializiramo sorrtiranja, ker potem gumbi niso klikabilni (na nekaterih androidih ne deluje ok)
+    if($(window).width() < 850)
+        return false;
+
+    $('ul.connectedSortable').sortable({
+        update: function(){ 
+            refreshFieldsList(); 
+        }, 
+        forcePlaceholderSize:'true', 
+        tolerance:'pointer', 
+        placeholder:'inv_field_placeholder'
+    });
 }

@@ -9499,3 +9499,86 @@ UPDATE misc SET value='21.05.24' WHERE what="version";
 INSERT INTO srv_help (help, what) VALUES ('Operatorji', 'srv_if_operator');
 
 UPDATE misc SET value='21.05.25' WHERE what="version";
+
+# Drupal verzija je bila posodobljena in vpišemo na 1ka.si in te
+UPDATE misc SET value='7.81' WHERE what="drupal version";
+UPDATE misc SET value='21.06.10' WHERE what="version";
+
+INSERT INTO srv_help (what, help) VALUES ('srv_export_full_meta', 'Export data and paradata');
+
+UPDATE srv_help SET help='Izvozi podatke in parapodatke' WHERE what='srv_export_full_meta' AND lang='1';
+INSERT INTO srv_help (what, help, lang) VALUES ('srv_export_full_meta', 'Export data and paradata', '2');
+
+UPDATE misc SET value='21.07.19' WHERE what="version";
+
+# NOVE ARHIVSKE TABELE - STARE SO PREIMENOVANE IN DODANE DODATNE
+RENAME TABLE srv_data_vrednost TO srv_data_vrednost_archive1;
+RENAME TABLE srv_data_text TO srv_data_text_archive1;
+RENAME TABLE srv_data_grid TO srv_data_grid_archive1;
+RENAME TABLE srv_data_checkgrid TO srv_data_checkgrid_archive1;
+RENAME TABLE srv_data_textgrid TO srv_data_textgrid_archive1;
+RENAME TABLE srv_user_grupa TO srv_user_grupa_archive1;
+RENAME TABLE srv_tracking TO srv_tracking_archive1;
+
+CREATE TABLE srv_data_vrednost_archive2 LIKE srv_data_vrednost_archive1; 
+CREATE TABLE srv_data_text_archive2 LIKE srv_data_text_archive1; 
+CREATE TABLE srv_data_grid_archive2 LIKE srv_data_grid_archive1; 
+CREATE TABLE srv_data_checkgrid_archive2 LIKE srv_data_checkgrid_archive1; 
+CREATE TABLE srv_data_textgrid_archive2 LIKE srv_data_textgrid_archive1; 
+CREATE TABLE srv_user_grupa_archive2 LIKE srv_user_grupa_archive1; 
+CREATE TABLE srv_tracking_archive2 LIKE srv_tracking_archive1; 
+
+UPDATE misc SET value='21.07.23' WHERE what="version";
+
+ALTER TABLE srv_language_vrednost CHANGE naslov2 naslov2 TEXT character set utf8 NOT NULL;
+ALTER TABLE srv_language_spremenljivka CHANGE info info TEXT character set utf8 NOT NULL;
+
+UPDATE misc SET value='21.07.29' WHERE what="version";
+
+## AAI ID uporabnika - SAMO NA AAI instalaciji!!!
+##ALTER TABLE users ADD aai_id VARCHAR(255) CHARACTER SET utf8 NOT NULL DEFAULT '' AFTER email;
+
+UPDATE misc SET value='21.08.30' WHERE what="version";
+
+## Moramo refreshati seznam mojih anket, ker ne prikazujemo vec stevila vseh responsov ampak samo veljavnih
+UPDATE srv_survey_list SET updated='1';
+
+UPDATE misc SET value='21.09.20' WHERE what="version";
+
+## Ciscenje tabele "misc"
+DELETE FROM misc WHERE NOT (
+    what LIKE '%version%'
+    OR what LIKE '%drupal version%'
+    OR what LIKE '%mobileApp_version%'
+    OR what LIKE '%SurveyLang_admin%'
+    OR what LIKE '%SurveyLang_resp%'
+    OR what LIKE '%SurveyDostop%'
+    OR what LIKE '%SurveyForum%'
+    OR what LIKE '%SurveyCookie%'
+    OR what LIKE '%CookieLife%'
+);
+
+## !!!!!!! PO SPODNJEM UPDATU JE NUJNO POGNATI SKRIPTO v utils/1kaUtils/app_settings_copy.php, ki prekopira vse spremenljivke v bazo !!!!!!!!
+## Nova tabela z nastavitvami aplikacije - SEM SE PRENESE VSE IZ settings_optional.php
+CREATE TABLE app_settings(
+    what VARCHAR(100) CHARACTER SET utf8 NOT NULL DEFAULT '',
+    domain VARCHAR(100) CHARACTER SET utf8 NOT NULL DEFAULT '',
+    value TEXT CHARACTER SET utf8 NOT NULL DEFAULT '',
+    UNIQUE KEY (what, domain)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+UPDATE misc SET value='21.09.21' WHERE what="version";
+
+## Ankete vec ne stevilcimo ampak jih identificiramo po hashu
+ALTER TABLE srv_anketa ADD hash VARCHAR(8) CHARACTER SET utf8 NOT NULL DEFAULT '' AFTER id;
+
+## Stare ankete imajo za hash kar id (da je kompatibilno za nazaj ker so ze objavljene)
+UPDATE srv_anketa SET hash=id;
+
+ALTER TABLE srv_anketa ADD UNIQUE (hash);
+
+UPDATE misc SET value='22.09.30' WHERE what="version";
+
+INSERT INTO srv_help (what, help) VALUES ('srv_glasovanje_archive', 'Dodaj anketo v arhiv glasovanja');
+
+UPDATE misc SET value='21.11.16' WHERE what="version";

@@ -171,7 +171,7 @@ function dataSettingProfileAction(action) {
 			return reloadData('dataSetting');
 		});
 	} else {
-		alert(action);
+		genericAlertPopup('alert_parameter_action',action);
 		return false;
 	}
 }	

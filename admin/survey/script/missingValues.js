@@ -53,7 +53,7 @@ function sysMissingValuesAdd()
 	if (filter != undefined && !(filter === '') && text != undefined && !(text === '' )) {
 		$("#sys_missing_values").load('ajax.php?t=missingValues&a=sysMissingValuesAdd', {filter:filter, text:text});
 	} else {
-		alert(lang['srv_missing_value_not_empty']);
+		genericAlertPopup('srv_missing_value_not_empty');
 	}
 }
 function sysMissingValuesDelete(id)
@@ -70,7 +70,7 @@ function sysMissingValuesSave(id) {
 	if (filter != undefined && !(filter === '') && text != undefined && !(text === '') ) {
 		$("#sys_missing_values").load('ajax.php?t=missingValues&a=sysMissingValuesSave', {filter:filter, text:text, id:id});
 	} else {
-		alert(lang['srv_missing_value_not_empty']);
+		genericAlertPopup('srv_missing_value_not_empty');
 	}
 
 }
@@ -126,7 +126,7 @@ function addSurveyMissingValueConfirm() {
 				$('#fullscreen').fadeOut('slow');
 			});
 		} else {
-			alert(response);
+			genericAlertPopup('alert_parameter_response',response);
 		}
 	});
 }

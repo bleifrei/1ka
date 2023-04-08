@@ -21,6 +21,7 @@ use App\Controllers\LanguageController as Language;
 use App\Controllers\Vprasanja\SystemVariableController as SystemVariable;
 use App\Models\Model;
 use enkaParameters;
+use AppSettings;
 
 class TextController extends Controller
 {
@@ -480,7 +481,6 @@ class TextController extends Controller
      ************************************************/
     public function textbox($spremenljivka, $oblika)
     {
-        global $recaptcha_sitekey;
         global $lang;
         
         $row = Model::select_from_srv_spremenljivka($spremenljivka);
@@ -575,7 +575,7 @@ class TextController extends Controller
                     $captcha = ($spremenljivkaParams->get('captcha') ? $spremenljivkaParams->get('captcha') : 0);
 
                     if ($captcha == 1) {
-                        echo '<div class="g-recaptcha" data-sitekey="' .$recaptcha_sitekey .'"></div>';                    
+                        echo '<div class="g-recaptcha" data-sitekey="'.AppSettings::getInstance()->getSetting('google-recaptcha_sitekey').'"></div>';                    
                     }
                     else {
                         $char_counter_events = $limit ? 'charCounter(this);' : '';

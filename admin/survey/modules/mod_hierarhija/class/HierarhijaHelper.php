@@ -41,10 +41,7 @@ class HierarhijaHelper
         // V kolikor smo na katerikoli strani, potem gledamo po piškotkih
         if (isset($get->{'survey-'.$ank_id})) {
 
-            $active = '';
-            if (SurveyInfo::getInstance()->getSurveyColumn('db_table') == 1) {
-                $active = '_active';
-            }
+            $active = SurveyInfo::getInstance()->getSurveyArchiveDBString();
 
             // ID uporabnika, glede na njegov piškot
             $srv_user = sisplet_query("SELECT id FROM srv_user WHERE cookie='".$get->{'survey-'.$ank_id}."'", "obj")->id;

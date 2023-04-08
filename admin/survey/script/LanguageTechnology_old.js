@@ -53,7 +53,7 @@ function runLanguageTechnology() {
                 
                 if (response['error'] != undefined) {
                     if (response['error']['hasError'] == true) {
-                        alert(response['error']['msg']);
+                        genericAlertPopup('alert_parameter_response',response['error']['msg']);
                         
                         // cleanUpAndReturn();
                         return false;
@@ -75,9 +75,9 @@ function runLanguageTechnology() {
             },
             error: function(x, t, m) {
                 if(t==="timeout") {
-                    alert("got timeout");
+                    genericAlertPopup('alert_timeout');
                 } else {
-                    alert('Prišlo je do neznane napake.');
+                    genericAlertPopup('alert_unknown_error');
                 }
             },
             complete: function() {
@@ -656,16 +656,16 @@ function lt_export_excel() {
         data: request,
         success: function (response) {
             if (response['error'] == true) {
-                alert(response['msg']);
+                genericAlertPopup('alert_parameter_response',response['msg']);
                 return false;
             }
             window.open(response['url']);
         },
         error: function(x, t, m) {
             if(t==="timeout") {
-                alert("got timeout");
+                genericAlertPopup('alert_timeout');
             } else {
-                alert('Prišlo je do neznane napake.');
+                genericAlertPopup('alert_unknown_error');
             }
         },
         complete: function() {
@@ -709,7 +709,7 @@ function changeWordType(spremenljivka, wordIndex, word, wordType) {
                 
                 if (response['error'] != undefined) {
                     if (response['error']['hasError'] == true) {
-                        alert(response['error']['msg']);
+                        genericAlertPopup('alert_parameter_response',response['error']['msg']);
                         
                         // cleanUpAndReturn();
                         return false;
@@ -734,9 +734,9 @@ function changeWordType(spremenljivka, wordIndex, word, wordType) {
             },
             error: function(x, t, m) {
                 if(t==="timeout") {
-                    alert("got timeout");
+                    genericAlertPopup('alert_timeout');
                 } else {
-                    alert('Prišlo je do neznane napake.');
+                    genericAlertPopup('alert_unknown_error');
                 }
             },
             complete: function() {

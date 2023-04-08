@@ -189,11 +189,10 @@ class SurveyDataCollect{
         $qry_survey = sisplet_query("SELECT *, UNIX_TIMESTAMP(edit_time) AS srv_edit_time  FROM srv_anketa WHERE id='".$this->sid."'");
         $this->survey = mysqli_fetch_assoc($qry_survey);
         
+        SurveyInfo::getInstance()->SurveyInit($this->sid);
+
         // Aktivne tabele za podatke v bazi
-        if ((int)$this->survey['db_table'] == 1)
-            $this->db_table = '_active';
-        else
-            $this->db_table = '';
+        $this->db_table = SurveyInfo::getInstance()->getSurveyArchiveDBString();
         
         // Zadnji cas editiranja ankete
         $this->max_anketa_time = (int)$this->survey['srv_edit_time'];
@@ -1321,16 +1320,24 @@ class SurveyDataCollect{
         $page = 1;
         foreach ($this->_array_groups as $gid => $grupa) {
 
-            $_HEADER['meta']['grids'][$_g_cnt] = Array('naslov'=>$lang['page'].' '.$page);
+            // Uvod
+            if($gid == '0'){
+                $_HEADER['meta']['grids'][$_g_cnt] = Array('naslov'=>$lang['intro']);
             
-            # date on page
-            $_HEADER['meta']['grids'][$_g_cnt]['variables'][0] = Array ('variable'=>'date_'.$page,'naslov'=>'datum_'.$page,'spss'=>'DATETIMEw','sortType'=>'date','sequence'=>$sequence);
-            $sequence++;
+                # date on page
+                $_HEADER['meta']['grids'][$_g_cnt]['variables'][0] = Array ('variable'=>'date_0','naslov'=>'datum_0','spss'=>'DATETIMEw','sortType'=>'date','sequence'=>$sequence);
+            }
+            else{
+                $_HEADER['meta']['grids'][$_g_cnt] = Array('naslov'=>$lang['page'].' '.$page);
             
+                # date on page
+                $_HEADER['meta']['grids'][$_g_cnt]['variables'][0] = Array ('variable'=>'date_'.$page,'naslov'=>'datum_'.$page,'spss'=>'DATETIMEw','sortType'=>'date','sequence'=>$sequence);
+                
+                $page++;
+            }   
+
             $_HEADER['meta']['grids'][$_g_cnt]['cnt_vars'] = 1;
-            
-            $page++;
-            $_g_cnt++;
+            $sequence++; $_g_cnt++;
         }
         
         // IP
@@ -2765,6 +2772,13 @@ class SurveyDataCollect{
             $cnt = 0;
 			if ($this->_cnt_groups > 0) {
 				$this->_array_groups = array();
+
+                // Uvod - ce je prikazan v anketi 
+                if($this->survey['show_intro'] == '1'){
+                    $this->_array_groups['0'] = '0';
+                    $str .= '0,';
+                }
+
 				$prefix ='';
                 
                 while ($row = mysqli_fetch_assoc($qry_groups)) {

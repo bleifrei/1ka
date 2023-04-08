@@ -1,9 +1,10 @@
 <?php
 
 include_once('../../function.php');
-$anketa = $_GET['anketa'];
+
+$anketa_hash = $_GET['anketa'];
 $grupa = $_GET['grupa'];
 
-echo 'URI = '.$site_url.'main/survey/index.php?anketa='.$anketa.'&grupa='.$grupa;
+echo 'URI = '.$site_url.'main/survey/index.php?anketa='.$anketa_hash.'&grupa='.$grupa;
 
 ?>

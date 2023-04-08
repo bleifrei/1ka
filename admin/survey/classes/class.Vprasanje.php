@@ -31,8 +31,7 @@ class Vprasanje {
 		
 		SurveyInfo::getInstance()->SurveyInit($this->anketa);
 
-		if (SurveyInfo::getInstance()->getSurveyColumn('db_table') == 1)
-			$this->db_table = '_active';
+		$this->db_table = SurveyInfo::getInstance()->getSurveyArchiveDBString();
 		
 		if (SurveyInfo::getInstance()->getSurveyColumn('expanded') == 1)
 			$this->expanded = 1;
@@ -1854,16 +1853,18 @@ class Vprasanje {
 	*/
 	function edit_variable () {
 		global $lang;
-		
+		global $site_domain;   
+
 		$row = Cache::srv_spremenljivka($this->spremenljivka);
-		#'email','ime','priimek','telefon','naziv','drugo'
+		
+        #'email','ime','priimek','telefon','naziv','drugo'
 		if ( in_array($row['variable'], array('email','telefon','ime','priimek','naziv','drugo')) && $row['sistem']==1	 )
 			$disabled = true; else $disabled = false;
 		
-		echo '<p><span class="title">'.$lang['srv_variable'].': '.Help::display('edit_variable').'</span><span class="content"><input type="text" name="variable" value="'.$row['variable'].'" onkeyup="vprasanje_check_variable(this);" '.($disabled?'disabled':'').' maxlength="10" /></span></p>';
-		
-		//echo '<p><span class="title">'.$lang['srv_datapiping'].': '.Help::display('DataPiping').'</span> '.$lang['srv_datapiping_txt'].'</p>';
-		
+        if($site_domain == 'anketa.nijz.si')
+		    echo '<p><span class="title">'.$lang['srv_variable'].': '.Help::display('edit_variable').'</span><span class="content"><input type="text" name="variable" value="'.$row['variable'].'" '.($disabled?'disabled':'').' /></span></p>';
+		else
+            echo '<p><span class="title">'.$lang['srv_variable'].': '.Help::display('edit_variable').'</span><span class="content"><input type="text" name="variable" value="'.$row['variable'].'" onkeyup="vprasanje_check_variable(this);" '.($disabled?'disabled':'').' maxlength="10" /></span></p>';
 	}
 	
 	/**
@@ -1887,11 +1888,9 @@ class Vprasanje {
 		
 		$row = Cache::srv_spremenljivka($this->spremenljivka);
 		
-		//echo '<h2><div contenteditable="true" onkeyup="vprasanje_check_variable(this); $(\'#spremenljivka_content_'.$row['id'].' .variable_name\').html( $(this).html() );" onblur="inline_variable(\''.$row['id'].'\', this);" class="editable" style="display:inline-block; width:115px; overflow:hidden; cursor:text">'.$row['variable'].'</div>';
 		echo '<h2>'.$row['variable'].'';
 		if ($edit_tip == 1) $this->edit_tip();
-		echo '</h2>';
-		
+		echo '</h2>';	
 	}
 	
 	//edit opombe
@@ -5542,8 +5541,12 @@ class Vprasanje {
 		}
 		
 		if (isset($_POST['label'])) {
-			if ($_POST['label'] != $row['label'])
-					$update .= ", label='$_POST[label]' ";
+			if ($_POST['label'] != $row['label']){
+
+                $label_text = strip_tags($_POST['label']);
+
+				$update .= ", label='$label_text' ";
+            }
 		}
 		
 		// // shrani opombo
@@ -5576,11 +5579,13 @@ class Vprasanje {
 		
 		// nastavitve uvoda
 		if ( isset($_POST['intro_opomba'])) {
+
 			if (isset($_POST['intro_opomba'])) {
-				$intro_opomba = $_POST['intro_opomba'];
-				$intro_note = $_POST['note'];
+				$intro_opomba = strip_tags($_POST['intro_opomba']);
+				$intro_note = strip_tags($_POST['note']);
 				$intro = " intro_opomba='".$intro_opomba."', intro_note='$intro_note'";
-			} else $intro = '';
+			} 
+            else $intro = '';
 			
 			unset($_POST['note']); // da ne gre shranjevat v srv_spremenljivka
 			
@@ -5645,11 +5650,11 @@ class Vprasanje {
 				SurveySetting::getInstance()->setSurveyMiscSetting('concl_url_status', $_POST['concl_url_status']);			
 				SurveySetting::getInstance()->setSurveyMiscSetting('concl_url_recnum', $_POST['concl_url_recnum']);			
 				
-				$concl_opomba = $_POST['concl_opomba'];	
-				$concl_note = $_POST['note'];	
+				$concl_opomba = strip_tags($_POST['concl_opomba']);	
+				$concl_note = strip_tags($_POST['note']);	
 				
-				$concl_back_button = $_POST['concl_back_button'];
-				$concl_end_button = $_POST['concl_end_button'];
+				$concl_back_button = strip_tags($_POST['concl_back_button']);
+				$concl_end_button = strip_tags($_POST['concl_end_button']);
 				
 				// shrani prikaz povezave na zacetek ankete za naknadno urejanje
 				$concl_return_edit = $_POST['concl_return_edit'];

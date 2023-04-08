@@ -264,7 +264,7 @@ function chartSaveAdvancedSettings (spid, loop) {
 	var checkEmpty = chartAdvancedSettingsLimitEmpty();
 	
 	if(checkEmpty == true){
-		alert(lang['srv_chart_num_limit_warning']);
+		genericAlertPopup('srv_chart_num_limit_warning');
 	}
 	else{
 		$.post('ajax.php?t=charts&a=chart_save_advanced_settings', form, function(data) {

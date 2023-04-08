@@ -5629,10 +5629,10 @@ span.enka-custom-radio:before,
 }
 .spremenljivka span.reminder {
   position: absolute;
-  color: red;
   left: 0px;
-  margin-top: -2px;
-  font-size: 150%;
+  color: red;
+  font-size: 130%;
+  text-indent: -5px;
 }
 .spremenljivka div.naslov {
   /*float: left;*/

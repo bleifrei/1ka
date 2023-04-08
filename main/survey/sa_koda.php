@@ -10,7 +10,7 @@ include_once('../../function.php');
 if (!empty($_POST['koda'])) {
     $koda = strtolower($_POST['koda']);
 
-    $sql = sisplet_query("SELECT url, anketa_id FROM srv_hierarhija_koda WHERE koda='" . $koda . "'");
+    $sql = sisplet_query("SELECT h.url, h.anketa_id, a.hash FROM srv_hierarhija_koda h, srv_anketa a WHERE h.koda='".$koda."' AND h.anketa_id=a.id");
 
     if ($sql->num_rows > 0) {
         $row = $sql->fetch_object();
@@ -19,7 +19,7 @@ if (!empty($_POST['koda'])) {
         $url_encode_spremenljivke = urlencode(base64_encode($row->url));
 
         //celotni url do ankete
-        header("Location: " . $site_url . "a/" . $row->anketa_id . "?enc=" . $url_encode_spremenljivke);
+        header("Location: " . $site_url . "a/" . $row->hash . "?enc=" . $url_encode_spremenljivke);
         die();
     }
 
@@ -35,7 +35,7 @@ if (!empty($_POST['koda'])) {
         $url_encode_spremenljivke = urlencode(base64_encode($koda_resevanje->url . '&supersifra=' . $koda.'&resujem=0'));
 
         //celotni url do ankete
-        header("Location: " . $site_url . "a/" . $row->anketa_id . "?enc=" . $url_encode_spremenljivke);
+        header("Location: " . $site_url . "a/" . $row->hash . "?enc=" . $url_encode_spremenljivke);
         die();
     }
 

@@ -31,8 +31,9 @@
 	text-align: center;
 }
 .spol_buttons input{
-	width: 60px;
+	width: 80px;
 	margin: 0 2px 0 2px;
+    padding: 2px;
 }
 .spol_buttons input.active{
 	font-weight: bold;

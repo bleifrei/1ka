@@ -20,11 +20,11 @@ function add_skupina_enter(skupine, event){
 }
 
 // brisanje skupine
-function delete_skupina(skupine, vre_id, text){
+function delete_skupina(skupine, vre_id){
 	
 	var spr_id = $('#skupine_spr_id').val();
 	
-	$.post('ajax.php?t=skupine&a=delete_skupina', {anketa: srv_meta_anketa_id, skupine:skupine, spr_id:spr_id, vre_id:vre_id, text:text}, function(){
+	$.post('ajax.php?t=skupine&a=delete_skupina', {anketa: srv_meta_anketa_id, skupine:skupine, spr_id:spr_id, vre_id:vre_id}, function(){
 		window.location.reload();
 	});
 }

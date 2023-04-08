@@ -16,7 +16,6 @@ class UserNarocilaCron{
 
 
     public function __construct(){
-        global $app_settings;
 
     }
 

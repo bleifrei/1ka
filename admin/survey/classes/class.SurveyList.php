@@ -232,7 +232,7 @@ class SurveyList {
     * @desc prikaze zgornjo navigacijo
     */
     function display_sub_tabs () {
-    	global $lang, $global_user_id, $admin_type, $site_domain, $aai_instalacija;
+    	global $lang, $global_user_id, $admin_type, $site_domain;
 
 		$SLCount = $this->countSurveys();
 
@@ -772,8 +772,7 @@ class SurveyList {
         }
         
         # Narocila - samo ce imamo vklopljene pakete
-        global $app_settings;
-        if($app_settings['commercial_packages']){
+        if(AppSettings::getInstance()->getSetting('app_settings-commercial_packages') === true){
             echo '<li class="spaceBig">&nbsp;</li>';
             
             echo '<li>';
@@ -1622,9 +1621,7 @@ class SurveyList {
 		global $lang, $site_url;
 		
 		echo $lang['orderby'];
-		//echo ' <img style="margin-left:5px; vertical-align:middle;" src="'.$site_url.'admin/survey/img_new/bullet_arrow_down.png">';
-		
-		
+				
 		echo '<div id="sortSettings">';
 		
 		echo '<ul>';
@@ -1659,13 +1656,10 @@ class SurveyList {
 		echo '<div id="filterButton" '.(($this->user_id || $this->lang_id != 0 || $this->gdpr != 0) ? 'class="active"' : '').'>';
 		
 		echo $lang['srv_analiza_filter'];
-		//echo ' <img style="margin-left:5px; vertical-align:middle;" src="'.$site_url.'admin/survey/img_new/bullet_arrow_down.png">';
-		
 		
 		echo '<div id="filterSettings">';		
 		echo '<ul>';
-        
-        
+               
 		# filter po uporabniku
 		echo '<li>';
 		
@@ -3079,7 +3073,6 @@ class SurveyList {
 
 				# poiščemmo katere ankete so OK, in jih odstranimo iz seznama anket potrebnih za update
 				$stringSurveyList = "SELECT id FROM srv_survey_list WHERE id IN (".implode(',', $meta_surveys_ids).")"
-				#. " AND (updated = '0' OR (updated = '1' AND TIME_TO_SEC(TIMEDIFF(NOW(),last_updated)) < ".SRV_LIST_UPDATE_TIME_LIMIT.")) AND ( last_updated IS NOT NULL)";
 				. " AND updated = '0' AND last_updated IS NOT NULL";
 				$sqlSurveyList = sisplet_query($stringSurveyList);
 				while (	$rowSurveyList = mysqli_fetch_assoc($sqlSurveyList)) {
@@ -3093,7 +3086,6 @@ class SurveyList {
 				
 				# poiščemmo katere ankete so OK, in jih odstranimo iz seznama anket potrebnih za update
 				$stringSurveyList = "SELECT id FROM srv_survey_list WHERE id IN (".implode(',', $this->surveys_ids).")"
-				#. " AND (updated = '0' OR (updated = '1' AND TIME_TO_SEC(TIMEDIFF(NOW(),last_updated)) < ".SRV_LIST_UPDATE_TIME_LIMIT.")) AND ( last_updated IS NOT NULL)";
 				. " AND updated = '0' AND last_updated IS NOT NULL";
 				$sqlSurveyList = sisplet_query($stringSurveyList);
 				while (	$rowSurveyList = mysqli_fetch_assoc($sqlSurveyList)) {
@@ -3111,10 +3103,6 @@ class SurveyList {
 				. ' IF(ISNULL(sla1.lib_glb),0,sla1.lib_glb) AS lib_glb,'
 				. ' IF(ISNULL(sla2.lib_usr),0,sla2.lib_usr) AS lib_usr,' 
 				
-				// Po novem ne joinamo s tabelo "users", ker je lahko query pocasen in zaklene tabelo - potem pa vse zasteka (dodano preventivno)
-				//. ' sa.edit_uid, us1.name AS e_name, us1.surname AS e_surname, us1.email AS e_email,' 
-				//. ' sa.insert_uid, us2.name AS i_name, us2.surname AS i_surname, us2.email AS i_email,'
-				
 				. " us3.vnos_time_first AS v_time_first, us3.vnos_time_last AS v_time_last," 
 				. ' IF(ISNULL(us3.answers),0,us3.answers) as answers,' 
 				. ' IF(ISNULL(g.variables),0,g.variables) as variables,'
@@ -3126,16 +3114,13 @@ class SurveyList {
 						AS sla1 ON sla1.ank_id = sa.id" 
 				. " LEFT OUTER JOIN ( SELECT ank_id, uid, COUNT(*) AS lib_usr FROM srv_library_anketa as sla WHERE sla.uid = '".$this->g_uid."' AND sla.ank_id IN (".implode(',', $to_update).") GROUP BY ank_id ) 
 						AS sla2 ON sla2.ank_id = sa.id"
-
-				//. ' LEFT OUTER JOIN users AS us1 ON us1.id = sa.edit_uid' 
-				//. ' LEFT OUTER JOIN users AS us2 ON us2.id = sa.insert_uid' 
 				
-				. ' LEFT OUTER JOIN ( SELECT us3.ank_id, COUNT(us3.ank_id) as answers, MIN( us3.time_insert ) as vnos_time_first, MAX( us3.time_insert ) as vnos_time_last, preview FROM srv_user as us3 WHERE us3.ank_id IN ('.implode(',', $to_update).') AND us3.preview = \'0\' AND us3.deleted=\'0\' GROUP BY us3.ank_id ) 
+				. ' LEFT OUTER JOIN ( SELECT us3.ank_id, COUNT(us3.ank_id) as answers, MIN( us3.time_insert ) as vnos_time_first, MAX( us3.time_insert ) as vnos_time_last, preview FROM srv_user as us3 WHERE us3.ank_id IN ('.implode(',', $to_update).') AND us3.preview = \'0\' AND us3.deleted=\'0\' AND us3.testdata=\'0\' AND (us3.last_status=\'5\' OR us3.last_status=\'6\') AND us3.lurker=\'0\' GROUP BY us3.ank_id ) 
 						AS us3 ON us3.ank_id = sa.id'
 				
 				. ' LEFT OUTER JOIN ( SELECT g.ank_id, COUNT(s.gru_id) as variables FROM srv_grupa g, srv_spremenljivka s WHERE g.id = s.gru_id AND g.ank_id IN ('.implode(',', $to_update).') GROUP BY g.ank_id ) 
 						AS g ON g.ank_id = sa.id'
-				//spodaj dodaj  AND us5.lurker=\'0\'
+
 				. ' LEFT OUTER JOIN ( SELECT us5.ank_id, COUNT(us5.ank_id) as approp, preview FROM srv_user as us5 WHERE last_status IN (' . $this->appropriateStatus . ') AND us5.ank_id IN ('.implode(',', $to_update).') AND us5.preview =\'0\' AND us5.deleted=\'0\' GROUP BY us5.ank_id ) 
 						AS us5 ON us5.ank_id = sa.id'
 				
@@ -3160,12 +3145,6 @@ class SurveyList {
 					
 	    			$values = array();
 					while (	$row = mysqli_fetch_assoc($sqlUpdateList)) {
-						/*$row[i_name] = mysqli_real_escape_string($GLOBALS['connect_db'], $row[i_name]);
-						$row[i_surname] = mysqli_real_escape_string($GLOBALS['connect_db'], $row[i_surname]);
-						$row[i_email] = mysqli_real_escape_string($GLOBALS['connect_db'], $row[i_email]);
-						$row[e_name] = mysqli_real_escape_string($GLOBALS['connect_db'], $row[e_name]);
-						$row[e_surname] = mysqli_real_escape_string($GLOBALS['connect_db'], $row[e_surname]);
-						$row[e_email] = mysqli_real_escape_string($GLOBALS['connect_db'], $row[e_email]);*/
 						
 						$row['i_name'] = mysqli_real_escape_string($GLOBALS['connect_db'], $users[$row['id']]['i_name']);
 						$row['i_surname'] = mysqli_real_escape_string($GLOBALS['connect_db'], $users[$row['id']]['i_surname']);

@@ -1391,7 +1391,10 @@ class SaveSurvey extends Model
             if (!$s) {
                 echo 'err08: ' . mysqli_error($GLOBALS['connect_db']);
             }
-            //$s = sisplet_query("DELETE FROM srv_data_glasovanje WHERE spr_id IN ($delete) AND usr_id='".get('usr_id')."'");					if (!$s) echo 'err07: '.mysqli_error($GLOBALS['connect_db']);
+            $s = sisplet_query("DELETE FROM srv_data_vrednost_cond WHERE spr_id IN ($delete) AND usr_id='" . get('usr_id') . "' AND loop_id $loop_id");
+            if (!$s) {
+                echo 'err09: ' . mysqli_error($GLOBALS['connect_db']);
+            }
         }
 
         // odrezemo zadnjo vejico, ker smo jo dodajali kar povsod

@@ -15,20 +15,20 @@ class SurveyEditsAnalysis{
 
 
     function __construct($anketa){
-            if ((int)$anketa > 0){
 
-                    $this->anketa = $anketa;
+        if ((int)$anketa > 0){
 
-                    # polovimo vrsto tabel (aktivne / neaktivne)
-                    SurveyInfo :: getInstance()->SurveyInit($this->anketa);
-                    if (SurveyInfo::getInstance()->getSurveyColumn('db_table') == 1) {
-                            $this->db_table = '_active';
-                    }
-            } 
-            else {	
-                    echo 'Invalid Survey ID!';
-                    exit();
-            }
+            $this->anketa = $anketa;
+
+            # polovimo vrsto tabel (aktivne / neaktivne)
+            SurveyInfo :: getInstance()->SurveyInit($this->anketa);
+            $this->db_table = SurveyInfo::getInstance()->getSurveyArchiveDBString();
+        } 
+        else {	
+            
+            echo 'Invalid Survey ID!';
+            exit();
+        }
     }
 
 

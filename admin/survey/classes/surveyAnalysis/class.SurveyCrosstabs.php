@@ -104,9 +104,8 @@ class SurveyCrosstabs {
 		
 			# polovimo vrsto tabel (aktivne / neaktivne)
 			SurveyInfo :: getInstance()->SurveyInit($this->sid);
-			if (SurveyInfo::getInstance()->getSurveyColumn('db_table') == 1) {
-				$this->db_table = '_active';
-			}
+			$this->db_table = SurveyInfo::getInstance()->getSurveyArchiveDBString();
+
 			$this->_CURRENT_STATUS_FILTER = STATUS_FIELD.' ~ /6|5/';
 
 			# Inicializiramo in polovimo nastavitve missing profila

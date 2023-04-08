@@ -1115,12 +1115,11 @@ class MAZA {
      * @return type - json result of curl output
      */
     private function send_FCM_mesage_curl($fields){
-        #API access key from Google API's Console
-        global $FCM_server_key;
         
+        #API access key from Google API's Console
         $headers = array
             (
-            'Authorization: key=' . $FCM_server_key,
+            'Authorization: key=' . AppSettings::getInstance()->getSetting('maza-FCM_server_key'),
             'Content-Type: application/json'
         );
         #Send Reponse To FireBase Server	
@@ -1790,16 +1789,14 @@ class MAZA {
      * @param type $password - passwor to set in nextpin for this user
      */
     public function nextpin_create_user($identifier, $password){
-        #credentials to use nextpin API
-        global $NextPinMainToken;
-        
+        #credentials to use nextpin API        
         $fields = array
             (
             'username' =>  $this->nextpin_token_prefix . $identifier,
             'password' => $password
         );
 
-        $this -> nextpin_API_call($NextPinMainToken, $fields, 'auth/createUser');
+        $this -> nextpin_API_call(AppSettings::getInstance()->getSetting('maza-NextPinMainToken'), $fields, 'auth/createUser');
     }
         
     /**

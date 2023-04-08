@@ -342,7 +342,7 @@ class SurveyStaticHtml
   
         if( in_array($data_file_status, array(FILE_STATUS_SRV_DELETED, FILE_STATUS_NO_DATA))
             && in_array($podstran, array(
-                'para_analysis_graph', 'para_graph', 'usable_resp', 
+                'para_analysis_graph', 'para_graph', 'usable_resp', 'status_advanced',
                 'data', 'quick_edit', 'variables', 'export', 
                 'sumarnik', 'descriptor', 'frequency', 'crosstabs', 'ttest', 'means', 'break', 'multicrosstabs', 'charts', 'analysis_links'
             )) ){

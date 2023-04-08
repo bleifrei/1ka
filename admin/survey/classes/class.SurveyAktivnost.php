@@ -15,7 +15,7 @@ class SurveyAktivnost{
 	 * @desc prikaze diagnostiko anket
 	 */
 	public function diagnostics() {
-		global $lang, $global_user_id, $admin_type, $app_settings;
+		global $lang, $global_user_id, $admin_type;
 
         $sum = 0;
         $sum_survey = 0;
@@ -53,7 +53,7 @@ class SurveyAktivnost{
 		
 		$language = (isset($_GET['language'])) ? $_GET['language'] : 0;
     
-        if(isset($app_settings['commercial_packages']) && $app_settings['commercial_packages'] == true){
+        if(AppSettings::getInstance()->getSetting('app_settings-commercial_packages') === true){
 
             $package_1ka = (isset($_GET['package_1ka']) && $_GET['package_1ka']=='0') ? 0 : 1;
             $package_2ka = (isset($_GET['package_2ka']) && $_GET['package_2ka']=='0') ? 0 : 1;
@@ -137,8 +137,6 @@ class SurveyAktivnost{
 
 		if ($type == 'pages')
 			$time_edit = 'srv_user_grupa_active.time_edit';
-		// ker je time_edit vcasih 0000-00-00 bi mogli v teh primerih pobrat time_insert
-		// $time_edit = 'srv_user_grupa'.$this->db_table.'.time_insert';
 		elseif ($type == 'users')
 			$time_edit = 'srv_user.time_edit';
 		elseif ($type=='analiza')
@@ -712,7 +710,7 @@ class SurveyAktivnost{
 	}
 
 	private function diagnostics_show_interval ($t) {
-		global $lang, $app_settings;
+		global $lang;
 		
 		echo '<form name="intr" action="index.php" method="get">';
 		echo '<input type="hidden" name="a" value="diagnostics">';
@@ -729,7 +727,7 @@ class SurveyAktivnost{
 		
 		$language = (isset($_GET['language'])) ? $_GET['language'] : 0;
         
-        if(isset($app_settings['commercial_packages']) && $app_settings['commercial_packages'] == true){
+        if(AppSettings::getInstance()->getSetting('app_settings-commercial_packages') === true){
 
             $package_1ka = (isset($_GET['package_1ka']) && $_GET['package_1ka']=='0') ? 0 : 1;
             $package_2ka = (isset($_GET['package_2ka']) && $_GET['package_2ka']=='0') ? 0 : 1;
@@ -870,11 +868,10 @@ class SurveyAktivnost{
     
     // Filter po paketih, ce jih imamo
 	private function diagnostics_get_user_package(){
-        global $app_settings;
 
         $filter = '';
 
-        if(isset($app_settings['commercial_packages']) && $app_settings['commercial_packages'] == true){
+        if(AppSettings::getInstance()->getSetting('app_settings-commercial_packages') === true){
 
             $package_1ka = (isset($_GET['package_1ka']) && $_GET['package_1ka']=='0') ? 0 : 1;
             $package_2ka = (isset($_GET['package_2ka']) && $_GET['package_2ka']=='0') ? 0 : 1;

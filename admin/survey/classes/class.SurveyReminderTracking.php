@@ -51,9 +51,8 @@ class SurveyReminderTracking{
 
 			# polovimo vrsto tabel (aktivne / neaktivne)
 			SurveyInfo :: getInstance()->SurveyInit($this->anketa);
-			if (SurveyInfo::getInstance()->getSurveyColumn('db_table') == 1) {
-				$this->db_table = '_active';
-			}
+			$this->db_table = SurveyInfo::getInstance()->getSurveyArchiveDBString();
+
 			$this->_CURRENT_STATUS_FILTER = STATUS_FIELD.' ~ /6|5/';
 
 			Common::deletePreviewData($this->anketa);

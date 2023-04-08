@@ -84,8 +84,7 @@ class Branching {
 
         SurveyInfo::getInstance()->SurveyInit($this->anketa);
 
-		if (SurveyInfo::getInstance()->getSurveyColumn('db_table') == 1)
-			$this->db_table = '_active';
+		$this->db_table = SurveyInfo::getInstance()->getSurveyArchiveDBString();
 
 		UserSetting :: getInstance()->Init($global_user_id);
 
@@ -102,7 +101,7 @@ class Branching {
     }
 
     /**
-    * @desc inicializacija branchinga (samo prvi�, na za�etku), prepi�e vrstni red iz normalenga urejanja
+    * @desc inicializacija branchinga (samo prvic, na zacetku), prepise vrstni red iz normalenga urejanja
     */
     function init_branching () {
 
@@ -742,24 +741,10 @@ class Branching {
 
 		$row = SurveyInfo::getInstance()->getSurveyRow();
 
-		//glede na to kje smo se nahajali se vrnemo (na osnovne oz napredne moznosti)
-		//$row['toolbox'] == 3 ? $preklop = 1 : $preklop = 2;
-
 		echo '<div id="toolbox_library" class="library">';
-
-		//echo '<p style="position:absolute; top:-30px"><a href="#" onclick="change_mode(\'toolboxback\', \''.$preklop.'\'); return false;">'.$lang['srv_nazajnavprasanja'].'</a></p>';
-
-
-		//zgornja navigacija toolboxa
-		/*echo '<table id="toolbox_menu" cellspacing="0" cellpadding="0"><tr>';
-		echo '<td class="noactive" style="border-right: 1px #888888 solid; border-bottom: 1px #888888 solid;"><a href="#" onclick="change_mode(\'toolboxback\', \''.$preklop.'\'); return false;">'.$lang['srv_novaspremenljivka'].'</a></td>';
-		//echo '<td class="noactive"><a href="#" onclick="change_mode(\'toolbox\', \'2\'); return false;">'.$lang['srv_advanced'].'</a></td>';
-		echo '<td class="handle">'.$lang['srv_library'].'</td>';
-		echo '</tr></table>';*/
 
 		if ($row['locked'] == 1) {
 
-			//echo '<p><img src="img_0/lock.png" /> '.$lang['srv_anketa_locked_1'].'</p>';
 			echo '<p>';
 			echo '<span class="sprites lock_close"></span> '.$lang['srv_anketa_locked_1'];
 			echo '</p>';
@@ -3956,8 +3941,15 @@ class Branching {
 					// sirina vnosnega polja
 					$input = $taWidth;
 
+                    if ($this->lang_id != null) {
+                        save('lang_id', $this->lang_id);
+                        $naslov = \App\Controllers\LanguageController::getInstance()->srv_language_vrednost($row1['id']);
+                        if ($naslov != '') $row1['naslov'] = $naslov;
+                    }
+
 					if($row['orientation'] == 3)
 						echo '<tr>';
+                        
 					echo '<td class="grid_question" style="width: '.$cell.'%; text-align:left" id="f_'.$row1['id'].'">';
 
 					if($row['text_orientation'] == 1 || $row['text_orientation'] == 3){
@@ -6836,6 +6828,9 @@ class Branching {
                 $spr_id = $row1['spr_id'];
             }
 
+            echo '</div><!-- class="condition_editing_body"-->';
+
+            
 			if ( ! ( mysqli_num_rows($sql1)==1 && $spr_id==0 ) ) {
 	            echo '<div id="div_condition_editing_operators" style="padding-left:1%">'.$lang['srv_add_cond'].' '.Help::display('srv_if_operator').':
 
@@ -6843,18 +6838,18 @@ class Branching {
 	            <a href="#" onclick="condition_add(\''.$if.'\', \'0\', \'1\', \''.$vrednost.'\'); return false;"><strong>&nbsp;AND NOT&nbsp;</strong></a>,
 	            <a href="#" onclick="condition_add(\''.$if.'\', \'1\', \'0\', \''.$vrednost.'\'); return false;"><strong>&nbsp;OR&nbsp;</strong></a>,
 	            <a href="#" onclick="condition_add(\''.$if.'\', \'1\', \'1\', \''.$vrednost.'\'); return false;"><strong>&nbsp;OR NOT&nbsp;</strong></a></div>';
-            }
-
-			echo '</div><!-- class="condition_editing_body"-->';
-
-		// blok
-        } elseif ($row['tip'] == 1) {
+            }	
+        } 
+        // blok
+        elseif ($row['tip'] == 1) {
 
             //ko imamo BLOCK prikažemo začetek oklepaja
             echo '<strong class="clr_bl">BLOCK</strong> <span class="colorblock">('.$row['number'].')</span>'.($row['enabled']==2?' FALSE ':'').($row['label']!=''?' <span class="if_comment">( '.$row['label'].' )</span>':'').'';
 
+       
+        } 
         // zanka
-        } elseif ($row['tip'] == 2) {
+        elseif ($row['tip'] == 2) {
             //začetni oklepaj za zanko
 
             $this->loop_display($if);
@@ -6962,28 +6957,28 @@ class Branching {
 
 
         // conjunction
-        echo '<td class="tbl_ce_tb white" style="width:70px; text-align:center">';
+        echo '<td class="tbl_ce_tb white" style="width:80px; text-align:center">';
+
+        $operator = $row['conjunction'].'_'.$row['negation'];
+
+        echo '<input type="hidden" name="conjunction_'.$condition.'" id="conjunction_'.$condition.'" value="'.$row['conjunction'].'_'.$row['negation'].'" />';
+
+        // Prikazujemo samo pri prvem in ce je ze izbran not
         if ($row['vrstni_red'] == 1) {
-        	echo '<input type="hidden" name="conjunction_'.$condition.'" id="conjunction_'.$condition.'" value="'.$row['conjunction'].'_'.$row['negation'].'" />';
 
-			// prikazujemo samo ce je ze izbran not
-            if ($row['negation']==1)
-				echo '<span style="font-weight:bold"><a href="#" onclick="conjunction_edit(\''.$condition.'\', \'0\', \'0\'); return false;">&nbsp;&nbsp;not&nbsp;&nbsp;</a></span>';
+            if($row['negation'] == 1)
+			    echo '<span style="font-weight:bold"><a href="#" onclick="conjunction_edit(\''.$condition.'\', \'0\', \'0\'); return false;">&nbsp;&nbsp;not&nbsp;&nbsp;</a></span>';
+        } 
+        else {
 
-        } else {
-
-			echo '<input type="hidden" name="conjunction_'.$condition.'" id="conjunction_'.$condition.'" value="'.$row['conjunction'].'_'.$row['negation'].'" />';
-
-			if ($row['conjunction']==0 && $row['negation']==0)
-				echo '<span style="font-weight:bold"><a href="#" onclick="conjunction_edit(\''.$condition.'\', \'1\', \'0\'); return false;" title="'.$lang['srv_edit_condition_conjunction'].'">&nbsp;&nbsp;AND&nbsp;&nbsp;</a></span>';
-			if ($row['conjunction']==1 && $row['negation']==0)
-				echo '<span style="font-weight:bold"><a href="#" onclick="conjunction_edit(\''.$condition.'\', \'0\', \'1\'); return false;" title="'.$lang['srv_edit_condition_conjunction'].'">&nbsp;&nbsp;OR&nbsp;&nbsp;</a></span>';
-			if ($row['conjunction']==0 && $row['negation']==1)
-				echo '<span style="font-weight:bold"><a href="#" onclick="conjunction_edit(\''.$condition.'\', \'1\', \'1\'); return false;" title="'.$lang['srv_edit_condition_conjunction'].'">&nbsp;AND NOT&nbsp;</a></span>';
-			if ($row['conjunction']==1 && $row['negation']==1)
-				echo '<span style="font-weight:bold"><a href="#" onclick="conjunction_edit(\''.$condition.'\', \'0\', \'0\'); return false;" title="'.$lang['srv_edit_condition_conjunction'].'">&nbsp;OR NOT&nbsp;</a></span>';
-
+            echo '<select name="conjunction_dropdown_'.$condition.'" id="conjunction_dropdown_'.$condition.'" onChange="conjunction_dropdown_edit(\''.$condition.'\'); return false;">';
+            echo '  <option value="0_0" '.($operator == '0_0' ? 'selected="selected"' : '').'>AND</option>';
+            echo '  <option value="1_0" '.($operator == '1_0' ? 'selected="selected"' : '').'>OR</option>';
+            echo '  <option value="0_1" '.($operator == '0_1' ? 'selected="selected"' : '').'>AND NOT</option>';
+            echo '  <option value="1_1" '.($operator == '1_1' ? 'selected="selected"' : '').'>OR NOT</option>';
+            echo '</select>';
         }
+        
         echo '</td>';
 
 	    // display bracket
@@ -7944,27 +7939,29 @@ class Branching {
         echo '</div>';
 		echo '</div>';
 
-        echo '<div class="condition_editing_body">';
+        echo '<div class="calculation_editing_title">';
         echo '<h2>'.$lang['srv_editcalculation'].'</h2>';
         echo '</div>';
+        
 
+        echo '<div class="calculation_editing_body">';
         $sql = sisplet_query("SELECT * FROM srv_calculation WHERE cnd_id = '$condition' ORDER BY vrstni_red");
         if (mysqli_num_rows($sql) == 0) {
             sisplet_query("INSERT INTO srv_calculation (id, cnd_id, vrstni_red) VALUES ('', '$condition', '1')");
             $sql = sisplet_query("SELECT * FROM srv_calculation WHERE cnd_id = '$condition' ORDER BY vrstni_red");
         }
         while ($row = mysqli_fetch_array($sql)) {
-
             $this->calculation_edit($row['id'], $vrednost);
         }
+        echo '</div>';
+
 
         echo '<p id="calculation_editing_operators" style="margin-left:62px; height:50px;">'.$lang['srv_add_cond'].':
-        <a href="#" onclick="calculation_add(\''.$condition.'\', \'0\', \''.$vrednost.'\'); return false;"><strong style="font-size:18px">&nbsp;+&nbsp;</strong></a>,
-        <a href="#" onclick="calculation_add(\''.$condition.'\', \'1\', \''.$vrednost.'\'); return false;"><strong style="font-size:18px">&nbsp;-&nbsp;</strong></a>,
-        <a href="#" onclick="calculation_add(\''.$condition.'\', \'2\', \''.$vrednost.'\'); return false;"><strong style="font-size:18px">&nbsp;*&nbsp;</strong></a>,
-        <a href="#" onclick="calculation_add(\''.$condition.'\', \'3\', \''.$vrednost.'\'); return false;"><strong style="font-size:18px">&nbsp;/&nbsp;</strong></a>
-        </p><br><br>';
-
+                <a href="#" onclick="calculation_add(\''.$condition.'\', \'0\', \''.$vrednost.'\'); return false;"><strong style="font-size:18px">&nbsp;+&nbsp;</strong></a>,
+                <a href="#" onclick="calculation_add(\''.$condition.'\', \'1\', \''.$vrednost.'\'); return false;"><strong style="font-size:18px">&nbsp;-&nbsp;</strong></a>,
+                <a href="#" onclick="calculation_add(\''.$condition.'\', \'2\', \''.$vrednost.'\'); return false;"><strong style="font-size:18px">&nbsp;*&nbsp;</strong></a>,
+                <a href="#" onclick="calculation_add(\''.$condition.'\', \'3\', \''.$vrednost.'\'); return false;"><strong style="font-size:18px">&nbsp;/&nbsp;</strong></a>
+            </p><br><br>';
     }
 
     /**
@@ -8539,6 +8536,7 @@ class Branching {
 			$spremenljivka = mysqli_insert_id($GLOBALS['connect_db']);
 		}
 
+
 		// vnesemo -4 tag v podatke, ki oznacuje novo spremenljivko
 		$sql = sisplet_query("SELECT id FROM srv_user WHERE ank_id = '$this->anketa'");
 		$query_values = "";
@@ -8549,6 +8547,12 @@ class Branching {
 		if (mysqli_num_rows($sql) > 0)
 			sisplet_query("INSERT INTO srv_data_vrednost".$this->db_table." (spr_id, vre_id, usr_id) VALUES $query_values");
 
+
+        // Preverimo ce smo presegli limit za stevilo vprasanj
+        $check = new SurveyCheck($this->anketa);
+        $check->checkLimitSpremenljivke();
+
+        
 		return $spremenljivka;
 	}
 

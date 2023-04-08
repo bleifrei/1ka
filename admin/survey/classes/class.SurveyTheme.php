@@ -15,7 +15,6 @@ class SurveyTheme {
 		global $site_domain;
 		global $global_user_id;
 		global $admin_type;
-		global $debug;
 		
 		$this->sid = $sid;
 
@@ -67,12 +66,11 @@ class SurveyTheme {
 						12 => 'Embed2.css', 
 						13 => 'Slideshow.css'
 					);
-					//if((($admin_type == '0' || $admin_type == '1') && (strpos($site_url, 'www.1ka.si') || strpos($site_url, 'test.1ka.si'))) || $debug == '1'){
-						$standard_skins[14] = 'Uni.css';
-						$standard_skins[15] = 'Fdv.css';
-						$standard_skins[16] = 'Cdi.css';
-						$standard_skins[17] = 'WebSM.css';
-					//}
+
+                    $standard_skins[14] = 'Uni.css';
+                    $standard_skins[15] = 'Fdv.css';
+                    $standard_skins[16] = 'Cdi.css';
+                    $standard_skins[17] = 'WebSM.css';
 					
 					// Novi safe skini so v loceni skupini
 					$safe_skins = array(
@@ -96,11 +94,10 @@ class SurveyTheme {
 						5 => 'MobilePurple.css', 
 						6 => 'MobileBlack.css'
 					);
-					//if((($admin_type == '0' || $admin_type == '1') && (strpos($site_url, 'www.1ka.si') || strpos($site_url, 'test.1ka.si'))) || $debug == '1'){
-						$mobile_skins[7] = 'MobileUni.css';
-						$mobile_skins[8] = 'MobileFdv.css';
-						$mobile_skins[9] = 'MobileCdi.css';
-					//}
+
+                    $mobile_skins[7] = 'MobileUni.css';
+					$mobile_skins[8] = 'MobileFdv.css';
+					$mobile_skins[9] = 'MobileCdi.css';
 					
 					// Safe skini
 					if(in_array($file, $safe_skins)){

@@ -46,8 +46,6 @@ class NewSurvey{
 		global $lang;
         global $site_url;
         global $site_path;
-        global $virtual_domain;
-        global $debug;
         global $admin_type;
 		
 		echo '<div class="title">'.$lang['srv_newSurvey_title'].':</div>';
@@ -56,15 +54,15 @@ class NewSurvey{
 		echo '<a href="'.$site_url.'admin/survey/index.php?a=ustvari_anketo&b=new" title="'.$lang['srv_newSurvey_survey_new2'].'"><span class="item '.($this->subpage == 'new' ? ' active' : '').'" onClick="">'.$lang['srv_newSurvey_survey_new'].'</span></a>';
 		
 		// Anketa iz predloga (knjiznice) - samo na www.1ka.si, testu in arnesu
-		if((strpos($site_url, 'www.1ka.si') !== false && !$virtual_domain) 
+		if((strpos($site_url, 'www.1ka.si') !== false && !isVirtual()) 
 				|| strpos($site_url, 'test.1ka.si')
 				|| strpos($site_url, '1ka.arnes.si')
-				|| $debug == '1'){
+				|| isDebug()){
 			
 			echo '<a href="'.$site_url.'admin/survey/index.php?a=ustvari_anketo&b=template" title="'.$lang['srv_newSurvey_survey_template2'].'"><span class="item '.($this->subpage == 'template' ? ' active' : '').'">'.$lang['srv_newSurvey_survey_template'].'</span></a>';
 			
 			if($this->subpage == 'template'){
-				echo '<ul>';		
+				echo '<ul class="template_type_menu">';		
 				for($i=0; $i<=10; $i++){
 					echo '<li><a href="'.$site_url.'admin/survey/index.php?a=ustvari_anketo&b=template&c='.$i.'" title="'.$lang['srv_newSurvey_survey_template_cat'.$i].'"><span class="subitem '.($this->subpage == 'template' && $this->template_category == $i ? ' active' : '').'">'.$lang['srv_newSurvey_survey_template_cat'.$i].'</span></a></li>';
 				}
@@ -341,6 +339,13 @@ class NewSurvey{
         echo '<div class="title">' . $lang['srv_newSurvey_survey_template_cat'.$this->template_category] . '</div>';
 		
 		echo '<input type="hidden" name="noSurvey_template_id" id="noSurvey_template_id" value="">';
+
+        // Mobile dropdown za izbiro tipa predloge
+        echo '<select class="template_type_menu" onchange="location.href=this.value;">';
+        for($i=0; $i<=10; $i++){
+            echo '<option value="'.$site_url.'admin/survey/index.php?a=ustvari_anketo&b=template&c='.$i.'" '.($this->subpage == 'template' && $this->template_category == $i ? ' selected="selected"' : '').'>'.$lang['srv_newSurvey_survey_template_cat'.$i].'</option>';
+        }
+        echo '</select>';
 			
 		// Prikaz predlog
 		foreach($this->templates as $template_id => $template_name){				
@@ -533,7 +538,6 @@ class NewSurvey{
         echo '<div class="setting archive" id="hierarhija-opcije-vklopa">';
 
             if(!empty($_GET['c']) && $_GET['c'] == 'izbira'){
-                global $hierarhija_default_id;
 
                 echo '<h4>'.$lang['srv_hierarchy_intro_select_title'].':</h4>';
                 echo '<div class="izbira">';
@@ -556,7 +560,7 @@ class NewSurvey{
                     echo '</div>';
 
                     echo '<label class="strong block"><input type="radio" id="prevzeta-anketa" name="izberi-anketo" onclick="pridobiKnjiznicoZaHierarhijo(\'privzeta\')" value="prevzeta" /><span class="enka-checkbox-radio"></span>'.$lang['srv_hierarchy_intro_option_default'].'
-                            <a href="/main/survey/index.php?anketa='.$hierarhija_default_id.'&amp;preview=on" target="_blank" title="Predogled ankete">
+                            <a href="/main/survey/index.php?anketa='.AppSettings::getInstance()->getSetting('hierarhija-default_id').'&amp;preview=on" target="_blank" title="Predogled ankete">
                                 <span class="faicon preview"></span>
                             </a>                          
                           </label>';

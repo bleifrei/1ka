@@ -485,7 +485,7 @@ class LatexDocument{
 		//brisanje temp datotek tex - konec
 		
 		//brisanje temp slikovnih datotek
-		$this->DeleteTmpImages($surveyId);
+		//$this->DeleteTmpImages($surveyId);
 		//brisanje temp slikovnih datotek - konec
 		
 	}

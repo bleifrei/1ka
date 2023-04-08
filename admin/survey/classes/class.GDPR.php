@@ -59,7 +59,7 @@ class GDPR{
 		$survey_list = $this->getUserSurveys();
 
 
-		echo '<div style="font-style:italic; margin-top:-10px;">';
+		echo '<div style="margin-top:-10px;">';
 
 		echo '<p>'.$lang['srv_gdpr_survey_list_text'].'</p>';
 
@@ -307,7 +307,7 @@ class GDPR{
 		global $site_url;
 		global $lang;
 
-		echo '<div style="font-style:italic; margin-top:-10px;">';
+		echo '<div style="margin-top:-10px;">';
 		echo '<p>'.$lang['srv_gdpr_requests_desc'].'</p>';
 		echo '</div>';
 
@@ -1047,7 +1047,7 @@ class GDPR{
 		global $site_url;
 		global $lang;
 		
-		echo '<div style="font-style:italic; margin-top:-10px;">';
+		echo '<div style="margin-top:-10px;">';
 		echo '<p>'.$lang['srv_gdpr_requests_desc'].'</p>';
 		echo '</div>';
 
@@ -1157,8 +1157,8 @@ class GDPR{
 
         echo '<p>'.$lang['srv_gdpr_dpa_text'].'</p>';
         echo '<ul>';
-        echo '  <li><a href="'.$site_url.'uploadi/dokumenti/DPA_SLO.pdf">'.$lang['srv_gdpr_dpa_slo'].'</a></li>';
-        echo '  <li><a href="'.$site_url.'uploadi/dokumenti/DPA_ANG.pdf">'.$lang['srv_gdpr_dpa_eng'].'</a></li>';
+        echo '  <li><a href="'.$site_url.'uploadi/dokumenti/DPA_SLO.pdf">'.$lang['srv_gdpr_dpa_slo'].'</a>,</li>';
+        echo '  <li><a href="'.$site_url.'uploadi/dokumenti/DPA_ANG.pdf">'.$lang['srv_gdpr_dpa_eng'].'</a>.</li>';
         echo '</ul>';
 
         echo '<p>'.$lang['srv_gdpr_dpa_info'].'</p>';
@@ -1471,8 +1471,6 @@ class GDPR{
 	// Poskrbi za vse potrebno ko respondent zahteva izbris oz. vpogled v podatke
 	public function sendGDPRRequest($request_data){
 		global $lang;
-        global $gdpr_admin_email;
-        global $app_settings;
 		
 		$errors = array();
 
@@ -1619,7 +1617,7 @@ class GDPR{
 				
 				$content .= '<p>Prosimo, da <b>v roku enega meseca</b> izvršite zahtevo in o tem obvestite respondenta na zgoraj navedeni elektronski naslov respondenta (<a href="http://eur-lex.europa.eu/legal-content/SL/TXT/?uri=uriserv:OJ.L_.2016.119.01.0001.01.SLV&toc=OJ:L:2016:119:FULL" target="_blank">Člen 19 uredbe GDPR</a>).</p>';	
 				
-				$content .= '<p>V primeru, da tega po enem mesecu ne boste izvršili, vas bomo ponovno obvestili. Če se zahteva ne izvrši, si pridružujemo pravico, da anketo izbrišemo.</p>';	
+				$content .= '<p>V primeru, da tega po enem mesecu ne boste izvršili, vas bomo ponovno obvestili. Če se zahteva ne izvrši, si pridržujemo pravico, da anketo izbrišemo.</p>';	
 
                 // Podpis
                 $signature = Common::getEmailSignature();
@@ -1635,7 +1633,7 @@ class GDPR{
 					//$MA->addRecipients('dusan.rutnik@gorenje.com');
 					$MA->addRecipients('gdpr@gorenje.com');
 				}
-				elseif(isset($gdpr_admin_email) && $gdpr_admin_email != ''){
+				elseif(AppSettings::getInstance()->getSetting('gdpr_admin_email') !== false){
 					$MA->addRecipients($gdpr_admin_email);
 				}
 				else{

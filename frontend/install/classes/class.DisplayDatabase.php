@@ -76,7 +76,6 @@ class DisplayDatabase{
 	public function displayUpdate($update){
         global $site_url;
         global $lang;
-        global $debug;
 		global $admin_type;
         
         echo '<p>'.$lang['install_database_update'].'</p>';
@@ -86,7 +85,7 @@ class DisplayDatabase{
         echo '<p>'.$lang['install_database_version_update'].': <b>'.$update['new_version'].'</b></p>';
         
         // Ce smo admin ali v debugu izpisemo tudi vrstice za update
-        if($admin_type == '0' || $debug == '1'){
+        if($admin_type == '0' || isDebug()){
 
             foreach ($update['update_lines'] as $key => $update_line) {
                 echo $update_line.'<br /><br />';

@@ -146,8 +146,7 @@ class PdfIzvozResults {
 		{
 			SurveyUserSetting::getInstance()->Init($this->anketa['id'], $global_user_id);
 			
-			if (SurveyInfo::getInstance()->getSurveyColumn('db_table') == 1)
-				$this->db_table = '_active';
+			$this->db_table = SurveyInfo::getInstance()->getSurveyArchiveDBString();
 		}
 		else
 			return false;

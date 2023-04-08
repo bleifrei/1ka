@@ -56,7 +56,6 @@ class DisplaySettings{
     private function displaySettingsApp(){
         global $lang;
         global $app_settings;
-        global $confirm_registration;
 
         echo '<h3>'.$lang['install_settings_app_title'].'</h3>';
 
@@ -170,8 +169,8 @@ class DisplaySettings{
         echo '<div class="settings_item radio">';
         echo '  <div class="what">'.$lang['install_settings_confirm_registration'].':</div>';
         echo '  <div class="value">';
-        echo '      <input type="radio" name="confirm_registration" id="confirm_registration_0" value="0" '.($confirm_registration != '1' ? 'checked="checked"' : '').'><label for="confirm_registration_0">'.$lang['no'].'</label>';
-        echo '      <input type="radio" name="confirm_registration" id="confirm_registration_1" value="1" '.($confirm_registration == '1' ? 'checked="checked"' : '').'><label for="confirm_registration_1">'.$lang['yes'].'</label>';
+        echo '      <input type="radio" name="confirm_registration" id="confirm_registration_0" value="0" '.(!AppSettings::getInstance()->getSetting('confirm_registration') ? 'checked="checked"' : '').'><label for="confirm_registration_0">'.$lang['no'].'</label>';
+        echo '      <input type="radio" name="confirm_registration" id="confirm_registration_1" value="1" '.(AppSettings::getInstance()->getSetting('confirm_registration') ? 'checked="checked"' : '').'><label for="confirm_registration_1">'.$lang['yes'].'</label>';
         echo '  </div>';
         echo '</div>';
     }
@@ -248,8 +247,6 @@ class DisplaySettings{
 
     private function displaySettingsGoogle(){
         global $lang;
-        global $recaptcha_sitekey;
-        global $secret_captcha;
         global $google_maps_API_key;
 
         echo '<h3>'.$lang['install_settings_google_title'].'</h3>';
@@ -257,19 +254,19 @@ class DisplaySettings{
         // Google recaptcha_sitekey
         echo '<div class="settings_item text">';
         echo '  <div class="what">'.$lang['install_settings_recaptcha_sitekey'].':</div>';
-        echo '  <div class="value"><input type="text" name="recaptcha_sitekey" value="'.$recaptcha_sitekey.'"></div>';
+        echo '  <div class="value"><input type="text" name="recaptcha_sitekey" value="'.AppSettings::getInstance()->getSetting('google-recaptcha_sitekey').'"></div>';
         echo '</div>';      
 
         // Google secret_captcha
         echo '<div class="settings_item text">';
         echo '  <div class="what">'.$lang['install_settings_secret_captcha'].':</div>';
-        echo '  <div class="value"><input type="text" name="secret_captcha" value="'.$secret_captcha.'"></div>';
+        echo '  <div class="value"><input type="text" name="secret_captcha" value="'.AppSettings::getInstance()->getSetting('google-secret_captcha').'"></div>';
         echo '</div>';     
 
         // Google google_maps_API_key
         echo '<div class="settings_item text">';
         echo '  <div class="what">'.$lang['install_settings_google_maps_API_key'].':</div>';
-        echo '  <div class="value"><input type="text" name="google_maps_API_key" value="'.$google_maps_API_key.'"></div>';
+        echo '  <div class="value"><input type="text" name="google_maps_API_key" value="'.AppSettings::getInstance()->getSetting('google-maps_API_key').'"></div>';
         echo '</div>'; 
     }
 

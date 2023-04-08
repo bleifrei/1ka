@@ -92,7 +92,7 @@ function zankaProfileAction(action) {
 
 		// ce imamo mnozjenje pustimo max 2 variabli
 		if ( mnozenje * $("#fs_list_4 li").length > 2) {
-			alert(lang['srv_loop_multiplication_error']);
+			genericAlertPopup('srv_loop_multiplication_error');
 		} else {
 			$.post('ajax.php?t=zankaProfile&a=run', {anketa: srv_meta_anketa_id, podstran: srv_meta_podstran, data:data, mnozenje:mnozenje, run:action, pid:pid }, function() {
 //				window.location.reload();
@@ -110,6 +110,6 @@ function zankaProfileAction(action) {
 			return reloadData();
 		});
 	} else {
-		alert('Missing action:'+action)
+		genericAlertPopup('alert_missing_action',action)
 	};
 }

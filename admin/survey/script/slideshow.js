@@ -19,7 +19,7 @@ function slideshow_reset_interval() {
 
 	} else {
 		// ne moremo resetriat, ker checkbox ni izbran
-		alert("Error! Select checkbox");
+		genericAlertPopup('alert_checkbox_error');
 	}
 }
 

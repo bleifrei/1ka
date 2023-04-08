@@ -128,6 +128,7 @@ class ApiNarocilaController{
 
             switch ($this->params['action']) {
 
+
                 // Ustvari novo narocilo
                 case 'create_narocilo':
                     $narocilo = new UserNarocila();
@@ -135,12 +136,43 @@ class ApiNarocilaController{
 
                     break;
 
+
                 // Posodobi obstoječe narocilo (npr. nastavi nacin placila)
                 case 'update_narocilo':
                     $narocilo = new UserNarocila();
                     $this->response = $narocilo->updateNarocilo($this->data);
 
                     break; 
+
+
+                // Dobi podatke zadnjega narocila za uporabnika
+                case 'get_last_narocilo':
+
+                    $usr_id = 0;
+
+                    // Dobimo user id iz emaila
+                    if(isset($this->data['email'])){
+                        $sqlU = sisplet_query("SELECT id FROM users WHERE email='".$this->data['email']."'");
+                        $rowU = mysqli_fetch_array($sqlU);
+                        
+                        $usr_id = $rowU['id'];
+                    }
+
+                    if($usr_id == '' || $usr_id == 0){
+                        $this->response['error'] = 'ERROR! Missing user ID.';
+                        $this->response['success'] = false;
+
+                        break;
+                    }
+
+                    // Dobimo podatke zadnjega narocila
+                    $narocilo = new UserNarocila();
+                    $last_narocilo = $narocilo->getLastNarocilo($usr_id);
+
+                    $this->response = $last_narocilo;
+
+                    break;
+
 
                 // Dobimo pdf predracun (ce ne obstaja ga ustvarimo)
                 case 'get_predracun':
@@ -156,6 +188,7 @@ class ApiNarocilaController{
 
                     break;
 
+
                 // Dobimo pdf racun
                 case 'get_racun':
 
@@ -169,6 +202,7 @@ class ApiNarocilaController{
                     }
 
                     break;
+
 
                 // Placamo narocilo - aktiviramo uporabniku paket za uporabo, zgeneriramo in vrnemo url do pdf racuna in ga tudi posljemo po mailu
                 case 'placaj_narocilo':
@@ -349,7 +383,7 @@ class ApiNarocilaController{
                   $podatki = $reader->city($this->data['ip']);
 
                   // Vrnemo ime države
-                  $this->response['drzava'] =  $podatki->country->name;
+                  $this->response['drzava'] =  $podatki->country->name ?? '';
 
                 break;
             }

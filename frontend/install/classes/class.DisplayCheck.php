@@ -128,7 +128,7 @@ class DisplayCheck{
         echo '<div class="bottom_buttons">';
         echo '  <a href="index.php?step=welcome"><input name="back" value="'.$lang['back'].'" type="button"></a>';
         if(!$red_error)
-            echo '  <a href="index.php?step=settings"><input type="button" value="'.$lang['next1'].'"></a>';
+            echo '  <a href="index.php?step=database"><input type="button" value="'.$lang['next1'].'"></a>';
         else
             echo '  <a href="index.php?step=check"><input type="button" value="Ponovno preveri"></a>';
         echo '</div>';

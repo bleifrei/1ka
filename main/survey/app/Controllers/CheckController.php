@@ -15,6 +15,7 @@ use SurveyInfo;
 use SurveyMissingValues;
 use Common;
 use Mobile_Detect;
+use AppSettings;
 
 
 class CheckController extends Controller
@@ -681,8 +682,7 @@ class CheckController extends Controller
      */
     public function check_captcha()
     {
-        global $secret_captcha;
-        
+
         // Ce urejamo podatke v admin vmesniku ne preverjamo nicesar
         if(isset($_GET['t']) && $_GET['t'] == 'postprocess' || get('grupa') == '0' || get('grupa') == ''){
             return;
@@ -696,7 +696,7 @@ class CheckController extends Controller
 
             if ($captcha == 1) {
                 $recaptchaResponse = $_POST['g-recaptcha-response'];
-                $request = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=".$secret_captcha."&response=".$recaptchaResponse);
+                $request = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=".AppSettings::getInstance()->getSetting('google-secret_captcha')."&response=".$recaptchaResponse);
 
                 // zdaj pa zabeleži mail (pred pošiljanjem)    
                 // zdaj pa še v bazi tistih ki so se ročno dodali
@@ -716,10 +716,9 @@ class CheckController extends Controller
      *
      */
     public function check_captcha_intro(){
-        global $secret_captcha;
 
 		$recaptchaResponse = $_POST['g-recaptcha-response'];
-		$request = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=".$secret_captcha."&response=".$recaptchaResponse);
+		$request = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=".AppSettings::getInstance()->getSetting('google-secret_captcha')."&response=".$recaptchaResponse);
 
 		if(strstr($request,"true")){
 			//

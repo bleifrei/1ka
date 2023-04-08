@@ -97,7 +97,8 @@ class RadioCheckboxSelectLatex extends LatexSurveyElement
 							
 							$stringTitle = ( $rowVrednost['naslov'] ) ? $rowVrednost['naslov'] : ( ( $rowVrednost['naslov2'] ) ? $rowVrednost['naslov2'] : $rowVrednost['variable'] );						
 							$stringTitle = Common::getInstance()->dataPiping($stringTitle, $usr_id, $loop_id);
-							$stringTitle = '\\textcolor{crta}{'.$this->encodeText($stringTitle).'}';
+							//$stringTitle = '\\textcolor{crta}{'.$this->encodeText($stringTitle).'}';
+							$stringTitle = '\\textcolor{crta}{'.$this->encodeText($stringTitle, 0, '', $indeksZaWhile).'}'; //encodeText($text='', $vre_id=0, $naslovStolpca = 0, $img_id=0)
 							
 							//echo $stringTitle."za indeks: ".$indeksZaWhile."</br>";
 							//stetje stevila vrstic
@@ -267,6 +268,10 @@ class RadioCheckboxSelectLatex extends LatexSurveyElement
 					if($this->prevod){ //ce je prevod ankete
 						$rowl = $this->srv_language_vrednost($rowVrednost['id']);	//pridobi prevod naslova v ustreznem jeziku						
 						$stringTitle = ((( $rowl['naslov'] ) ? $rowl['naslov'] : ( ( $rowl['naslov2'] ) ? $rowl['naslov2'] : $rowl['variable'] ) )); //prevod naslova v ustreznem jeziku
+						if($stringTitle == ''){	//ce ni prevoda, prevzemi izvirno
+							//$stringTitleRow = ((( $rowVrednost['naslov'] ) ? $rowVrednost['naslov'] : ( ( $rowVrednost['naslov2'] ) ? $rowVrednost['naslov2'] : $rowVrednost['variable'] ) ));
+							$stringTitle = ((( $rowVrednost['naslov'] ) ? $rowVrednost['naslov'] : ( ( $rowVrednost['naslov2'] ) ? $rowVrednost['naslov2'] : $rowVrednost['variable'] ) ));
+						}
 					}else{						
 						$stringTitle = ((( $rowVrednost['naslov'] ) ? $rowVrednost['naslov'] : ( ( $rowVrednost['naslov2'] ) ? $rowVrednost['naslov2'] : $rowVrednost['variable'] ) ));
 					}
@@ -285,9 +290,23 @@ class RadioCheckboxSelectLatex extends LatexSurveyElement
 					}
 					
 					if($spremenljivke['orientation']==1&&$spremenljivke['tip'] != 3){	//navpicno						
-						$tex .= $symbol.' '.$this->encodeText($stringTitle, $rowVrednost['id']).' '.$texNewLine;
+						//$tex .= $symbol.' '.$this->encodeText($stringTitle, $rowVrednost['id']).' '.$texNewLine;
+						$tex .= $symbol.' '.$this->encodeText($stringTitle, $rowVrednost['id']).' ';
 						//$test = $symbol.' '.$this->encodeText($stringTitle, $rowVrednost['id']).' '.$texNewLine;
-						//echo "tukaj! $test </br>";
+						//echo "tukaj! $test </br>";													
+						if($rowVrednost['other'] == 1){	//ce je odgovor Drugo:, izpisi se tabelo za drugo
+							$tex .= '\begin{tabular}{c} ';	//izris s tabelo brez obrob
+							if(isset($this->userAnswer[$rowVrednost['id']])){								
+								$sqlOtheText1 = "SELECT * FROM srv_data_text".$db_table." WHERE spr_id='".$spremenljivke['id']."' AND vre_id='".$rowVrednost['id']."' AND usr_id=".$usr_id;								
+								$sqlOtherText = sisplet_query($sqlOtheText1);
+								$row4 = mysqli_fetch_assoc($sqlOtherText);								
+								$tex .= '\fbox{\parbox{0.2\textwidth}{ '.$row4['text'].' }} ';
+							}else{
+								$tex .= '\fbox{\parbox{0.2\textwidth}{ \hphantom{\hspace{0.2\textwidth}} }} ';								
+							}							
+							$tex .= ' \end{tabular}';	//za zakljuciti izris odgovorov v tabeli
+						}
+						$tex .= $texNewLine;
 					}elseif($spremenljivke['orientation']==7){	//navpicno - tekst levo						
 						$text = $this->encodeText($stringTitle, $rowVrednost['id']).' & '.$symbol.' '.$texNewLine;
 						$textLength = strlen($text);
@@ -295,18 +314,76 @@ class RadioCheckboxSelectLatex extends LatexSurveyElement
 							$tex .= '\vspace{2 mm}';
 							$tex .= '\parbox{'.LINE_BREAK_AT.'}{'.$this->encodeText($stringTitle, $rowVrednost['id']).'} & '.$symbol.' '.$texNewLine;	//tekst odgovora razbij pri LINE_BREAK_AT (5 cm) in zraven dodaj ustrezni simbol
 						}else{
-							$tex .= $text;
-						}						
+							$tex .= $this->encodeText($stringTitle, $rowVrednost['id']).' & ';							
+							if($rowVrednost['other'] == 1){	//ce je odgovor Drugo:, izpisi se tabelo za drugo								
+								$tex .= '\begin{tabular}{c} ';	//izris s tabelo brez obrob
+								if(isset($this->userAnswer[$rowVrednost['id']])){								
+									$sqlOtheText1 = "SELECT * FROM srv_data_text".$db_table." WHERE spr_id='".$spremenljivke['id']."' AND vre_id='".$rowVrednost['id']."' AND usr_id=".$usr_id;								
+									$sqlOtherText = sisplet_query($sqlOtheText1);
+									$row4 = mysqli_fetch_assoc($sqlOtherText);								
+									$tex .= '\fbox{\parbox{0.2\textwidth}{ '.$row4['text'].' }} ';
+								}else{
+									$tex .= '\fbox{\parbox{0.2\textwidth}{ \hphantom{\hspace{0.2\textwidth}} }} ';								
+								}							
+								$tex .= ' \end{tabular}';	//za zakljuciti izris odgovorov v tabeli
+							}
+							$tex .= $symbol.' '.$texNewLine;
+						}
+						//echo $tex."</br>";
 					}elseif($spremenljivke['orientation']==0){	//vodoravno ob vprasanju
 						$tex .= ' '.$symbol.' '.$this->encodeText($stringTitle, $rowVrednost['id']).'  ';
+						if($rowVrednost['other'] == 1){	//ce je odgovor Drugo:, izpisi se tabelo za drugo
+							$tex .= '\begin{tabular}{c} ';	//izris s tabelo brez obrob
+							if(isset($this->userAnswer[$rowVrednost['id']])){								
+								$sqlOtheText1 = "SELECT * FROM srv_data_text".$db_table." WHERE spr_id='".$spremenljivke['id']."' AND vre_id='".$rowVrednost['id']."' AND usr_id=".$usr_id;								
+								$sqlOtherText = sisplet_query($sqlOtheText1);
+								$row4 = mysqli_fetch_assoc($sqlOtherText);								
+								$tex .= '\fbox{\parbox{0.2\textwidth}{ '.$row4['text'].' }} ';
+							}else{
+								$tex .= '\fbox{\parbox{0.2\textwidth}{ \hphantom{\hspace{0.2\textwidth}} }} ';								
+							}							
+							$tex .= ' \end{tabular}';	//za zakljuciti izris odgovorov v tabeli
+						}
 					}elseif($spremenljivke['orientation']==2){	//vodoravno pod vprasanjem					
 						$tex .= ' '.$symbol.' '.$this->encodeText($stringTitle, $rowVrednost['id']).'  ';
+						if($rowVrednost['other'] == 1){	//ce je odgovor Drugo:, izpisi se tabelo za drugo
+							$tex .= '\begin{tabular}{c} ';	//izris s tabelo brez obrob
+							if(isset($this->userAnswer[$rowVrednost['id']])){								
+								$sqlOtheText1 = "SELECT * FROM srv_data_text".$db_table." WHERE spr_id='".$spremenljivke['id']."' AND vre_id='".$rowVrednost['id']."' AND usr_id=".$usr_id;								
+								$sqlOtherText = sisplet_query($sqlOtheText1);
+								$row4 = mysqli_fetch_assoc($sqlOtherText);								
+								$tex .= '\fbox{\parbox{0.2\textwidth}{ '.$row4['text'].' }} ';
+							}else{
+								$tex .= '\fbox{\parbox{0.2\textwidth}{ \hphantom{\hspace{0.2\textwidth}} }} ';								
+							}							
+							$tex .= ' \end{tabular}';	//za zakljuciti izris odgovorov v tabeli
+						}
 					}elseif(($spremenljivke['tip'] == 3&&$spremenljivke['orientation']==1)||$spremenljivke['orientation']==6){	//roleta ali izberite s seznama
 						if($export_data_type==1&&isset($this->userAnswer[$rowVrednost['id']])){	//ce je dolg izvoz in je podatek za odgovor
-							$tex .= ' \textbf{'.$this->encodeText($stringTitle, $rowVrednost['id']).'} '.$texNewLine;
+							//$tex .= ' \textbf{'.$this->encodeText($stringTitle, $rowVrednost['id']).'} '.$texNewLine;
+							//$tex .= ' \textbf{'.$this->encodeText($stringTitle, $rowVrednost['id']).' ';
+							$tex .= ' \textbf{'.$this->encodeText($stringTitle, $rowVrednost['id']).' }';
 						}else{
-							$tex .= $this->encodeText($stringTitle, $rowVrednost['id']).' '.$texNewLine;
-						}						
+							//$tex .= $this->encodeText($stringTitle, $rowVrednost['id']).' '.$texNewLine;
+							$tex .= $this->encodeText($stringTitle, $rowVrednost['id']).' ';
+						}
+						if($rowVrednost['other'] == 1){	//ce je odgovor Drugo:, izpisi se tabelo za drugo
+							$tex .= '\begin{tabular}{c} ';	//izris s tabelo brez obrob
+							if(isset($this->userAnswer[$rowVrednost['id']])){								
+								$sqlOtheText1 = "SELECT * FROM srv_data_text".$db_table." WHERE spr_id='".$spremenljivke['id']."' AND vre_id='".$rowVrednost['id']."' AND usr_id=".$usr_id;								
+								$sqlOtherText = sisplet_query($sqlOtheText1);
+								$row4 = mysqli_fetch_assoc($sqlOtherText);								
+								$tex .= '\fbox{\parbox{0.2\textwidth}{ '.$row4['text'].' }} ';
+							}else{
+								$tex .= '\fbox{\parbox{0.2\textwidth}{ \hphantom{\hspace{0.2\textwidth}} }} ';								
+							}							
+							$tex .= ' \end{tabular}';	//za zakljuciti izris odgovorov v tabeli
+							if($export_data_type==1&&isset($this->userAnswer[$rowVrednost['id']])){	//ce je dolg izvoz in je podatek za odgovor
+								$tex .= '}';
+							}
+							
+						}
+						$tex .= $texNewLine;
 					}elseif($spremenljivke['orientation']==8){	//povleci-spusti
 						
 						if(isset($this->userAnswer[$rowVrednost['id']])){
